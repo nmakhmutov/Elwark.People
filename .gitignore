@@ -645,3 +645,4 @@ MigrationBackup/
 .ionide/
 
 **/appsettings.*.json
+docker-compose.*.yml
