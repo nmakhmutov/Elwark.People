@@ -1,0 +1,57 @@
+{% section title %}Код подтверждения{% endsection %}
+
+{% section styles %}
+
+{% endsection %}
+
+<tr>
+    <td align="center" valign="top" width="100%" style="background-color: #f7f7f7;" class="content-padding">
+        <center>
+            <table cellspacing="0" cellpadding="0" width="600" class="w320">
+                <tr>
+                    <td class="header-lg">
+                        Код подтверждения
+                    </td>
+                </tr>
+                <tr>
+                    <td class="free-text">
+                        Если вы не запрашивали код подтверждения, немедленно измените пароль, перейдя в настройки своей
+                        учетной записи в Elwark. Мы также рекомендуем изменить пароль на других сайтах, не принадлежащих
+                        Elwark, если вы используете тот же пароль.
+                    </td>
+                </tr>
+                <tr>
+                    <td class="mini-block-container">
+                        <table cellspacing="0" cellpadding="0" width="100%"
+                               style="border-collapse:separate !important;">
+                            <tr>
+                                <td class="mini-block">
+                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td style="padding-bottom: 30px;">
+                                                Привет,<br/>
+                                                Пожалуйства используйте код для завершения подтверждения ваших действий:
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="code-block">
+                                                {{ Model.Code }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding-top: 30px">
+                                                <strong>
+                                                    Не пересылайте и не передавайте этот код кому-либо.
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </center>
+    </td>
+</tr>

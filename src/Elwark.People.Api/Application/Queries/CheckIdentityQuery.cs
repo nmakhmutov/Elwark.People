@@ -1,0 +1,79 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Elwark.People.Abstractions;
+using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Shared;
+using MediatR;
+using Newtonsoft.Json;
+
+namespace Elwark.People.Api.Application.Queries
+{
+    public class CheckIdentityQuery : IRequest<IdentityActiveResponse>
+    {
+        public CheckIdentityQuery(IdentityId identityId) =>
+            IdentityId = identityId;
+
+        public IdentityId IdentityId { get; }
+    }
+
+    public class CheckIdentityQueryHandler : IRequestHandler<CheckIdentityQuery, IdentityActiveResponse>
+    {
+        private readonly IDatabaseQueryExecutor _executor;
+
+        private readonly string _sql = $@"
+SELECT i.id,
+       CASE WHEN i.confirmed_at IS NULL THEN FALSE ELSE TRUE END,
+       CASE
+           WHEN b.type IS NULL THEN NULL
+           ELSE json_build_object(
+                   '{nameof(BanDetailsResponse.Type)}', b.type,
+                   '{nameof(BanDetailsResponse.CreatedAt)}', b.created_at,
+                   '{nameof(BanDetailsResponse.ExpiredAt)}', b.expired_at,
+                   '{nameof(BanDetailsResponse.Reason)}', b.reason
+               )
+           END
+FROM identities i
+         LEFT JOIN bans b ON i.account_id = b.account_id
+WHERE i.id = @id;
+";
+
+        public CheckIdentityQueryHandler(IDatabaseQueryExecutor executor) =>
+            _executor = executor;
+
+        public async Task<IdentityActiveResponse> Handle(CheckIdentityQuery request,
+            CancellationToken cancellationToken)
+        {
+            var data = await _executor.SingleAsync(_sql,
+                new Dictionary<string, object>
+                {
+                    {"@id", request.IdentityId.Value}
+                },
+                reader =>
+                {
+                    var banJson = reader.GetNullableFieldValue<string>(2);
+                    return new
+                    {
+                        Id = new IdentityId(reader.GetFieldValue<Guid>(0)),
+                        IsConfirmed = reader.GetFieldValue<bool>(1),
+                        Ban = banJson is null
+                            ? null
+                            : JsonConvert.DeserializeObject<BanDetailsResponse>(banJson)
+                    };
+                },
+                cancellationToken);
+
+            if (data is null)
+                return IdentityActiveResponse.Deactivated;
+
+            if (!data.IsConfirmed)
+                return IdentityActiveResponse.Deactivated;
+
+            if (data.Ban is {})
+                return IdentityActiveResponse.Deactivated;
+
+            return IdentityActiveResponse.Activated;
+        }
+    }
+}

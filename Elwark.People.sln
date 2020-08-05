@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elwark.People.Domain", "src\Elwark.People.Domain\Elwark.People.Domain.csproj", "{8632F4D2-66C4-4CE9-A74B-F756D8061971}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elwark.People.Infrastructure", "src\Elwark.People.Infrastructure\Elwark.People.Infrastructure.csproj", "{156CED56-4DA5-49A1-86E8-5F2D4E7B1F39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elwark.People.Background", "src\Elwark.People.Background\Elwark.People.Background.csproj", "{40D858FA-DE98-4236-ACC8-FB0615DF05B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elwark.People.Api", "src\Elwark.People.Api\Elwark.People.Api.csproj", "{D99F2595-D4B2-4F58-80F6-58A75442A312}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elwark.People.Shared", "src\Elwark.People.Shared\Elwark.People.Shared.csproj", "{625C63E4-A9FA-4EF3-8282-4BDD7C67493B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8632F4D2-66C4-4CE9-A74B-F756D8061971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8632F4D2-66C4-4CE9-A74B-F756D8061971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8632F4D2-66C4-4CE9-A74B-F756D8061971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8632F4D2-66C4-4CE9-A74B-F756D8061971}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156CED56-4DA5-49A1-86E8-5F2D4E7B1F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156CED56-4DA5-49A1-86E8-5F2D4E7B1F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156CED56-4DA5-49A1-86E8-5F2D4E7B1F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156CED56-4DA5-49A1-86E8-5F2D4E7B1F39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40D858FA-DE98-4236-ACC8-FB0615DF05B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40D858FA-DE98-4236-ACC8-FB0615DF05B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40D858FA-DE98-4236-ACC8-FB0615DF05B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40D858FA-DE98-4236-ACC8-FB0615DF05B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99F2595-D4B2-4F58-80F6-58A75442A312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99F2595-D4B2-4F58-80F6-58A75442A312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99F2595-D4B2-4F58-80F6-58A75442A312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99F2595-D4B2-4F58-80F6-58A75442A312}.Release|Any CPU.Build.0 = Release|Any CPU
+		{625C63E4-A9FA-4EF3-8282-4BDD7C67493B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{625C63E4-A9FA-4EF3-8282-4BDD7C67493B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{625C63E4-A9FA-4EF3-8282-4BDD7C67493B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{625C63E4-A9FA-4EF3-8282-4BDD7C67493B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8632F4D2-66C4-4CE9-A74B-F756D8061971} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
+		{156CED56-4DA5-49A1-86E8-5F2D4E7B1F39} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
+		{40D858FA-DE98-4236-ACC8-FB0615DF05B4} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
+		{D99F2595-D4B2-4F58-80F6-58A75442A312} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
+		{625C63E4-A9FA-4EF3-8282-4BDD7C67493B} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
+	EndGlobalSection
+EndGlobal

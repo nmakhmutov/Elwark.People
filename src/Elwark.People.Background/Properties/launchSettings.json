@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "Elwark.People.Background": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "http://localhost:5002",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
