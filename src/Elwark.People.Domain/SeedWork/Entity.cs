@@ -14,10 +14,10 @@ namespace Elwark.People.Domain.SeedWork
         public IReadOnlyCollection<INotification> DomainEvents =>
             _domainEvents.AsReadOnly();
 
-        public void AddDomainEvent(INotification evt) =>
+        protected void AddDomainEvent(INotification evt) =>
             _domainEvents.Add(evt);
 
-        public void RemoveDomainEvent(INotification evt) =>
+        protected void RemoveDomainEvent(INotification evt) =>
             _domainEvents.Remove(evt);
 
         public void ClearDomainEvents() =>

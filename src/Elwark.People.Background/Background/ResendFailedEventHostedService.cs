@@ -37,7 +37,7 @@ WHERE state <> 2 AND creation_time < (now() - INTERVAL '1 minute')",
             foreach (var id in ids)
             {
                 await _eventPublisher.PublishAsync(new IntegrationEventFailedIntegrationEvent(id), cancellationToken);
-                Logger.LogInformation("Failed integration event {id} resended", id);
+                Logger.LogInformation("Failed integration event {id} resent", id);
             }
         }
     }

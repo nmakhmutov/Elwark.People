@@ -9,8 +9,8 @@ namespace Elwark.People.Api.Application.Models.Responses
     {
         public AccountResponse(AccountId id, string? firstName, string? lastName, string nickname,
             Gender gender, DateTime? birthdate, string? countryCode, string language, string? city, string? timezone,
-            string? bio, Uri picture, ICollection<string> roles, IDictionary<LinksType, Uri?> links, DateTimeOffset createdAt,
-            DateTimeOffset updatedAt)
+            string? bio, Uri picture, ICollection<string> roles, IDictionary<LinksType, Uri?> links,
+            DateTimeOffset createdAt, DateTimeOffset updatedAt)
         {
             Id = id;
             Gender = gender;
@@ -38,7 +38,9 @@ namespace Elwark.People.Api.Application.Models.Responses
 
         public string? LastName { get; }
 
-        public string? FullName => string.Join(" ", FirstName, LastName).Trim().NullIfEmpty();
+        public string? FullName => string.Join(" ", FirstName, LastName)
+            .Trim()
+            .NullIfEmpty() ?? Nickname;
 
         public string Nickname { get; }
 
@@ -61,7 +63,7 @@ namespace Elwark.People.Api.Application.Models.Responses
         public DateTimeOffset UpdatedAt { get; }
 
         public ICollection<string> Roles { get; }
-        
+
         public IDictionary<LinksType, Uri?> Links { get; }
     }
 }

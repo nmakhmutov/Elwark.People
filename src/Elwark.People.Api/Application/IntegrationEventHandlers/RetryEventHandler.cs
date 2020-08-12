@@ -9,15 +9,14 @@ using Newtonsoft.Json;
 
 namespace Elwark.People.Api.Application.IntegrationEventHandlers
 {
-    public class IntegrationEventLogFailedIntegrationEventHandler
-        : IIntegrationEventHandler<IntegrationEventFailedIntegrationEvent>
+    public class RetryEventHandler : IIntegrationEventHandler<IntegrationEventFailedIntegrationEvent>
     {
         private readonly IIntegrationEventPublisher _eventPublisher;
         private readonly IIntegrationEventLogService _integrationEventLogService;
-        private readonly ILogger<IntegrationEventLogFailedIntegrationEventHandler> _logger;
+        private readonly ILogger<RetryEventHandler> _logger;
 
-        public IntegrationEventLogFailedIntegrationEventHandler(IIntegrationEventLogService integrationEventLogService,
-            IIntegrationEventPublisher eventPublisher, ILogger<IntegrationEventLogFailedIntegrationEventHandler> logger)
+        public RetryEventHandler(IIntegrationEventLogService integrationEventLogService,
+            IIntegrationEventPublisher eventPublisher, ILogger<RetryEventHandler> logger)
         {
             _integrationEventLogService = integrationEventLogService ??
                                           throw new ArgumentNullException(nameof(integrationEventLogService));

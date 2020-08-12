@@ -1,3 +1,4 @@
+using Elwark.People.Api.Infrastructure;
 using Elwark.People.Domain.ErrorCodes;
 using Microsoft.AspNetCore.Http;
 
@@ -9,28 +10,16 @@ namespace Elwark.People.Api.Application.ProblemDetails
         {
             Title = CommonError.Unknown.ToString(),
             Type = CommonError.Unknown.ToString(),
-            Status = StatusCodes.Status503ServiceUnavailable
-        };
-
-        public static ElwarkProblemDetails Unauthorized => new ElwarkProblemDetails
-        {
-            Title = CommonError.Unauthorized.ToString(),
-            Type = CommonError.Unauthorized.ToString(),
-            Status = StatusCodes.Status401Unauthorized
-        };
-        
-        public static ElwarkProblemDetails Forbidden => new ElwarkProblemDetails
-        {
-            Title = CommonError.Forbidden.ToString(),
-            Type = CommonError.Forbidden.ToString(),
-            Status = StatusCodes.Status403Forbidden
+            Status = StatusCodes.Status503ServiceUnavailable,
+            Detail = ErrorMessageResources.CommonError_Unknown
         };
         
         public static ElwarkProblemDetails Internal => new ElwarkProblemDetails
         {
             Title = CommonError.Internal.ToString(),
             Type = CommonError.Internal.ToString(),
-            Status = StatusCodes.Status500InternalServerError
+            Status = StatusCodes.Status500InternalServerError,
+            Detail = ErrorMessageResources.CommonError_Internal
         };
 
         public static ElwarkProblemDetails NotSupported(string message) =>

@@ -112,7 +112,7 @@ namespace Elwark.People.Api
             services.AddSingleton<IOAuthIntegrationEventService, OAuthIntegrationEventService>()
                 .AddScoped<IIntegrationEventLogService, IntegrationEventLogService>()
                 .AddElwarkRabbitMq(configuration.GetSection("MessageQueue").Get<ElwarkRabbitConfiguration>())
-                .AddEventHandler<IntegrationEventFailedIntegrationEvent, IntegrationEventLogFailedIntegrationEventHandler>()
+                .AddEventHandler<IntegrationEventFailedIntegrationEvent, RetryEventHandler>()
                 .AddEventHandler<MergeAccountInformationIntegrationEvent, AccountMergerIntegrationEventHandler>()
                 .AddEventHandler<AccountBanExpiredIntegrationEvent, BanExpiredIntegrationEventHandler>();
 
