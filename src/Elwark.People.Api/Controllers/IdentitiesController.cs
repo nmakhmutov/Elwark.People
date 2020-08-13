@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Infrastructure;
 using MediatR;

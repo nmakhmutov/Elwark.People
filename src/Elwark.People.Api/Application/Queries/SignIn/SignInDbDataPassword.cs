@@ -1,5 +1,5 @@
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
@@ -22,7 +22,7 @@ namespace Elwark.People.Api.Application.Queries.SignIn
         }
         
         public SignInDbDataPassword(Identification.Email identifier, IdentityId identityId, AccountId accountId,
-            bool isConfirmed, BanDetailsResponse? ban, PasswordModel? password)
+            bool isConfirmed, BanDetail? ban, PasswordModel? password)
             : base(identifier, identityId, accountId, isConfirmed, ban) =>
             Password = password;
 

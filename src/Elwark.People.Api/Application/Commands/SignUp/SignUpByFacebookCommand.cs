@@ -3,17 +3,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Infrastructure.Services.Facebook;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
+using Elwark.People.Shared.Primitives;
 using Elwark.Storage.Client;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Commands.SignUp
 {
-    public class SignUpByFacebookCommand : IRequest<SignUpResponse>
+    public class SignUpByFacebookCommand : IRequest<SignUpModel>
     {
         public SignUpByFacebookCommand(Identification.Facebook facebook, Identification.Email email, string accessToken)
         {
@@ -27,7 +28,7 @@ namespace Elwark.People.Api.Application.Commands.SignUp
         public string AccessToken { get; }
     }
 
-    public class SignUpByFacebookCommandHandler : IRequestHandler<SignUpByFacebookCommand, SignUpResponse>
+    public class SignUpByFacebookCommandHandler : IRequestHandler<SignUpByFacebookCommand, SignUpModel>
     {
         private readonly IFacebookApiService _facebook;
         private readonly IAccountRepository _repository;
@@ -43,7 +44,7 @@ namespace Elwark.People.Api.Application.Commands.SignUp
             _validator = validator;
         }
 
-        public async Task<SignUpResponse> Handle(SignUpByFacebookCommand request, CancellationToken cancellationToken)
+        public async Task<SignUpModel> Handle(SignUpByFacebookCommand request, CancellationToken cancellationToken)
         {
             var facebook = await _facebook.GetAsync(request.AccessToken, cancellationToken);
             if (facebook.Id != request.Facebook)
@@ -67,13 +68,18 @@ namespace Elwark.People.Api.Application.Commands.SignUp
             await _repository.CreateAsync(account, cancellationToken);
             await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            return new SignUpResponse(
+            return new SignUpModel(
                 account.Id,
                 account.Name.Nickname,
                 account.Identities
-                    .Select(x =>
-                        new RegistrationIdentityResponse(x.Id, x.Identification, x.Notification,
-                            x.ConfirmedAt.HasValue))
+                    .Select(x => new IdentityModel(
+                        x.Id,
+                        x.AccountId,
+                        x.Identification,
+                        x.Notification,
+                        x.ConfirmedAt,
+                        x.CreatedAt)
+                    )
                     .ToArray()
             );
         }

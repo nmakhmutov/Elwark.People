@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Shared;
 using MediatR;
 using Newtonsoft.Json;
@@ -28,10 +28,10 @@ SELECT i.id,
        CASE
            WHEN b.type IS NULL THEN NULL
            ELSE json_build_object(
-                   '{nameof(BanDetailsResponse.Type)}', b.type,
-                   '{nameof(BanDetailsResponse.CreatedAt)}', b.created_at,
-                   '{nameof(BanDetailsResponse.ExpiredAt)}', b.expired_at,
-                   '{nameof(BanDetailsResponse.Reason)}', b.reason
+                   '{nameof(BanDetail.Type)}', b.type,
+                   '{nameof(BanDetail.CreatedAt)}', b.created_at,
+                   '{nameof(BanDetail.ExpiredAt)}', b.expired_at,
+                   '{nameof(BanDetail.Reason)}', b.reason
                )
            END
 FROM identities i
@@ -59,7 +59,7 @@ WHERE i.id = @id;
                         IsConfirmed = reader.GetFieldValue<bool>(1),
                         Ban = banJson is null
                             ? null
-                            : JsonConvert.DeserializeObject<BanDetailsResponse>(banJson)
+                            : JsonConvert.DeserializeObject<BanDetail>(banJson)
                     };
                 },
                 cancellationToken);

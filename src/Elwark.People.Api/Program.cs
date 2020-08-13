@@ -57,9 +57,9 @@ namespace Elwark.People.Api
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("application", app);
 
-            if (environment == "Development")
+            if ("Development".Equals(environment, StringComparison.InvariantCultureIgnoreCase))
                 logger.WriteTo.Console(outputTemplate:
-                    "[{Timestamp:HH:mm:ss.fff} {Application} {Level:u3}] {RequestId} {SourceContext:lj} {Message:lj}{NewLine}{Exception}"
+                    "[{Timestamp:HH:mm:ss.fff} {Level:u3}] {SourceContext:lj} {Message:lj}{NewLine}{Exception}"
                 );
             else
                 logger.WriteTo.Console(new ElwarkCompactJsonFormatter());

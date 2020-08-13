@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 using Bogus;
 using Elwark.Extensions;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Infrastructure.Services.Facebook;
 using Elwark.People.Api.Infrastructure.Services.Google;
 using Elwark.People.Api.Infrastructure.Services.Microsoft;
+using Elwark.People.Api.Requests;
 using Elwark.People.Shared.Primitives;
 using Newtonsoft.Json;
 using Xunit;
@@ -71,7 +71,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var result = JsonConvert.DeserializeObject<SignUpResponse>(json);
+            var result = JsonConvert.DeserializeObject<SignUpModel>(json);
 
             Assert.NotNull(result);
             Assert.True(result.AccountId.Value > 0);
@@ -80,13 +80,13 @@ namespace Elwark.People.Api.FunctionalTests
             Assert.Collection(result.Identities,
                 response =>
                 {
-                    Assert.Equal(isConfirmed, response.IsConfirmed);
+                    Assert.Equal(isConfirmed, response.ConfirmedAt.HasValue);
                     Assert.Equal(response.Identification.Value, email.Value);
                     Assert.NotEqual(Guid.Empty, response.IdentityId.Value);
                 },
                 response =>
                 {
-                    Assert.True(response.IsConfirmed);
+                    Assert.True(response.ConfirmedAt.HasValue);
                     Assert.Equal(response.Identification, google);
                     Assert.NotEqual(Guid.Empty, response.IdentityId.Value);
                 });
@@ -129,7 +129,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var result = JsonConvert.DeserializeObject<SignUpResponse>(json);
+            var result = JsonConvert.DeserializeObject<SignUpModel>(json);
 
             Assert.NotNull(result);
             Assert.True(result.AccountId.Value > 0);
@@ -138,13 +138,13 @@ namespace Elwark.People.Api.FunctionalTests
             Assert.Collection(result.Identities,
                 response =>
                 {
-                    Assert.False(response.IsConfirmed);
+                    Assert.False(response.ConfirmedAt.HasValue);
                     Assert.Equal(response.Identification.Value, email.Value);
                     Assert.NotEqual(Guid.Empty, response.IdentityId.Value);
                 },
                 response =>
                 {
-                    Assert.True(response.IsConfirmed);
+                    Assert.True(response.ConfirmedAt.HasValue);
                     Assert.Equal(response.Identification, facebook);
                     Assert.NotEqual(Guid.Empty, response.IdentityId.Value);
                 });
@@ -182,7 +182,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var result = JsonConvert.DeserializeObject<SignUpResponse>(json);
+            var result = JsonConvert.DeserializeObject<SignUpModel>(json);
 
             Assert.NotNull(result);
             Assert.True(result.AccountId.Value > 0);
@@ -191,13 +191,13 @@ namespace Elwark.People.Api.FunctionalTests
             Assert.Collection(result.Identities,
                 response =>
                 {
-                    Assert.True(response.IsConfirmed);
+                    Assert.True(response.ConfirmedAt.HasValue);
                     Assert.Equal(response.Identification.Value, email.Value);
                     Assert.NotEqual(Guid.Empty, response.IdentityId.Value);
                 }, 
                 response =>
                 {
-                    Assert.True(response.IsConfirmed);
+                    Assert.True(response.ConfirmedAt.HasValue);
                     Assert.Equal(response.Identification, microsoft);
                     Assert.NotEqual(Guid.Empty, response.IdentityId.Value);
                 });

@@ -1,11 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Api.Application.Commands;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Infrastructure;
 using Elwark.People.Api.Infrastructure.Services.Identity;
+using Elwark.People.Api.Requests;
 using Elwark.People.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +26,7 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpGet, Authorize(Policy = Policy.Common)]
-        public async Task<ActionResult<AccountResponse>> GetMeAsync(CancellationToken ct)
+        public async Task<ActionResult<AccountModel>> GetMeAsync(CancellationToken ct)
         {
             var id = _identityService.GetAccountId();
             var result = await _mediator.Send(new GetAccountByIdQuery(id), ct)
@@ -36,7 +36,7 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpPut, Authorize(Policy = Policy.Account)]
-        public async Task<ActionResult<AccountResponse>> UpdateMeAsync(UpdateAccountRequest request,
+        public async Task<ActionResult<AccountModel>> UpdateMeAsync(UpdateAccountRequest request,
             CancellationToken ct)
         {
             var accountId = _identityService.GetAccountId();

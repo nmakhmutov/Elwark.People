@@ -2,10 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.Queries.SignIn;
 using Elwark.People.Api.Infrastructure;
+using Elwark.People.Api.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +21,10 @@ namespace Elwark.People.Api.Controllers
             _mediator = mediator;
 
         [HttpPost]
-        public async Task<ActionResult<SignInResponse>> IndexAsync([FromBody] SignInRequest request,
+        public async Task<ActionResult<SignInModel>> IndexAsync([FromBody] SignInRequest request,
             CancellationToken ct)
         {
-            IRequest<SignInResponse> query = request.Identification switch
+            IRequest<SignInModel> query = request.Identification switch
             {
                 Identification.Email email => new SignInByEmailQuery(email, request.Verifier),
                 Identification.Facebook facebook => new SignInByFacebookQuery(facebook, request.Verifier),

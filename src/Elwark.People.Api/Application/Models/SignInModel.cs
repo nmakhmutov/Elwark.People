@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using Elwark.People.Abstractions;
 
-namespace Elwark.People.Api.Application.Models.Responses
+namespace Elwark.People.Api.Application.Models
 {
-    public class SignInResponse
+    public class SignInModel
     {
         [DebuggerStepThrough]
-        public SignInResponse(AccountId accountId, IdentityId identityId)
+        public SignInModel(AccountId accountId, IdentityId identityId)
         {
             AccountId = accountId;
             IdentityId = identityId;

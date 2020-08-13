@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Elwark.People.Abstractions;
 using Elwark.People.Domain.SeedWork;
+using Elwark.People.Shared.Primitives;
 
 namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {

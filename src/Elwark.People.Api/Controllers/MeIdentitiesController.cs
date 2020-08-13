@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
 using Elwark.People.Api.Application.Commands;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Infrastructure;
 using Elwark.People.Api.Infrastructure.Services.Identity;
@@ -29,7 +29,7 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<IdentityResponse>>> GetIdentitiesAsync(CancellationToken ct)
+        public async Task<ActionResult<IEnumerable<IdentityModel>>> GetIdentitiesAsync(CancellationToken ct)
         {
             var accountId = _identityService.GetAccountId();
             var result = await _mediator.Send(new GetIdentitiesQuery(accountId), ct);

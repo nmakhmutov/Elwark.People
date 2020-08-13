@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.ProblemDetails;
+using Elwark.People.Api.Requests;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Infrastructure;
@@ -74,7 +74,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var response = JsonConvert.DeserializeObject<SignInResponse>(json);
+            var response = JsonConvert.DeserializeObject<SignInModel>(json);
             Assert.NotNull(response);
             Assert.NotEqual(response.IdentityId, Guid.Empty);
             Assert.True(response.AccountId > 0);

@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Shared;
+using Elwark.People.Shared.Primitives;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Queries
 {
-    public class GetAccountByIdentifierQuery : IRequest<AccountResponse>
+    public class GetAccountByIdentifierQuery : IRequest<AccountModel>
     {
         [DebuggerStepThrough]
         public GetAccountByIdentifierQuery(Identification identification) =>
@@ -19,7 +20,7 @@ namespace Elwark.People.Api.Application.Queries
         public Identification Identification { get; }
     }
 
-    public class GetAccountByIdentifierQueryHandler : IRequestHandler<GetAccountByIdentifierQuery, AccountResponse?>
+    public class GetAccountByIdentifierQueryHandler : IRequestHandler<GetAccountByIdentifierQuery, AccountModel?>
     {
         private const string Sql = @"
 SELECT id,
@@ -48,7 +49,7 @@ WHERE id = (SELECT account_id FROM identities WHERE identification_type = @type 
             _executor = executor;
 
 
-        public Task<AccountResponse?> Handle(GetAccountByIdentifierQuery request,
+        public Task<AccountModel?> Handle(GetAccountByIdentifierQuery request,
             CancellationToken cancellationToken) =>
             _executor.SingleAsync(Sql,
                 new Dictionary<string, object>
@@ -56,7 +57,7 @@ WHERE id = (SELECT account_id FROM identities WHERE identification_type = @type 
                     {"@type", request.Identification.Type},
                     {"@value", request.Identification.Value}
                 },
-                reader => new AccountResponse(
+                reader => new AccountModel(
                     reader.GetFieldValue<long>(0),
                     reader.GetNullableFieldValue<string>(1),
                     reader.GetNullableFieldValue<string>(2),

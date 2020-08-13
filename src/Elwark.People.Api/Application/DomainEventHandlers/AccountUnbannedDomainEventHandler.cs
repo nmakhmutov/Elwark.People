@@ -6,15 +6,15 @@ using Elwark.People.Shared.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Elwark.People.Api.Application.DomainEventHandlers.BanRemoved
+namespace Elwark.People.Api.Application.DomainEventHandlers
 {
-    public class NotifyWhenAccountUnbannedDomainEventHandler : INotificationHandler<BanRemovedDomainEvent>
+    public class AccountUnbannedDomainEventHandler : INotificationHandler<BanRemovedDomainEvent>
     {
         private readonly ILogger<INotificationHandler<BanRemovedDomainEvent>> _logger;
 
         private readonly IOAuthIntegrationEventService _oauthIntegrationEventService;
 
-        public NotifyWhenAccountUnbannedDomainEventHandler(ILogger<INotificationHandler<BanRemovedDomainEvent>> logger,
+        public AccountUnbannedDomainEventHandler(ILogger<INotificationHandler<BanRemovedDomainEvent>> logger,
             IOAuthIntegrationEventService oauthIntegrationEventService)
         {
             _logger = logger;

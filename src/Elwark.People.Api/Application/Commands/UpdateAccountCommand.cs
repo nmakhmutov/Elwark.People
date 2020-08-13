@@ -7,9 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elwark.Extensions;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Requests;
+using Elwark.People.Api.Requests;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.Exceptions;
+using Elwark.People.Shared.Primitives;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Commands

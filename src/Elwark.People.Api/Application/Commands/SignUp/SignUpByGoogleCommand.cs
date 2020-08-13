@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Infrastructure.Services.Google;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
@@ -13,7 +13,7 @@ using MediatR;
 
 namespace Elwark.People.Api.Application.Commands.SignUp
 {
-    public class SignUpByGoogleCommand : IRequest<SignUpResponse>
+    public class SignUpByGoogleCommand : IRequest<SignUpModel>
     {
         public SignUpByGoogleCommand(Identification.Google google, Identification.Email email, string accessToken)
         {
@@ -27,7 +27,7 @@ namespace Elwark.People.Api.Application.Commands.SignUp
         public string AccessToken { get; }
     }
 
-    public class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoogleCommand, SignUpResponse>
+    public class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoogleCommand, SignUpModel>
     {
         private readonly IGoogleApiService _google;
         private readonly IAccountRepository _repository;
@@ -43,7 +43,7 @@ namespace Elwark.People.Api.Application.Commands.SignUp
             _validator = validator;
         }
 
-        public async Task<SignUpResponse> Handle(SignUpByGoogleCommand request, CancellationToken cancellationToken)
+        public async Task<SignUpModel> Handle(SignUpByGoogleCommand request, CancellationToken cancellationToken)
         {
             var google = await _google.GetAsync(request.AccessToken, cancellationToken);
 
@@ -64,13 +64,18 @@ namespace Elwark.People.Api.Application.Commands.SignUp
             await _repository.CreateAsync(account, cancellationToken);
             await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            return new SignUpResponse(
+            return new SignUpModel(
                 account.Id,
                 account.Name.Nickname,
                 account.Identities
-                    .Select(x =>
-                        new RegistrationIdentityResponse(x.Id, x.Identification, x.Notification,
-                            x.ConfirmedAt.HasValue))
+                    .Select(x => new IdentityModel(
+                        x.Id,
+                        x.AccountId,
+                        x.Identification,
+                        x.Notification,
+                        x.ConfirmedAt,
+                        x.CreatedAt)
+                    )
                     .ToArray()
             );
         }

@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -25,7 +25,7 @@ namespace Elwark.People.Api.FunctionalTests
             var accountDb = context.Accounts
                 .First(x => x.Id == id);
 
-            var accountResponse = JsonConvert.DeserializeObject<AccountResponse>(json);
+            var accountResponse = JsonConvert.DeserializeObject<AccountModel>(json);
 
             Assert.Equal(id, accountResponse.Id);
             Assert.Equal(accountDb.Name.FirstName, accountResponse.FirstName);

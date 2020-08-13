@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Elwark.People.Abstractions;
 
-namespace Elwark.People.Api.Application.Models.Responses
+namespace Elwark.People.Api.Application.Models
 {
-    public class SignUpResponse
+    public class SignUpModel
     {
         [DebuggerStepThrough]
-        public SignUpResponse(AccountId accountId, string name,
-            IReadOnlyCollection<RegistrationIdentityResponse> identities)
+        public SignUpModel(AccountId accountId, string name,
+            IReadOnlyCollection<IdentityModel> identities)
         {
             AccountId = accountId;
             Name = name;
@@ -19,6 +19,6 @@ namespace Elwark.People.Api.Application.Models.Responses
 
         public string Name { get; }
 
-        public IReadOnlyCollection<RegistrationIdentityResponse> Identities { get; }
+        public IReadOnlyCollection<IdentityModel> Identities { get; }
     }
 }

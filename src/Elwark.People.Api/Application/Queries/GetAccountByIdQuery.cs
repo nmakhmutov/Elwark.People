@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Shared;
+using Elwark.People.Shared.Primitives;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Queries
 {
-    public class GetAccountByIdQuery : IRequest<AccountResponse>
+    public class GetAccountByIdQuery : IRequest<AccountModel>
     {
         [DebuggerStepThrough]
         public GetAccountByIdQuery(AccountId id) => Id = id;
@@ -18,7 +19,7 @@ namespace Elwark.People.Api.Application.Queries
         public AccountId Id { get; }
     }
 
-    public class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByIdQuery, AccountResponse?>
+    public class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByIdQuery, AccountModel?>
     {
         private const string Sql = @"
 SELECT id,
@@ -46,13 +47,13 @@ WHERE id = @id;
         public GetAccountByIdQueryHandler(IDatabaseQueryExecutor executor) =>
             _executor = executor;
 
-        public Task<AccountResponse?> Handle(GetAccountByIdQuery request, CancellationToken cancellationToken) =>
+        public Task<AccountModel?> Handle(GetAccountByIdQuery request, CancellationToken cancellationToken) =>
             _executor.SingleAsync(Sql,
                 new Dictionary<string, object>
                 {
                     {"@id", request.Id.Value}
                 },
-                reader => new AccountResponse(
+                reader => new AccountModel(
                     reader.GetFieldValue<long>(0),
                     reader.GetNullableFieldValue<string>(1),
                     reader.GetNullableFieldValue<string>(2),

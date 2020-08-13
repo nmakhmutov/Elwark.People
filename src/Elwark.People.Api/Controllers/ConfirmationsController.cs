@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
 using Elwark.People.Api.Application.Commands;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Infrastructure;
+using Elwark.People.Api.Requests;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
 using Elwark.People.Shared.Primitives;
@@ -25,12 +25,12 @@ namespace Elwark.People.Api.Controllers
             _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<ConfirmationResponse>> GetAsync([FromQuery] string token, CancellationToken ct)
+        public async Task<ActionResult<ConfirmationModel>> GetAsync([FromQuery] string token, CancellationToken ct)
         {
             var confirmation = await _mediator.Send(new CheckConfirmationByTokenQuery(token), ct);
             var result = await _mediator.Send(new GetIdentityByIdQuery(confirmation.IdentityId), ct);
 
-            return Ok(new ConfirmationResponse(result.Identification));
+            return Ok(new ConfirmationModel(result.IdentityId, result.Identification));
         }
 
         [HttpPost]
@@ -39,8 +39,9 @@ namespace Elwark.People.Api.Controllers
             var identity = await _mediator.Send(new GetIdentityByIdentifierQuery(request.Email), ct)
                            ?? throw ElwarkIdentificationException.NotFound(request.Email);
 
-            var email = await _mediator.Send(new GetNotifierQuery(identity.AccountId, NotificationType.PrimaryEmail),
-                ct) ?? throw new ElwarkNotificationException(NotificationError.NotFound);
+            var email = await _mediator.Send(
+                new GetNotifierQuery(identity.AccountId, NotificationType.PrimaryEmail), ct
+            ) ?? throw new ElwarkNotificationException(NotificationError.NotFound);
 
             await _mediator.Send(
                 new SendConfirmationUrlCommand(
@@ -57,14 +58,14 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ConfirmIdentityResponse>> PutAsync(
-            [FromBody] CheckConfirmationByTokenQuery query, CancellationToken ct)
+        public async Task<ActionResult<IdentityId>> PutAsync([FromBody] CheckConfirmationByTokenQuery query,
+            CancellationToken ct)
         {
             var confirmation = await _mediator.Send(query, ct);
             await _mediator.Send(new ActivateIdentityCommand(confirmation.IdentityId), ct);
             await _mediator.Send(new DeleteConfirmationCommand(confirmation.ConfirmationId), ct);
 
-            return Ok(new ConfirmIdentityResponse(confirmation.IdentityId));
+            return Ok(confirmation.IdentityId);
         }
     }
 }

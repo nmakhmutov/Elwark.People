@@ -9,7 +9,7 @@ namespace Elwark.People.Api.Application.Validations
     {
         public UpdateAccountCommandValidator(IElwarkStorageClient client)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Gender)
                 .IsInEnum()

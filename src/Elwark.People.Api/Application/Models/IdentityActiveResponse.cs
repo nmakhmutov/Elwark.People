@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Newtonsoft.Json;
 
-namespace Elwark.People.Api.Application.Models.Responses
+namespace Elwark.People.Api.Application.Models
 {
     public class IdentityActiveResponse
     {

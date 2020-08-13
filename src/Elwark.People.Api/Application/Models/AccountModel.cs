@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using Elwark.Extensions;
 using Elwark.People.Abstractions;
+using Elwark.People.Shared.Primitives;
 
-namespace Elwark.People.Api.Application.Models.Responses
+namespace Elwark.People.Api.Application.Models
 {
-    public class AccountResponse
+    public class AccountModel
     {
-        public AccountResponse(AccountId id, string? firstName, string? lastName, string nickname,
+        public AccountModel(AccountId id, string? firstName, string? lastName, string nickname,
             Gender gender, DateTime? birthdate, string? countryCode, string language, string? city, string? timezone,
             string? bio, Uri picture, ICollection<string> roles, IDictionary<LinksType, Uri?> links,
             DateTimeOffset createdAt, DateTimeOffset updatedAt)

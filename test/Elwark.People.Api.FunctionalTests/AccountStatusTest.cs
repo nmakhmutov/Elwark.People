@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Infrastructure;
 using Elwark.People.Shared.Primitives;

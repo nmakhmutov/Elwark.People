@@ -6,9 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.ProblemDetails;
+using Elwark.People.Api.Requests;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Shared.Primitives;
 using Microsoft.AspNetCore.Http;
@@ -55,7 +55,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var result = JsonConvert.DeserializeObject<SignUpResponse>(json);
+            var result = JsonConvert.DeserializeObject<SignUpModel>(json);
 
             Assert.NotNull(result);
             Assert.NotNull(result.Name);
@@ -64,7 +64,7 @@ namespace Elwark.People.Api.FunctionalTests
             Assert.NotEmpty(result.Identities);
             Assert.Collection(result.Identities, response =>
             {
-                Assert.False(response.IsConfirmed);
+                Assert.False(response.ConfirmedAt.HasValue);
                 Assert.NotNull(response.Identification);
                 Assert.Equal(response.Identification, data.Email);
                 Assert.NotEqual(Guid.Empty, response.IdentityId.Value);

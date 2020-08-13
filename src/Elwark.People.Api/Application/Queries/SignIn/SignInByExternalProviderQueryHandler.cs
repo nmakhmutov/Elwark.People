@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.Exceptions;
 using Elwark.People.Shared;
 using MediatR;
@@ -11,8 +11,8 @@ using Newtonsoft.Json;
 
 namespace Elwark.People.Api.Application.Queries.SignIn
 {
-    public abstract class SignInByExternalProviderQueryHandler<TRequest> : IRequestHandler<TRequest, SignInResponse>
-        where TRequest : IRequest<SignInResponse>
+    public abstract class SignInByExternalProviderQueryHandler<TRequest> : IRequestHandler<TRequest, SignInModel>
+        where TRequest : IRequest<SignInModel>
     {
         private readonly IDatabaseQueryExecutor _executor;
 
@@ -23,10 +23,10 @@ SELECT i.id,
        CASE
            WHEN b.type IS NULL THEN NULL
            ELSE json_build_object(
-                   '{nameof(BanDetailsResponse.Type)}', b.type,
-                   '{nameof(BanDetailsResponse.CreatedAt)}', b.created_at,
-                   '{nameof(BanDetailsResponse.ExpiredAt)}', b.expired_at,
-                   '{nameof(BanDetailsResponse.Reason)}', b.reason
+                   '{nameof(BanDetail.Type)}', b.type,
+                   '{nameof(BanDetail.CreatedAt)}', b.created_at,
+                   '{nameof(BanDetail.ExpiredAt)}', b.expired_at,
+                   '{nameof(BanDetail.Reason)}', b.reason
                )
            END
 FROM identities i
@@ -38,7 +38,7 @@ WHERE i.identification_type = @type
         protected SignInByExternalProviderQueryHandler(IDatabaseQueryExecutor executor) =>
             _executor = executor;
 
-        public abstract Task<SignInResponse> Handle(TRequest request, CancellationToken cancellationToken);
+        public abstract Task<SignInModel> Handle(TRequest request, CancellationToken cancellationToken);
 
         protected async Task<SignInDbDataBase<T>> GetDbData<T>(T identifier, CancellationToken cancellationToken)
             where T : Identification =>
@@ -59,7 +59,7 @@ WHERE i.identification_type = @type
                         reader.GetFieldValue<bool>(2),
                         banJson is null
                             ? null
-                            : JsonConvert.DeserializeObject<BanDetailsResponse>(banJson)
+                            : JsonConvert.DeserializeObject<BanDetail>(banJson)
                     );
                 },
                 cancellationToken

@@ -2,12 +2,12 @@ using System;
 using System.Diagnostics;
 using Elwark.People.Abstractions;
 
-namespace Elwark.People.Api.Application.Models.Responses
+namespace Elwark.People.Api.Application.Models
 {
-    public class IdentityResponse
+    public class IdentityModel
     {
         [DebuggerStepThrough]
-        public IdentityResponse(IdentityId identityId, AccountId accountId, Identification identification, Notification notification,
+        public IdentityModel(IdentityId identityId, AccountId accountId, Identification identification, Notification notification,
             DateTimeOffset? confirmedAt, DateTimeOffset createdAt)
         {
             IdentityId = identityId;

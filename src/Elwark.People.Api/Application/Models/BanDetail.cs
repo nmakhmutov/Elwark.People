@@ -2,12 +2,12 @@ using System;
 using System.Diagnostics;
 using Elwark.People.Shared.Primitives;
 
-namespace Elwark.People.Api.Application.Models.Responses
+namespace Elwark.People.Api.Application.Models
 {
-    public class BanDetailsResponse
+    public class BanDetail
     {
         [DebuggerStepThrough]
-        public BanDetailsResponse(BanType type, DateTimeOffset createdAt, DateTimeOffset? expiredAt, string reason)
+        public BanDetail(BanType type, DateTimeOffset createdAt, DateTimeOffset? expiredAt, string reason)
         {
             Reason = reason;
             Type = type;

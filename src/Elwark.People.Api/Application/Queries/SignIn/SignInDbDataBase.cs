@@ -1,5 +1,5 @@
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
 
@@ -9,7 +9,7 @@ namespace Elwark.People.Api.Application.Queries.SignIn
         where T : Identification
     {
         public SignInDbDataBase(T identifier, IdentityId identityId, AccountId accountId, bool isConfirmed,
-            BanDetailsResponse? ban)
+            BanDetail? ban)
         {
             Identifier = identifier;
             IdentityId = identityId;
@@ -26,7 +26,7 @@ namespace Elwark.People.Api.Application.Queries.SignIn
 
         public bool IsConfirmed { get; }
 
-        public BanDetailsResponse? Ban { get; }
+        public BanDetail? Ban { get; }
 
         public virtual void Validate()
         {

@@ -1,7 +1,7 @@
 using Elwark.People.Abstractions;
 using Elwark.People.Shared.Primitives;
 
-namespace Elwark.People.Api.Application.Models.Requests
+namespace Elwark.People.Api.Requests
 {
     public class SignUpByGoogleRequest : SignUpBaseRequest
     {

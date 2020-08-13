@@ -15,7 +15,7 @@
         <PackageReference Include="Microsoft.NETCore.Platforms" Version="3.1.1" />
         <PackageReference Include="Npgsql" Version="4.1.4" />
         <PackageReference Include="Polly" Version="7.2.1" />
-        <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
         <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
         <PackageReference Include="Elwark.Storage.Client" Version="3.1.2" />

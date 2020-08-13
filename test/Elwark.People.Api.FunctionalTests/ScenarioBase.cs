@@ -24,7 +24,7 @@ namespace Elwark.People.Api.FunctionalTests
 {
     public class ScenarioBase
     {
-        public static TestServer CreateServer(IIdentityService identityService = null)
+        public static TestServer CreateServer(IIdentityService? identityService = null)
         {
             var path = Assembly.GetAssembly(typeof(ScenarioBase))?.Location;
 

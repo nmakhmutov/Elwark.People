@@ -1,13 +1,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Shared;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Queries.SignIn
 {
-    public class SignInByGoogleQuery : IRequest<SignInResponse>
+    public class SignInByGoogleQuery : IRequest<SignInModel>
     {
         public SignInByGoogleQuery(Identification.Google google, string accessToken)
         {
@@ -27,13 +27,13 @@ namespace Elwark.People.Api.Application.Queries.SignIn
         {
         }
 
-        public override async Task<SignInResponse> Handle(SignInByGoogleQuery request,
+        public override async Task<SignInModel> Handle(SignInByGoogleQuery request,
             CancellationToken cancellationToken)
         {
             var db = await GetDbData(request.Google, cancellationToken);
             db.Validate();
 
-            return new SignInResponse(db.AccountId, db.IdentityId);
+            return new SignInModel(db.AccountId, db.IdentityId);
         }
     }
 }

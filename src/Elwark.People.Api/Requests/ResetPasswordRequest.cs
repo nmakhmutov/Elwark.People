@@ -1,11 +1,11 @@
 using Elwark.People.Abstractions;
 using Elwark.People.Shared.Primitives;
 
-namespace Elwark.People.Api.Application.Models.Requests
+namespace Elwark.People.Api.Requests
 {
-    public class SendConfirmationRequest
+    public class ResetPasswordRequest
     {
-        public SendConfirmationRequest(Identification.Email email, UrlTemplate confirmationUrl)
+        public ResetPasswordRequest(Identification.Email email, UrlTemplate confirmationUrl)
         {
             Email = email;
             ConfirmationUrl = confirmationUrl;

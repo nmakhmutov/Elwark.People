@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.Storage.Client;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Commands.SignUp
 {
-    public class SignUpByEmailCommand : IRequest<SignUpResponse>
+    public class SignUpByEmailCommand : IRequest<SignUpModel>
     {
         public SignUpByEmailCommand(Identification.Email email, string password)
         {
@@ -23,7 +23,7 @@ namespace Elwark.People.Api.Application.Commands.SignUp
         public string Password { get; }
     }
 
-    public class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmailCommand, SignUpResponse>
+    public class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmailCommand, SignUpModel>
     {
         private readonly IPasswordHasher _passwordHasher;
         private readonly IAccountRepository _repository;
@@ -32,7 +32,8 @@ namespace Elwark.People.Api.Application.Commands.SignUp
         private readonly IIdentificationValidator _identificationValidator;
 
         public SignUpByEmailCommandHandler(IAccountRepository repository, IPasswordHasher hasher,
-            IElwarkStorageClient storage, IPasswordValidator passwordValidator, IIdentificationValidator identificationValidator)
+            IElwarkStorageClient storage, IPasswordValidator passwordValidator,
+            IIdentificationValidator identificationValidator)
         {
             _repository = repository;
             _passwordHasher = hasher;
@@ -41,7 +42,7 @@ namespace Elwark.People.Api.Application.Commands.SignUp
             _identificationValidator = identificationValidator;
         }
 
-        public async Task<SignUpResponse> Handle(SignUpByEmailCommand request, CancellationToken cancellationToken)
+        public async Task<SignUpModel> Handle(SignUpByEmailCommand request, CancellationToken cancellationToken)
         {
             var img = _storage.Static.Icons.User.Default.Path;
             var account = new Account(new Name(request.Email.GetUser()), CultureInfo.CurrentCulture, img);
@@ -51,13 +52,18 @@ namespace Elwark.People.Api.Application.Commands.SignUp
             await _repository.CreateAsync(account, cancellationToken);
             await _repository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            return new SignUpResponse(
+            return new SignUpModel(
                 account.Id,
                 account.Name.Nickname,
                 account.Identities
-                    .Select(x =>
-                        new RegistrationIdentityResponse(x.Id, x.Identification, x.Notification,
-                            x.ConfirmedAt.HasValue))
+                    .Select(x => new IdentityModel(
+                        x.Id,
+                        x.AccountId,
+                        x.Identification,
+                        x.Notification,
+                        x.ConfirmedAt,
+                        x.CreatedAt)
+                    )
                     .ToArray()
             );
         }

@@ -6,7 +6,7 @@ using Elwark.People.Shared.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Elwark.People.Api.Application.DomainEventHandlers.AccountCreated
+namespace Elwark.People.Api.Application.DomainEventHandlers
 {
     public class AccountCreatedDomainEventHandler : INotificationHandler<AccountCreatedDomainEvent>
     {

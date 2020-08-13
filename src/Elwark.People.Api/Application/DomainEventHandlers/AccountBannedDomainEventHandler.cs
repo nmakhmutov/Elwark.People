@@ -7,14 +7,14 @@ using Elwark.People.Shared.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Elwark.People.Api.Application.DomainEventHandlers.BanAdded
+namespace Elwark.People.Api.Application.DomainEventHandlers
 {
-    public class NotifyWhenAccountBannedDomainEventHandler : INotificationHandler<BanAddedDomainEvent>
+    public class AccountBannedDomainEventHandler : INotificationHandler<BanAddedDomainEvent>
     {
         private readonly ILogger<INotificationHandler<BanAddedDomainEvent>> _logger;
         private readonly IOAuthIntegrationEventService _oauthIntegrationEventService;
 
-        public NotifyWhenAccountBannedDomainEventHandler(ILogger<INotificationHandler<BanAddedDomainEvent>> logger,
+        public AccountBannedDomainEventHandler(ILogger<INotificationHandler<BanAddedDomainEvent>> logger,
             IOAuthIntegrationEventService oauthIntegrationEventService)
         {
             _logger = logger;
@@ -33,7 +33,7 @@ namespace Elwark.People.Api.Application.DomainEventHandlers.BanAdded
             await _oauthIntegrationEventService.PublishThroughEventBusAsync(evt, cancellationToken);
 
             _logger.LogInformation("Handler {event} for account {id}",
-                nameof(NotifyWhenAccountBannedDomainEventHandler), evt.AccountId);
+                nameof(AccountBannedDomainEventHandler), evt.AccountId);
         }
     }
 }

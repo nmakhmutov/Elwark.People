@@ -61,17 +61,15 @@ namespace Elwark.People.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettings = Configuration.GetSection("App").Get<AppSettings>();
-
             services
-                .AddOAuthControllers()
-                .AddOAuthHealthChecks(Configuration)
-                .AddOAuthStore(Configuration)
-                .AddOAuthConfiguration(Configuration)
-                .AddOAuthAuthentication(Configuration)
-                .AddOAuthAuthorization()
-                .AddOAuthModules(Configuration)
-                .AddOAuthSecurity(appSettings)
+                .AddPeopleControllers()
+                .AddPeopleHealthChecks(Configuration)
+                .AddPeopleStore(Configuration)
+                .AddPeopleConfiguration(Configuration)
+                .AddPeopleAuthentication(Configuration)
+                .AddPeopleAuthorization()
+                .AddPeopleModules(Configuration)
+                .AddPeopleSecurity(Configuration)
                 .AddEventBus(Configuration);
         }
 
@@ -80,7 +78,11 @@ namespace Elwark.People.Api
                 {
                     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
                 })
-                .UseCors("default")
+                .UseCors(builder =>
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                )
                 .UseCorrelationId()
                 .UseStaticFiles()
                 .UseRouting()
@@ -119,7 +121,7 @@ namespace Elwark.People.Api
             return services;
         }
 
-        public static IServiceCollection AddOAuthControllers(this IServiceCollection services)
+        public static IServiceCollection AddPeopleControllers(this IServiceCollection services)
         {
             services
                 .AddControllers(options =>
@@ -150,18 +152,10 @@ namespace Elwark.People.Api
                 })
                 .WithTraceIdentifierProvider();
 
-            services.AddCors(options =>
-                options.AddPolicy("default",
-                    policy => policy.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                )
-            );
-
             return services;
         }
 
-        public static IServiceCollection AddOAuthStore(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPeopleStore(this IServiceCollection services, IConfiguration configuration)
         {
             var postgres = configuration.GetConnectionString("postgres");
             var redis = configuration.GetConnectionString("redis");
@@ -182,7 +176,7 @@ namespace Elwark.People.Api
                 .AddScoped<IAccountRepository, AccountRepository>();
         }
 
-        public static IServiceCollection AddOAuthHealthChecks(this IServiceCollection services,
+        public static IServiceCollection AddPeopleHealthChecks(this IServiceCollection services,
             IConfiguration configuration)
         {
             var postgres = configuration.GetConnectionString("postgres");
@@ -200,7 +194,7 @@ namespace Elwark.People.Api
             return services;
         }
 
-        public static IServiceCollection AddOAuthConfiguration(this IServiceCollection services,
+        public static IServiceCollection AddPeopleConfiguration(this IServiceCollection services,
             IConfiguration configuration) =>
             services.AddOptions()
                 .Configure<PasswordSettings>(configuration.GetSection("Password"))
@@ -209,7 +203,7 @@ namespace Elwark.People.Api
                     options.InvalidModelStateResponseFactory =
                         ProblemDetailsExtensions.InvalidModelStateResponseFactory);
 
-        public static IServiceCollection AddOAuthAuthorization(this IServiceCollection services) =>
+        public static IServiceCollection AddPeopleAuthorization(this IServiceCollection services) =>
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(Policy.Common, Policy.CommonPolicy());
@@ -219,7 +213,7 @@ namespace Elwark.People.Api
                 options.AddPolicy(Policy.Account, Policy.AccountPolicy());
             });
 
-        public static IServiceCollection AddOAuthAuthentication(this IServiceCollection services,
+        public static IServiceCollection AddPeopleAuthentication(this IServiceCollection services,
             IConfiguration configuration)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
@@ -246,11 +240,14 @@ namespace Elwark.People.Api
             return services;
         }
 
-        public static IServiceCollection AddOAuthModules(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPeopleModules(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            var exportedTypes = Assembly.GetExecutingAssembly().ExportedTypes.ToArray();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            services.AddMediatR(exportedTypes);
+            services.AddMediatR(assemblies)
+                .AddValidatorsFromAssemblies(assemblies);
+
             services.AddScoped<IConfirmationService, ConfirmationService>()
                 .AddScoped<IIdentificationValidator, IdentificationValidator>();
 
@@ -279,37 +276,17 @@ namespace Elwark.People.Api
                 .AddLogging()
                 .AddCorrelationIdForwarding();
 
-            services
-                .MapGenericInterfaces(typeof(IValidator<>), exportedTypes)
-                .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
-                .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
-
             return services;
         }
 
-        public static IServiceCollection AddOAuthSecurity(this IServiceCollection services, AppSettings appSettings) =>
-            services
+        public static IServiceCollection AddPeopleSecurity(this IServiceCollection services, IConfiguration configuration)
+        {
+            var appSettings = configuration.GetSection("App").Get<AppSettings>();
+            
+            return services
                 .AddScoped<IPasswordValidator, PasswordValidator>()
                 .AddSingleton<IPasswordHasher>(provider => new PasswordHasher(appSettings.Key))
                 .AddSingleton<IDataEncryption>(provider => new DataEncryption(appSettings.Key, appSettings.Iv));
-
-        private static IServiceCollection MapGenericInterfaces(this IServiceCollection services, Type interfaceType,
-            IEnumerable<Type> types)
-        {
-            var notAbstractTypes = types.Where(v => !v.GetTypeInfo().IsAbstract);
-
-            foreach (var type in notAbstractTypes)
-            {
-                var interfaceDefinitions = type.GetTypeInfo()
-                    .GetInterfaces()
-                    .Where(v => v.GetTypeInfo().IsGenericType &&
-                                v.GetGenericTypeDefinition() == interfaceType);
-
-                foreach (var interfaceDefinition in interfaceDefinitions)
-                    services.AddScoped(interfaceDefinition, type);
-            }
-
-            return services;
         }
     }
 }

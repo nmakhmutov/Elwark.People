@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Infrastructure;
 using Elwark.People.Shared.Primitives;
@@ -54,7 +54,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var response = JsonConvert.DeserializeObject<BanResponse>(json);
+            var response = JsonConvert.DeserializeObject<BanModel>(json);
             Assert.NotNull(response);
             Assert.True(response.IsBanned);
 
@@ -91,7 +91,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var response = JsonConvert.DeserializeObject<BanResponse>(json);
+            var response = JsonConvert.DeserializeObject<BanModel>(json);
             Assert.NotNull(response);
             Assert.False(response.IsBanned);
             Assert.Null(response.Details);

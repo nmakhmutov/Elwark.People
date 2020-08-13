@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Requests;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.ProblemDetails;
 using Elwark.People.Api.Infrastructure.Security;
 using Elwark.People.Api.Infrastructure.Services.Confirmation;
+using Elwark.People.Api.Requests;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Infrastructure;
@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
+using ConfirmationModel = Elwark.People.Api.Application.Models.ConfirmationModel;
 
 namespace Elwark.People.Api.FunctionalTests
 {
@@ -58,8 +59,8 @@ namespace Elwark.People.Api.FunctionalTests
             await context.Accounts.AddAsync(account);
             await context.SaveChangesAsync();
 
-            var dbSet = context.Set<ConfirmationModel>();
-            var model = new ConfirmationModel(
+            var dbSet = context.Set<People.Infrastructure.Confirmation.ConfirmationModel>();
+            var model = new People.Infrastructure.Confirmation.ConfirmationModel(
                 identity.Id,
                 ConfirmationType.ConfirmIdentity,
                 _faker.Random.Long(),
@@ -79,7 +80,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var result = JsonConvert.DeserializeObject<ConfirmationResponse>(json);
+            var result = JsonConvert.DeserializeObject<ConfirmationModel>(json);
             Assert.NotNull(result);
             Assert.Equal(email, result.Identification);
         }
@@ -250,7 +251,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             Assert.True(c.HasValue);
 
-            var confirmationModel = await context.Set<ConfirmationModel>()
+            var confirmationModel = await context.Set<People.Infrastructure.Confirmation.ConfirmationModel>()
                 .FirstOrDefaultAsync(x => x.IdentityId == identity.Id);
 
             Assert.NotNull(confirmationModel);

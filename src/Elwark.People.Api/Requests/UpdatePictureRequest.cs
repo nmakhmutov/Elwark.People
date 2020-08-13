@@ -1,6 +1,6 @@
 using System;
 
-namespace Elwark.People.Api.Application.Models.Requests
+namespace Elwark.People.Api.Requests
 {
     public class UpdatePictureRequest
     {

@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Infrastructure;
 using Elwark.People.Domain.Exceptions;
@@ -20,7 +20,7 @@ namespace Elwark.People.Api.Controllers
             _mediator = mediator;
 
         [HttpGet("{id}"), Authorize(Policy = Policy.Common)]
-        public async Task<ActionResult<AccountResponse>> GetAccountAsync(AccountId id, CancellationToken ct)
+        public async Task<ActionResult<AccountModel>> GetAccountAsync(AccountId id, CancellationToken ct)
         {
             var result = await _mediator.Send(new GetAccountByIdQuery(id), ct)
                          ?? throw ElwarkAccountException.NotFound(id);
@@ -29,7 +29,7 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpGet("{id}/ban"), Authorize(Policy = Policy.Common)]
-        public async Task<ActionResult<BanResponse>> GetBanAsync(AccountId id, CancellationToken ct)
+        public async Task<ActionResult<BanModel>> GetBanAsync(AccountId id, CancellationToken ct)
         {
             var result = await _mediator.Send(new GetBanQuery(id), ct);
 

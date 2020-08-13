@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Models.Responses;
+using Elwark.People.Api.Application.Models;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.Exceptions;
 using Elwark.People.Shared;
@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Elwark.People.Api.Application.Queries.SignIn
 {
-    public class SignInByEmailQuery : IRequest<SignInResponse>
+    public class SignInByEmailQuery : IRequest<SignInModel>
     {
         public SignInByEmailQuery(Identification.Email email, string password)
         {
@@ -25,7 +25,7 @@ namespace Elwark.People.Api.Application.Queries.SignIn
         public string Password { get; }
     }
 
-    public class SignInByEmailQueryHandler : IRequestHandler<SignInByEmailQuery, SignInResponse>
+    public class SignInByEmailQueryHandler : IRequestHandler<SignInByEmailQuery, SignInModel>
     {
         private readonly IDatabaseQueryExecutor _executor;
         private readonly IPasswordHasher _hasher;
@@ -37,10 +37,10 @@ SELECT i.id,
        CASE
            WHEN b.type IS NULL THEN NULL
            ELSE json_build_object(
-                   '{nameof(BanDetailsResponse.Type)}', b.type,
-                   '{nameof(BanDetailsResponse.CreatedAt)}', b.created_at,
-                   '{nameof(BanDetailsResponse.ExpiredAt)}', b.expired_at,
-                   '{nameof(BanDetailsResponse.Reason)}', b.reason
+                   '{nameof(BanDetail.Type)}', b.type,
+                   '{nameof(BanDetail.CreatedAt)}', b.created_at,
+                   '{nameof(BanDetail.ExpiredAt)}', b.expired_at,
+                   '{nameof(BanDetail.Reason)}', b.reason
                )
            END,
        CASE
@@ -63,7 +63,7 @@ WHERE i.identification_type = @type
             _hasher = hasher;
         }
 
-        public async Task<SignInResponse> Handle(SignInByEmailQuery request, CancellationToken cancellationToken)
+        public async Task<SignInModel> Handle(SignInByEmailQuery request, CancellationToken cancellationToken)
         {
             var db = await _executor.SingleAsync(_sql,
                 new Dictionary<string, object>
@@ -83,7 +83,7 @@ WHERE i.identification_type = @type
                         reader.GetFieldValue<bool>(2),
                         banJson is null
                             ? null
-                            : JsonConvert.DeserializeObject<BanDetailsResponse>(banJson),
+                            : JsonConvert.DeserializeObject<BanDetail>(banJson),
                         passwordJson is null
                             ? null
                             : JsonConvert.DeserializeObject<SignInDbDataPassword.PasswordModel>(passwordJson)
@@ -94,7 +94,7 @@ WHERE i.identification_type = @type
 
             db.Validate(_hasher, request.Password);
 
-            return new SignInResponse(db.AccountId, db.IdentityId);
+            return new SignInModel(db.AccountId, db.IdentityId);
         }
     }
 }
