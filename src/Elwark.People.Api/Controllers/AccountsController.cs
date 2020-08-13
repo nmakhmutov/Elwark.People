@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elwark.People.Abstractions;
@@ -24,6 +25,14 @@ namespace Elwark.People.Api.Controllers
         {
             var result = await _mediator.Send(new GetAccountByIdQuery(id), ct)
                          ?? throw ElwarkAccountException.NotFound(id);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/email"), Authorize(Policy = Policy.Common)]
+        public async Task<ActionResult<IEnumerable<EmailModel>>> GetEmailsAsync(AccountId id, CancellationToken ct)
+        {
+            var result = await _mediator.Send(new GetEmailsByAccountIdQuery(id), ct);
 
             return Ok(result);
         }

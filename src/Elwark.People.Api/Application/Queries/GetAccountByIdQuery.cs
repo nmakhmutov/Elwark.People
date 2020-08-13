@@ -14,7 +14,8 @@ namespace Elwark.People.Api.Application.Queries
     public class GetAccountByIdQuery : IRequest<AccountModel>
     {
         [DebuggerStepThrough]
-        public GetAccountByIdQuery(AccountId id) => Id = id;
+        public GetAccountByIdQuery(AccountId id) => 
+            Id = id;
 
         public AccountId Id { get; }
     }
