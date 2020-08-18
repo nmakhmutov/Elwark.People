@@ -231,12 +231,6 @@ namespace Elwark.People.Api.Infrastructure {
             }
         }
         
-        internal static string CommonError_NotImplemented {
-            get {
-                return ResourceManager.GetString("CommonError:NotImplemented", resourceCulture);
-            }
-        }
-        
         internal static string CommonError_NotSupported {
             get {
                 return ResourceManager.GetString("CommonError:NotSupported", resourceCulture);

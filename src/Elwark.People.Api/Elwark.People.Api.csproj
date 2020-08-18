@@ -50,6 +50,11 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ErrorMessageResources.resx</DependentUpon>
       </Compile>
+      <Compile Update="Infrastructure\ErrorMessageResources.ru.Designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ErrorMessageResources.ru.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+      </Compile>
     </ItemGroup>
 
 </Project>

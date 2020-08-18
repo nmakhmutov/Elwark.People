@@ -39,7 +39,7 @@
     </data>
 
     <data name="AccountError:Blocked" xml:space="preserve">
-        <value>Account with id '{0}' blocked until {1}. Reason: {2}</value>
+        <value>Account with id '{0}' blocked until {1}. Reason: {2}.</value>
     </data>
     <data name="AccountError:NotFound" xml:space="preserve">
         <value>Account with id '{0}' not found.</value>
@@ -79,49 +79,46 @@
     </data>
 
     <data name="PasswordError:Empty" xml:space="preserve">
-        <value>Passwords must be filled</value>
+        <value>Passwords must be filled.</value>
     </data>
     <data name="PasswordError:NotSet" xml:space="preserve">
-        <value>Password not set for account</value>
+        <value>Password not set for account.</value>
     </data>
     <data name="PasswordError:TooShort" xml:space="preserve">
-        <value>Passwords must be at least 6 characters.</value>
+        <value>Password must be at least 6 characters.</value>
     </data>
     <data name="PasswordError:RequiresNonAlphanumeric" xml:space="preserve">
-        <value>Passwords must have at least one non letter or digit character.</value>
+        <value>Password must have at least one non letter or digit character.</value>
     </data>
     <data name="PasswordError:RequiresDigit" xml:space="preserve">
-        <value>Passwords must have at least one digit ('0'-'9').</value>
+        <value>Password must have at least one digit ('0'-'9').</value>
     </data>
     <data name="PasswordError:RequiresLower" xml:space="preserve">
-        <value>Passwords must have at least one lowercase ('a'-'z').</value>
+        <value>Password must have at least one lowercase ('a'-'z').</value>
     </data>
     <data name="PasswordError:RequiresUpper" xml:space="preserve">
-        <value>Passwords must have at least one uppercase ('A'-'Z').</value>
+        <value>Password must have at least one uppercase ('A'-'Z').</value>
     </data>
     <data name="PasswordError:RequiresUniqueChars" xml:space="preserve">
-        <value>Passwords must have unique chars</value>
+        <value>Password must have unique chars.</value>
     </data>
     <data name="PasswordError:Mismatch" xml:space="preserve">
         <value>Incorrect password.</value>
     </data>
     <data name="PasswordError:Worst" xml:space="preserve">
-        <value>Password in list of worst passwords. Please use another password</value>
+        <value>Password in list of worst passwords. Please use another password.</value>
     </data>
 
     <data name="CommonError:ModelState" xml:space="preserve">
-        <value>Request data error</value>
+        <value>Request data error.</value>
     </data>
     <data name="CommonError:Unknown" xml:space="preserve">
-        <value>Unknown error</value>
+        <value>Unknown error.</value>
     </data>
     <data name="CommonError:Internal" xml:space="preserve">
-        <value>Internal error</value>
-    </data>
-    <data name="CommonError:NotImplemented" xml:space="preserve">
-        <value>Not implemented</value>
+        <value>Internal error.</value>
     </data>
     <data name="CommonError:NotSupported" xml:space="preserve">
-        <value>Not supported</value>
+        <value>Not supported.</value>
     </data>
 </root>

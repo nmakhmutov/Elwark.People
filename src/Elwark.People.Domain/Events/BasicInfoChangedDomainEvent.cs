@@ -12,6 +12,7 @@ namespace Elwark.People.Domain.Events
         }
 
         public Account Account { get; }
+        
         public BasicInfo Info { get; }
     }
 }

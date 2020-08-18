@@ -39,7 +39,7 @@ namespace Elwark.People.Api.Application.Models
 
         public string? LastName { get; }
 
-        public string? FullName => string.Join(" ", FirstName, LastName)
+        public string FullName => string.Join(" ", FirstName, LastName)
             .Trim()
             .NullIfEmpty() ?? Nickname;
 

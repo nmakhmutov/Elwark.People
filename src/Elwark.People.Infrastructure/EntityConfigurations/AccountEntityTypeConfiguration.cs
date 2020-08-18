@@ -23,6 +23,8 @@ namespace Elwark.People.Infrastructure.EntityConfigurations
 
             builder.OwnsOne(x => x.Name, navigationBuilder =>
             {
+                navigationBuilder.Ignore(x => x.FullName);
+                
                 navigationBuilder.Property(x => x.FirstName)
                     .HasColumnName("first_name")
                     .IsRequired(false)

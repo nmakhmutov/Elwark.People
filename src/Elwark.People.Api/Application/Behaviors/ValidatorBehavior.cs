@@ -19,7 +19,7 @@ namespace Elwark.People.Api.Application.Behaviors
         private readonly IValidator<TRequest>[] _validators;
 
         [DebuggerStepThrough]
-        public ValidatorBehavior(IEnumerable<IValidator<TRequest>> validators,
+        public ValidatorBehavior(IEnumerable<IValidator<TRequest>>? validators,
             ILogger<ValidatorBehavior<TRequest, TResponse>> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -29,7 +29,7 @@ namespace Elwark.People.Api.Application.Behaviors
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var requestType = request?.GetType().GetGenericTypeName();
+            var requestType = request.GetType().GetGenericTypeName();
 
             var failures = _validators
                 .Select(x => x.Validate(request))

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using CorrelationId.HttpClient;
@@ -13,7 +10,6 @@ using Elwark.Extensions.AspNet.HttpClientAppName;
 using Elwark.Extensions.AspNet.HttpClientLogging;
 using Elwark.Extensions.AspNet.Localization;
 using Elwark.Extensions.AspNet.Middlewares;
-using Elwark.People.Api.Application.Behaviors;
 using Elwark.People.Api.Application.IntegrationEventHandlers;
 using Elwark.People.Api.Application.IntegrationEvents;
 using Elwark.People.Api.Extensions;
@@ -87,7 +83,7 @@ namespace Elwark.People.Api
                 .UseStaticFiles()
                 .UseRouting()
                 .UseElwarkLoggingRequest()
-                .UseElwarkRequestLocalization(Configuration.GetSection("Language").Get<ElwarkLocalizationOption>())
+                .UseElwarkRequestLocalization(Configuration.GetSection("Localization").Get<ElwarkLocalizationOption>())
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseEndpoints(builder =>
@@ -126,9 +122,13 @@ namespace Elwark.People.Api
             services
                 .AddControllers(options =>
                 {
+                    options.AllowEmptyInputInBodyModelBinding = false;
                     options.Filters.Add<HttpGlobalExceptionFilter>();
                     options.ModelBinderProviders.Insert(2, new IdentityModelBinderProvider());
                 })
+                .ConfigureApiBehaviorOptions(options =>
+                    options.InvalidModelStateResponseFactory =
+                        ProblemDetailsExtensions.InvalidModelStateResponseFactory)
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.NullValueHandling = ElwarkJsonSettings.Value.NullValueHandling;
@@ -198,10 +198,7 @@ namespace Elwark.People.Api
             IConfiguration configuration) =>
             services.AddOptions()
                 .Configure<PasswordSettings>(configuration.GetSection("Password"))
-                .Configure<ConfirmationSettings>(configuration.GetSection("Confirmation"))
-                .Configure<ApiBehaviorOptions>(options =>
-                    options.InvalidModelStateResponseFactory =
-                        ProblemDetailsExtensions.InvalidModelStateResponseFactory);
+                .Configure<ConfirmationSettings>(configuration.GetSection("Confirmation"));
 
         public static IServiceCollection AddPeopleAuthorization(this IServiceCollection services) =>
             services.AddAuthorization(options =>
@@ -279,10 +276,11 @@ namespace Elwark.People.Api
             return services;
         }
 
-        public static IServiceCollection AddPeopleSecurity(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPeopleSecurity(this IServiceCollection services,
+            IConfiguration configuration)
         {
             var appSettings = configuration.GetSection("App").Get<AppSettings>();
-            
+
             return services
                 .AddScoped<IPasswordValidator, PasswordValidator>()
                 .AddSingleton<IPasswordHasher>(provider => new PasswordHasher(appSettings.Key))

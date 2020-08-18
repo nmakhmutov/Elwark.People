@@ -104,12 +104,13 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 
         public Task AddIdentificationAsync(Identification.Email email, IIdentificationValidator validator) =>
             AddIdentificationAsync(email, false, validator);
-        
-        public async Task AddIdentificationAsync(Identification identification, bool isConfirmed, IIdentificationValidator validator)
+
+        public async Task AddIdentificationAsync(Identification identification, bool isConfirmed,
+            IIdentificationValidator validator)
         {
             if (identification is null)
                 throw new ArgumentNullException(nameof(identification));
-            
+
             if (validator is null)
                 throw new ArgumentNullException(nameof(validator));
 
@@ -120,18 +121,18 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 
             NotificationType GetNotification()
             {
-                if (!(identification is Identification.Email)) 
+                if (!(identification is Identification.Email))
                     return NotificationType.None;
-                
+
                 if (_identities.Count == 0)
                     return NotificationType.PrimaryEmail;
-                    
-                if(GetSecondaryEmail() is null)
+
+                if (GetSecondaryEmail() is null)
                     return NotificationType.SecondaryEmail;
 
                 return NotificationType.None;
             }
-            
+
             var accountIdentity = new Identity(identification.Type, GetNotification(), identification.Value);
 
             if (isConfirmed)
@@ -183,9 +184,9 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
         public Notification.SecondaryEmail? GetSecondaryEmail()
         {
             var data = _identities.FirstOrDefault(x => x.NotificationType == NotificationType.SecondaryEmail);
-            
-            return data is null 
-                ? null 
+
+            return data is null
+                ? null
                 : new Notification.SecondaryEmail(data.Value);
         }
 
@@ -194,17 +195,18 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
             var identity = _identities.FirstOrDefault(x => x.Id == identityId)
                            ?? throw ElwarkIdentificationException.NotFound();
 
-            if(!identity.IsConfirmed)
+            if (!identity.IsConfirmed)
                 throw new ElwarkIdentificationException(IdentificationError.NotConfirmed, identity.Identification);
-            
+
             switch (IdentifierType: identity.IdentificationType, identity.NotificationType)
             {
                 case (IdentificationType.Email, NotificationType.None):
                 case (IdentificationType.Email, NotificationType.SecondaryEmail):
-                    _identities.FirstOrDefault(x => x.NotificationType == type)?.SetNotificationType(NotificationType.None);
+                    _identities.FirstOrDefault(x => x.NotificationType == type)
+                        ?.SetNotificationType(NotificationType.None);
                     identity.SetNotificationType(type);
                     break;
-                
+
                 default:
                     throw new ElwarkNotificationException(NotificationError.UnsupportedTransformation);
             }
@@ -244,33 +246,33 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
         {
             if (password is null)
                 throw new ArgumentNullException(nameof(password));
-            
-            if (hasher is null) 
+
+            if (hasher is null)
                 throw new ArgumentNullException(nameof(hasher));
 
             await validator.ValidateAsync(password);
-            
+
             var salt = hasher.CreateSalt();
             var passwordHash = hasher.CreatePasswordHash(password, salt);
-            
+
             Password = new Password(passwordHash, salt);
-            
+
             AddDomainEvent(new PasswordChangedDomainEvent(this));
             AccountUpdated();
         }
 
         public void CheckPassword(string? password, IPasswordHasher hasher)
         {
-            if (password is null) 
+            if (password is null)
                 throw new ElwarkPasswordException(PasswordError.Empty);
-            
+
             if (hasher is null)
                 throw new ArgumentNullException(nameof(hasher));
-            
-            if(Password is null)
+
+            if (Password is null)
                 throw new ElwarkPasswordException(PasswordError.NotSet);
 
-            if(!hasher.IsEqual(password, Password.Hash, Password.Salt))
+            if (!hasher.IsEqual(password, Password.Hash, Password.Salt))
                 throw new ElwarkPasswordException(PasswordError.Mismatch);
         }
 
@@ -279,7 +281,7 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
             if (name is null)
                 throw new ArgumentNullException(nameof(name));
 
-            if (Name == name)
+            if (Name.Equals(name))
                 return;
 
             Name = name;
@@ -293,7 +295,7 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
             if (info is null)
                 throw new ArgumentNullException(nameof(info));
 
-            if (BasicInfo == info)
+            if (BasicInfo.Equals(info))
                 return;
 
             BasicInfo = info;
@@ -307,7 +309,7 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
             if (address is null)
                 throw new ArgumentNullException(nameof(address));
 
-            if (Address == address)
+            if (Address.Equals(address))
                 return;
 
             Address = address;
@@ -321,7 +323,7 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
             if (links is null)
                 throw new ArgumentNullException(nameof(links));
 
-            if (Links == links)
+            if (Links.Equals(links))
                 return;
 
             Links = links;
