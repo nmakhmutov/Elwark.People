@@ -16,14 +16,17 @@ namespace Elwark.People.Api.Infrastructure.Services.Identity
 
         public AccountId GetAccountId()
         {
-            _httpContextAccessor.HttpContext.User.Claims.TryGetLong("sub", out var id);
-            return new AccountId(id);
+            if (_httpContextAccessor.HttpContext.User.Claims.TryGetLong("sub", out var id))
+                return new AccountId(id);
+
+            throw new ArgumentException("Account id cannot be null in identity service", "Claims.sub");
         }
 
         public IdentityId GetIdentityId()
         {
             var identity = _httpContextAccessor.HttpContext.User.Claims.GetClaimValueOrDefault("identity")
-                           ?? throw new ArgumentException("Identity claim cannot be null");
+                           ?? throw new ArgumentException("Identity claim cannot be null in identity service",
+                               "Claims.identity");
 
             return IdentityId.Parse(identity);
         }
