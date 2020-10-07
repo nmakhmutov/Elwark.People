@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 using Elwark.People.Abstractions;
 using Elwark.People.Api.Application.IntegrationEvents;
 using Elwark.People.Api.Application.Queries;
-using Elwark.People.Api.Infrastructure.Services.Confirmation;
 using Elwark.People.Api.Settings;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
-using Elwark.People.Infrastructure.Cache;
 using Elwark.People.Infrastructure.Confirmation;
 using Elwark.People.Shared.IntegrationEvents;
 using Elwark.People.Shared.Primitives;
@@ -33,6 +31,7 @@ namespace Elwark.People.Api.Application.Commands
         }
 
         public AccountId AccountId { get; }
+
         public IdentityId IdentityId { get; }
 
         public Notification Notification { get; }
@@ -46,31 +45,26 @@ namespace Elwark.People.Api.Application.Commands
 
     public class SendConfirmationUrlCommandHandler : IRequestHandler<SendConfirmationUrlCommand>
     {
-        private readonly ICacheStorage _cache;
-        private readonly IConfirmationService _confirmationService;
         private readonly IOAuthIntegrationEventService _eventService;
         private readonly IMediator _mediator;
         private readonly ConfirmationSettings _settings;
         private readonly IConfirmationStore _store;
 
-        public SendConfirmationUrlCommandHandler(IConfirmationService confirmationService, ICacheStorage cache,
-            IOAuthIntegrationEventService eventService, IConfirmationStore store,
+        public SendConfirmationUrlCommandHandler(IOAuthIntegrationEventService eventService, IConfirmationStore store,
             IOptions<ConfirmationSettings> settings, IMediator mediator)
         {
-            _confirmationService = confirmationService ?? throw new ArgumentNullException(nameof(confirmationService));
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
             _store = store ?? throw new ArgumentNullException(nameof(store));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public async Task<Unit> Handle(SendConfirmationUrlCommand request, CancellationToken cancellationToken)
         {
-            var key = $"Confirmation_Url_{request.IdentityId}_{request.Notification}_{request.ConfirmationType}";
-            var cache = await _cache.ReadAsync<DateTimeOffset?>(key);
-            if (cache.HasValue)
-                throw new ElwarkConfirmationException(ConfirmationError.AlreadySent, cache.Value);
+            var cache = await _store.GetAsync(request.IdentityId, request.ConfirmationType);
+            if (cache is {} && cache.CreatedAt.Add(_settings.Code.Delay) < DateTime.UtcNow)
+                throw new ElwarkConfirmationException(ConfirmationError.AlreadySent,
+                    cache.CreatedAt.Add(_settings.Code.Delay));
 
             var notifier = request.Notification switch
             {
@@ -83,14 +77,11 @@ namespace Elwark.People.Api.Application.Commands
 
             var code = new Random()
                 .Next(_settings.CodeRange.Min, _settings.CodeRange.Max);
-            var confirmation = new ConfirmationModel(request.IdentityId, request.ConfirmationType, code,
-                DateTimeOffset.UtcNow.Add(_settings.Link.Lifetime));
+            var confirmation = new ConfirmationModel(request.IdentityId, request.ConfirmationType, code);
 
-            await _store.CreateAsync(confirmation, cancellationToken);
+            await _store.CreateAsync(confirmation, _settings.Link.Lifetime);
 
-            var token = _confirmationService.WriteToken(
-                confirmation.Id, request.IdentityId, request.ConfirmationType, code
-            );
+            var token = await _mediator.Send(new EncodeConfirmationCommand(confirmation), cancellationToken);
 
             var url = request.UrlTemplate.Build(WebUtility.UrlEncode(token));
 
@@ -102,7 +93,6 @@ namespace Elwark.People.Api.Application.Commands
                     request.ConfirmationType),
                 cancellationToken);
 
-            await _cache.CreateAsync(key, DateTimeOffset.UtcNow.Add(_settings.Link.Delay), _settings.Link.Delay);
             return Unit.Value;
         }
     }

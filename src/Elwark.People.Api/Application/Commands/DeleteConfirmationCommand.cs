@@ -1,17 +1,23 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Elwark.People.Abstractions;
 using Elwark.People.Infrastructure.Confirmation;
+using Elwark.People.Shared.Primitives;
 using MediatR;
 
 namespace Elwark.People.Api.Application.Commands
 {
     public class DeleteConfirmationCommand : IRequest
     {
-        public DeleteConfirmationCommand(Guid confirmationId) =>
-            ConfirmationId = confirmationId;
+        public DeleteConfirmationCommand(IdentityId id, ConfirmationType type)
+        {
+            Id = id;
+            Type = type;
+        }
 
-        public Guid ConfirmationId { get; }
+        public IdentityId Id { get; }
+        
+        public ConfirmationType Type { get; }
     }
 
     public class DeleteConfirmationCommandHandler : IRequestHandler<DeleteConfirmationCommand>
@@ -23,7 +29,7 @@ namespace Elwark.People.Api.Application.Commands
 
         public async Task<Unit> Handle(DeleteConfirmationCommand request, CancellationToken cancellationToken)
         {
-            await _store.DeleteAsync(request.ConfirmationId, cancellationToken);
+            await _store.DeleteAsync(request.Id, request.Type);
 
             return Unit.Value;
         }

@@ -1,7 +1,6 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Elwark.People.Api.Infrastructure.Services.Confirmation;
+using Elwark.People.Api.Application.Commands;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
 using Elwark.People.Infrastructure.Confirmation;
@@ -9,7 +8,7 @@ using MediatR;
 
 namespace Elwark.People.Api.Application.Queries
 {
-    public class CheckConfirmationByTokenQuery : IRequest<ConfirmationData>
+    public class CheckConfirmationByTokenQuery : IRequest<ConfirmationModel>
     {
         public CheckConfirmationByTokenQuery(string token) =>
             Token = token;
@@ -17,31 +16,25 @@ namespace Elwark.People.Api.Application.Queries
         public string Token { get; }
     }
 
-    public class CheckConfirmationByTokenQueryHandler : IRequestHandler<CheckConfirmationByTokenQuery, ConfirmationData>
+    public class CheckConfirmationByTokenQueryHandler : IRequestHandler<CheckConfirmationByTokenQuery, ConfirmationModel>
     {
-        private readonly IConfirmationService _service;
         private readonly IConfirmationStore _store;
+        private readonly IMediator _mediator;
 
-        public CheckConfirmationByTokenQueryHandler(IConfirmationService service, IConfirmationStore store)
+        public CheckConfirmationByTokenQueryHandler(IConfirmationStore store, IMediator mediator)
         {
-            _service = service;
             _store = store;
+            _mediator = mediator;
         }
 
-        public async Task<ConfirmationData> Handle(CheckConfirmationByTokenQuery request,
-            CancellationToken cancellationToken)
+        public async Task<ConfirmationModel> Handle(CheckConfirmationByTokenQuery request, CancellationToken ct)
         {
-            var data = _service.ReadToken(request.Token);
-            var confirmation = await _store.GetAsync(data.ConfirmationId, cancellationToken)
+            var data = await _mediator.Send(new DecodeConfirmationCommand(request.Token), ct);
+            var confirmation = await _store.GetAsync(data.IdentityId, data.Type)
                                ?? throw new ElwarkConfirmationException(ConfirmationError.NotFound);
 
-            if (confirmation.Code != data.Code ||
-                confirmation.IdentityId != data.IdentityId ||
-                confirmation.Type != data.Type)
+            if (confirmation.Code != data.Code)
                 throw new ElwarkConfirmationException(ConfirmationError.NotMatch);
-
-            if (confirmation.ExpiredAt < DateTimeOffset.UtcNow)
-                throw new ElwarkConfirmationException(ConfirmationError.Expired);
 
             return data;
         }

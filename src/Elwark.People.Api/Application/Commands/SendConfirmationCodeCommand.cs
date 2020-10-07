@@ -8,7 +8,6 @@ using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Settings;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
-using Elwark.People.Infrastructure.Cache;
 using Elwark.People.Infrastructure.Confirmation;
 using Elwark.People.Shared.IntegrationEvents;
 using Elwark.People.Shared.Primitives;
@@ -42,29 +41,27 @@ namespace Elwark.People.Api.Application.Commands
 
     public class SendConfirmationCodeCommandHandler : IRequestHandler<SendConfirmationCodeCommand>
     {
-        private readonly ICacheStorage _cache;
         private readonly IOAuthIntegrationEventService _eventService;
         private readonly IMediator _mediator;
         private readonly ConfirmationSettings _settings;
         private readonly IConfirmationStore _store;
 
         public SendConfirmationCodeCommandHandler(IOAuthIntegrationEventService eventService, IConfirmationStore store,
-            IOptions<ConfirmationSettings> settings, ICacheStorage cache, IMediator mediator)
+            IOptions<ConfirmationSettings> settings, IMediator mediator)
         {
             _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
             _store = store ?? throw new ArgumentNullException(nameof(store));
             _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(_mediator));
         }
 
 
         public async Task<Unit> Handle(SendConfirmationCodeCommand request, CancellationToken cancellationToken)
         {
-            var key = $"Confirmation_Code_{request.IdentityId}_{request.Notification}_{request.ConfirmationType}";
-            var cache = await _cache.ReadAsync<DateTimeOffset?>(key);
-            if (cache.HasValue)
-                throw new ElwarkConfirmationException(ConfirmationError.AlreadySent, cache.Value);
+            var cache = await _store.GetAsync(request.IdentityId, request.ConfirmationType);
+            if (cache is {} && cache.CreatedAt.Add(_settings.Code.Delay) < DateTime.UtcNow)
+                throw new ElwarkConfirmationException(ConfirmationError.AlreadySent,
+                    cache.CreatedAt.Add(_settings.Code.Delay));
 
             var notifier = request.Notification switch
             {
@@ -75,12 +72,10 @@ namespace Elwark.People.Api.Application.Commands
                 var x => x
             } ?? throw new ElwarkNotificationException(NotificationError.NotFound);
 
-            var code = new Random()
-                .Next(_settings.CodeRange.Min, _settings.CodeRange.Max);
-            var confirmation = new ConfirmationModel(request.IdentityId, request.ConfirmationType, code,
-                DateTimeOffset.UtcNow.Add(_settings.Link.Lifetime));
+            var code = new Random().Next(_settings.CodeRange.Min, _settings.CodeRange.Max);
+            var confirmation = new ConfirmationModel(request.IdentityId, request.ConfirmationType, code);
 
-            await _store.CreateAsync(confirmation, cancellationToken);
+            await _store.CreateAsync(confirmation, _settings.Link.Lifetime);
 
             await _eventService.PublishThroughEventBusAsync(
                 new ConfirmationByCodeCreatedIntegrationEvent(
@@ -90,7 +85,6 @@ namespace Elwark.People.Api.Application.Commands
                     request.ConfirmationType),
                 cancellationToken);
 
-            await _cache.CreateAsync(key, DateTimeOffset.UtcNow.Add(_settings.Link.Delay), _settings.Link.Delay);
             return Unit.Value;
         }
     }

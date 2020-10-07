@@ -40,7 +40,6 @@ namespace Elwark.People.Infrastructure
 
             builder.ApplyConfiguration(new AccountEntityTypeConfiguration());
             builder.ApplyConfiguration(new IdentityEntityTypeConfiguration());
-            builder.ApplyConfiguration(new ConfirmationEntityTypeConfiguration());
         }
 
         private class FakeMediator : IMediator

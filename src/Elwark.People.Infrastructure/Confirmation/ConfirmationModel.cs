@@ -1,27 +1,33 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.Serialization;
 using Elwark.People.Abstractions;
 using Elwark.People.Shared.Primitives;
 
 namespace Elwark.People.Infrastructure.Confirmation
 {
-    public class ConfirmationModel
+    [DataContract]
+    public sealed class ConfirmationModel
     {
-        public ConfirmationModel(IdentityId identityId, ConfirmationType type, long code, DateTimeOffset expiredAt)
+        [DebuggerStepThrough]
+        public ConfirmationModel(IdentityId identityId, ConfirmationType type, long code)
         {
             IdentityId = identityId;
             Type = type;
             Code = code;
-            ExpiredAt = expiredAt;
+            CreatedAt = DateTime.UtcNow;
         }
 
-        public Guid Id { get; private set; } = Guid.Empty;
-
+        [DataMember(Name = "a", IsRequired = true)]
         public IdentityId IdentityId { get; }
 
+        [DataMember(Name = "b", IsRequired = true)]
         public ConfirmationType Type { get; }
 
+        [DataMember(Name = "c", IsRequired = true)]
         public long Code { get; }
-
-        public DateTimeOffset ExpiredAt { get; }
+        
+        [DataMember(Name = "d", IsRequired = true)]
+        public DateTime CreatedAt { get; }
     }
 }

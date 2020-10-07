@@ -54,10 +54,10 @@ namespace Elwark.People.Api.FunctionalTests
         private class BlacklistEndpoint : IBlacklistEndpoint
         {
             public Task<IReadOnlyCollection<string>> GetPasswordsAsync(CancellationToken cancellationToken) =>
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
 
             public Task<IReadOnlyCollection<string>> GetEmailDomainsAsync(CancellationToken cancellationToken) =>
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
 
             public Task<bool> IsForbiddenPasswordAsync(string password, CancellationToken cancellationToken) =>
                 Task.FromResult(password == "true");

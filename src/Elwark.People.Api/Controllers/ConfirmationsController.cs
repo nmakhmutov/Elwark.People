@@ -63,7 +63,7 @@ namespace Elwark.People.Api.Controllers
         {
             var confirmation = await _mediator.Send(query, ct);
             await _mediator.Send(new ActivateIdentityCommand(confirmation.IdentityId), ct);
-            await _mediator.Send(new DeleteConfirmationCommand(confirmation.ConfirmationId), ct);
+            await _mediator.Send(new DeleteConfirmationCommand(confirmation.IdentityId, confirmation.Type), ct);
 
             return Ok(confirmation.IdentityId);
         }

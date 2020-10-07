@@ -7,22 +7,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
+using Elwark.People.Api.Application.Commands;
 using Elwark.People.Api.Application.ProblemDetails;
 using Elwark.People.Api.Infrastructure.Security;
-using Elwark.People.Api.Infrastructure.Services.Confirmation;
 using Elwark.People.Api.Requests;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Infrastructure;
 using Elwark.People.Infrastructure.Cache;
+using Elwark.People.Infrastructure.Confirmation;
 using Elwark.People.Shared.Primitives;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
-using ConfirmationModel = Elwark.People.Api.Application.Models.ConfirmationModel;
 
 namespace Elwark.People.Api.FunctionalTests
 {
@@ -53,22 +54,14 @@ namespace Elwark.People.Api.FunctionalTests
             await account.AddIdentificationAsync(email, true, validator);
             var identity = account.Identities.First();
 
-            await using var context = server.Services.GetService<OAuthContext>();
-            await context.Accounts.AddAsync(account);
-            await context.SaveChangesAsync();
-
-            var dbSet = context.Set<People.Infrastructure.Confirmation.ConfirmationModel>();
-            var model = new People.Infrastructure.Confirmation.ConfirmationModel(
+            var model = new ConfirmationModel(
                 identity.Id,
                 ConfirmationType.ConfirmIdentity,
-                _faker.Random.Long(),
-                _faker.Date.Future()
+                _faker.Random.Long()
             );
-            await dbSet.AddAsync(model);
-            await context.SaveChangesAsync();
 
-            var service = server.Services.GetService<IConfirmationService>();
-            var token = service.WriteToken(model.Id, model.IdentityId, model.Type, model.Code);
+            var mediator = server.Services.GetService<IMediator>();
+            var token = await mediator.Send(new EncodeConfirmationCommand(model));
 
             var httpResponse = await server.CreateClient()
                 .GetAsync($"{ControllerName}?token={WebUtility.UrlEncode(token)}");
@@ -80,7 +73,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             var result = JsonConvert.DeserializeObject<ConfirmationModel>(json);
             Assert.NotNull(result);
-            Assert.Equal(email, result.Identification);
+            Assert.Equal(identity.Id, result.IdentityId);
         }
 
         [Fact]
@@ -143,13 +136,10 @@ namespace Elwark.People.Api.FunctionalTests
         public async Task Get_confirmation_by_non_existent_token_fail()
         {
             using var server = CreateServer();
-            var service = server.Services.GetService<IConfirmationService>();
-            var token = service.WriteToken(
-                _faker.Random.Guid(),
-                new IdentityId(_faker.Random.Guid()),
-                ConfirmationType.ConfirmIdentity,
-                _faker.Random.Long()
-            );
+            var mediator = server.Services.GetService<IMediator>();
+            var token = await mediator.Send(new EncodeConfirmationCommand(
+                new ConfirmationModel(new IdentityId(_faker.Random.Guid()), ConfirmationType.ConfirmIdentity,
+                    _faker.Random.Long())));
 
             var httpResponse = await server.CreateClient()
                 .GetAsync($"{ControllerName}?token={WebUtility.UrlEncode(token)}");
@@ -211,7 +201,7 @@ namespace Elwark.People.Api.FunctionalTests
             using var server = CreateServer();
             var cache = server.Services.GetService<ICacheStorage>();
             var validator = server.Services.GetService<IIdentificationValidator>();
-            
+
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(_faker.Internet.UserName()),
@@ -243,13 +233,7 @@ namespace Elwark.People.Api.FunctionalTests
 
             httpResponse.EnsureSuccessStatusCode();
 
-            var c = await cache.ReadAsync<DateTimeOffset?>(
-                $"Confirmation_Url_{identity.Id}_{account.GetPrimaryEmail()}_{ConfirmationType.ConfirmIdentity}"
-            );
-
-            Assert.True(c.HasValue);
-
-            var confirmationModel = await context.Set<People.Infrastructure.Confirmation.ConfirmationModel>()
+            var confirmationModel = await context.Set<ConfirmationModel>()
                 .FirstOrDefaultAsync(x => x.IdentityId == identity.Id);
 
             Assert.NotNull(confirmationModel);

@@ -18,7 +18,6 @@ using Elwark.People.Api.Infrastructure.Binders;
 using Elwark.People.Api.Infrastructure.ContextFactory;
 using Elwark.People.Api.Infrastructure.Filters;
 using Elwark.People.Api.Infrastructure.Security;
-using Elwark.People.Api.Infrastructure.Services.Confirmation;
 using Elwark.People.Api.Infrastructure.Services.Facebook;
 using Elwark.People.Api.Infrastructure.Services.Google;
 using Elwark.People.Api.Infrastructure.Services.Identity;
@@ -245,8 +244,7 @@ namespace Elwark.People.Api
             services.AddMediatR(assemblies)
                 .AddValidatorsFromAssemblies(assemblies);
 
-            services.AddScoped<IConfirmationService, ConfirmationService>()
-                .AddScoped<IIdentificationValidator, IdentificationValidator>();
+            services.AddScoped<IIdentificationValidator, IdentificationValidator>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>()
                 .AddTransient<IIdentityService, IdentityService>()

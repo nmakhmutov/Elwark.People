@@ -66,11 +66,11 @@ namespace Elwark.People.Api.Controllers
         public async Task<ActionResult> ConfirmIdentityAsync(IdentityId id, long code, CancellationToken ct)
         {
             var confirmation = await _mediator.Send(
-                new CheckConfirmationByCodeQuery(id, code, ConfirmationType.ConfirmIdentity), ct
+                new CheckConfirmationByCodeQuery(id, ConfirmationType.ConfirmIdentity, code), ct
             );
 
             await _mediator.Send(new ActivateIdentityCommand(confirmation.IdentityId), ct);
-            await _mediator.Send(new DeleteConfirmationCommand(confirmation.ConfirmationId), ct);
+            await _mediator.Send(new DeleteConfirmationCommand(confirmation.IdentityId, confirmation.Type), ct);
 
             return NoContent();
         }

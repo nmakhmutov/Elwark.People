@@ -122,42 +122,5 @@ namespace Elwark.People.Api.FunctionalTests.DbContext
                 }
             }
         }
-
-        [Fact]
-        public async Task Create_confirmation_success()
-        {
-            using var server = CreateServer();
-            await using var context = server.Services.GetService<OAuthContext>();
-
-            var dbSet = context.Set<ConfirmationModel>();
-            var model = new ConfirmationModel(
-                new IdentityId(Faker.Random.Guid()),
-                Faker.Random.Enum<ConfirmationType>(),
-                Faker.Random.Long(),
-                Faker.Date.Future()
-            );
-
-            await dbSet.AddAsync(model);
-            await context.SaveChangesAsync();
-
-            var result = await dbSet.FirstOrDefaultAsync(x => x.Id == model.Id);
-
-            Assert.NotNull(result);
-            Assert.NotEqual(Guid.Empty, result.Id);
-            Assert.Equal(result.Code, model.Code);
-            Assert.Equal(result.Type, model.Type);
-            Assert.Equal(result.ExpiredAt, model.ExpiredAt);
-            Assert.Equal(result.IdentityId, model.IdentityId);
-
-            var store = server.Services.GetService<IConfirmationStore>();
-            var result2 = await store.GetAsync(model.Id);
-            Assert.NotNull(result2);
-            Assert.NotEqual(Guid.Empty, result2.Id);
-            Assert.Equal(result.Id, result2.Id);
-            Assert.Equal(result.Code, result2.Code);
-            Assert.Equal(result.Type, result2.Type);
-            Assert.Equal(result.ExpiredAt, result2.ExpiredAt);
-            Assert.Equal(result.IdentityId, result2.IdentityId);
-        }
     }
 }

@@ -70,14 +70,14 @@ namespace Elwark.People.Api.Controllers
             if (isPassword)
                 throw new ElwarkPasswordException(PasswordError.AlreadySet);
 
-            var identity = _identityService.GetIdentityId();
+            var identityId = _identityService.GetIdentityId();
 
             var confirmation = await _mediator.Send(
-                new CheckConfirmationByCodeQuery(identity, request.Code, ConfirmationType.UpdatePassword),
+                new CheckConfirmationByCodeQuery(identityId, ConfirmationType.UpdatePassword, request.Code),
                 ct);
 
             await _mediator.Send(new UpdatePasswordCommand(accountId, null, request.Password), ct);
-            await _mediator.Send(new DeleteConfirmationCommand(confirmation.ConfirmationId), ct);
+            await _mediator.Send(new DeleteConfirmationCommand(confirmation.IdentityId, confirmation.Type), ct);
 
             return NoContent();
         }

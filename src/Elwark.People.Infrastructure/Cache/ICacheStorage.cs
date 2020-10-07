@@ -7,7 +7,7 @@ namespace Elwark.People.Infrastructure.Cache
     {
         Task<bool> CreateAsync<T>(string key, T data, TimeSpan expiry);
 
-        Task<T> ReadAsync<T>(string key);
+        Task<T?> ReadAsync<T>(string key) where T : class;
 
         Task<bool> DeleteAsync(string key);
     }

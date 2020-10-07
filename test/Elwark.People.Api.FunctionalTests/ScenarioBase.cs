@@ -13,6 +13,7 @@ using Elwark.People.Api.Infrastructure.Services.Identity;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
 using Elwark.Storage.Client;
+using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;

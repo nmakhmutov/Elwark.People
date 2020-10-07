@@ -24,16 +24,14 @@ namespace Elwark.People.Infrastructure.Cache
             return _database.StringSetAsync(key, JsonConvert.SerializeObject(data, ElwarkJsonSettings.Value), expiry);
         }
 
-        public async Task<T> ReadAsync<T>(string key)
+        public async Task<T?> ReadAsync<T>(string key) where T : class
         {
             var result = await _database.StringGetAsync(key);
             _logger.LogDebug("For {key} data is {@data}", key, result.ToString());
 
-#pragma warning disable 8603
             return result.HasValue
                 ? JsonConvert.DeserializeObject<T>(result, ElwarkJsonSettings.Value)
-                : default;
-#pragma warning restore 8603
+                : null;
         }
 
         public Task<bool> DeleteAsync(string key)

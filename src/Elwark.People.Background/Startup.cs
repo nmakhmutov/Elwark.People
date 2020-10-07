@@ -60,7 +60,7 @@ namespace Elwark.People.Background
                 .AddEventHandler<AccountRegisteredIntegrationEvent, AccountRegisteredIntegrationEventHandler>()
                 .AddEventHandler<AccountCreatedIntegrationEvent, GravatarSearcherAccountCreatedHandler>();
 
-            services.AddHostedService<ConfirmationsExpiredHostedService>()
+            services
                 .AddHostedService<IntegrationEventLogsExpiredHostedService>()
                 .AddHostedService<AccountBansExpiredHostedService>()
                 .AddHostedService<ResendFailedEventHostedService>();

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Elwark.People.Infrastructure.Migrations.OauthContext
 {
     [DbContext(typeof(OAuthContext))]
-    [Migration("20200706173425_InitialOAuth")]
+    [Migration("20201007130833_InitialOAuth")]
     partial class InitialOAuth
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,7 +20,7 @@ namespace Elwark.People.Infrastructure.Migrations.OauthContext
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:uuid-ossp", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.5")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Elwark.People.Domain.AggregatesModel.AccountAggregate.Account", b =>
@@ -108,37 +108,6 @@ namespace Elwark.People.Infrastructure.Migrations.OauthContext
                         .IsUnique();
 
                     b.ToTable("identities");
-                });
-
-            modelBuilder.Entity("Elwark.People.Infrastructure.Confirmation.ConfirmationModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("uuid_generate_v4()");
-
-                    b.Property<long>("Code")
-                        .HasColumnName("code")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("ExpiredAt")
-                        .HasColumnName("expired_at")
-                        .HasColumnType("timestamptz");
-
-                    b.Property<Guid>("IdentityId")
-                        .HasColumnName("identity_id")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Type")
-                        .HasColumnName("type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasAlternateKey("IdentityId", "Code");
-
-                    b.ToTable("confirmations");
                 });
 
             modelBuilder.Entity("Elwark.People.Domain.AggregatesModel.AccountAggregate.Account", b =>
