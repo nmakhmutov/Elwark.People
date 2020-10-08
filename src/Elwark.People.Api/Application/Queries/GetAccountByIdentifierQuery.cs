@@ -47,8 +47,7 @@ WHERE id = (SELECT account_id FROM identities WHERE identification_type = @type 
 
         public GetAccountByIdentifierQueryHandler(IDatabaseQueryExecutor executor) =>
             _executor = executor;
-
-
+        
         public Task<AccountModel?> Handle(GetAccountByIdentifierQuery request,
             CancellationToken cancellationToken) =>
             _executor.SingleAsync(Sql,

@@ -9,30 +9,32 @@ using MediatR;
 
 namespace Elwark.People.Api.Application.Queries
 {
-    public class CheckConfirmationByCodeQuery : IRequest<ConfirmationModel>
+    public class CheckConfirmationQuery : IRequest<ConfirmationModel>
     {
-        public CheckConfirmationByCodeQuery(IdentityId identityId, ConfirmationType type, long code)
+        public CheckConfirmationQuery(IdentityId identityId, ConfirmationType type, long code)
         {
             IdentityId = identityId;
-            Code = code;
             Type = type;
+            Code = code;
         }
-        
+
         public IdentityId IdentityId { get; }
 
         public ConfirmationType Type { get; }
-        
+
         public long Code { get; }
     }
-
-    public class CheckConfirmationByCodeQueryHandler : IRequestHandler<CheckConfirmationByCodeQuery, ConfirmationModel>
+    
+    public class CheckConfirmationQueryHandler : IRequestHandler<CheckConfirmationQuery, ConfirmationModel>
     {
         private readonly IConfirmationStore _store;
 
-        public CheckConfirmationByCodeQueryHandler(IConfirmationStore store) =>
+        public CheckConfirmationQueryHandler(IConfirmationStore store)
+        {
             _store = store;
+        }
 
-        public async Task<ConfirmationModel> Handle(CheckConfirmationByCodeQuery request, CancellationToken ct)
+        public async Task<ConfirmationModel> Handle(CheckConfirmationQuery request, CancellationToken cancellationToken)
         {
             var confirmation = await _store.GetAsync(request.IdentityId, request.Type)
                                ?? throw new ElwarkConfirmationException(ConfirmationError.NotFound);

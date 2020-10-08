@@ -21,8 +21,7 @@ namespace Elwark.People.Api.Controllers
             _mediator = mediator;
 
         [HttpPost]
-        public async Task<ActionResult<SignInModel>> IndexAsync([FromBody] SignInRequest request,
-            CancellationToken ct)
+        public async Task<ActionResult<SignInModel>> IndexAsync([FromBody] SignInRequest request, CancellationToken ct)
         {
             IRequest<SignInModel> query = request.Identification switch
             {

@@ -48,16 +48,13 @@ namespace Elwark.People.Api.Controllers
         [HttpPut("restore")]
         public async Task<ActionResult> RestoreAsync([FromBody] RestorePasswordRequest request, CancellationToken ct)
         {
+            var decode = await _mediator.Send(new DecodeConfirmationCommand(request.ConfirmationToken), ct);
             var confirmation = await _mediator.Send(
-                new CheckConfirmationByTokenQuery(request.ConfirmationToken), ct
+                new CheckConfirmationQuery(decode.IdentityId, decode.Type, decode.Code), ct
             );
-
             var identity = await _mediator.Send(new GetIdentityByIdQuery(confirmation.IdentityId), ct);
 
-            await _mediator.Send(
-                new UpdatePasswordCommand(identity.AccountId, null, request.Password), ct
-            );
-
+            await _mediator.Send(new UpdatePasswordCommand(identity.AccountId, null, request.Password), ct);
             await _mediator.Send(new DeleteConfirmationCommand(confirmation.IdentityId, confirmation.Type), ct);
 
             return NoContent();
