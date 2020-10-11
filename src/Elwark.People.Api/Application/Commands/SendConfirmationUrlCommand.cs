@@ -62,9 +62,8 @@ namespace Elwark.People.Api.Application.Commands
         public async Task<Unit> Handle(SendConfirmationUrlCommand request, CancellationToken cancellationToken)
         {
             var cache = await _store.GetAsync(request.IdentityId, request.ConfirmationType);
-            if (cache is {} && cache.CreatedAt.Add(_settings.Code.Delay) < DateTime.UtcNow)
-                throw new ElwarkConfirmationException(ConfirmationError.AlreadySent,
-                    cache.CreatedAt.Add(_settings.Code.Delay));
+            if (cache is {} && cache.CreatedAt.Add(_settings.Code.Delay) > DateTime.UtcNow)
+                throw new ElwarkConfirmationAlreadySentException(cache.CreatedAt.Add(_settings.Code.Delay));
 
             var notifier = request.Notification switch
             {

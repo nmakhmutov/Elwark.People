@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using Elwark.People.Abstractions;
 using Elwark.People.Shared.Primitives;
+using Newtonsoft.Json;
 
 namespace Elwark.People.Infrastructure.Confirmation
 {
@@ -16,6 +17,15 @@ namespace Elwark.People.Infrastructure.Confirmation
             Type = type;
             Code = code;
             CreatedAt = DateTime.UtcNow;
+        }
+
+        [JsonConstructor]
+        private ConfirmationModel(IdentityId identityId, ConfirmationType type, long code, DateTime createdAt)
+        {
+            IdentityId = identityId;
+            Type = type;
+            Code = code;
+            CreatedAt = createdAt;
         }
 
         [DataMember(Name = "a", IsRequired = true)]

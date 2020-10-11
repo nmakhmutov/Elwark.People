@@ -32,6 +32,8 @@ namespace Elwark.People.Api.Infrastructure
 
                 ElwarkAccountException x => Create(x),
 
+                ElwarkConfirmationAlreadySentException x => Create(x),
+
                 ElwarkIdentificationException x => Create(x),
 
                 ElwarkNotificationException x => Create(x),
@@ -117,19 +119,28 @@ namespace Elwark.People.Api.Infrastructure
                 Notifier = ex.Notifier
             };
 
-        private static ConfirmationProblemDetails Create(ElwarkConfirmationException ex) =>
+        private static ElwarkProblemDetails Create(ElwarkConfirmationException ex) =>
+            new ElwarkProblemDetails
+            {
+                Title = ex.Group,
+                Type = ex.Type,
+                Instance = ex.Source,
+                Detail = GetDetails(GetKey(ex)),
+                Status = ex.Code switch
+                {
+                    ConfirmationError.NotFound => StatusCodes.Status404NotFound,
+                    _ => StatusCodes.Status400BadRequest
+                }
+            };
+
+        private static ConfirmationProblemDetails Create(ElwarkConfirmationAlreadySentException ex) =>
             new ConfirmationProblemDetails
             {
                 Title = ex.Group,
                 Type = ex.Type,
                 Instance = ex.Source,
                 Detail = GetDetails(ex),
-                Status = ex.Code switch
-                {
-                    ConfirmationError.NotFound => StatusCodes.Status404NotFound,
-                    _ => StatusCodes.Status400BadRequest
-                },
-
+                Status = StatusCodes.Status400BadRequest,
                 RetryAfter = ex.RetryAfter
             };
 
@@ -175,12 +186,11 @@ namespace Elwark.People.Api.Infrastructure
         private static string GetDetails(string key, params object?[] values) =>
             string.Format(ErrorMessageResources.ResourceManager.GetString(key) ?? string.Empty, values);
 
-        private static string GetDetails(ElwarkConfirmationException ex)
+        private static string GetDetails(ElwarkConfirmationAlreadySentException ex)
         {
-            var retryAfter = ex.RetryAfter?.ToString(
-                DateTimeOffset.UtcNow - ex.RetryAfter >= TimeSpan.FromDays(1)
-                    ? "G"
-                    : "T"
+            var retryAfter = ex.RetryAfter.ToString(DateTimeOffset.UtcNow - ex.RetryAfter >= TimeSpan.FromDays(1)
+                ? "G"
+                : "T"
             );
 
             return GetDetails(GetKey(ex), retryAfter);
