@@ -80,7 +80,7 @@ namespace Elwark.People.Api.Application.Commands
 
             await _store.CreateAsync(confirmation, _settings.Link.Lifetime);
 
-            var token = await _mediator.Send(new EncodeConfirmationCommand(confirmation), cancellationToken);
+            var token = await _mediator.Send(new EncodeConfirmationQuery(confirmation), cancellationToken);
 
             var url = request.UrlTemplate.Build(WebUtility.UrlEncode(token));
 

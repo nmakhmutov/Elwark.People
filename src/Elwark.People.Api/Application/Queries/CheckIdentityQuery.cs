@@ -53,14 +53,13 @@ WHERE i.id = @id;
                 reader =>
                 {
                     var banJson = reader.GetNullableFieldValue<string>(2);
-                    return new
-                    {
-                        Id = new IdentityId(reader.GetFieldValue<Guid>(0)),
-                        IsConfirmed = reader.GetFieldValue<bool>(1),
-                        Ban = banJson is null
+                    return new Result(
+                        new IdentityId(reader.GetFieldValue<Guid>(0)),
+                        reader.GetFieldValue<bool>(1),
+                        banJson is null
                             ? null
                             : JsonConvert.DeserializeObject<BanDetail>(banJson)
-                    };
+                        );
                 },
                 cancellationToken);
 
@@ -74,6 +73,22 @@ WHERE i.id = @id;
                 return IdentityActiveResponse.Deactivated;
 
             return IdentityActiveResponse.Activated;
+        }
+        
+        private class Result
+        {
+            public Result(IdentityId id, bool isConfirmed, BanDetail? ban)
+            {
+                Id = id;
+                IsConfirmed = isConfirmed;
+                Ban = ban;
+            }
+
+            public IdentityId Id { get; }
+            
+            public bool IsConfirmed { get; }
+            
+            public BanDetail? Ban { get; }
         }
     }
 }

@@ -7,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Bogus;
 using Elwark.People.Abstractions;
-using Elwark.People.Api.Application.Commands;
 using Elwark.People.Api.Application.ProblemDetails;
+using Elwark.People.Api.Application.Queries;
 using Elwark.People.Api.Infrastructure.Security;
 using Elwark.People.Api.Requests;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
@@ -61,7 +61,7 @@ namespace Elwark.People.Api.FunctionalTests
             );
 
             var mediator = server.Services.GetService<IMediator>();
-            var token = await mediator.Send(new EncodeConfirmationCommand(model));
+            var token = await mediator.Send(new EncodeConfirmationQuery(model));
 
             var httpResponse = await server.CreateClient()
                 .GetAsync($"{ControllerName}?token={WebUtility.UrlEncode(token)}");
@@ -137,7 +137,7 @@ namespace Elwark.People.Api.FunctionalTests
         {
             using var server = CreateServer();
             var mediator = server.Services.GetService<IMediator>();
-            var token = await mediator.Send(new EncodeConfirmationCommand(
+            var token = await mediator.Send(new EncodeConfirmationQuery(
                 new ConfirmationModel(new IdentityId(_faker.Random.Guid()), ConfirmationType.ConfirmIdentity,
                     _faker.Random.Long())));
 

@@ -12,7 +12,7 @@ namespace Elwark.People.Background.FunctionalTests
         protected static readonly AccountId Id = new AccountId(1);
         
         protected static readonly Notification.PrimaryEmail Email =
-            new Notification.PrimaryEmail("makhmutov.nail@yahoo.com");
+            new Notification.PrimaryEmail("makhmutov.nail@outlook.com");
         
         public static TestServer CreateServer()
         {

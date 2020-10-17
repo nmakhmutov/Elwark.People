@@ -11,29 +11,29 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Elwark.People.Api.Application.Commands
+namespace Elwark.People.Api.Application.Queries
 {
-    public class DecodeConfirmationCommand : IRequest<ConfirmationModel>
+    public class DecodeConfirmationQuery : IRequest<ConfirmationModel>
     {
-        public DecodeConfirmationCommand(string token) =>
+        public DecodeConfirmationQuery(string token) =>
             Token = token;
 
         public string Token { get; }
     }
 
-    public class DecodeConfirmationCommandHandler : IRequestHandler<DecodeConfirmationCommand, ConfirmationModel>
+    public class DecodeConfirmationQueryHandler : IRequestHandler<DecodeConfirmationQuery, ConfirmationModel>
     {
         private readonly IDataEncryption _encryption;
-        private readonly ILogger<DecodeConfirmationCommandHandler> _logger;
+        private readonly ILogger<DecodeConfirmationQueryHandler> _logger;
 
-        public DecodeConfirmationCommandHandler(IDataEncryption encryption,
-            ILogger<DecodeConfirmationCommandHandler> logger)
+        public DecodeConfirmationQueryHandler(IDataEncryption encryption,
+            ILogger<DecodeConfirmationQueryHandler> logger)
         {
             _encryption = encryption;
             _logger = logger;
         }
 
-        public Task<ConfirmationModel> Handle(DecodeConfirmationCommand request, CancellationToken cancellationToken)
+        public Task<ConfirmationModel> Handle(DecodeConfirmationQuery request, CancellationToken cancellationToken)
         {
             try
             {
@@ -43,7 +43,8 @@ namespace Elwark.People.Api.Application.Commands
             {
                 _logger.LogError(ex, "Confirmation manager format exception");
                 return Task.FromException<ConfirmationModel>(
-                    new ElwarkCryptographyException(CryptographyError.InvalidFormat, ex));
+                    new ElwarkCryptographyException(CryptographyError.InvalidFormat, ex)
+                );
             }
             catch (DecoderFallbackException ex)
             {

@@ -146,7 +146,7 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpPost("activate"), Authorize(Policy = Policy.Identity)]
-        public async Task<ActionResult<IdentityId>> PutAsync([FromBody] DecodeConfirmationCommand query,
+        public async Task<ActionResult<IdentityId>> PutAsync([FromBody] DecodeConfirmationQuery query,
             CancellationToken ct)
         {
             var decode = await _mediator.Send(query, ct);

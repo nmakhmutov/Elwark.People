@@ -40,14 +40,16 @@ namespace Elwark.People.Api.Application.Commands
             var account = await _accountRepository.GetAsync(request.AccountId, cancellationToken)
                           ?? throw ElwarkAccountException.NotFound(request.AccountId);
 
-            account.SetName(new Name(request.Nickname,
+            account.SetName(
+                new Name(request.Nickname,
                     request.FirstName.NullIfEmpty(),
                     request.LastName.NullIfEmpty()
                 )
             );
 
             account.SetAddress(new Address(request.CountryCode, request.City.NullIfEmpty()));
-            account.SetBasicInfo(new BasicInfo(
+            account.SetBasicInfo(
+                new BasicInfo(
                     new CultureInfo(request.Language),
                     request.Gender,
                     request.Timezone,
@@ -56,7 +58,8 @@ namespace Elwark.People.Api.Application.Commands
                 )
             );
             account.SetPicture(request.Picture);
-            account.SetLinks(new Links(
+            account.SetLinks(
+                new Links(
                     request.Links.Where(x => x.Value is {})
                         .ToDictionary(x => x.Key, x => x.Value)
                 )

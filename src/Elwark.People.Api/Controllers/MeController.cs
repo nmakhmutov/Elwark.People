@@ -123,7 +123,8 @@ namespace Elwark.People.Api.Controllers
         }
 
         [HttpPut("identities/{id}/confirm/{code}"), Authorize(Policy = Policy.Account)]
-        public async Task<ActionResult> ConfirmIdentityAsync(IdentityId id, long code, CancellationToken ct)
+        public async Task<ActionResult> ConfirmIdentityAsync([FromRoute] IdentityId id, [FromRoute] long code,
+            CancellationToken ct)
         {
             var confirmation = await _mediator.Send(
                 new CheckConfirmationQuery(id, ConfirmationType.ConfirmIdentity, code), ct
