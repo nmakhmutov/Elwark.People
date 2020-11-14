@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 
 namespace Elwark.People.Shared
@@ -24,8 +23,6 @@ namespace Elwark.People.Shared
                     option.MigrationsHistoryTable(Table);
                     option.EnableRetryOnFailure(10, TimeSpan.FromSeconds(30), Array.Empty<string>());
                 })
-                .EnableSensitiveDataLogging()
-                .ConfigureWarnings(warnings =>
-                    warnings.Throw(RelationalEventId.QueryPossibleExceptionWithAggregateOperatorWarning));
+                .EnableSensitiveDataLogging();
     }
 }

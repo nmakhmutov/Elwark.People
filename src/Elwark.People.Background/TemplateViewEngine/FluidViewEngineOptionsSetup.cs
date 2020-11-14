@@ -5,7 +5,7 @@ namespace Elwark.People.Background.TemplateViewEngine
     public class FluidViewEngineOptionsSetup : ConfigureOptions<FluidViewEngineOptions>
     {
         public FluidViewEngineOptionsSetup()
-            : base(x => { })
+            : base(_ => { })
         {
         }
     }

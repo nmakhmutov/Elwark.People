@@ -21,7 +21,7 @@ namespace Elwark.People.Api.FunctionalTests
             var json = await server.CreateClient()
                 .GetStringAsync(GetAccount(id));
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var accountDb = context.Accounts
                 .First(x => x.Id == id);
 

@@ -163,7 +163,7 @@ namespace Elwark.People.Api
                 .AddDbContext<OAuthContext>(OAuthContextFactory.ContextOption(postgres))
                 .AddDbContext<IntegrationEventLogContext>(IntegrationEventLogContextFactory.ContextOption(postgres))
                 .AddNpgsqlQueryExecutor(postgres)
-                .AddSingleton<IConnectionMultiplexer>(provider =>
+                .AddSingleton<IConnectionMultiplexer>(_ =>
                 {
                     var options = ConfigurationOptions.Parse(redis, true);
                     options.ResolveDns = true;
@@ -281,8 +281,8 @@ namespace Elwark.People.Api
 
             return services
                 .AddScoped<IPasswordValidator, PasswordValidator>()
-                .AddSingleton<IPasswordHasher>(provider => new PasswordHasher(appSettings.Key))
-                .AddSingleton<IDataEncryption>(provider => new DataEncryption(appSettings.Key, appSettings.Iv));
+                .AddSingleton<IPasswordHasher>(_ => new PasswordHasher(appSettings.Key))
+                .AddSingleton<IDataEncryption>(_ => new DataEncryption(appSettings.Key, appSettings.Iv));
         }
     }
 }

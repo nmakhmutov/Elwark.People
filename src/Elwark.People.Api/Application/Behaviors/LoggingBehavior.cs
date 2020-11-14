@@ -20,7 +20,7 @@ namespace Elwark.People.Api.Application.Behaviors
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var requestType = request?.GetType().GetGenericTypeName() ?? "Unknown";
+            var requestType = request.GetType().GetGenericTypeName();
 
             _logger.LogInformation("Handling command {CommandName}. {@Command}", requestType, request);
 

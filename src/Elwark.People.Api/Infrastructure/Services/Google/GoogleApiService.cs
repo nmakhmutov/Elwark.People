@@ -29,14 +29,14 @@ namespace Elwark.People.Api.Infrastructure.Services.Google
         public async Task<GoogleAccount> GetAsync(string accessToken, CancellationToken cancellationToken)
         {
             var key = $"google-api-{accessToken.ToMd5Hash()}";
-            var cache = await _cache.ReadAsync<GoogleAccount?>(key);
+            var cache = await _cache.ReadAsync<GoogleAccount>(key);
             if (cache is {})
                 return cache;
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             var response = await _httpClient.GetAsync("/oauth2/v1/userinfo", cancellationToken);
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
             var json = JObject.Parse(content);
 
             if (!response.IsSuccessStatusCode)

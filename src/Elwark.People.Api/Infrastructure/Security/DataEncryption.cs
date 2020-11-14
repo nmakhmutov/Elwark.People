@@ -64,7 +64,7 @@ namespace Elwark.People.Api.Infrastructure.Security
                 throw new ArgumentNullException(nameof(cipher));
 
             if (cipher.Length == 0)
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(cipher));
+                throw new ArgumentException(@"Value cannot be an empty collection.", nameof(cipher));
 
             var transform = Rijndael.CreateDecryptor();
             var decryptedValue = transform.TransformFinalBlock(cipher, 0, cipher.Length);

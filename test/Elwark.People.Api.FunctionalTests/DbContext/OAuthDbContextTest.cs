@@ -7,7 +7,6 @@ using Elwark.Extensions;
 using Elwark.People.Abstractions;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Infrastructure;
-using Elwark.People.Infrastructure.Confirmation;
 using Elwark.People.Shared.Primitives;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,8 +43,8 @@ namespace Elwark.People.Api.FunctionalTests.DbContext
 
             using var server = CreateServer();
             var hasher = server.Services.GetRequiredService<IPasswordHasher>();
-            var passwordValidator = server.Services.GetService<IPasswordValidator>();
-            var notificationValidator = server.Services.GetService<IIdentificationValidator>();
+            var passwordValidator = server.Services.GetRequiredService<IPasswordValidator>();
+            var notificationValidator = server.Services.GetRequiredService<IIdentificationValidator>();
 
             await account.AddIdentificationAsync(new Identification.Email(Faker.Internet.Email()), true, notificationValidator);
             await account.AddIdentificationAsync(identifiers, true, notificationValidator);
@@ -66,7 +65,7 @@ namespace Elwark.People.Api.FunctionalTests.DbContext
 
             account.SetLinks(links);
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             await context.AddAsync(account);
             await context.SaveChangesAsync();
 
@@ -96,8 +95,8 @@ namespace Elwark.People.Api.FunctionalTests.DbContext
             Assert.Equal(account.Links, db.Links);
 
             Assert.NotNull(db.Password);
-            Assert.NotEmpty(db.Password.Hash);
-            Assert.NotEmpty(db.Password.Salt);
+            Assert.NotEmpty(db.Password?.Hash ?? Array.Empty<byte>());
+            Assert.NotEmpty(db.Password?.Salt ?? Array.Empty<byte>());
 
             Assert.Equal(account.Picture, db.Picture);
 

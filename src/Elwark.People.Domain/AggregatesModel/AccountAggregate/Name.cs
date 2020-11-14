@@ -6,7 +6,7 @@ using Elwark.People.Domain.SeedWork;
 
 namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {
-    public class Name : ValueObject
+    public record Name : ValueObject
     {
         public Name(string nickname, string? firstName = null, string? lastName = null)
         {

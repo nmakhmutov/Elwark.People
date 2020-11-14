@@ -53,10 +53,10 @@ namespace Elwark.People.Api.Application.Commands
         public SendConfirmationUrlCommandHandler(IOAuthIntegrationEventService eventService, IConfirmationStore store,
             IOptions<ConfirmationSettings> settings, IMediator mediator)
         {
-            _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
-            _store = store ?? throw new ArgumentNullException(nameof(store));
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
+            _eventService = eventService;
+            _store = store;
+            _mediator = mediator;
+            _settings = settings.Value;
         }
 
         public async Task<Unit> Handle(SendConfirmationUrlCommand request, CancellationToken cancellationToken)

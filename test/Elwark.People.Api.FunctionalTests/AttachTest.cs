@@ -33,14 +33,14 @@ namespace Elwark.People.Api.FunctionalTests
             var identityService = new FakeIdentityService();
             using var server = CreateServer(identityService);
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(email.GetUser()),
                 new CultureInfo("en"),
                 new Uri(_faker.Image.LoremPixelUrl())
             );
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, validator);
 
             context.Accounts.Update(account);
@@ -70,9 +70,9 @@ namespace Elwark.People.Api.FunctionalTests
         {
             var identityService = new FakeIdentityService();
             using var server = CreateServer(identityService);
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(email.GetUser()),
@@ -102,9 +102,9 @@ namespace Elwark.People.Api.FunctionalTests
         {
             var identityService = new FakeIdentityService();
             using var server = CreateServer(identityService);
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(email.GetUser()),

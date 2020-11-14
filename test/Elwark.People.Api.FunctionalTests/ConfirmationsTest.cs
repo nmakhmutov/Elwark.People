@@ -14,7 +14,6 @@ using Elwark.People.Api.Requests;
 using Elwark.People.Domain.AggregatesModel.AccountAggregate;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Infrastructure;
-using Elwark.People.Infrastructure.Cache;
 using Elwark.People.Infrastructure.Confirmation;
 using Elwark.People.Shared.Primitives;
 using MediatR;
@@ -50,7 +49,7 @@ namespace Elwark.People.Api.FunctionalTests
                 new CultureInfo("en"),
                 new Uri(_faker.Image.LoremFlickrUrl())
             );
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, validator);
             var identity = account.Identities.First();
 
@@ -60,7 +59,7 @@ namespace Elwark.People.Api.FunctionalTests
                 _faker.Random.Long()
             );
 
-            var mediator = server.Services.GetService<IMediator>();
+            var mediator = server.Services.GetRequiredService<IMediator>();
             var token = await mediator.Send(new EncodeConfirmationQuery(model));
 
             var httpResponse = await server.CreateClient()
@@ -136,7 +135,7 @@ namespace Elwark.People.Api.FunctionalTests
         public async Task Get_confirmation_by_non_existent_token_fail()
         {
             using var server = CreateServer();
-            var mediator = server.Services.GetService<IMediator>();
+            var mediator = server.Services.GetRequiredService<IMediator>();
             var token = await mediator.Send(new EncodeConfirmationQuery(
                 new ConfirmationModel(new IdentityId(_faker.Random.Guid()), ConfirmationType.ConfirmIdentity,
                     _faker.Random.Long())));
@@ -178,7 +177,7 @@ namespace Elwark.People.Api.FunctionalTests
         public async Task Get_confirmation_by_wrong_crypt_value_token_fail()
         {
             using var server = CreateServer();
-            var encryption = server.Services.GetService<IDataEncryption>();
+            var encryption = server.Services.GetRequiredService<IDataEncryption>();
             var token = encryption.EncryptToString(new {data = _faker.Address.City()});
 
             var httpResponse = await server.CreateClient()
@@ -199,8 +198,7 @@ namespace Elwark.People.Api.FunctionalTests
         public async Task Create_confirmation_success()
         {
             using var server = CreateServer();
-            var cache = server.Services.GetService<ICacheStorage>();
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
 
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
@@ -211,7 +209,7 @@ namespace Elwark.People.Api.FunctionalTests
             await account.AddIdentificationAsync(email, validator);
             var identity = account.Identities.First();
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             await context.Accounts.AddAsync(account);
             await context.SaveChangesAsync();
 

@@ -15,7 +15,7 @@ namespace Elwark.People.Infrastructure.Cache
         public CacheStorage(IConnectionMultiplexer multiplexer, ILogger<CacheStorage> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _database = multiplexer?.GetDatabase() ?? throw new ArgumentNullException(nameof(multiplexer));
+            _database = multiplexer.GetDatabase() ?? throw new ArgumentNullException(nameof(multiplexer));
         }
 
         public Task<bool> CreateAsync<T>(string key, T data, TimeSpan expiry)

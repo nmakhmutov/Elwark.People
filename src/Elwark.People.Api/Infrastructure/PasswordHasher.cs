@@ -61,9 +61,9 @@ namespace Elwark.People.Api.Infrastructure
             if (salt is null)
                 throw new ArgumentNullException(nameof(salt));
             if (password.Length == 0)
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(password));
+                throw new ArgumentException(@"Value cannot be an empty collection.", nameof(password));
             if (salt.Length == 0)
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(salt));
+                throw new ArgumentException(@"Value cannot be an empty collection.", nameof(salt));
 
             var saltAndAppHash = new byte[salt.Length + _appHash.Length];
             Buffer.BlockCopy(salt, 0, saltAndAppHash, 0, salt.Length);

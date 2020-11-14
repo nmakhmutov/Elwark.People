@@ -30,14 +30,14 @@ namespace Elwark.People.Api.FunctionalTests
         {
             using var server = CreateServer();
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(email.GetUser()), 
                 new CultureInfo("en"), 
                 new Uri(_faker.Image.LoremPixelUrl())
             );
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, validator);
 
             context.Accounts.Update(account);
@@ -62,14 +62,14 @@ namespace Elwark.People.Api.FunctionalTests
         {
             using var server = CreateServer();
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(email.GetUser()), 
                 new CultureInfo("en"), 
                 new Uri(_faker.Image.LoremPixelUrl())
             );
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, false, validator);
 
             context.Accounts.Update(account);
@@ -94,14 +94,14 @@ namespace Elwark.People.Api.FunctionalTests
         {
             using var server = CreateServer();
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
                 new Name(email.GetUser()), 
                 new CultureInfo("en"), 
                 new Uri(_faker.Image.LoremPixelUrl())
             );
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, validator);
             account.SetBan(new Ban(BanType.Temporarily, DateTimeOffset.Now, _faker.Date.Future(), "Test reason"));
 

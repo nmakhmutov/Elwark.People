@@ -34,7 +34,7 @@ WHERE account_id = @id;
                 {
                     {"@id", request.AccountId.Value}
                 },
-                reader => true,
+                _ => true,
                 () => false,
                 cancellationToken);
     }

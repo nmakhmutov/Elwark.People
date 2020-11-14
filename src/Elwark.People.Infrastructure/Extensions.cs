@@ -17,14 +17,11 @@ namespace Elwark.People.Infrastructure
         {
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()
-                .Where(x => x.Entity.DomainEvents is {} && x.Entity.DomainEvents.Any())
+                .Where(x => x.Entity.DomainEvents.Any())
                 .ToList();
 
             var domainEvents = domainEntities
                 .SelectMany(x => x.Entity.DomainEvents);
-
-//            foreach (var notification in domainEvents)
-//                await mediator.Publish(notification, cancellationToken);
 
             IEnumerable<Task> tasks = domainEvents.Select(async x => await mediator.Publish(x, cancellationToken));
 

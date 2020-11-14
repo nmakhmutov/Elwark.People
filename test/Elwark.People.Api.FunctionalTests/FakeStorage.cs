@@ -11,13 +11,13 @@ namespace Elwark.People.Api.FunctionalTests
 {
     public class FakeStorage : IElwarkStorageClient
     {
-        public ICountryEndpoint Country { get; }
+        public ICountryEndpoint Country { get; } = default!;
         public IBlacklistEndpoint Blacklist { get; } = new BlacklistEndpoint();
-        public ICurrencyEndpoint Currency { get; }
-        public ILanguageEndpoint Language { get; }
-        public ITimezoneEndpoint Timezone { get; }
+        public ICurrencyEndpoint Currency { get; } = default!;
+        public ILanguageEndpoint Language { get; } = default!;
+        public ITimezoneEndpoint Timezone { get; } = default!;
         public IStaticEndpoint Static { get; } = new StaticEndpoint();
-        public IImageEndpoint Images { get; }
+        public IImageEndpoint Images { get; } = default!;
 
         private class StaticEndpoint : IStaticEndpoint
         {
@@ -27,7 +27,7 @@ namespace Elwark.People.Api.FunctionalTests
             {
                 public IUserIcon User { get; } = new UserIconEndpoint();
 
-                public IElwarkIcons Elwark { get; }
+                public IElwarkIcons Elwark { get; } = default!;
 
                 private class UserIconEndpoint : IUserIcon
                 {

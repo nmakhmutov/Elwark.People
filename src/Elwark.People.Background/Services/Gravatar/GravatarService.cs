@@ -38,7 +38,7 @@ namespace Elwark.People.Background.Services.Gravatar
             return JObject.Parse(content)
                 .Property("entry")
                 ?.ToArray()
-                ?.FirstOrDefault()
+                .FirstOrDefault()
                 ?.First
                 ?.ToObject<GravatarProfile>();
         }

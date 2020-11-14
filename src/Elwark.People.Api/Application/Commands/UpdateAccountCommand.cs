@@ -60,7 +60,7 @@ namespace Elwark.People.Api.Application.Commands
             account.SetPicture(request.Picture);
             account.SetLinks(
                 new Links(
-                    request.Links.Where(x => x.Value is {})
+                    request.Links.Where(x => x.Value is not null)
                         .ToDictionary(x => x.Key, x => x.Value)
                 )
             );

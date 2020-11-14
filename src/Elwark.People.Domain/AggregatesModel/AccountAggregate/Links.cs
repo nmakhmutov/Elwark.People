@@ -7,7 +7,7 @@ using Elwark.People.Shared.Primitives;
 
 namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {
-    public class Links : ValueObject, IDictionary<LinksType, Uri?>
+    public record Links : ValueObject, IDictionary<LinksType, Uri?>
     {
         private readonly SortedDictionary<LinksType, Uri?> _dictionary;
 

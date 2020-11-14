@@ -49,10 +49,10 @@ namespace Elwark.People.Api.Application.Commands
         public SendConfirmationCodeCommandHandler(IOAuthIntegrationEventService eventService, IConfirmationStore store,
             IOptions<ConfirmationSettings> settings, IMediator mediator)
         {
-            _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
-            _store = store ?? throw new ArgumentNullException(nameof(store));
-            _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(_mediator));
+            _eventService = eventService;
+            _store = store;
+            _settings = settings.Value;
+            _mediator = mediator;
         }
 
 

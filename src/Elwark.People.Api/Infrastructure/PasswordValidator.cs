@@ -19,7 +19,7 @@ namespace Elwark.People.Api.Infrastructure
         public PasswordValidator(IElwarkStorageClient client, IOptions<PasswordSettings> settings)
         {
             _client = client;
-            _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
+            _settings = settings.Value ?? throw new ArgumentNullException(nameof(settings));
         }
 
         public async Task ValidateAsync(string password, CancellationToken ct)

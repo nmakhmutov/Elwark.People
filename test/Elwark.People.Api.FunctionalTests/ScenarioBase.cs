@@ -13,7 +13,6 @@ using Elwark.People.Api.Infrastructure.Services.Identity;
 using Elwark.People.Domain.ErrorCodes;
 using Elwark.People.Domain.Exceptions;
 using Elwark.Storage.Client;
-using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -46,29 +45,29 @@ namespace Elwark.People.Api.FunctionalTests
                     services.AddHttpClient<IGoogleApiService, FakeApiService>();
                     services.AddHttpClient<IFacebookApiService, FakeApiService>();
                     services.AddHttpClient<IMicrosoftApiService, FakeApiService>();
-                    services.AddSingleton<IElwarkStorageClient>(provider => new FakeStorage());
+                    services.AddSingleton<IElwarkStorageClient>(_ => new FakeStorage());
                     
                     if (identityService != null)
                     {
                         services.RemoveAll<IIdentityService>();
-                        services.AddTransient(provider => identityService);
+                        services.AddTransient(_ => identityService);
                     }
                     
                     services.AddAuthorization(options =>
                     {
                         options.AddPolicy(
                             Policy.Common,
-                            builder => builder.RequireAssertion(context => true)
+                            builder => builder.RequireAssertion(_ => true)
                         );
 
                         options.AddPolicy(
                             Policy.Identity,
-                            builder => builder.RequireAssertion(context => true)
+                            builder => builder.RequireAssertion(_ => true)
                         );
 
                         options.AddPolicy(
                             Policy.Account,
-                            builder => builder.RequireAssertion(context => true)
+                            builder => builder.RequireAssertion(_ => true)
                         );
                     });
                 })
@@ -86,16 +85,13 @@ namespace Elwark.People.Api.FunctionalTests
         
         public Func<IdentityId> IdentityIdGenerator { get; set; } = () => new IdentityId();
         
-        public string GetSub() =>
-            AccountIdGenerator().Value.ToString();
-
         public AccountId GetAccountId() =>
             AccountIdGenerator();
 
         public IdentityId GetIdentityId() =>
             IdentityIdGenerator();
 
-        public string? GetIdentityName() =>
+        public string GetIdentityName() =>
             throw new NotImplementedException();
     }
 

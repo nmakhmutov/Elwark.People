@@ -38,10 +38,10 @@ namespace Elwark.People.Api.FunctionalTests
         public async Task Identify_by_email_ok_response()
         {
             using var server = CreateServer();
-            var hasher = server.Services.GetService<IPasswordHasher>();
-            var validator = server.Services.GetService<IPasswordValidator>();
+            var hasher = server.Services.GetRequiredService<IPasswordHasher>();
+            var validator = server.Services.GetRequiredService<IPasswordValidator>();
             
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
             
             var email = new Identification.Email(_faker.Internet.Email());
             var password = _faker.Internet.Password();
@@ -54,7 +54,7 @@ namespace Elwark.People.Api.FunctionalTests
             
             await account.SetPasswordAsync(password, validator, hasher);
             
-            var notificationValidator = server.Services.GetService<IIdentificationValidator>();
+            var notificationValidator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, notificationValidator);
 
             context.Accounts.Update(account);
@@ -192,10 +192,10 @@ namespace Elwark.People.Api.FunctionalTests
         public async Task Identify_by_correct_email_and_incorrect_password_error_response()
         {
             using var server = CreateServer();
-            var hasher = server.Services.GetService<IPasswordHasher>();
-            var validator = server.Services.GetService<IPasswordValidator>();
+            var hasher = server.Services.GetRequiredService<IPasswordHasher>();
+            var validator = server.Services.GetRequiredService<IPasswordValidator>();
             
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
 
             var email = new Identification.Email(_faker.Internet.Email());
             var password = _faker.Internet.Password();
@@ -207,7 +207,7 @@ namespace Elwark.People.Api.FunctionalTests
             );
             
             await account.SetPasswordAsync(password, validator, hasher);
-            var notificationValidator = server.Services.GetService<IIdentificationValidator>();
+            var notificationValidator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, notificationValidator);
 
             context.Accounts.Update(account);
@@ -241,7 +241,7 @@ namespace Elwark.People.Api.FunctionalTests
                 "Test reason");
             using var server = CreateServer();
 
-            await using var context = server.Services.GetService<OAuthContext>();
+            await using var context = server.Services.GetRequiredService<OAuthContext>();
 
             var email = new Identification.Email(_faker.Internet.Email());
             var account = new Account(
@@ -249,7 +249,7 @@ namespace Elwark.People.Api.FunctionalTests
                 new CultureInfo("en"), 
                 new Uri(_faker.Image.LoremPixelUrl())
             );
-            var validator = server.Services.GetService<IIdentificationValidator>();
+            var validator = server.Services.GetRequiredService<IIdentificationValidator>();
             await account.AddIdentificationAsync(email, true, validator);
             account.SetBan(ban);
 

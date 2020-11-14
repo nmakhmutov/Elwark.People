@@ -28,15 +28,15 @@ namespace Elwark.People.Infrastructure.Repositories
         public Identity Update(Identity identity) =>
             _context.Identities.Update(identity).Entity;
 
-        public Task<Account> GetAsync(AccountId id, CancellationToken cancellationToken) =>
-            _context.Accounts
+        public async Task<Account?> GetAsync(AccountId id, CancellationToken cancellationToken) =>
+            await _context.Accounts
                 .Include(x => x.Ban)
                 .Include(x => x.Password)
                 .Include(x => x.Identities)
                 .FirstOrDefaultAsync(x => x.Id == id.Value, cancellationToken);
 
-        public Task<Account> GetAsync(Identification identification, CancellationToken cancellationToken) =>
-            _context.Accounts
+        public async Task<Account?> GetAsync(Identification identification, CancellationToken cancellationToken) =>
+            await _context.Accounts
                 .Include(x => x.Ban)
                 .Include(x => x.Password)
                 .Include(x => x.Identities)
@@ -45,8 +45,8 @@ namespace Elwark.People.Infrastructure.Repositories
                         t.Identification.Value == identification.Value),
                     cancellationToken);
 
-        public Task<Account> GetAsync(IdentityId id, CancellationToken cancellationToken) =>
-            _context.Accounts
+        public async Task<Account?> GetAsync(IdentityId id, CancellationToken cancellationToken) =>
+            await _context.Accounts
                 .Include(x => x.Ban)
                 .Include(x => x.Password)
                 .Include(x => x.Identities)

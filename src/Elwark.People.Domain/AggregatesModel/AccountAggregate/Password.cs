@@ -4,7 +4,7 @@ using Elwark.People.Domain.SeedWork;
 
 namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {
-    public class Password : ValueObject
+    public record Password : ValueObject
     {
         private readonly DateTimeOffset _createdAt;
 
@@ -22,9 +22,9 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
             Salt = salt ?? throw new ArgumentNullException(nameof(salt));
 
             if (hash.Length == 0)
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(hash));
+                throw new ArgumentException(@"Value cannot be an empty collection.", nameof(hash));
             if (salt.Length == 0)
-                throw new ArgumentException("Value cannot be an empty collection.", nameof(salt));
+                throw new ArgumentException(@"Value cannot be an empty collection.", nameof(salt));
         }
 
         public byte[] Hash { get; private set; }

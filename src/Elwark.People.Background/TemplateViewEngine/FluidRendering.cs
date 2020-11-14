@@ -109,7 +109,7 @@ namespace Elwark.People.Background.TemplateViewEngine
                     foreach (var viewStartPath in FindViewStarts(path, fileProvider))
                     {
                         // Redefine the current view path while processing ViewStart files
-                        statements.Add(new CallbackStatement((writer, encoder, context) =>
+                        statements.Add(new CallbackStatement((_, _, context) =>
                         {
                             context.AmbientValues[ViewPath] = viewStartPath;
                             return new ValueTask<Completion>(Completion.Normal);

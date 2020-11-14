@@ -35,7 +35,7 @@ namespace Elwark.People.Shared
 
             _retryPolicyAsync = Policy
                 .Handle<PostgresException>(exception => _sqlExceptions.Contains(exception.SqlState))
-                .WaitAndRetryAsync((int) retryCount, attempt => waitBetweenRetries);
+                .WaitAndRetryAsync((int) retryCount, _ => waitBetweenRetries);
         }
 
         public Task<TResult> ExecuteAsync<TResult>(Func<CancellationToken, Task<TResult>> action,

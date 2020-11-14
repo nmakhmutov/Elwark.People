@@ -14,8 +14,8 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
     public class Account : Entity<long>, IAggregateRoot
     {
         private readonly DateTimeOffset _createdAt;
-        private readonly List<Identity> _identities = new List<Identity>();
-        private readonly List<string> _roles = new List<string>();
+        private readonly List<Identity> _identities = new();
+        private readonly List<string> _roles = new();
 
         private DateTimeOffset _updatedAt;
         private Uri _picture;

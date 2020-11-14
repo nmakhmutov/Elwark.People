@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,8 +22,7 @@ namespace Elwark.People.Api.Application.Queries
         private readonly IDatabaseQueryExecutor _executor;
 
         private readonly string _sql = $@"
-SELECT i.id,
-       CASE WHEN i.confirmed_at IS NULL THEN FALSE ELSE TRUE END,
+SELECT CASE WHEN i.confirmed_at IS NULL THEN FALSE ELSE TRUE END,
        CASE
            WHEN b.type IS NULL THEN NULL
            ELSE json_build_object(
@@ -52,10 +50,9 @@ WHERE i.id = @id;
                 },
                 reader =>
                 {
-                    var banJson = reader.GetNullableFieldValue<string>(2);
+                    var banJson = reader.GetNullableFieldValue<string>(1);
                     return new Result(
-                        new IdentityId(reader.GetFieldValue<Guid>(0)),
-                        reader.GetFieldValue<bool>(1),
+                        reader.GetFieldValue<bool>(0),
                         banJson is null
                             ? null
                             : JsonConvert.DeserializeObject<BanDetail>(banJson)
@@ -75,17 +72,14 @@ WHERE i.id = @id;
             return IdentityActiveResponse.Activated;
         }
         
-        private class Result
+        private record Result
         {
-            public Result(IdentityId id, bool isConfirmed, BanDetail? ban)
+            public Result(bool isConfirmed, BanDetail? ban)
             {
-                Id = id;
                 IsConfirmed = isConfirmed;
                 Ban = ban;
             }
 
-            public IdentityId Id { get; }
-            
             public bool IsConfirmed { get; }
             
             public BanDetail? Ban { get; }

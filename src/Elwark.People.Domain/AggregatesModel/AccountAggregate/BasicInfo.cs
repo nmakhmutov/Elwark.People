@@ -6,7 +6,7 @@ using Elwark.People.Domain.SeedWork;
 
 namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {
-    public class BasicInfo : ValueObject
+    public record BasicInfo : ValueObject
     {
         public BasicInfo(CultureInfo language, Gender gender = Gender.Female, string timezone = "Atlantic/Azores",
             DateTime? birthday = null, string? bio = null)

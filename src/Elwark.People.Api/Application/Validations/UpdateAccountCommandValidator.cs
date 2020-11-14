@@ -21,24 +21,26 @@ namespace Elwark.People.Api.Application.Validations
 
             RuleFor(x => x.Nickname)
                 .NotEmpty();
-            
+
             RuleFor(x => x.CountryCode)
                 .Length(2)
                 .NotEmpty()
-                .MustAsync(async (code, token) => await client.Country.GetByCodeAsync(code, token) is {});
+                .MustAsync(async (code, token) => await client.Country.GetByCodeAsync(code, token) is not null);
 
             RuleFor(x => x.Timezone)
                 .NotEmpty()
-                .MustAsync(async (zone, token) => await client.Timezone.GetByTimezoneNameAsync(zone) is {});
+                .MustAsync(async (zone, token) =>
+                    await client.Timezone.GetByTimezoneNameAsync(zone, token) is not null);
 
             RuleFor(x => x.Language)
                 .Length(2)
                 .NotEmpty()
-                .MustAsync(async (language, token) => await client.Language.GetByCodeAsync(language, token) is {});
+                .MustAsync(async (language, token) =>
+                    await client.Language.GetByCodeAsync(language, token) is not null);
 
             RuleFor(x => x.Birthdate)
                 .LessThan(DateTime.Today)
-                .When(x => x.Birthdate is {});
+                .When(x => x.Birthdate is { });
 
             RuleForEach(x => x.Links)
                 .NotNull()
@@ -49,7 +51,7 @@ namespace Elwark.People.Api.Application.Validations
                         .IsInEnum();
 
                     x.RuleFor(t => t.Value)
-                        .Must(t => t!.IsAbsoluteUri).When(t => t.Value is {});
+                        .Must(t => t!.IsAbsoluteUri).When(t => t.Value is { });
                 });
         }
     }

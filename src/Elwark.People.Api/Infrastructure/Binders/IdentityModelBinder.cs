@@ -6,9 +6,9 @@ namespace Elwark.People.Api.Infrastructure.Binders
 {
     public class IdentityModelBinder<T> : IModelBinder
     {
-        private readonly Func<string, T> _converter;
+        private readonly Func<string?, T> _converter;
 
-        public IdentityModelBinder(Func<string, T> converter) =>
+        public IdentityModelBinder(Func<string?, T> converter) =>
             _converter = converter;
 
         public Task BindModelAsync(ModelBindingContext bindingContext)

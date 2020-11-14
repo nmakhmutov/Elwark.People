@@ -8,7 +8,7 @@ namespace Elwark.People.Api.Application.Validations
     {
         public ChangePictureCommandValidator(IHttpClientFactory factory) =>
             RuleFor(x => x.Picture)
-                .MustAsync(async (uri, token) =>
+                .MustAsync(async (uri, _) =>
                 {
                     if (uri is null)
                         return true;
@@ -17,8 +17,9 @@ namespace Elwark.People.Api.Application.Validations
 
                     var result = await client.GetAsync(uri);
 
-                    return result.IsSuccessStatusCode &&
-                           result.Content.Headers.ContentType.MediaType.StartsWith("image/");
+                    return result.IsSuccessStatusCode
+                           && result.Content.Headers.ContentType?.MediaType is not null
+                           && result.Content.Headers.ContentType.MediaType.StartsWith("image/");
                 })
                 .WithMessage("Incorrect image url");
     }

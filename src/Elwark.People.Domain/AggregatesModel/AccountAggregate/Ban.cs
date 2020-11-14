@@ -5,18 +5,9 @@ using Elwark.People.Shared.Primitives;
 
 namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {
-    public class Ban : ValueObject
+    public record Ban : ValueObject
     {
-        protected Ban() =>
-            Reason = string.Empty;
-
-        public Ban(BanType type, DateTimeOffset createdAt, string reason)
-            : this(type, createdAt, null, reason)
-        {
-        }
-
         public Ban(BanType type, DateTimeOffset createdAt, DateTimeOffset? expiredAt, string reason)
-            : this()
         {
             Type = type;
             Reason = reason ?? throw new ArgumentNullException(nameof(reason));
@@ -30,14 +21,13 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 
         public DateTimeOffset? ExpiredAt { get; }
 
-        public string Reason { get; }
+        public string Reason { get; } = string.Empty;
 
-        protected override IEnumerable<object> GetAtomicValues()
+        protected override IEnumerable<object?> GetAtomicValues()
         {
             yield return Type;
             yield return CreatedAt;
-            if (ExpiredAt.HasValue)
-                yield return ExpiredAt;
+            yield return ExpiredAt;
             yield return Reason;
         }
     }

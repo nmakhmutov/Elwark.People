@@ -7,11 +7,11 @@ namespace Elwark.People.Domain.AggregatesModel.AccountAggregate
 {
     public interface IAccountRepository : IRepository
     {
-        Task<Account> GetAsync(AccountId id, CancellationToken cancellationToken = default);
+        Task<Account?> GetAsync(AccountId id, CancellationToken cancellationToken = default);
 
-        Task<Account> GetAsync(IdentityId id, CancellationToken cancellationToken = default);
+        Task<Account?> GetAsync(IdentityId id, CancellationToken cancellationToken = default);
 
-        Task<Account> GetAsync(Identification identification, CancellationToken cancellationToken = default);
+        Task<Account?> GetAsync(Identification identification, CancellationToken cancellationToken = default);
 
         Task<Account> CreateAsync(Account account, CancellationToken cancellationToken = default);
 
