@@ -1,12 +1,13 @@
-using System;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace People.Domain.AggregateModels.Account.Identities
 {
     public sealed class MicrosoftIdentity : Identity
     {
-        public MicrosoftIdentity(string value, DateTime? confirmedAt) 
-            : base(new IdentityKey(IdentityType.Microsoft, value), confirmedAt)
-        {
-        }
+        public MicrosoftIdentity(string id, string name)
+            : base(new IdentityKey(IdentityType.Microsoft, id)) =>
+            Name = name;
+
+        public string Name { get; private set; }
     }
 }

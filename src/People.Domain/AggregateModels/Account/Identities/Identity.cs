@@ -1,38 +1,37 @@
 using System;
-using System.Net.Mail;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 namespace People.Domain.AggregateModels.Account.Identities
 {
     public abstract class Identity
     {
-        protected Identity(IdentityKey key, DateTime? confirmedAt)
+        protected Identity(IdentityKey key)
         {
-            Key = key;
-            ConfirmedAt = confirmedAt;
+            Type = key.Type;
+            Value = key.Value;
+            ConfirmedAt = null;
             CreatedAt = DateTime.UtcNow;
         }
 
-        public IdentityKey Key { get; private set; }
+        public IdentityType Type { get; private set; }
 
-        public DateTime? ConfirmedAt { get; protected set; }
+        public string Value { get; private set; }
+
+        public DateTime? ConfirmedAt { get; private set; }
 
         public DateTime CreatedAt { get; private set; }
-    }
 
-    public sealed record IdentityKey(IdentityType Type, string Value)
-    {
-        public static IdentityKey Email(MailAddress email) => 
-            new (IdentityType.Email, email.Address);
+        public IdentityKey GetKey() => 
+            new(Type, Value);
 
-        public static IdentityKey Google(string id) =>
-            new(IdentityType.Google, id);
+        public Identity SetAsConfirmed(DateTime confirmedAt)
+        {
+            if (ConfirmedAt.HasValue)
+                return this;
 
-        public static IdentityKey Facebook(string id) =>
-            new(IdentityType.Facebook, id);
+            ConfirmedAt = confirmedAt;
 
-        public static IdentityKey Microsoft(string id) =>
-            new(IdentityType.Microsoft, id);
+            return this;
+        }
     }
 }

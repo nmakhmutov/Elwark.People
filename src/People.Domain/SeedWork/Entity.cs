@@ -17,7 +17,7 @@ namespace People.Domain.SeedWork
         protected void RemoveDomainEvent(INotification evt) =>
             (_domainEvents ??= new List<INotification>()).Remove(evt);
 
-        protected void ClearDomainEvents() =>
+        public void ClearDomainEvents() =>
             (_domainEvents ??= new List<INotification>()).Clear();
 
         protected abstract bool IsTransient();

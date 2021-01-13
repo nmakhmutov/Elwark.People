@@ -43,6 +43,8 @@ namespace People.Domain.AggregateModels.Account
                 : throw new ArgumentException($"Object must be of type {nameof(CountryCode)}");
         }
 
+        public bool IsEmpty() => this == Empty;
+
         public static bool operator <(CountryCode left, CountryCode right) =>
             left.CompareTo(right) < 0;
 
