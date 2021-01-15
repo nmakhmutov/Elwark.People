@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
+using System.Net;
 using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.Events;
 using People.Domain.SeedWork;
@@ -14,8 +14,10 @@ namespace People.Domain.AggregateModels.Account
         private HashSet<string> _roles;
         private List<Identity> _identities;
         private Password? _password;
+        private Registration _registration;
+        private DateTime _lastSignIn;
 
-        public Account(AccountId id, Name name, Language language, Uri picture)
+        public Account(AccountId id, Name name, Language language, Uri picture, IPAddress ip)
         {
             var now = DateTime.UtcNow;
             Id = id;
@@ -24,12 +26,12 @@ namespace People.Domain.AggregateModels.Account
             Ban = null;
             _roles = new HashSet<string>();
             _identities = new List<Identity>();
-            UpdatedAt = LoggedInAt = now;
+            UpdatedAt = _lastSignIn = now;
             Name = name;
             Timezone = Timezone.Default;
             Address = new Address(CountryCode.Empty, string.Empty);
             Profile = new Profile(language, Gender.Female, picture);
-            Registration = new Registration(Array.Empty<byte>(), CountryCode.Empty, now);
+            _registration = new Registration(ip.ToString(), CountryCode.Empty, now);
 
             AddDomainEvent(new AccountCreatedDomainEvent(this));
         }
@@ -46,10 +48,6 @@ namespace People.Domain.AggregateModels.Account
 
         public Ban? Ban { get; private set; }
 
-        public Registration Registration { get; private set; }
-
-        public DateTime LoggedInAt { get; private set; }
-
         public DateTime UpdatedAt { get; private set; }
 
         public IReadOnlyCollection<string> Roles => _roles;
@@ -60,38 +58,83 @@ namespace People.Domain.AggregateModels.Account
             .Select(x => new IdentityKey(x.Type, x.Value))
             .ToArray();
 
+        public bool IsBanned() =>
+            Ban != null;
+        
         public void AddIdentity(Identity identity)
         {
             _identities.Add(identity);
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void ConfirmIdentity(IdentityKey key, DateTime confirmedAt)
         {
             var identity = _identities.First(x => x.GetKey() == key);
             identity.SetAsConfirmed(confirmedAt);
-        }
-
-        public void SetPassword(byte[] hash, byte[] salt)
-        {
-            _password = new Password(hash, salt, DateTime.UtcNow);
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void SetProfile(Profile profile)
         {
             Profile = profile;
+            UpdatedAt = DateTime.UtcNow;
         }
 
-        public MailAddress GetPrimaryEmail()
+        public AccountEmail GetPrimaryEmail()
         {
             var identity = _identities
                 .Where(x => x.Type == IdentityType.Email)
                 .Cast<EmailIdentity>()
-                .First(x => x.NotificationType == EmailNotificationType.Primary);
+                .First(x => x.EmailType == EmailType.Primary);
 
-            return new MailAddress(identity.Value);
+            return new AccountEmail(identity.EmailType, identity.Value, identity.IsConfirmed());
         }
 
         public bool IsConfirmed() =>
             _identities.Any(x => x.ConfirmedAt.HasValue);
+
+        public bool IsActive()
+        {
+            if (!IsConfirmed())
+                return false;
+
+            if (IsBanned())
+                return false;
+
+            if (_password is not null && _password.CreatedAt > _lastSignIn) 
+                return false;
+
+            return true;
+        }
+        
+        public bool IsPasswordAvailable() => 
+            _password is not null;
+
+        public void SetPassword(string password, byte[] salt, Func<string, byte[], byte[]> hasher)
+        {
+            var hash = hasher(password, salt);
+            _password = new Password(hash, salt, DateTime.UtcNow);
+            UpdatedAt = DateTime.UtcNow;
+        }
+        
+        public bool IsPasswordEqual(string password, Func<string, byte[], byte[]> hasher)
+        {
+            if (_password is null)
+                throw new ArgumentNullException(nameof(password), "Password not created");
+
+            var hash = hasher(password, _password.Salt);
+            return hash.SequenceEqual(_password.Hash);
+        }
+
+        public void SignInSuccess(DateTime dateTime, IPAddress ip)
+        {
+            if(_lastSignIn > dateTime)
+                return;
+            
+            _lastSignIn = dateTime;
+            UpdatedAt = DateTime.UtcNow;
+            
+            AddDomainEvent(new AccountSignInSuccess(this, ip));
+        }
     }
 }

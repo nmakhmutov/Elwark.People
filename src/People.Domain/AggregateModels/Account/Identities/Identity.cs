@@ -24,9 +24,11 @@ namespace People.Domain.AggregateModels.Account.Identities
         public IdentityKey GetKey() => 
             new(Type, Value);
 
+        public bool IsConfirmed() => ConfirmedAt.HasValue;
+        
         public Identity SetAsConfirmed(DateTime confirmedAt)
         {
-            if (ConfirmedAt.HasValue)
+            if (IsConfirmed())
                 return this;
 
             ConfirmedAt = confirmedAt;

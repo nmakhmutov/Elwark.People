@@ -5,7 +5,7 @@ namespace People.Domain.AggregateModels.Account.Identities
     public sealed record IdentityKey(IdentityType Type, string Value)
     {
         public static IdentityKey Email(MailAddress email) => 
-            new (IdentityType.Email, email.Address);
+            new (IdentityType.Email, email.Address.ToLowerInvariant());
 
         public static IdentityKey Google(string id) =>
             new(IdentityType.Google, id);

@@ -4,7 +4,7 @@ using People.Domain.AggregateModels.Account;
 
 namespace People.Domain.Events
 {
-    public class AccountCreatedDomainEvent : INotification
+    public sealed class AccountCreatedDomainEvent : INotification
     {
         public AccountCreatedDomainEvent(Account account) =>
             Account = account ?? throw new ArgumentNullException(nameof(account));

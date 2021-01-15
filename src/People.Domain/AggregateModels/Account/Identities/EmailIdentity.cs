@@ -5,10 +5,10 @@ namespace People.Domain.AggregateModels.Account.Identities
 {
     public sealed class EmailIdentity : Identity
     {
-        public EmailIdentity(MailAddress address, EmailNotificationType notificationType)
-            : base(new IdentityKey(IdentityType.Email, address.Address)) =>
-            NotificationType = notificationType;
+        public EmailIdentity(MailAddress address, EmailType type)
+            : base(IdentityKey.Email(address))=>
+            EmailType = type;
 
-        public EmailNotificationType NotificationType { get; private set; }
+        public EmailType EmailType { get; private set; }
     }
 }

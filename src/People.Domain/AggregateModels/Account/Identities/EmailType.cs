@@ -1,6 +1,6 @@
 namespace People.Domain.AggregateModels.Account.Identities
 {
-    public enum EmailNotificationType
+    public enum EmailType
     {
         None,
         Primary,

@@ -5,7 +5,7 @@ namespace People.Domain.AggregateModels.Account.Identities
     public sealed class MicrosoftIdentity : Identity
     {
         public MicrosoftIdentity(string id, string name)
-            : base(new IdentityKey(IdentityType.Microsoft, id)) =>
+            : base(IdentityKey.Microsoft(id)) =>
             Name = name;
 
         public string Name { get; private set; }
