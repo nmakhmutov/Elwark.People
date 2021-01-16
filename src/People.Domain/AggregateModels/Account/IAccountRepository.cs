@@ -7,8 +7,8 @@ namespace People.Domain.AggregateModels.Account
 {
     public interface IAccountRepository : IRepository<AccountId, Account>
     {
-        public Task<Account?> GetAsync(IdentityKey key, CancellationToken ct = default);
+        public Task<Account?> GetAsync(Identity key, CancellationToken ct = default);
 
-        public Task<bool> IsExists(IdentityKey key, CancellationToken ct = default);
+        public Task<bool> IsExists(Identity key, CancellationToken ct = default);
     }
 }

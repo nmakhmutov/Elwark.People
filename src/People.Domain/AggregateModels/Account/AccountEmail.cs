@@ -2,5 +2,8 @@ using People.Domain.AggregateModels.Account.Identities;
 
 namespace People.Domain.AggregateModels.Account
 {
-    public sealed record AccountEmail(EmailType Type, string Address, bool IsConfirmed);
+    public sealed record AccountEmail(EmailType Type, string Address, bool IsConfirmed)
+    {
+        public EmailIdentity Key() => new(Address);
+    }
 }

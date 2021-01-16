@@ -2,10 +2,13 @@ namespace People.Domain.Exceptions
 {
     public static class ElwarkExceptionCodes
     {
+        public const string Internal = nameof(Internal);
+        
         public const string AccountNotFound = nameof(AccountNotFound);
         public const string AccountBanned = nameof(AccountBanned);
 
         public const string IdentityNotConfirmed = nameof(IdentityNotConfirmed);
+        public const string IdentityAlreadyConfirmed = nameof(IdentityAlreadyConfirmed);
         
         public const string EmailAlreadyExists = nameof(EmailAlreadyExists);
         public const string EmailIncorrectFormat = nameof(EmailIncorrectFormat);

@@ -6,13 +6,8 @@ namespace People.Domain.AggregateModels.Account
     {
         private readonly long _value;
 
-        public AccountId(long value)
-        {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
+        public AccountId(long value) =>
             _value = value;
-        }
 
         public int CompareTo(AccountId other) => _value.CompareTo(other._value);
 

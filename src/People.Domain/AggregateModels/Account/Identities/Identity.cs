@@ -1,39 +1,12 @@
-using System;
-
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 namespace People.Domain.AggregateModels.Account.Identities
 {
-    public abstract class Identity
-    {
-        protected Identity(IdentityKey key)
-        {
-            Type = key.Type;
-            Value = key.Value;
-            ConfirmedAt = null;
-            CreatedAt = DateTime.UtcNow;
-        }
+    public abstract record Identity(IdentityType Type, string Value);
 
-        public IdentityType Type { get; private set; }
+    public sealed record EmailIdentity(string Email) : Identity(IdentityType.Email, Email.ToLowerInvariant());
 
-        public string Value { get; private set; }
+    public sealed record GoogleIdentity(string Id) : Identity(IdentityType.Google, Id);
 
-        public DateTime? ConfirmedAt { get; private set; }
+    public sealed record FacebookIdentity(string Id) : Identity(IdentityType.Facebook, Id);
 
-        public DateTime CreatedAt { get; private set; }
-
-        public IdentityKey GetKey() => 
-            new(Type, Value);
-
-        public bool IsConfirmed() => ConfirmedAt.HasValue;
-        
-        public Identity SetAsConfirmed(DateTime confirmedAt)
-        {
-            if (IsConfirmed())
-                return this;
-
-            ConfirmedAt = confirmedAt;
-
-            return this;
-        }
-    }
+    public sealed record MicrosoftIdentity(string Id) : Identity(IdentityType.Microsoft, Id);
 }
