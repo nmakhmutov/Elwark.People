@@ -4,6 +4,8 @@ namespace People.Domain.AggregateModels.Account
 {
     public readonly struct Language : IComparable, IComparable<Language>, IEquatable<Language>
     {
+        public static Language Default => new("en");
+        
         private readonly string _value;
 
         public Language(string value)
@@ -15,7 +17,7 @@ namespace People.Domain.AggregateModels.Account
                 throw new ArgumentOutOfRangeException(nameof(value), value,
                     $"{nameof(Language)} value must be two chars");
 
-            _value = value.ToUpperInvariant();
+            _value = value.ToLowerInvariant();
         }
 
         public bool Equals(Language other) =>
@@ -29,6 +31,20 @@ namespace People.Domain.AggregateModels.Account
 
         public override string ToString() =>
             _value;
+
+        public static bool TryParse(string? value, out Language language)
+        {
+            try
+            {
+                language = new Language(value ?? string.Empty);
+                return true;
+            }
+            catch
+            {
+                language = Default;
+                return false;
+            }
+        }
 
         public int CompareTo(Language other) =>
             string.Compare(_value, other._value, StringComparison.Ordinal);

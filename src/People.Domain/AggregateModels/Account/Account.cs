@@ -66,21 +66,14 @@ namespace People.Domain.AggregateModels.Account
         public void AddGoogle(GoogleIdentity identity, string name)
         {
             var now = DateTime.UtcNow;
-            _identities.Add(new GoogleIdentityModel(identity.Id, name, now));
-            UpdatedAt = now;
-        }
-
-        public void AddFacebook(FacebookIdentity identity, string name)
-        {
-            var now = DateTime.UtcNow;
-            _identities.Add(new FacebookIdentityModel(identity.Id, name, now));
+            _identities.Add(new GoogleIdentityModel(identity.Value, name, now));
             UpdatedAt = now;
         }
 
         public void AddMicrosoft(MicrosoftIdentity identity, string name)
         {
             var now = DateTime.UtcNow;
-            _identities.Add(new MicrosoftIdentityModel(identity.Id, name, now));
+            _identities.Add(new MicrosoftIdentityModel(identity.Value, name, now));
             UpdatedAt = now;
         }
 

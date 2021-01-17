@@ -4,7 +4,6 @@ namespace People.Domain.AggregateModels.Account.Identities
     {
         Email = 1,
         Google = 2,
-        Facebook = 3,
-        Microsoft = 4
+        Microsoft = 3
     }
 }
