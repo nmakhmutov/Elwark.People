@@ -34,16 +34,17 @@ namespace People.Infrastructure
             {
                 map.AutoMap();
                 map.MapField("_password");
+                map.MapField("_registration");
+                map.MapField("_lastSignIn");
                 map.MapField("_roles")
                     .SetElementName(nameof(Account.Roles));
                 map.MapField("_identities")
                     .SetElementName(nameof(Account.Identities));
             });
 
-            BsonClassMap.RegisterClassMap<EmailIdentity>();
-            BsonClassMap.RegisterClassMap<GoogleIdentity>();
-            BsonClassMap.RegisterClassMap<FacebookIdentity>();
-            BsonClassMap.RegisterClassMap<MicrosoftIdentity>();
+            BsonClassMap.RegisterClassMap<EmailIdentityModel>();
+            BsonClassMap.RegisterClassMap<GoogleIdentityModel>();
+            BsonClassMap.RegisterClassMap<MicrosoftIdentityModel>();
         }
 
         public PeopleDbContext(IOptions<DbContextSettings> settings)
@@ -68,13 +69,13 @@ namespace People.Infrastructure
                 new CreateIndexModel<Account>(
                     Builders<Account>.IndexKeys.Combine(
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Identities)}.{nameof(Identity.Key)}.{nameof(IdentityKey.Type)}"
+                            $"{nameof(Account.Identities)}.{nameof(Identity.Type)}"
                         ),
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Identities)}.{nameof(Identity.Key)}.{nameof(IdentityKey.Value)}"
+                            $"{nameof(Account.Identities)}.{nameof(Identity.Value)}"
                         )
                     ),
-                    new CreateIndexOptions {Name = "Identities.Key.Type_Identities.Key.Value", Unique = true}
+                    new CreateIndexOptions {Name = "Identities.Type_Identities.Value", Unique = true}
                 )
             );
 

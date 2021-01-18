@@ -1,27 +1,53 @@
 version: '3.7'
 
+networks:
+  elwarknetwork:
+    external:
+      name: elwark_network
+      
 services:
-        
-  people.api:
-    container_name: "elwark_people_api"
-    image: elwark/people.api:${TAG:-latest}
+
+  people.gateway:
+    container_name: "elwark_people_gateway"
+    image: "elwark/people-gateway:latest"
     build:
       context: .
-      dockerfile: Elwark.People.Api/Dockerfile
+      dockerfile: People.Gateway/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
+      - Urls__Identity=http://elwark_identity
+      - Urls__People.Api=http://elwark_people_api
     ports:
       - "5001:80"
-        
-  people.background:
-    container_name: "elwark_people_background"
-    image: elwark/people.background:${TAG:-latest}
+    networks:
+      - elwarknetwork
+
+  people.api:
+    container_name: "elwark_people_api"
+    image: "elwark/people-api:latest"
     build:
       context: .
-      dockerfile: Elwark.People.Background/Dockerfile
+      dockerfile: People.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Grpc__Port=80
+      - Mongodb__ConnectionString=mongodb://master_account:master_password@mongo
+    ports:
+      - "5002:80"
+    networks:
+      - elwarknetwork
+        
+  people.worker:
+    container_name: "elwark_people_worker"
+    image: "elwark/people-worker:latest"
+    build:
+      context: .
+      dockerfile: People.Worker/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
-      - "5002:80"
+      - "5003:80"
+    networks:
+      - elwarknetwork

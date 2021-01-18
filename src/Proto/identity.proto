@@ -1,0 +1,127 @@
+syntax = "proto3";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "common.proto";
+
+option csharp_namespace = "People.Grpc.Identity";
+
+service Identity {
+    rpc GetAccountById (people.AccountId) returns (AccountReply);
+    rpc GetStatus (people.AccountId) returns (StatusReply);
+
+    rpc SignInByEmail (SignInByEmailRequest) returns (SignInReply);
+    rpc SignInByGoogle (SignInByProviderRequest) returns (SignInReply);
+    rpc SignInByMicrosoft (SignInByProviderRequest) returns (SignInReply);
+
+    rpc SignUpByEmail (SignUpByEmailRequest) returns (SignUpReply);
+    rpc SignUpByGoogle (SignUpByProviderRequest) returns (SignUpReply);
+    rpc SignUpByMicrosoft (SignUpByProviderRequest) returns (SignUpReply);
+    rpc CheckSignUpConfirmation (people.AccountId) returns (CheckSignUpConfirmationReply);
+    rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
+    rpc ResendSignUpConfirmation (people.AccountId) returns (google.protobuf.Empty);
+
+    rpc ResetPassword (people.Identity) returns (people.AccountId);
+    rpc RestorePassword (RestorePasswordRequest) returns (google.protobuf.Empty);
+}
+
+message SignInByEmailRequest {
+    string email = 1;
+    string password = 2;
+    string ip = 3;
+}
+
+message SignInByProviderRequest {
+    string access_token = 1;
+    string ip = 2;
+}
+
+message SignUpByEmailRequest {
+    string email = 1;
+    string password = 2;
+    string language = 3;
+    string ip = 4;
+}
+
+message SignUpByProviderRequest {
+    string access_token = 1;
+    string language = 2;
+    string ip = 3;
+}
+
+message RestorePasswordRequest {
+    people.AccountId id = 1;
+    int32 code = 2;
+    string password = 3;
+}
+
+message SignInReply {
+    people.AccountId id = 1;
+    string display_name = 2;
+}
+
+message SignUpReply {
+    people.AccountId id = 1;
+    string display_name = 2;
+    bool is_sent_confirmation = 3;
+}
+
+message ConfirmSignUpRequest {
+    people.AccountId id = 1;
+    int32 code = 2;
+}
+
+message CheckSignUpConfirmationReply {
+    people.Identity key = 1;
+    google.protobuf.Timestamp created_at = 2;
+    google.protobuf.Timestamp expire_at = 3;
+}
+
+message AccountReply {
+    message PrimaryEmail {
+        string email = 1;
+        bool is_confirmed = 2;
+    }
+
+    message Name {
+        string nickname = 1;
+        google.protobuf.StringValue first_name = 2;
+        google.protobuf.StringValue last_name = 3;
+    }
+
+    message Address {
+        string country_code = 1;
+        string city_name = 2;
+    }
+
+    message Timezone {
+        string Name = 1;
+        google.protobuf.Duration offset = 2;
+    }
+
+    message Profile {
+        string language = 1;
+        people.Gender gender = 2;
+        google.protobuf.Timestamp birthday = 3;
+        google.protobuf.StringValue bio = 4;
+        string picture = 5;
+    }
+
+    message Ban {
+        string reason = 1;
+        google.protobuf.Timestamp expires_at = 2;
+    }
+
+    people.AccountId id = 1;
+    Name name = 2;
+    PrimaryEmail email = 3;
+    Address address = 4;
+    Timezone timezone = 5;
+    Profile profile = 6;
+    Ban ban = 7;
+}
+
+message StatusReply {
+    bool is_active = 1;
+}

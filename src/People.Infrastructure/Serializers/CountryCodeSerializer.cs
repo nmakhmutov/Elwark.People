@@ -20,7 +20,7 @@ namespace People.Infrastructure.Serializers
             if(value is CountryCode code)
                 Serialize(context, args, code);
             else
-                throw new NotSupportedException($"Value {value} is not correct for type '${nameof(CountryCode)}'");
+                throw new NotSupportedException($"Value {value} is not correct for type '{nameof(CountryCode)}'");
         }
 
         public Type ValueType { get; } = typeof(CountryCode);

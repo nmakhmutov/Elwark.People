@@ -20,7 +20,7 @@ namespace People.Infrastructure.Serializers
             if (value is AccountId id)
                 Serialize(context, args, id);
             else
-                throw new NotSupportedException($"Value {value} is not correct for type '${nameof(AccountId)}'");
+                throw new NotSupportedException($"Value {value} is not correct for type '{nameof(AccountId)}'");
         }
 
         public Type ValueType { get; } = typeof(AccountId);

@@ -20,7 +20,7 @@ namespace People.Infrastructure.Serializers
             if (value is Language language)
                 Serialize(context, args, language);
             else
-                throw new NotSupportedException($"Value {value} is not correct for type '${nameof(Language)}'");
+                throw new NotSupportedException($"Value {value} is not correct for type '{nameof(Language)}'");
         }
 
         public Type ValueType { get; } = typeof(Language);
