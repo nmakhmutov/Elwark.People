@@ -1,0 +1,23 @@
+syntax = "proto3";
+package people;
+option csharp_namespace = "People.Grpc.Common";
+
+enum IdentityType {
+    EMAIL = 0;
+    GOOGLE = 1;
+    MICROSOFT = 2;
+}
+
+enum Gender {
+    FEMALE = 0;
+    MALE = 1;
+}
+
+message AccountId {
+    int64 value = 1;
+}
+
+message Identity {
+    IdentityType type = 1;
+    string value = 2;
+}

@@ -19,6 +19,3 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
-
-      - name: Test Api unit test
-        run: dotnet test test/Elwark.People.Api.UnitTests --no-build --configuration Release
