@@ -23,7 +23,8 @@ namespace People.Api.Mappers
                 {
                     Nickname = account.Name.Nickname,
                     FirstName = account.Name.FirstName,
-                    LastName = account.Name.LastName
+                    LastName = account.Name.LastName,
+                    FullName = account.Name.FullName()
                 },
                 Email = account.GetPrimaryEmail().ToGrpcPrimaryEmail(),
                 Profile = new People.Grpc.Identity.AccountReply.Types.Profile
@@ -38,7 +39,8 @@ namespace People.Api.Mappers
                 {
                     Name = account.Timezone.Name,
                     Offset = account.Timezone.Offset.ToDuration()
-                }
+                },
+                UpdatedAt = account.UpdatedAt.ToTimestamp()
             };
 
         public static People.Grpc.Identity.SignUpReply ToSignUpReply(this SignUpResult result) =>

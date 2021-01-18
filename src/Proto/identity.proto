@@ -88,6 +88,7 @@ message AccountReply {
         string nickname = 1;
         google.protobuf.StringValue first_name = 2;
         google.protobuf.StringValue last_name = 3;
+        string full_name = 4;
     }
 
     message Address {
@@ -120,6 +121,7 @@ message AccountReply {
     Timezone timezone = 5;
     Profile profile = 6;
     Ban ban = 7;
+    google.protobuf.Timestamp updated_at = 8;
 }
 
 message StatusReply {
