@@ -35,7 +35,7 @@ namespace People.Api.Grpc
         {
             var data = await _mediator.Send(new GetAccountByIdQuery(request.Value), context.CancellationToken);
             if (data is not null)
-                return data.ToAccountReply();
+                return data.ToIdentityAccountReply();
 
             context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
             return new AccountReply();
@@ -43,7 +43,7 @@ namespace People.Api.Grpc
 
         public override async Task<StatusReply> GetStatus(AccountId request, ServerCallContext context)
         {
-            var query = new GetAccountStatusQuery(request.FromGrpcAccountId());
+            var query = new GetAccountStatusQuery(request.ToAccountId());
             var data = await _mediator.Send(query);
 
             return new StatusReply
@@ -136,12 +136,12 @@ namespace People.Api.Grpc
         public override async Task<CheckSignUpConfirmationReply> CheckSignUpConfirmation(
             AccountId request, ServerCallContext context)
         {
-            var query = new CheckSignUpConfirmationQuery(request.FromGrpcAccountId());
+            var query = new CheckSignUpConfirmationQuery(request.ToAccountId());
             var confirmation = await _mediator.Send(query, context.CancellationToken);
 
             return new CheckSignUpConfirmationReply
             {
-                Key = confirmation.Key.ToGrpcIdentityKey(),
+                Key = confirmation.Key.ToIdentityKey(),
                 CreatedAt = confirmation.CreatedAt.ToTimestamp(),
                 ExpireAt = confirmation.ExpireAt.ToTimestamp()
             };
@@ -150,7 +150,7 @@ namespace People.Api.Grpc
         public override async Task<Empty> ResendSignUpConfirmation(AccountId request,
             ServerCallContext context)
         {
-            var query = new GetAccountByIdQuery(request.FromGrpcAccountId());
+            var query = new GetAccountByIdQuery(request.ToAccountId());
             var account = await _mediator.Send(query, context.CancellationToken);
             if (account is null)
             {
@@ -174,15 +174,15 @@ namespace People.Api.Grpc
         public override async Task<AccountId> ResetPassword(People.Grpc.Common.Identity request,
             ServerCallContext context)
         {
-            var command = new ResetPasswordCommand(request.FromGrpcIdentityKey());
+            var command = new ResetPasswordCommand(request.ToIdentityKey());
             var data = await _mediator.Send(command, context.CancellationToken);
 
-            return data.ToGrpcAccountId();
+            return data.ToAccountId();
         }
 
         public override async Task<Empty> ConfirmSignUp(ConfirmSignUpRequest request, ServerCallContext context)
         {
-            var command = new ConfirmEmailSignUpCommand(request.Id.FromGrpcAccountId(), request.Code);
+            var command = new ConfirmEmailSignUpCommand(request.Id.ToAccountId(), request.Code);
             await _mediator.Send(command);
 
             return new Empty();
@@ -190,7 +190,7 @@ namespace People.Api.Grpc
 
         public override async Task<Empty> RestorePassword(RestorePasswordRequest request, ServerCallContext context)
         {
-            var command = new RestorePasswordCommand(request.Id.FromGrpcAccountId(), request.Code, request.Password);
+            var command = new RestorePasswordCommand(request.Id.ToAccountId(), request.Code, request.Password);
             await _mediator.Send(command);
 
             return new Empty();

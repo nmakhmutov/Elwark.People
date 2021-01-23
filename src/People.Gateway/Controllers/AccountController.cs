@@ -6,6 +6,8 @@ using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
 using People.Gateway.Models;
 using People.Grpc.Common;
+using Address = People.Gateway.Models.Address;
+using Timezone = People.Gateway.Models.Timezone;
 
 namespace People.Gateway.Controllers
 {
@@ -32,6 +34,7 @@ namespace People.Gateway.Controllers
                 account.Name.Nickname,
                 account.Name.FirstName,
                 account.Name.LastName,
+                account.Name.FullName,
                 account.Profile.Language,
                 account.Profile.Gender,
                 account.Profile.Birthday?.ToDateTime(),

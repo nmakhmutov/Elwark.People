@@ -8,6 +8,7 @@ namespace People.Gateway.Models
         string Nickname,
         string? FirstName,
         string? LastName,
+        string FullName,
         string Language,
         Gender Gender,
         DateTime? Birthday,
