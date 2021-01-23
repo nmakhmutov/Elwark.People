@@ -7,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
 
@@ -25,6 +28,11 @@ namespace People.Gateway
             AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
+
+            services.AddAuthorizationCore(options =>
+                options.AddPolicy(Policy.RequireAccountId, Policy.RequireAccountIdPolicy())
+            );
+
             services
                 .AddAuthentication(options =>
                 {
@@ -34,21 +42,17 @@ namespace People.Gateway
                 .AddJwtBearer(options =>
                 {
                     options.Authority = Configuration["Urls:Identity"];
-                    options.Audience = "elwark.people.api";
+                    //options.Audience = "elwark.people.api";
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateAudience = false,
                         ValidateLifetime = true,
                         NameClaimType = "name",
                         RoleClaimType = "role"
                     };
                 });
-
-            services.AddAuthorizationCore(options =>
-                options.AddPolicy(Policy.RequireAccountId, Policy.RequireAccountIdPolicy())
-            );
 
             services.AddHttpContextAccessor()
                 .AddScoped<IIdentityService, IdentityService>();
@@ -57,7 +61,20 @@ namespace People.Gateway
                 options => options.Address = new Uri(Configuration["Urls:People.Api"])
             );
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    options.SerializerSettings.Formatting = Formatting.None;
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.Converters = new JsonConverter[]
+                    {
+                        new IsoDateTimeConverter(),
+                        new StringEnumConverter(new CamelCaseNamingStrategy())
+                    };
+                    options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -67,6 +84,7 @@ namespace People.Gateway
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

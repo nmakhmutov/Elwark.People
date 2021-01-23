@@ -1,6 +1,4 @@
 syntax = "proto3";
-import "google/protobuf/wrappers.proto";
-import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "common.proto";
@@ -79,47 +77,14 @@ message CheckSignUpConfirmationReply {
 }
 
 message AccountReply {
-    message PrimaryEmail {
-        string email = 1;
-        bool is_confirmed = 2;
-    }
-
-    message Name {
-        string nickname = 1;
-        google.protobuf.StringValue first_name = 2;
-        google.protobuf.StringValue last_name = 3;
-    }
-
-    message Address {
-        string country_code = 1;
-        string city_name = 2;
-    }
-
-    message Timezone {
-        string Name = 1;
-        google.protobuf.Duration offset = 2;
-    }
-
-    message Profile {
-        string language = 1;
-        people.Gender gender = 2;
-        google.protobuf.Timestamp birthday = 3;
-        google.protobuf.StringValue bio = 4;
-        string picture = 5;
-    }
-
-    message Ban {
-        string reason = 1;
-        google.protobuf.Timestamp expires_at = 2;
-    }
-
     people.AccountId id = 1;
-    Name name = 2;
-    PrimaryEmail email = 3;
-    Address address = 4;
-    Timezone timezone = 5;
-    Profile profile = 6;
-    Ban ban = 7;
+    people.Name name = 2;
+    people.PrimaryEmail email = 3;
+    people.Address address = 4;
+    people.Timezone timezone = 5;
+    people.Profile profile = 6;
+    people.Ban ban = 7;
+    google.protobuf.Timestamp updated_at = 8;
 }
 
 message StatusReply {
