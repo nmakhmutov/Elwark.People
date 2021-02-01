@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using People.Api.Infrastructure.Logger;
+using People.Gateway.Infrastructure.Logger;
 using Serilog;
 
 namespace People.Gateway

@@ -17,7 +17,7 @@ using People.Api.Infrastructure.Providers.Microsoft;
 using People.Domain.AggregateModels.Account;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
-using People.Infrastructure.Prohibitions;
+using People.Infrastructure.Forbidden;
 using People.Infrastructure.Repositories;
 using People.Infrastructure.Sequences;
 
@@ -43,7 +43,7 @@ namespace People.Api
             services.Configure<DbContextSettings>(Configuration.GetSection("Mongodb"))
                 .AddScoped<PeopleDbContext>()
                 .AddScoped<InfrastructureDbContext>()
-                .AddScoped<IProhibitionService, ProhibitionService>()
+                .AddScoped<IForbiddenService, ForbiddenService>()
                 .AddScoped<ISequenceGenerator, SequenceGenerator>()
                 .AddScoped<IAccountRepository, AccountRepository>();
 

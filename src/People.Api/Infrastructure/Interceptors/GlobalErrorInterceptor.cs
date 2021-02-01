@@ -4,18 +4,12 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Microsoft.Extensions.Logging;
 using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Interceptors
 {
     public class GlobalErrorInterceptor : Interceptor
     {
-        private readonly ILogger<GlobalErrorInterceptor> _logger;
-
-        public GlobalErrorInterceptor(ILogger<GlobalErrorInterceptor> logger) =>
-            _logger = logger;
-
         public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
             ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
         {

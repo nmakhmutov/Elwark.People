@@ -1,20 +1,25 @@
 using System;
+using MongoDB.Bson;
+
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace People.Infrastructure.Prohibitions
+namespace People.Infrastructure.Forbidden
 {
-    public class Prohibition
+    public sealed record ForbiddenItem
     {
-        public Prohibition(ProhibitionType type, string value)
+        public ForbiddenItem(ForbiddenType type, string value)
         {
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentException("Value cannot be null or empty.", nameof(value));
             
+            Id = ObjectId.Empty;
             Type = type;
             Value = value;
         }
 
-        public ProhibitionType Type { get; private set; }
+        public ObjectId Id { get; private set; }
+        
+        public ForbiddenType Type { get; private set; }
         
         public string Value { get; private set; }
     }

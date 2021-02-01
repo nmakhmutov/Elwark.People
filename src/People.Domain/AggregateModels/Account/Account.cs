@@ -9,6 +9,7 @@ using People.Domain.Exceptions;
 using People.Domain.SeedWork;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// ReSharper disable FieldCanBeMadeReadOnly.Local
 namespace People.Domain.AggregateModels.Account
 {
     public sealed class Account : Entity<AccountId>, IAggregateRoot
@@ -156,6 +157,16 @@ namespace People.Domain.AggregateModels.Account
                 throw new ElwarkException(ElwarkExceptionCodes.Internal, "Account Id already created");
 
             Id = id;
+        }
+
+        public void AddRole(string role) => _roles.Add(role);
+        
+        public void UpdateRegistrationCountry(CountryCode code)
+        {
+            if(_registration.CountryCode != CountryCode.Empty)
+                return;
+
+            _registration = _registration with {CountryCode = code};
         }
     }
 }

@@ -2,13 +2,13 @@ using FluentValidation;
 using People.Api.Application.Commands;
 using People.Domain.AggregateModels.Account;
 using People.Domain.Exceptions;
-using People.Infrastructure.Prohibitions;
+using People.Infrastructure.Forbidden;
 
 namespace People.Api.Application.Validators
 {
     public sealed class SignUpByGoogleCommandValidator : AbstractValidator<SignUpByGoogleCommand>
     {
-        public SignUpByGoogleCommandValidator(IAccountRepository repository, IProhibitionService prohibitionService)
+        public SignUpByGoogleCommandValidator(IAccountRepository repository, IForbiddenService forbiddenService)
         {
             CascadeMode = CascadeMode.Stop;
             RuleFor(x => x.Identity)
@@ -25,7 +25,7 @@ namespace People.Api.Application.Validators
                 .MustAsync(async (email, ct) =>
                 {
                     var host = email.GetMailAddress().Host;
-                    return !await prohibitionService.IsEmailHostDenied(host, ct);
+                    return !await forbiddenService.IsEmailHostDenied(host, ct);
                 })
                 .WithErrorCode(ElwarkExceptionCodes.EmailHostDenied)
                 .MustAsync(async (email, ct) => !await repository.IsExists(email, ct))

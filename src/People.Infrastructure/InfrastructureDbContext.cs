@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using People.Infrastructure.Confirmations;
-using People.Infrastructure.Prohibitions;
+using People.Infrastructure.Countries;
+using People.Infrastructure.Forbidden;
+using People.Infrastructure.Timezones;
 
 namespace People.Infrastructure
 {
@@ -14,8 +16,14 @@ namespace People.Infrastructure
         {
         }
 
-        public IMongoCollection<Prohibition> Prohibitions =>
-            Database.GetCollection<Prohibition>("prohibitions");
+        public IMongoCollection<Country> Countries =>
+            Database.GetCollection<Country>("countries");
+
+        public IMongoCollection<Timezone> Timezones =>
+            Database.GetCollection<Timezone>("timezones");
+
+        public IMongoCollection<ForbiddenItem> ForbiddenItems =>
+            Database.GetCollection<ForbiddenItem>("forbidden_items");
 
         public IMongoCollection<Confirmation> Confirmations =>
             Database.GetCollection<Confirmation>("confirmations");
@@ -23,17 +31,33 @@ namespace People.Infrastructure
         public override async Task OnModelCreatingAsync()
         {
             await CreateCollectionsAsync(
-                Prohibitions.CollectionNamespace.CollectionName,
+                Countries.CollectionNamespace.CollectionName,
+                Timezones.CollectionNamespace.CollectionName,
+                ForbiddenItems.CollectionNamespace.CollectionName,
                 Confirmations.CollectionNamespace.CollectionName
             );
 
-            await CreateIndexesAsync(Prohibitions,
-                new CreateIndexModel<Prohibition>(
-                    Builders<Prohibition>.IndexKeys.Combine(
-                        Builders<Prohibition>.IndexKeys.Ascending(x => x.Type),
-                        Builders<Prohibition>.IndexKeys.Ascending(x => x.Value)
+            await CreateIndexesAsync(Countries,
+                new CreateIndexModel<Country>(
+                    Builders<Country>.IndexKeys.Ascending(x => x.Alpha2Code),
+                    new CreateIndexOptions {Name = "Alpha2Code", Unique = true}
+                )
+            );
+
+            await CreateIndexesAsync(Timezones,
+                new CreateIndexModel<Timezone>(
+                    Builders<Timezone>.IndexKeys.Ascending(x => x.Name),
+                    new CreateIndexOptions {Name = "Name", Unique = true}
+                )
+            );
+
+            await CreateIndexesAsync(ForbiddenItems,
+                new CreateIndexModel<ForbiddenItem>(
+                    Builders<ForbiddenItem>.IndexKeys.Combine(
+                        Builders<ForbiddenItem>.IndexKeys.Ascending(x => x.Type),
+                        Builders<ForbiddenItem>.IndexKeys.Ascending(x => x.Value)
                     ),
-                    new CreateIndexOptions {Name = "Type_Value"}
+                    new CreateIndexOptions {Name = "Type_Value", Unique = true}
                 )
             );
 

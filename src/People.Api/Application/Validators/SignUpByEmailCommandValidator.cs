@@ -3,13 +3,13 @@ using FluentValidation.Results;
 using People.Api.Application.Commands;
 using People.Api.Infrastructure.Password;
 using People.Domain.Exceptions;
-using People.Infrastructure.Prohibitions;
+using People.Infrastructure.Forbidden;
 
 namespace People.Api.Application.Validators
 {
     public sealed class SignUpByEmailCommandValidator : AbstractValidator<SignUpByEmailCommand>
     {
-        public SignUpByEmailCommandValidator(IPasswordValidator validator, IProhibitionService prohibitionService)
+        public SignUpByEmailCommandValidator(IPasswordValidator validator, IForbiddenService forbiddenService)
         {
             CascadeMode = CascadeMode.Stop;
             RuleFor(x => x.Password)
@@ -40,7 +40,7 @@ namespace People.Api.Application.Validators
                 .MustAsync(async (email, ct) =>
                 {
                     var host = email.GetMailAddress().Host;
-                    return !await prohibitionService.IsEmailHostDenied(host, ct);
+                    return !await forbiddenService.IsEmailHostDenied(host, ct);
                 })
                 .WithErrorCode(ElwarkExceptionCodes.EmailHostDenied);
         }

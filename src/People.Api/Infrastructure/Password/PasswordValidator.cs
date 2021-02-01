@@ -4,18 +4,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using People.Domain.Exceptions;
-using People.Infrastructure.Prohibitions;
+using People.Infrastructure.Forbidden;
 
 namespace People.Api.Infrastructure.Password
 {
     public class PasswordValidator: IPasswordValidator
     {
-        private readonly IProhibitionService _prohibition;
+        private readonly IForbiddenService _forbidden;
         private readonly PasswordValidationOptions _options;
 
-        public PasswordValidator(IOptions<PasswordValidationOptions> settings, IProhibitionService prohibition)
+        public PasswordValidator(IOptions<PasswordValidationOptions> settings, IForbiddenService forbidden)
         {
-            _prohibition = prohibition;
+            _forbidden = forbidden;
             _options = settings.Value ?? throw new ArgumentNullException(nameof(settings));
         }
 
@@ -42,7 +42,7 @@ namespace People.Api.Infrastructure.Password
             if (_options.RequiredUniqueChars > 1 && password.Distinct().Count() <= _options.RequiredUniqueChars)
                 throw new ElwarkException(ElwarkExceptionCodes.PasswordRequiresUniqueChars);
             
-            if (await _prohibition.IsPasswordForbidden(password, ct))
+            if (await _forbidden.IsPasswordForbidden(password, ct))
                 throw new ElwarkException(ElwarkExceptionCodes.PasswordForbidden);
         }
         

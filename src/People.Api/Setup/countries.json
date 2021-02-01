@@ -1,0 +1,6965 @@
+[
+  {
+    "Alpha2Code": "AD",
+    "Alpha3Code": "AND",
+    "Capital": "Andorra la Vella",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "ca"
+    ],
+    "Translations": {
+      "en": "Andorra",
+      "cs": "Andorra",
+      "cy": "Andorra",
+      "de": "Andorra",
+      "fr": "Andorre",
+      "hr": "Andora",
+      "it": "Andorra",
+      "ja": "アンドラ",
+      "nl": "Andorra",
+      "pt": "Andorra",
+      "ru": "Андорра",
+      "sk": "Andorra",
+      "es": "Andorra",
+      "fi": "Andorra",
+      "et": "Andorra",
+      "zh": "安道尔"
+    }
+  },
+  {
+    "Alpha2Code": "AE",
+    "Alpha3Code": "ARE",
+    "Capital": "Abu Dhabi",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "United Arab Emirates",
+      "cs": "Spojené arabské emiráty",
+      "de": "Vereinigte Arabische Emirate",
+      "fr": "Émirats arabes unis",
+      "hr": "Ujedinjeni Arapski Emirati",
+      "it": "Emirati Arabi Uniti",
+      "ja": "アラブ首長国連邦",
+      "nl": "Verenigde Arabische Emiraten",
+      "pt": "Emirados Árabes Unidos",
+      "ru": "Объединённые Арабские Эмираты",
+      "sk": "Spojené arabské emiráty",
+      "es": "Emiratos Árabes Unidos",
+      "fi": "Arabiemiraatit",
+      "et": "Araabia Ühendemiraadid",
+      "zh": "阿拉伯联合酋长国"
+    }
+  },
+  {
+    "Alpha2Code": "AF",
+    "Alpha3Code": "AFG",
+    "Capital": "Kabul",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "prs",
+      "ps",
+      "tk"
+    ],
+    "Translations": {
+      "en": "Afghanistan",
+      "cs": "Afghánistán",
+      "cy": "Affganistan",
+      "de": "Afghanistan",
+      "fr": "Afghanistan",
+      "hr": "Afganistan",
+      "it": "Afghanistan",
+      "ja": "アフガニスタン",
+      "nl": "Afghanistan",
+      "pt": "Afeganistão",
+      "ru": "Афганистан",
+      "sk": "Afganistan",
+      "es": "Afganistán",
+      "fi": "Afganistan",
+      "et": "Afganistan",
+      "zh": "阿富汗"
+    }
+  },
+  {
+    "Alpha2Code": "AG",
+    "Alpha3Code": "ATG",
+    "Capital": "Saint John's",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Antigua and Barbuda",
+      "cs": "Antigua a Barbuda",
+      "cy": "Antigwa a Barbiwda",
+      "de": "Antigua und Barbuda",
+      "fr": "Antigua-et-Barbuda",
+      "hr": "Antigva i Barbuda",
+      "it": "Antigua e Barbuda",
+      "ja": "アンティグア・バーブーダ",
+      "nl": "Antigua en Barbuda",
+      "pt": "Antígua e Barbuda",
+      "ru": "Антигуа и Барбуда",
+      "sk": "Antigua a Barbuda",
+      "es": "Antigua y Barbuda",
+      "fi": "Antigua ja Barbuda",
+      "et": "Antigua ja Barbuda",
+      "zh": "安提瓜和巴布达"
+    }
+  },
+  {
+    "Alpha2Code": "AI",
+    "Alpha3Code": "AIA",
+    "Capital": "The Valley",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Anguilla",
+      "cs": "Anguilla",
+      "de": "Anguilla",
+      "fr": "Anguilla",
+      "hr": "Angvila",
+      "it": "Anguilla",
+      "ja": "アンギラ",
+      "nl": "Anguilla",
+      "pt": "Anguilla",
+      "ru": "Ангилья",
+      "sk": "Anguilla",
+      "es": "Anguilla",
+      "fi": "Anguilla",
+      "et": "Anguilla",
+      "zh": "安圭拉"
+    }
+  },
+  {
+    "Alpha2Code": "AL",
+    "Alpha3Code": "ALB",
+    "Capital": "Tirana",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "sq"
+    ],
+    "Translations": {
+      "en": "Albania",
+      "cs": "Albánie",
+      "cy": "Albania",
+      "de": "Albanien",
+      "fr": "Albanie",
+      "hr": "Albanija",
+      "it": "Albania",
+      "ja": "アルバニア",
+      "nl": "Albanië",
+      "pt": "Albânia",
+      "ru": "Албания",
+      "sk": "Albánsko",
+      "es": "Albania",
+      "fi": "Albania",
+      "et": "Albaania",
+      "zh": "阿尔巴尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "AM",
+    "Alpha3Code": "ARM",
+    "Capital": "Yerevan",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "hy"
+    ],
+    "Translations": {
+      "en": "Armenia",
+      "cs": "Arménie",
+      "cy": "Armenia",
+      "de": "Armenien",
+      "fr": "Arménie",
+      "hr": "Armenija",
+      "it": "Armenia",
+      "ja": "アルメニア",
+      "nl": "Armenië",
+      "pt": "Arménia",
+      "ru": "Армения",
+      "sk": "Arménsko",
+      "es": "Armenia",
+      "fi": "Armenia",
+      "et": "Armeenia",
+      "zh": "亚美尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "AO",
+    "Alpha3Code": "AGO",
+    "Capital": "Luanda",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "pt"
+    ],
+    "Translations": {
+      "en": "Angola",
+      "cs": "Angola",
+      "cy": "Angola",
+      "de": "Angola",
+      "fr": "Angola",
+      "hr": "Angola",
+      "it": "Angola",
+      "ja": "アンゴラ",
+      "nl": "Angola",
+      "pt": "Angola",
+      "ru": "Ангола",
+      "sk": "Angola",
+      "es": "Angola",
+      "fi": "Angola",
+      "et": "Angola",
+      "zh": "安哥拉"
+    }
+  },
+  {
+    "Alpha2Code": "AQ",
+    "Alpha3Code": "ATA",
+    "Capital": "",
+    "Region": "Antarctic",
+    "Subregion": "",
+    "Languages": [],
+    "Translations": {
+      "en": "Antarctica",
+      "cs": "Antarktida",
+      "cy": "Yr Antarctig",
+      "de": "Antarktis",
+      "fr": "Antarctique",
+      "hr": "Antarktika",
+      "it": "Antartide",
+      "ja": "南極",
+      "nl": "Antarctica",
+      "pt": "Antártida",
+      "ru": "Антарктида",
+      "sk": "Antarktída",
+      "es": "Antártida",
+      "fi": "Etelämanner",
+      "et": "Antarktika",
+      "zh": "南极洲"
+    }
+  },
+  {
+    "Alpha2Code": "AR",
+    "Alpha3Code": "ARG",
+    "Capital": "Buenos Aires",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "gn",
+      "es"
+    ],
+    "Translations": {
+      "en": "Argentina",
+      "cs": "Argentina",
+      "cy": "Ariannin",
+      "de": "Argentinien",
+      "fr": "Argentine",
+      "hr": "Argentina",
+      "it": "Argentina",
+      "ja": "アルゼンチン",
+      "nl": "Argentinië",
+      "pt": "Argentina",
+      "ru": "Аргентина",
+      "sk": "Argentína",
+      "es": "Argentina",
+      "fi": "Argentiina",
+      "et": "Argentina",
+      "zh": "阿根廷"
+    }
+  },
+  {
+    "Alpha2Code": "AS",
+    "Alpha3Code": "ASM",
+    "Capital": "Pago Pago",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "sm"
+    ],
+    "Translations": {
+      "en": "American Samoa",
+      "cs": "Americká Samoa",
+      "de": "Amerikanisch-Samoa",
+      "fr": "Samoa américaines",
+      "hr": "Američka Samoa",
+      "it": "Samoa Americane",
+      "ja": "アメリカ領サモア",
+      "nl": "Amerikaans Samoa",
+      "pt": "Samoa Americana",
+      "ru": "Американское Самоа",
+      "sk": "Americká Samoa",
+      "es": "Samoa Americana",
+      "fi": "Amerikan Samoa",
+      "et": "Ameerika Samoa",
+      "zh": "美属萨摩亚"
+    }
+  },
+  {
+    "Alpha2Code": "AT",
+    "Alpha3Code": "AUT",
+    "Capital": "Vienna",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "bar"
+    ],
+    "Translations": {
+      "en": "Austria",
+      "cs": "Rakousko",
+      "cy": "Awstria",
+      "de": "Österreich",
+      "fr": "Autriche",
+      "hr": "Austrija",
+      "it": "Austria",
+      "ja": "オーストリア",
+      "nl": "Oostenrijk",
+      "pt": "Áustria",
+      "ru": "Австрия",
+      "sk": "Rakúsko",
+      "es": "Austria",
+      "fi": "Itävalta",
+      "et": "Austria",
+      "zh": "奥地利"
+    }
+  },
+  {
+    "Alpha2Code": "AU",
+    "Alpha3Code": "AUS",
+    "Capital": "Canberra",
+    "Region": "Oceania",
+    "Subregion": "Australia and New Zealand",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Australia",
+      "cs": "Austrálie",
+      "cy": "Awstralia",
+      "de": "Australien",
+      "fr": "Australie",
+      "hr": "Australija",
+      "it": "Australia",
+      "ja": "オーストラリア",
+      "nl": "Australië",
+      "pt": "Austrália",
+      "ru": "Австралия",
+      "sk": "Austrália",
+      "es": "Australia",
+      "fi": "Australia",
+      "et": "Austraalia",
+      "zh": "澳大利亚"
+    }
+  },
+  {
+    "Alpha2Code": "AW",
+    "Alpha3Code": "ABW",
+    "Capital": "Oranjestad",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "nl",
+      "pap"
+    ],
+    "Translations": {
+      "en": "Aruba",
+      "cs": "Aruba",
+      "de": "Aruba",
+      "fr": "Aruba",
+      "hr": "Aruba",
+      "it": "Aruba",
+      "ja": "アルバ",
+      "nl": "Aruba",
+      "pt": "Aruba",
+      "ru": "Аруба",
+      "sk": "Aruba",
+      "es": "Aruba",
+      "fi": "Aruba",
+      "et": "Aruba",
+      "zh": "阿鲁巴"
+    }
+  },
+  {
+    "Alpha2Code": "AX",
+    "Alpha3Code": "ALA",
+    "Capital": "Mariehamn",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "sv"
+    ],
+    "Translations": {
+      "en": "Åland Islands",
+      "cs": "Ålandy",
+      "de": "Åland",
+      "fr": "Ahvenanmaa",
+      "hr": "Ålandski otoci",
+      "it": "Isole Aland",
+      "ja": "オーランド諸島",
+      "nl": "Ålandeilanden",
+      "pt": "Alândia",
+      "ru": "Аландские острова",
+      "sk": "Alandy",
+      "es": "Alandia",
+      "fi": "Ahvenanmaa",
+      "et": "Ahvenamaa",
+      "zh": "奥兰群岛"
+    }
+  },
+  {
+    "Alpha2Code": "AZ",
+    "Alpha3Code": "AZE",
+    "Capital": "Baku",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "az",
+      "ru"
+    ],
+    "Translations": {
+      "en": "Azerbaijan",
+      "cs": "Ázerbájdžán",
+      "cy": "Aserbaijan",
+      "de": "Aserbaidschan",
+      "fr": "Azerbaïdjan",
+      "hr": "Azerbajdžan",
+      "it": "Azerbaijan",
+      "ja": "アゼルバイジャン",
+      "nl": "Azerbeidzjan",
+      "pt": "Azerbeijão",
+      "ru": "Азербайджан",
+      "sk": "AzerbajǇan",
+      "es": "Azerbaiyán",
+      "fi": "Azerbaidzan",
+      "et": "Aserbaidžaan",
+      "zh": "阿塞拜疆"
+    }
+  },
+  {
+    "Alpha2Code": "BA",
+    "Alpha3Code": "BIH",
+    "Capital": "Sarajevo",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "bs",
+      "hr",
+      "sr"
+    ],
+    "Translations": {
+      "en": "Bosnia and Herzegovina",
+      "cs": "Bosna a Hercegovina",
+      "cy": "Bosnia a Hercegovina",
+      "de": "Bosnien und Herzegowina",
+      "fr": "Bosnie-Herzégovine",
+      "hr": "Bosna i Hercegovina",
+      "it": "Bosnia ed Erzegovina",
+      "ja": "ボスニア・ヘルツェゴビナ",
+      "nl": "Bosnië en Herzegovina",
+      "pt": "Bósnia e Herzegovina",
+      "ru": "Босния и Герцеговина",
+      "sk": "Bosna a Hercegovina",
+      "es": "Bosnia y Herzegovina",
+      "fi": "Bosnia ja Hertsegovina",
+      "et": "Bosnia ja Hertsegoviina",
+      "zh": "波斯尼亚和黑塞哥维那"
+    }
+  },
+  {
+    "Alpha2Code": "BB",
+    "Alpha3Code": "BRB",
+    "Capital": "Bridgetown",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Barbados",
+      "cs": "Barbados",
+      "cy": "Barbados",
+      "de": "Barbados",
+      "fr": "Barbade",
+      "hr": "Barbados",
+      "it": "Barbados",
+      "ja": "バルバドス",
+      "nl": "Barbados",
+      "pt": "Barbados",
+      "ru": "Барбадос",
+      "sk": "Barbados",
+      "es": "Barbados",
+      "fi": "Barbados",
+      "et": "Barbados",
+      "zh": "巴巴多斯"
+    }
+  },
+  {
+    "Alpha2Code": "BD",
+    "Alpha3Code": "BGD",
+    "Capital": "Dhaka",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "bn"
+    ],
+    "Translations": {
+      "en": "Bangladesh",
+      "cs": "Bangladéš",
+      "cy": "Bangladesh",
+      "de": "Bangladesch",
+      "fr": "Bangladesh",
+      "hr": "Bangladeš",
+      "it": "Bangladesh",
+      "ja": "バングラデシュ",
+      "nl": "Bangladesh",
+      "pt": "Bangladesh",
+      "ru": "Бангладеш",
+      "sk": "Bangladéš",
+      "es": "Bangladesh",
+      "fi": "Bangladesh",
+      "et": "Bangladesh",
+      "zh": "孟加拉国"
+    }
+  },
+  {
+    "Alpha2Code": "BE",
+    "Alpha3Code": "BEL",
+    "Capital": "Brussels",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "de",
+      "fr",
+      "nl"
+    ],
+    "Translations": {
+      "en": "Belgium",
+      "cs": "Belgie",
+      "cy": "Gwlad Belg",
+      "de": "Belgien",
+      "fr": "Belgique",
+      "hr": "Belgija",
+      "it": "Belgio",
+      "ja": "ベルギー",
+      "nl": "België",
+      "pt": "Bélgica",
+      "ru": "Бельгия",
+      "sk": "Belgicko",
+      "es": "Bélgica",
+      "fi": "Belgia",
+      "et": "Belgia",
+      "zh": "比利时"
+    }
+  },
+  {
+    "Alpha2Code": "BF",
+    "Alpha3Code": "BFA",
+    "Capital": "Ouagadougou",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Burkina Faso",
+      "cs": "Burkina Faso",
+      "cy": "Bwrcina Ffaso",
+      "de": "Burkina Faso",
+      "fr": "Burkina Faso",
+      "hr": "Burkina Faso",
+      "it": "Burkina Faso",
+      "ja": "ブルキナファソ",
+      "nl": "Burkina Faso",
+      "pt": "Burkina Faso",
+      "ru": "Буркина-Фасо",
+      "sk": "Burkina Faso",
+      "es": "Burkina Faso",
+      "fi": "Burkina Faso",
+      "et": "Burkina Faso",
+      "zh": "布基纳法索"
+    }
+  },
+  {
+    "Alpha2Code": "BG",
+    "Alpha3Code": "BGR",
+    "Capital": "Sofia",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "bg"
+    ],
+    "Translations": {
+      "en": "Bulgaria",
+      "cs": "Bulharsko",
+      "cy": "Bwlgaria",
+      "de": "Bulgarien",
+      "fr": "Bulgarie",
+      "hr": "Bugarska",
+      "it": "Bulgaria",
+      "ja": "ブルガリア",
+      "nl": "Bulgarije",
+      "pt": "Bulgária",
+      "ru": "Болгария",
+      "sk": "Bulharsko",
+      "es": "Bulgaria",
+      "fi": "Bulgaria",
+      "et": "Bulgaaria",
+      "zh": "保加利亚"
+    }
+  },
+  {
+    "Alpha2Code": "BH",
+    "Alpha3Code": "BHR",
+    "Capital": "Manama",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Bahrain",
+      "cs": "Bahrajn",
+      "cy": "Bahrain",
+      "de": "Bahrain",
+      "fr": "Bahreïn",
+      "hr": "Bahrein",
+      "it": "Bahrein",
+      "ja": "バーレーン",
+      "nl": "Bahrein",
+      "pt": "Bahrein",
+      "ru": "Бахрейн",
+      "sk": "Bahrajn",
+      "es": "Bahrein",
+      "fi": "Bahrain",
+      "et": "Bahrein",
+      "zh": "巴林"
+    }
+  },
+  {
+    "Alpha2Code": "BI",
+    "Alpha3Code": "BDI",
+    "Capital": "Bujumbura",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "fr",
+      "rn"
+    ],
+    "Translations": {
+      "en": "Burundi",
+      "cs": "Burundi",
+      "cy": "Bwrwndi",
+      "de": "Burundi",
+      "fr": "Burundi",
+      "hr": "Burundi",
+      "it": "Burundi",
+      "ja": "ブルンジ",
+      "nl": "Burundi",
+      "pt": "Burundi",
+      "ru": "Бурунди",
+      "sk": "Burundi",
+      "es": "Burundi",
+      "fi": "Burundi",
+      "et": "Burundi",
+      "zh": "布隆迪"
+    }
+  },
+  {
+    "Alpha2Code": "BJ",
+    "Alpha3Code": "BEN",
+    "Capital": "Porto-Novo",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Benin",
+      "cs": "Benin",
+      "cy": "Benin",
+      "de": "Benin",
+      "fr": "Bénin",
+      "hr": "Benin",
+      "it": "Benin",
+      "ja": "ベナン",
+      "nl": "Benin",
+      "pt": "Benin",
+      "ru": "Бенин",
+      "sk": "Benin",
+      "es": "Benín",
+      "fi": "Benin",
+      "et": "Benin",
+      "zh": "贝宁"
+    }
+  },
+  {
+    "Alpha2Code": "BL",
+    "Alpha3Code": "BLM",
+    "Capital": "Gustavia",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Saint Barthélemy",
+      "cs": "Svatý Bartoloměj",
+      "de": "Saint-Barthélemy",
+      "fr": "Saint-Barthélemy",
+      "hr": "Saint Barthélemy",
+      "it": "Antille Francesi",
+      "ja": "サン・バルテルミー",
+      "nl": "Saint Barthélemy",
+      "pt": "São Bartolomeu",
+      "ru": "Сен-Бартелеми",
+      "sk": "Svätý Bartolomej",
+      "es": "San Bartolomé",
+      "fi": "Saint-Barthélemy",
+      "et": "Saint-Barthélemy",
+      "zh": "圣巴泰勒米"
+    }
+  },
+  {
+    "Alpha2Code": "BM",
+    "Alpha3Code": "BMU",
+    "Capital": "Hamilton",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Bermuda",
+      "cs": "Bermudy",
+      "cy": "Bermiwda",
+      "de": "Bermuda",
+      "fr": "Bermudes",
+      "hr": "Bermudi",
+      "it": "Bermuda",
+      "ja": "バミューダ",
+      "nl": "Bermuda",
+      "pt": "Bermudas",
+      "ru": "Бермудские Острова",
+      "sk": "Bermudy",
+      "es": "Bermudas",
+      "fi": "Bermuda",
+      "et": "Bermuda",
+      "zh": "百慕大"
+    }
+  },
+  {
+    "Alpha2Code": "BN",
+    "Alpha3Code": "BRN",
+    "Capital": "Bandar Seri Begawan",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "ms"
+    ],
+    "Translations": {
+      "en": "Brunei",
+      "cs": "Brunej",
+      "cy": "Brunei",
+      "de": "Brunei",
+      "fr": "Brunei",
+      "hr": "Brunej",
+      "it": "Brunei",
+      "ja": "ブルネイ・ダルサラーム",
+      "nl": "Brunei",
+      "pt": "Brunei",
+      "ru": "Бруней",
+      "sk": "Brunej",
+      "es": "Brunei",
+      "fi": "Brunei",
+      "et": "Brunei",
+      "zh": "文莱"
+    }
+  },
+  {
+    "Alpha2Code": "BO",
+    "Alpha3Code": "BOL",
+    "Capital": "Sucre",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "ay",
+      "gn",
+      "qu",
+      "es"
+    ],
+    "Translations": {
+      "en": "Bolivia",
+      "cs": "Bolívie",
+      "cy": "Bolifia",
+      "de": "Bolivien",
+      "fr": "Bolivie",
+      "hr": "Bolivija",
+      "it": "Bolivia",
+      "ja": "ボリビア多民族国",
+      "nl": "Bolivia",
+      "pt": "Bolívia",
+      "ru": "Боливия",
+      "sk": "Bolívia",
+      "es": "Bolivia",
+      "fi": "Bolivia",
+      "et": "Boliivia",
+      "zh": "玻利维亚"
+    }
+  },
+  {
+    "Alpha2Code": "BQ",
+    "Alpha3Code": "BES",
+    "Capital": null,
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en",
+      "nl",
+      "pap"
+    ],
+    "Translations": {
+      "en": "Caribbean Netherlands",
+      "cs": "Karibské Nizozemsko",
+      "de": "Karibische Niederlande",
+      "fr": "Pays-Bas caribéens",
+      "hr": "Bonaire, Sint Eustatius i Saba",
+      "it": "Paesi Bassi caraibici",
+      "ja": "ボネール、シント・ユースタティウスおよびサバ",
+      "nl": "Caribisch Nederland",
+      "pt": "Países Baixos Caribenhos",
+      "ru": "Карибские Нидерланды",
+      "sk": "Bonaire, Sint Eustatius a Saba",
+      "es": "Caribe Neerlandés",
+      "fi": "Bonaire, Sint Eustatius ja Saba",
+      "et": "Bonaire, Sint Eustatius ja Saba",
+      "zh": "荷蘭加勒比區"
+    }
+  },
+  {
+    "Alpha2Code": "BR",
+    "Alpha3Code": "BRA",
+    "Capital": "Brasília",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "pt"
+    ],
+    "Translations": {
+      "en": "Brazil",
+      "cs": "Brazílie",
+      "cy": "Brasil",
+      "de": "Brasilien",
+      "fr": "Brésil",
+      "hr": "Brazil",
+      "it": "Brasile",
+      "ja": "ブラジル",
+      "nl": "Brazilië",
+      "pt": "Brasil",
+      "ru": "Бразилия",
+      "sk": "Brazília",
+      "es": "Brasil",
+      "fi": "Brasilia",
+      "et": "Brasiilia",
+      "zh": "巴西"
+    }
+  },
+  {
+    "Alpha2Code": "BS",
+    "Alpha3Code": "BHS",
+    "Capital": "Nassau",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Bahamas",
+      "cs": "Bahamy",
+      "cy": "Bahamas",
+      "de": "Bahamas",
+      "fr": "Bahamas",
+      "hr": "Bahami",
+      "it": "Bahamas",
+      "ja": "バハマ",
+      "nl": "Bahama’s",
+      "pt": "Bahamas",
+      "ru": "Багамские Острова",
+      "sk": "Bahamy",
+      "es": "Bahamas",
+      "fi": "Bahamasaaret",
+      "et": "Bahama",
+      "zh": "巴哈马"
+    }
+  },
+  {
+    "Alpha2Code": "BT",
+    "Alpha3Code": "BTN",
+    "Capital": "Thimphu",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "dz"
+    ],
+    "Translations": {
+      "en": "Bhutan",
+      "cs": "Bhútán",
+      "cy": "Bhwtan",
+      "de": "Bhutan",
+      "fr": "Bhoutan",
+      "hr": "Butan",
+      "it": "Bhutan",
+      "ja": "ブータン",
+      "nl": "Bhutan",
+      "pt": "Butão",
+      "ru": "Бутан",
+      "sk": "Bhután",
+      "es": "Bután",
+      "fi": "Bhutan",
+      "et": "Bhutan",
+      "zh": "不丹"
+    }
+  },
+  {
+    "Alpha2Code": "BV",
+    "Alpha3Code": "BVT",
+    "Capital": "",
+    "Region": "Antarctic",
+    "Subregion": "",
+    "Languages": [
+      "no"
+    ],
+    "Translations": {
+      "en": "Bouvet Island",
+      "cs": "Bouvetův ostrov",
+      "de": "Bouvetinsel",
+      "fr": "Île Bouvet",
+      "hr": "Otok Bouvet",
+      "it": "Isola Bouvet",
+      "ja": "ブーベ島",
+      "nl": "Bouveteiland",
+      "pt": "Ilha Bouvet",
+      "ru": "Остров Буве",
+      "sk": "Bouvetov ostrov",
+      "es": "Isla Bouvet",
+      "fi": "Bouvet'nsaari",
+      "et": "Bouvet’ saar",
+      "zh": "布维岛"
+    }
+  },
+  {
+    "Alpha2Code": "BW",
+    "Alpha3Code": "BWA",
+    "Capital": "Gaborone",
+    "Region": "Africa",
+    "Subregion": "Southern Africa",
+    "Languages": [
+      "en",
+      "tn"
+    ],
+    "Translations": {
+      "en": "Botswana",
+      "cs": "Botswana",
+      "de": "Botswana",
+      "fr": "Botswana",
+      "hr": "Bocvana",
+      "it": "Botswana",
+      "ja": "ボツワナ",
+      "nl": "Botswana",
+      "pt": "Botswana",
+      "ru": "Ботсвана",
+      "sk": "Botswana",
+      "es": "Botswana",
+      "fi": "Botswana",
+      "et": "Botswana",
+      "zh": "博茨瓦纳"
+    }
+  },
+  {
+    "Alpha2Code": "BY",
+    "Alpha3Code": "BLR",
+    "Capital": "Minsk",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "be",
+      "ru"
+    ],
+    "Translations": {
+      "en": "Belarus",
+      "cs": "Bělorusko",
+      "cy": "Belarws",
+      "de": "Weißrussland",
+      "fr": "Biélorussie",
+      "hr": "Bjelorusija",
+      "it": "Bielorussia",
+      "ja": "ベラルーシ",
+      "nl": "Wit-Rusland",
+      "pt": "Bielorússia",
+      "ru": "Беларусь",
+      "sk": "Bielorusko",
+      "es": "Bielorrusia",
+      "fi": "Valko-Venäjä",
+      "et": "Valgevene",
+      "zh": "白俄罗斯"
+    }
+  },
+  {
+    "Alpha2Code": "BZ",
+    "Alpha3Code": "BLZ",
+    "Capital": "Belmopan",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "bjz",
+      "en",
+      "es"
+    ],
+    "Translations": {
+      "en": "Belize",
+      "cs": "Belize",
+      "cy": "Belîs",
+      "de": "Belize",
+      "fr": "Belize",
+      "hr": "Belize",
+      "it": "Belize",
+      "ja": "ベリーズ",
+      "nl": "Belize",
+      "pt": "Belize",
+      "ru": "Белиз",
+      "sk": "Belize",
+      "es": "Belice",
+      "fi": "Belize",
+      "et": "Belize",
+      "zh": "伯利兹"
+    }
+  },
+  {
+    "Alpha2Code": "CA",
+    "Alpha3Code": "CAN",
+    "Capital": "Ottawa",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "en",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Canada",
+      "cs": "Kanada",
+      "cy": "Canada",
+      "de": "Kanada",
+      "fr": "Canada",
+      "hr": "Kanada",
+      "it": "Canada",
+      "ja": "カナダ",
+      "nl": "Canada",
+      "pt": "Canadá",
+      "ru": "Канада",
+      "sk": "Kanada",
+      "es": "Canadá",
+      "fi": "Kanada",
+      "et": "Kanada",
+      "zh": "加拿大"
+    }
+  },
+  {
+    "Alpha2Code": "CC",
+    "Alpha3Code": "CCK",
+    "Capital": "West Island",
+    "Region": "Oceania",
+    "Subregion": "Australia and New Zealand",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Cocos (Keeling) Islands",
+      "cs": "Kokosové ostrovy",
+      "cy": "Ynysoedd Cocos",
+      "de": "Kokosinseln",
+      "fr": "Îles Cocos",
+      "hr": "Kokosovi Otoci",
+      "it": "Isole Cocos e Keeling",
+      "ja": "ココス（キーリング）諸島",
+      "nl": "Cocoseilanden",
+      "pt": "Ilhas Cocos (Keeling)",
+      "ru": "Кокосовые острова",
+      "sk": "Kokosové ostrovy",
+      "es": "Islas Cocos o Islas Keeling",
+      "fi": "Kookossaaret",
+      "et": "Kookossaared",
+      "zh": "科科斯"
+    }
+  },
+  {
+    "Alpha2Code": "CD",
+    "Alpha3Code": "COD",
+    "Capital": "Kinshasa",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "fr",
+      "kg",
+      "ln",
+      "lua",
+      "sw"
+    ],
+    "Translations": {
+      "en": "DR Congo",
+      "cs": "DR Kongo",
+      "cy": "Gweriniaeth Ddemocrataidd Congo",
+      "de": "Kongo (Dem. Rep.)",
+      "fr": "Congo (Rép. dém.)",
+      "hr": "Kongo, Demokratska Republika",
+      "it": "Congo (Rep. Dem.)",
+      "ja": "コンゴ民主共和国",
+      "nl": "Congo (DRC)",
+      "pt": "República Democrática do Congo",
+      "ru": "Демократическая Республика Конго",
+      "sk": "Kongo",
+      "es": "Congo (Rep. Dem.)",
+      "fi": "Kongon demokraattinen tasavalta",
+      "et": "Kongo DV",
+      "zh": "民主刚果"
+    }
+  },
+  {
+    "Alpha2Code": "CF",
+    "Alpha3Code": "CAF",
+    "Capital": "Bangui",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "fr",
+      "sg"
+    ],
+    "Translations": {
+      "en": "Central African Republic",
+      "cs": "Středoafrická republika",
+      "cy": "Gweriniaeth Canolbarth Affrica",
+      "de": "Zentralafrikanische Republik",
+      "fr": "République centrafricaine",
+      "hr": "Srednjoafrička Republika",
+      "it": "Repubblica Centrafricana",
+      "ja": "中央アフリカ共和国",
+      "nl": "Centraal-Afrikaanse Republiek",
+      "pt": "República Centro-Africana",
+      "ru": "Центральноафриканская Республика",
+      "sk": "Stredoafrická republika",
+      "es": "República Centroafricana",
+      "fi": "Keski-Afrikan tasavalta",
+      "et": "Kesk-Aafrika Vabariik",
+      "zh": "中非共和国"
+    }
+  },
+  {
+    "Alpha2Code": "CG",
+    "Alpha3Code": "COG",
+    "Capital": "Brazzaville",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "fr",
+      "kg",
+      "ln"
+    ],
+    "Translations": {
+      "en": "Republic of the Congo",
+      "cs": "Kongo",
+      "cy": "Gweriniaeth y Congo",
+      "de": "Kongo",
+      "fr": "Congo",
+      "hr": "Kongo",
+      "it": "Congo",
+      "ja": "コンゴ共和国",
+      "nl": "Congo",
+      "pt": "Congo",
+      "ru": "Республика Конго",
+      "sk": "Kongo",
+      "es": "Congo",
+      "fi": "Kongo-Brazzaville",
+      "et": "Kongo Vabariik",
+      "zh": "刚果"
+    }
+  },
+  {
+    "Alpha2Code": "CH",
+    "Alpha3Code": "CHE",
+    "Capital": "Bern",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "fr",
+      "gsw",
+      "it",
+      "rm"
+    ],
+    "Translations": {
+      "en": "Switzerland",
+      "cs": "Švýcarsko",
+      "de": "Schweiz",
+      "fr": "Suisse",
+      "hr": "Švicarska",
+      "it": "Svizzera",
+      "ja": "スイス",
+      "nl": "Zwitserland",
+      "pt": "Suíça",
+      "ru": "Швейцария",
+      "sk": "Švajčiarsko",
+      "es": "Suiza",
+      "fi": "Sveitsi",
+      "et": "Šveits",
+      "zh": "瑞士"
+    }
+  },
+  {
+    "Alpha2Code": "CI",
+    "Alpha3Code": "CIV",
+    "Capital": "Yamoussoukro",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Ivory Coast",
+      "cs": "Pobřeží slonoviny",
+      "de": "Elfenbeinküste",
+      "fr": "Côte d'Ivoire",
+      "hr": "Obala Bjelokosti",
+      "it": "Costa d'Avorio",
+      "ja": "コートジボワール",
+      "nl": "Ivoorkust",
+      "pt": "Costa do Marfim",
+      "ru": "Кот-д’Ивуар",
+      "sk": "Pobržie Slonoviny",
+      "es": "Costa de Marfil",
+      "fi": "Norsunluurannikko",
+      "et": "Elevandiluurannik",
+      "zh": "科特迪瓦"
+    }
+  },
+  {
+    "Alpha2Code": "CK",
+    "Alpha3Code": "COK",
+    "Capital": "Avarua",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "rar"
+    ],
+    "Translations": {
+      "en": "Cook Islands",
+      "cs": "Cookovy ostrovy",
+      "cy": "Ynysoedd Cook",
+      "de": "Cookinseln",
+      "fr": "Îles Cook",
+      "hr": "Cookovo Otočje",
+      "it": "Isole Cook",
+      "ja": "クック諸島",
+      "nl": "Cookeilanden",
+      "pt": "Ilhas Cook",
+      "ru": "Острова Кука",
+      "sk": "Cookove ostrovy",
+      "es": "Islas Cook",
+      "fi": "Cookinsaaret",
+      "et": "Cooki saared",
+      "zh": "库克群岛"
+    }
+  },
+  {
+    "Alpha2Code": "CL",
+    "Alpha3Code": "CHL",
+    "Capital": "Santiago",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Chile",
+      "cs": "Chile",
+      "cy": "Chile",
+      "de": "Chile",
+      "fr": "Chili",
+      "hr": "Čile",
+      "it": "Cile",
+      "ja": "チリ",
+      "nl": "Chili",
+      "pt": "Chile",
+      "ru": "Чили",
+      "sk": "Čile",
+      "es": "Chile",
+      "fi": "Chile",
+      "et": "Tšiili",
+      "zh": "智利"
+    }
+  },
+  {
+    "Alpha2Code": "CM",
+    "Alpha3Code": "CMR",
+    "Capital": "Yaoundé",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "en",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Cameroon",
+      "cs": "Kamerun",
+      "cy": "Camerŵn",
+      "de": "Kamerun",
+      "fr": "Cameroun",
+      "hr": "Kamerun",
+      "it": "Camerun",
+      "ja": "カメルーン",
+      "nl": "Kameroen",
+      "pt": "Camarões",
+      "ru": "Камерун",
+      "sk": "Kamerun",
+      "es": "Camerún",
+      "fi": "Kamerun",
+      "et": "Kamerun",
+      "zh": "喀麦隆"
+    }
+  },
+  {
+    "Alpha2Code": "CN",
+    "Alpha3Code": "CHN",
+    "Capital": "Beijing",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "zh"
+    ],
+    "Translations": {
+      "en": "China",
+      "cs": "Čína",
+      "cy": "Tsieina",
+      "de": "China",
+      "fr": "Chine",
+      "hr": "Kina",
+      "it": "Cina",
+      "ja": "中国",
+      "nl": "China",
+      "pt": "China",
+      "ru": "Китай",
+      "sk": "Čína",
+      "es": "China",
+      "fi": "Kiina",
+      "et": "Hiina"
+    }
+  },
+  {
+    "Alpha2Code": "CO",
+    "Alpha3Code": "COL",
+    "Capital": "Bogotá",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Colombia",
+      "cs": "Kolumbie",
+      "cy": "Colombia",
+      "de": "Kolumbien",
+      "fr": "Colombie",
+      "hr": "Kolumbija",
+      "it": "Colombia",
+      "ja": "コロンビア",
+      "nl": "Colombia",
+      "pt": "Colômbia",
+      "ru": "Колумбия",
+      "sk": "Kolumbia",
+      "es": "Colombia",
+      "fi": "Kolumbia",
+      "et": "Colombia",
+      "zh": "哥伦比亚"
+    }
+  },
+  {
+    "Alpha2Code": "CR",
+    "Alpha3Code": "CRI",
+    "Capital": "San José",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Costa Rica",
+      "cs": "Kostarika",
+      "cy": "Costa Rica",
+      "de": "Costa Rica",
+      "fr": "Costa Rica",
+      "hr": "Kostarika",
+      "it": "Costa Rica",
+      "ja": "コスタリカ",
+      "nl": "Costa Rica",
+      "pt": "Costa Rica",
+      "ru": "Коста-Рика",
+      "sk": "Kostarika",
+      "es": "Costa Rica",
+      "fi": "Costa Rica",
+      "et": "Costa Rica",
+      "zh": "哥斯达黎加"
+    }
+  },
+  {
+    "Alpha2Code": "CU",
+    "Alpha3Code": "CUB",
+    "Capital": "Havana",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Cuba",
+      "cs": "Kuba",
+      "cy": "Ciwba",
+      "de": "Kuba",
+      "fr": "Cuba",
+      "hr": "Kuba",
+      "it": "Cuba",
+      "ja": "キューバ",
+      "nl": "Cuba",
+      "pt": "Cuba",
+      "ru": "Куба",
+      "sk": "Kuba",
+      "es": "Cuba",
+      "fi": "Kuuba",
+      "et": "Kuuba",
+      "zh": "古巴"
+    }
+  },
+  {
+    "Alpha2Code": "CV",
+    "Alpha3Code": "CPV",
+    "Capital": "Praia",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "pt"
+    ],
+    "Translations": {
+      "en": "Cape Verde",
+      "cs": "Kapverdy",
+      "cy": "Penrhyn Verde",
+      "de": "Kap Verde",
+      "fr": "Îles du Cap-Vert",
+      "hr": "Zelenortska Republika",
+      "it": "Capo Verde",
+      "ja": "カーボベルデ",
+      "nl": "Kaapverdië",
+      "pt": "Cabo Verde",
+      "ru": "Кабо-Верде",
+      "sk": "Kapverdy",
+      "es": "Cabo Verde",
+      "fi": "Kap Verde",
+      "et": "Roheneemesaared",
+      "zh": "佛得角"
+    }
+  },
+  {
+    "Alpha2Code": "CW",
+    "Alpha3Code": "CUW",
+    "Capital": "Willemstad",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en",
+      "nl",
+      "pap"
+    ],
+    "Translations": {
+      "en": "Curaçao",
+      "cs": "Curaçao",
+      "de": "Curaçao",
+      "fr": "Curaçao",
+      "nl": "Curaçao",
+      "pt": "ilha da Curação",
+      "ru": "Кюрасао",
+      "sk": "Curacao",
+      "es": "Curazao",
+      "fi": "Curaçao",
+      "et": "Curaçao",
+      "zh": "库拉索"
+    }
+  },
+  {
+    "Alpha2Code": "CX",
+    "Alpha3Code": "CXR",
+    "Capital": "Flying Fish Cove",
+    "Region": "Oceania",
+    "Subregion": "Australia and New Zealand",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Christmas Island",
+      "cs": "Vánoční ostrov",
+      "cy": "Ynys y Nadolig",
+      "de": "Weihnachtsinsel",
+      "fr": "Île Christmas",
+      "hr": "Božićni otok",
+      "it": "Isola di Natale",
+      "ja": "クリスマス島",
+      "nl": "Christmaseiland",
+      "pt": "Ilha do Natal",
+      "ru": "Остров Рождества",
+      "sk": "Vianočnú ostrov",
+      "es": "Isla de Navidad",
+      "fi": "Joulusaari",
+      "et": "Jõulusaar",
+      "zh": "圣诞岛"
+    }
+  },
+  {
+    "Alpha2Code": "CY",
+    "Alpha3Code": "CYP",
+    "Capital": "Nicosia",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "el",
+      "tr"
+    ],
+    "Translations": {
+      "en": "Cyprus",
+      "cs": "Kypr",
+      "cy": "Cyprus",
+      "de": "Zypern",
+      "fr": "Chypre",
+      "hr": "Cipar",
+      "it": "Cipro",
+      "ja": "キプロス",
+      "nl": "Cyprus",
+      "pt": "Chipre",
+      "ru": "Кипр",
+      "sk": "Cyprus",
+      "es": "Chipre",
+      "fi": "Kypros",
+      "et": "Küpros",
+      "zh": "塞浦路斯"
+    }
+  },
+  {
+    "Alpha2Code": "CZ",
+    "Alpha3Code": "CZE",
+    "Capital": "Prague",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "cs",
+      "sk"
+    ],
+    "Translations": {
+      "en": "Czechia",
+      "cs": "Česko",
+      "cy": "Y Weriniaeth Tsiec",
+      "de": "Tschechien",
+      "fr": "Tchéquie",
+      "hr": "Češka",
+      "it": "Cechia",
+      "ja": "チェコ",
+      "nl": "Tsjechië",
+      "pt": "Chéquia",
+      "ru": "Чехия",
+      "sk": "Česko",
+      "es": "Chequia",
+      "fi": "Tšekki",
+      "et": "Tšehhi",
+      "zh": "捷克"
+    }
+  },
+  {
+    "Alpha2Code": "DE",
+    "Alpha3Code": "DEU",
+    "Capital": "Berlin",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "de"
+    ],
+    "Translations": {
+      "en": "Germany",
+      "cs": "Německo",
+      "de": "Deutschland",
+      "fr": "Allemagne",
+      "hr": "Njemačka",
+      "it": "Germania",
+      "ja": "ドイツ",
+      "nl": "Duitsland",
+      "pt": "Alemanha",
+      "ru": "Германия",
+      "sk": "Nemecko",
+      "es": "Alemania",
+      "fi": "Saksa",
+      "et": "Saksamaa",
+      "zh": "德国"
+    }
+  },
+  {
+    "Alpha2Code": "DJ",
+    "Alpha3Code": "DJI",
+    "Capital": "Djibouti",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "ar",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Djibouti",
+      "cs": "Džibutsko",
+      "cy": "Jibwti",
+      "de": "Dschibuti",
+      "fr": "Djibouti",
+      "hr": "Džibuti",
+      "it": "Gibuti",
+      "ja": "ジブチ",
+      "nl": "Djibouti",
+      "pt": "Djibouti",
+      "ru": "Джибути",
+      "sk": "ǅibutsko",
+      "es": "Djibouti",
+      "fi": "Dijibouti",
+      "et": "Djibouti",
+      "zh": "吉布提"
+    }
+  },
+  {
+    "Alpha2Code": "DK",
+    "Alpha3Code": "DNK",
+    "Capital": "Copenhagen",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "da"
+    ],
+    "Translations": {
+      "en": "Denmark",
+      "cs": "Dánsko",
+      "cy": "Denmarc",
+      "de": "Dänemark",
+      "fr": "Danemark",
+      "hr": "Danska",
+      "it": "Danimarca",
+      "ja": "デンマーク",
+      "nl": "Denemarken",
+      "pt": "Dinamarca",
+      "ru": "Дания",
+      "sk": "Dánsko",
+      "es": "Dinamarca",
+      "fi": "Tanska",
+      "et": "Taani",
+      "zh": "丹麦"
+    }
+  },
+  {
+    "Alpha2Code": "DM",
+    "Alpha3Code": "DMA",
+    "Capital": "Roseau",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Dominica",
+      "cs": "Dominika",
+      "cy": "Dominica",
+      "de": "Dominica",
+      "fr": "Dominique",
+      "hr": "Dominika",
+      "it": "Dominica",
+      "ja": "ドミニカ国",
+      "nl": "Dominica",
+      "pt": "Dominica",
+      "ru": "Доминика",
+      "sk": "Dominika",
+      "es": "Dominica",
+      "fi": "Dominica",
+      "et": "Dominica",
+      "zh": "多米尼加"
+    }
+  },
+  {
+    "Alpha2Code": "DO",
+    "Alpha3Code": "DOM",
+    "Capital": "Santo Domingo",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Dominican Republic",
+      "cs": "Dominikánská republika",
+      "cy": "Gweriniaeth Dominica",
+      "de": "Dominikanische Republik",
+      "fr": "République dominicaine",
+      "hr": "Dominikanska Republika",
+      "it": "Repubblica Dominicana",
+      "ja": "ドミニカ共和国",
+      "nl": "Dominicaanse Republiek",
+      "pt": "República Dominicana",
+      "ru": "Доминиканская Республика",
+      "sk": "Dominikánska republika",
+      "es": "República Dominicana",
+      "fi": "Dominikaaninen tasavalta",
+      "et": "Dominikaani Vabariik",
+      "zh": "多明尼加"
+    }
+  },
+  {
+    "Alpha2Code": "DZ",
+    "Alpha3Code": "DZA",
+    "Capital": "Algiers",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Algeria",
+      "cs": "Alžírsko",
+      "cy": "Algeria",
+      "de": "Algerien",
+      "fr": "Algérie",
+      "hr": "Alžir",
+      "it": "Algeria",
+      "ja": "アルジェリア",
+      "nl": "Algerije",
+      "pt": "Argélia",
+      "ru": "Алжир",
+      "sk": "Alžírsko",
+      "es": "Argelia",
+      "fi": "Algeria",
+      "et": "Alžeeria",
+      "zh": "阿尔及利亚"
+    }
+  },
+  {
+    "Alpha2Code": "EC",
+    "Alpha3Code": "ECU",
+    "Capital": "Quito",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Ecuador",
+      "cs": "Ekvádor",
+      "cy": "Ecwador",
+      "de": "Ecuador",
+      "fr": "Équateur",
+      "hr": "Ekvador",
+      "it": "Ecuador",
+      "ja": "エクアドル",
+      "nl": "Ecuador",
+      "pt": "Equador",
+      "ru": "Эквадор",
+      "sk": "Ekvádor",
+      "es": "Ecuador",
+      "fi": "Ecuador",
+      "et": "Ecuador",
+      "zh": "厄瓜多尔"
+    }
+  },
+  {
+    "Alpha2Code": "EE",
+    "Alpha3Code": "EST",
+    "Capital": "Tallinn",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "et"
+    ],
+    "Translations": {
+      "en": "Estonia",
+      "cs": "Estonsko",
+      "cy": "Estonia",
+      "de": "Estland",
+      "fr": "Estonie",
+      "hr": "Estonija",
+      "it": "Estonia",
+      "ja": "エストニア",
+      "nl": "Estland",
+      "pt": "Estónia",
+      "ru": "Эстония",
+      "sk": "Estónsko",
+      "es": "Estonia",
+      "fi": "Viro",
+      "et": "Eesti",
+      "zh": "爱沙尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "EG",
+    "Alpha3Code": "EGY",
+    "Capital": "Cairo",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Egypt",
+      "cs": "Egypt",
+      "cy": "Yr Aifft",
+      "de": "Ägypten",
+      "fr": "Égypte",
+      "hr": "Egipat",
+      "it": "Egitto",
+      "ja": "エジプト",
+      "nl": "Egypte",
+      "pt": "Egito",
+      "ru": "Египет",
+      "sk": "Egypt",
+      "es": "Egipto",
+      "fi": "Egypti",
+      "et": "Egiptus",
+      "zh": "埃及"
+    }
+  },
+  {
+    "Alpha2Code": "EH",
+    "Alpha3Code": "ESH",
+    "Capital": "El Aaiún",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ber",
+      "mey",
+      "es"
+    ],
+    "Translations": {
+      "en": "Western Sahara",
+      "cs": "Západní Sahara",
+      "de": "Westsahara",
+      "fr": "Sahara Occidental",
+      "hr": "Zapadna Sahara",
+      "it": "Sahara Occidentale",
+      "ja": "西サハラ",
+      "nl": "Westelijke Sahara",
+      "pt": "Saara Ocidental",
+      "ru": "Западная Сахара",
+      "sk": "Západná Sahara",
+      "es": "Sahara Occidental",
+      "fi": "Länsi-Sahara",
+      "et": "Lääne-Sahara",
+      "zh": "西撒哈拉"
+    }
+  },
+  {
+    "Alpha2Code": "ER",
+    "Alpha3Code": "ERI",
+    "Capital": "Asmara",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "ar",
+      "en",
+      "ti"
+    ],
+    "Translations": {
+      "en": "Eritrea",
+      "cs": "Eritrea",
+      "cy": "Eritrea",
+      "de": "Eritrea",
+      "fr": "Érythrée",
+      "hr": "Eritreja",
+      "it": "Eritrea",
+      "ja": "エリトリア",
+      "nl": "Eritrea",
+      "pt": "Eritreia",
+      "ru": "Эритрея",
+      "sk": "Eritrea",
+      "es": "Eritrea",
+      "fi": "Eritrea",
+      "et": "Eritrea",
+      "zh": "厄立特里亚"
+    }
+  },
+  {
+    "Alpha2Code": "ES",
+    "Alpha3Code": "ESP",
+    "Capital": "Madrid",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Spain",
+      "cs": "Španělsko",
+      "de": "Spanien",
+      "fr": "Espagne",
+      "hr": "Španjolska",
+      "it": "Spagna",
+      "ja": "スペイン",
+      "nl": "Spanje",
+      "pt": "Espanha",
+      "ru": "Испания",
+      "sk": "Španielsko",
+      "es": "España",
+      "fi": "Espanja",
+      "et": "Hispaania",
+      "zh": "西班牙"
+    }
+  },
+  {
+    "Alpha2Code": "ET",
+    "Alpha3Code": "ETH",
+    "Capital": "Addis Ababa",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "am"
+    ],
+    "Translations": {
+      "en": "Ethiopia",
+      "cs": "Etiopie",
+      "cy": "Ethiopia",
+      "de": "Äthiopien",
+      "fr": "Éthiopie",
+      "hr": "Etiopija",
+      "it": "Etiopia",
+      "ja": "エチオピア",
+      "nl": "Ethiopië",
+      "pt": "Etiópia",
+      "ru": "Эфиопия",
+      "sk": "Etiópia",
+      "es": "Etiopía",
+      "fi": "Etiopia",
+      "et": "Etioopia",
+      "zh": "埃塞俄比亚"
+    }
+  },
+  {
+    "Alpha2Code": "FI",
+    "Alpha3Code": "FIN",
+    "Capital": "Helsinki",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "fi",
+      "sv"
+    ],
+    "Translations": {
+      "en": "Finland",
+      "cs": "Finsko",
+      "de": "Finnland",
+      "fr": "Finlande",
+      "hr": "Finska",
+      "it": "Finlandia",
+      "ja": "フィンランド",
+      "nl": "Finland",
+      "pt": "Finlândia",
+      "ru": "Финляндия",
+      "sk": "Fínsko",
+      "es": "Finlandia",
+      "fi": "Suomi",
+      "et": "Soome",
+      "zh": "芬兰"
+    }
+  },
+  {
+    "Alpha2Code": "FJ",
+    "Alpha3Code": "FJI",
+    "Capital": "Suva",
+    "Region": "Oceania",
+    "Subregion": "Melanesia",
+    "Languages": [
+      "en",
+      "fj",
+      "hif"
+    ],
+    "Translations": {
+      "en": "Fiji",
+      "cs": "Fidži",
+      "de": "Fidschi",
+      "fr": "Fidji",
+      "hr": "Fiđi",
+      "it": "Figi",
+      "ja": "フィジー",
+      "nl": "Fiji",
+      "pt": "Fiji",
+      "ru": "Фиджи",
+      "sk": "Fiǆi",
+      "es": "Fiyi",
+      "fi": "Fidži",
+      "et": "Fidži",
+      "zh": "斐济"
+    }
+  },
+  {
+    "Alpha2Code": "FK",
+    "Alpha3Code": "FLK",
+    "Capital": "Stanley",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Falkland Islands",
+      "cs": "Falklandy",
+      "de": "Falklandinseln",
+      "fr": "Îles Malouines",
+      "hr": "Falklandski Otoci",
+      "it": "Isole Falkland o Isole Malvine",
+      "ja": "フォークランド（マルビナス）諸島",
+      "nl": "Falklandeilanden",
+      "pt": "Ilhas Malvinas",
+      "ru": "Фолклендские острова",
+      "sk": "Falklandy",
+      "es": "Islas Malvinas",
+      "fi": "Falkandinsaaret",
+      "et": "Falklandi saared",
+      "zh": "福克兰群岛"
+    }
+  },
+  {
+    "Alpha2Code": "FM",
+    "Alpha3Code": "FSM",
+    "Capital": "Palikir",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Micronesia",
+      "cs": "Mikronésie",
+      "de": "Mikronesien",
+      "fr": "Micronésie",
+      "hr": "Mikronezija",
+      "it": "Micronesia",
+      "ja": "ミクロネシア連邦",
+      "nl": "Micronesië",
+      "pt": "Micronésia",
+      "ru": "Федеративные Штаты Микронезии",
+      "sk": "Mikronézia",
+      "es": "Micronesia",
+      "fi": "Mikronesia",
+      "et": "Mikroneesia",
+      "zh": "密克罗尼西亚"
+    }
+  },
+  {
+    "Alpha2Code": "FO",
+    "Alpha3Code": "FRO",
+    "Capital": "Tórshavn",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "da",
+      "fo"
+    ],
+    "Translations": {
+      "en": "Faroe Islands",
+      "cs": "Faerské ostrovy",
+      "de": "Färöer-Inseln",
+      "fr": "Îles Féroé",
+      "hr": "Farski Otoci",
+      "it": "Isole Far Oer",
+      "ja": "フェロー諸島",
+      "nl": "Faeröer",
+      "pt": "Ilhas Faroé",
+      "ru": "Фарерские острова",
+      "sk": "Faerské ostrovy",
+      "es": "Islas Faroe",
+      "fi": "Färsaaret",
+      "et": "Fääri saared",
+      "zh": "法罗群岛"
+    }
+  },
+  {
+    "Alpha2Code": "FR",
+    "Alpha3Code": "FRA",
+    "Capital": "Paris",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "France",
+      "cs": "Francie",
+      "de": "Frankreich",
+      "fr": "France",
+      "hr": "Francuska",
+      "it": "Francia",
+      "ja": "フランス",
+      "nl": "Frankrijk",
+      "pt": "França",
+      "ru": "Франция",
+      "sk": "Francúzsko",
+      "es": "Francia",
+      "fi": "Ranska",
+      "et": "Prantsusmaa",
+      "zh": "法国"
+    }
+  },
+  {
+    "Alpha2Code": "GA",
+    "Alpha3Code": "GAB",
+    "Capital": "Libreville",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Gabon",
+      "cs": "Gabon",
+      "de": "Gabun",
+      "fr": "Gabon",
+      "hr": "Gabon",
+      "it": "Gabon",
+      "ja": "ガボン",
+      "nl": "Gabon",
+      "pt": "Gabão",
+      "ru": "Габон",
+      "sk": "Gabon",
+      "es": "Gabón",
+      "fi": "Gabon",
+      "et": "Gabon",
+      "zh": "加蓬"
+    }
+  },
+  {
+    "Alpha2Code": "GB",
+    "Alpha3Code": "GBR",
+    "Capital": "London",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "United Kingdom",
+      "cs": "Spojené království",
+      "de": "Vereinigtes Königreich",
+      "fr": "Royaume-Uni",
+      "hr": "Ujedinjeno Kraljevstvo",
+      "it": "Regno Unito",
+      "ja": "イギリス",
+      "nl": "Verenigd Koninkrijk",
+      "pt": "Reino Unido",
+      "ru": "Великобритания",
+      "sk": "Veľká Británia (Spojené kráľovstvo)",
+      "es": "Reino Unido",
+      "fi": "Yhdistynyt kuningaskunta",
+      "et": "Suurbritannia",
+      "zh": "英国"
+    }
+  },
+  {
+    "Alpha2Code": "GD",
+    "Alpha3Code": "GRD",
+    "Capital": "St. George's",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Grenada",
+      "cs": "Grenada",
+      "de": "Grenada",
+      "fr": "Grenade",
+      "hr": "Grenada",
+      "it": "Grenada",
+      "ja": "グレナダ",
+      "nl": "Grenada",
+      "pt": "Granada",
+      "ru": "Гренада",
+      "sk": "Grenada",
+      "es": "Grenada",
+      "fi": "Grenada",
+      "et": "Grenada",
+      "zh": "格林纳达"
+    }
+  },
+  {
+    "Alpha2Code": "GE",
+    "Alpha3Code": "GEO",
+    "Capital": "Tbilisi",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ka"
+    ],
+    "Translations": {
+      "en": "Georgia",
+      "cs": "Gruzie",
+      "de": "Georgien",
+      "fr": "Géorgie",
+      "hr": "Gruzija",
+      "it": "Georgia",
+      "ja": "グルジア",
+      "nl": "Georgië",
+      "pt": "Geórgia",
+      "ru": "Грузия",
+      "sk": "Gruzínsko",
+      "es": "Georgia",
+      "fi": "Georgia",
+      "et": "Gruusia",
+      "zh": "格鲁吉亚"
+    }
+  },
+  {
+    "Alpha2Code": "GF",
+    "Alpha3Code": "GUF",
+    "Capital": "Cayenne",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "French Guiana",
+      "cs": "Francouzská Guyana",
+      "de": "Französisch Guyana",
+      "fr": "Guyane",
+      "hr": "Francuska Gvajana",
+      "it": "Guyana francese",
+      "ja": "フランス領ギアナ",
+      "nl": "Frans-Guyana",
+      "pt": "Guiana Francesa",
+      "ru": "Французская Гвиана",
+      "sk": "Guyana",
+      "es": "Guayana Francesa",
+      "fi": "Ranskan Guayana",
+      "et": "Prantsuse Guajaana",
+      "zh": "法属圭亚那"
+    }
+  },
+  {
+    "Alpha2Code": "GG",
+    "Alpha3Code": "GGY",
+    "Capital": "St. Peter Port",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "en",
+      "fr",
+      "nfr"
+    ],
+    "Translations": {
+      "en": "Guernsey",
+      "cs": "Guernsey",
+      "de": "Guernsey",
+      "fr": "Guernesey",
+      "hr": "Guernsey",
+      "it": "Guernsey",
+      "ja": "ガーンジー",
+      "nl": "Guernsey",
+      "pt": "Guernsey",
+      "ru": "Гернси",
+      "sk": "Guernsey",
+      "es": "Guernsey",
+      "fi": "Guernsey",
+      "et": "Guernsey",
+      "zh": "根西岛"
+    }
+  },
+  {
+    "Alpha2Code": "GH",
+    "Alpha3Code": "GHA",
+    "Capital": "Accra",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Ghana",
+      "cs": "Ghana",
+      "de": "Ghana",
+      "fr": "Ghana",
+      "hr": "Gana",
+      "it": "Ghana",
+      "ja": "ガーナ",
+      "nl": "Ghana",
+      "pt": "Gana",
+      "ru": "Гана",
+      "sk": "Ghana",
+      "es": "Ghana",
+      "fi": "Ghana",
+      "et": "Ghana",
+      "zh": "加纳"
+    }
+  },
+  {
+    "Alpha2Code": "GI",
+    "Alpha3Code": "GIB",
+    "Capital": "Gibraltar",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Gibraltar",
+      "cs": "Gibraltar",
+      "de": "Gibraltar",
+      "fr": "Gibraltar",
+      "hr": "Gibraltar",
+      "it": "Gibilterra",
+      "ja": "ジブラルタル",
+      "nl": "Gibraltar",
+      "pt": "Gibraltar",
+      "ru": "Гибралтар",
+      "sk": "Gibraltár",
+      "es": "Gibraltar",
+      "fi": "Gibraltar",
+      "et": "Gibraltar",
+      "zh": "直布罗陀"
+    }
+  },
+  {
+    "Alpha2Code": "GL",
+    "Alpha3Code": "GRL",
+    "Capital": "Nuuk",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "kl"
+    ],
+    "Translations": {
+      "en": "Greenland",
+      "cs": "Grónsko",
+      "de": "Grönland",
+      "fr": "Groenland",
+      "hr": "Grenland",
+      "it": "Groenlandia",
+      "ja": "グリーンランド",
+      "nl": "Groenland",
+      "pt": "Gronelândia",
+      "ru": "Гренландия",
+      "sk": "Grónsko",
+      "es": "Groenlandia",
+      "fi": "Groönlanti",
+      "et": "Gröönimaa",
+      "zh": "格陵兰"
+    }
+  },
+  {
+    "Alpha2Code": "GM",
+    "Alpha3Code": "GMB",
+    "Capital": "Banjul",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Gambia",
+      "cs": "Gambie",
+      "de": "Gambia",
+      "fr": "Gambie",
+      "hr": "Gambija",
+      "it": "Gambia",
+      "ja": "ガンビア",
+      "nl": "Gambia",
+      "pt": "Gâmbia",
+      "ru": "Гамбия",
+      "sk": "Gambia",
+      "es": "Gambia",
+      "fi": "Gambia",
+      "et": "Gambia",
+      "zh": "冈比亚"
+    }
+  },
+  {
+    "Alpha2Code": "GN",
+    "Alpha3Code": "GIN",
+    "Capital": "Conakry",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Guinea",
+      "cs": "Guinea",
+      "de": "Guinea",
+      "fr": "Guinée",
+      "hr": "Gvineja",
+      "it": "Guinea",
+      "ja": "ギニア",
+      "nl": "Guinee",
+      "pt": "Guiné",
+      "ru": "Гвинея",
+      "sk": "Guinea",
+      "es": "Guinea",
+      "fi": "Guinea",
+      "et": "Guinea",
+      "zh": "几内亚"
+    }
+  },
+  {
+    "Alpha2Code": "GP",
+    "Alpha3Code": "GLP",
+    "Capital": "Basse-Terre",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Guadeloupe",
+      "cs": "Guadeloupe",
+      "de": "Guadeloupe",
+      "fr": "Guadeloupe",
+      "hr": "Gvadalupa",
+      "it": "Guadeloupa",
+      "ja": "グアドループ",
+      "nl": "Guadeloupe",
+      "pt": "Guadalupe",
+      "ru": "Гваделупа",
+      "sk": "Guadeloupe",
+      "es": "Guadalupe",
+      "fi": "Guadeloupe",
+      "et": "Guadeloupe",
+      "zh": "瓜德罗普岛"
+    }
+  },
+  {
+    "Alpha2Code": "GQ",
+    "Alpha3Code": "GNQ",
+    "Capital": "Malabo",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "fr",
+      "pt",
+      "es"
+    ],
+    "Translations": {
+      "en": "Equatorial Guinea",
+      "cs": "Rovníková Guinea",
+      "cy": "Gini Gyhydeddol",
+      "de": "Äquatorialguinea",
+      "fr": "Guinée équatoriale",
+      "hr": "Ekvatorijalna Gvineja",
+      "it": "Guinea Equatoriale",
+      "ja": "赤道ギニア",
+      "nl": "Equatoriaal-Guinea",
+      "pt": "Guiné Equatorial",
+      "ru": "Экваториальная Гвинея",
+      "sk": "Rovníková Guinea",
+      "es": "Guinea Ecuatorial",
+      "fi": "Päiväntasaajan Guinea",
+      "et": "Ekvatoriaal-Guinea",
+      "zh": "赤道几内亚"
+    }
+  },
+  {
+    "Alpha2Code": "GR",
+    "Alpha3Code": "GRC",
+    "Capital": "Athens",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "el"
+    ],
+    "Translations": {
+      "en": "Greece",
+      "cs": "Řecko",
+      "de": "Griechenland",
+      "fr": "Grèce",
+      "hr": "Grčka",
+      "it": "Grecia",
+      "ja": "ギリシャ",
+      "nl": "Griekenland",
+      "pt": "Grécia",
+      "ru": "Греция",
+      "sk": "Greécko",
+      "es": "Grecia",
+      "fi": "Kreikka",
+      "et": "Kreeka",
+      "zh": "希腊"
+    }
+  },
+  {
+    "Alpha2Code": "GS",
+    "Alpha3Code": "SGS",
+    "Capital": "King Edward Point",
+    "Region": "Antarctic",
+    "Subregion": "",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "South Georgia",
+      "cs": "Jižní Georgie a Jižní Sandwichovy ostrovy",
+      "de": "Südgeorgien und die Südlichen Sandwichinseln",
+      "fr": "Géorgie du Sud-et-les Îles Sandwich du Sud",
+      "hr": "Južna Georgija i otočje Južni Sandwich",
+      "it": "Georgia del Sud e Isole Sandwich Meridionali",
+      "ja": "サウスジョージア・サウスサンドウィッチ諸島",
+      "nl": "Zuid-Georgia en Zuidelijke Sandwicheilanden",
+      "pt": "Ilhas Geórgia do Sul e Sandwich do Sul",
+      "ru": "Южная Георгия и Южные Сандвичевы острова",
+      "sk": "Južná Georgia a Južné Sandwichove ostrovy",
+      "es": "Islas Georgias del Sur y Sandwich del Sur",
+      "fi": "Etelä-Georgia ja Eteläiset Sandwichsaaret",
+      "et": "Lõuna-Georgia ja Lõuna-Sandwichi saared",
+      "zh": "南乔治亚"
+    }
+  },
+  {
+    "Alpha2Code": "GT",
+    "Alpha3Code": "GTM",
+    "Capital": "Guatemala City",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Guatemala",
+      "cs": "Guatemala",
+      "de": "Guatemala",
+      "fr": "Guatemala",
+      "hr": "Gvatemala",
+      "it": "Guatemala",
+      "ja": "グアテマラ",
+      "nl": "Guatemala",
+      "pt": "Guatemala",
+      "ru": "Гватемала",
+      "sk": "Guatemala",
+      "es": "Guatemala",
+      "fi": "Guatemala",
+      "et": "Guatemala",
+      "zh": "危地马拉"
+    }
+  },
+  {
+    "Alpha2Code": "GU",
+    "Alpha3Code": "GUM",
+    "Capital": "Hagåtña",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "ch",
+      "en",
+      "es"
+    ],
+    "Translations": {
+      "en": "Guam",
+      "cs": "Guam",
+      "de": "Guam",
+      "fr": "Guam",
+      "hr": "Guam",
+      "it": "Guam",
+      "ja": "グアム",
+      "nl": "Guam",
+      "pt": "Guam",
+      "ru": "Гуам",
+      "sk": "Guam",
+      "es": "Guam",
+      "fi": "Guam",
+      "et": "Guam",
+      "zh": "关岛"
+    }
+  },
+  {
+    "Alpha2Code": "GW",
+    "Alpha3Code": "GNB",
+    "Capital": "Bissau",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "pt",
+      "pov"
+    ],
+    "Translations": {
+      "en": "Guinea-Bissau",
+      "cs": "Guinea-Bissau",
+      "de": "Guinea-Bissau",
+      "fr": "Guinée-Bissau",
+      "hr": "Gvineja Bisau",
+      "it": "Guinea-Bissau",
+      "ja": "ギニアビサウ",
+      "nl": "Guinee-Bissau",
+      "pt": "Guiné-Bissau",
+      "ru": "Гвинея-Бисау",
+      "sk": "Guinea-Bissau",
+      "es": "Guinea-Bisáu",
+      "fi": "Guinea-Bissau",
+      "et": "Guinea-Bissau",
+      "zh": "几内亚比绍"
+    }
+  },
+  {
+    "Alpha2Code": "GY",
+    "Alpha3Code": "GUY",
+    "Capital": "Georgetown",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Guyana",
+      "cs": "Guyana",
+      "de": "Guyana",
+      "fr": "Guyana",
+      "hr": "Gvajana",
+      "it": "Guyana",
+      "ja": "ガイアナ",
+      "nl": "Guyana",
+      "pt": "Guiana",
+      "ru": "Гайана",
+      "sk": "Guyana",
+      "es": "Guyana",
+      "fi": "Guayana",
+      "et": "Guyana",
+      "zh": "圭亚那"
+    }
+  },
+  {
+    "Alpha2Code": "HK",
+    "Alpha3Code": "HKG",
+    "Capital": "City of Victoria",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "en",
+      "zh"
+    ],
+    "Translations": {
+      "en": "Hong Kong",
+      "cs": "Hongkong",
+      "de": "Hongkong",
+      "fr": "Hong Kong",
+      "hr": "Hong Kong",
+      "it": "Hong Kong",
+      "ja": "香港",
+      "nl": "Hongkong",
+      "pt": "Hong Kong",
+      "ru": "Гонконг",
+      "sk": "Hongkong",
+      "es": "Hong Kong",
+      "fi": "Hongkong",
+      "et": "Hongkong"
+    }
+  },
+  {
+    "Alpha2Code": "HM",
+    "Alpha3Code": "HMD",
+    "Capital": "",
+    "Region": "Antarctic",
+    "Subregion": "",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Heard Island and McDonald Islands",
+      "cs": "Heardův ostrov a McDonaldovy ostrovy",
+      "de": "Heard und die McDonaldinseln",
+      "fr": "Îles Heard-et-MacDonald",
+      "hr": "Otok Heard i otočje McDonald",
+      "it": "Isole Heard e McDonald",
+      "ja": "ハード島とマクドナルド諸島",
+      "nl": "Heard-en McDonaldeilanden",
+      "pt": "Ilha Heard e Ilhas McDonald",
+      "ru": "Остров Херд и острова Макдональд",
+      "sk": "Heardov ostrov",
+      "es": "Islas Heard y McDonald",
+      "fi": "Heard ja McDonaldinsaaret",
+      "et": "Heard ja McDonald",
+      "zh": "赫德岛和麦当劳群岛"
+    }
+  },
+  {
+    "Alpha2Code": "HN",
+    "Alpha3Code": "HND",
+    "Capital": "Tegucigalpa",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Honduras",
+      "cs": "Honduras",
+      "de": "Honduras",
+      "fr": "Honduras",
+      "hr": "Honduras",
+      "it": "Honduras",
+      "ja": "ホンジュラス",
+      "nl": "Honduras",
+      "pt": "Honduras",
+      "ru": "Гондурас",
+      "sk": "Honduras",
+      "es": "Honduras",
+      "fi": "Honduras",
+      "et": "Honduras",
+      "zh": "洪都拉斯"
+    }
+  },
+  {
+    "Alpha2Code": "HR",
+    "Alpha3Code": "HRV",
+    "Capital": "Zagreb",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "hr"
+    ],
+    "Translations": {
+      "en": "Croatia",
+      "cs": "Chorvatsko",
+      "cy": "Croatia",
+      "de": "Kroatien",
+      "fr": "Croatie",
+      "hr": "Hrvatska",
+      "it": "Croazia",
+      "ja": "クロアチア",
+      "nl": "Kroatië",
+      "pt": "Croácia",
+      "ru": "Хорватия",
+      "sk": "Chorvátsko",
+      "es": "Croacia",
+      "fi": "Kroatia",
+      "et": "Horvaatia",
+      "zh": "克罗地亚"
+    }
+  },
+  {
+    "Alpha2Code": "HT",
+    "Alpha3Code": "HTI",
+    "Capital": "Port-au-Prince",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "fr",
+      "ht"
+    ],
+    "Translations": {
+      "en": "Haiti",
+      "cs": "Haiti",
+      "de": "Haiti",
+      "fr": "Haïti",
+      "hr": "Haiti",
+      "it": "Haiti",
+      "ja": "ハイチ",
+      "nl": "Haïti",
+      "pt": "Haiti",
+      "ru": "Гаити",
+      "sk": "Haiti",
+      "es": "Haiti",
+      "fi": "Haiti",
+      "et": "Haiti",
+      "zh": "海地"
+    }
+  },
+  {
+    "Alpha2Code": "HU",
+    "Alpha3Code": "HUN",
+    "Capital": "Budapest",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "hu"
+    ],
+    "Translations": {
+      "en": "Hungary",
+      "cs": "Maďarsko",
+      "de": "Ungarn",
+      "fr": "Hongrie",
+      "hr": "Mađarska",
+      "it": "Ungheria",
+      "ja": "ハンガリー",
+      "nl": "Hongarije",
+      "pt": "Hungria",
+      "ru": "Венгрия",
+      "sk": "Maďarsko",
+      "es": "Hungría",
+      "fi": "Unkari",
+      "et": "Ungari",
+      "zh": "匈牙利"
+    }
+  },
+  {
+    "Alpha2Code": "ID",
+    "Alpha3Code": "IDN",
+    "Capital": "Jakarta",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "id"
+    ],
+    "Translations": {
+      "en": "Indonesia",
+      "cs": "Indonésie",
+      "de": "Indonesien",
+      "fr": "Indonésie",
+      "hr": "Indonezija",
+      "it": "Indonesia",
+      "ja": "インドネシア",
+      "nl": "Indonesië",
+      "pt": "Indonésia",
+      "ru": "Индонезия",
+      "sk": "Indonézia",
+      "es": "Indonesia",
+      "fi": "Indonesia",
+      "et": "Indoneesia",
+      "zh": "印度尼西亚"
+    }
+  },
+  {
+    "Alpha2Code": "IE",
+    "Alpha3Code": "IRL",
+    "Capital": "Dublin",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "en",
+      "ga"
+    ],
+    "Translations": {
+      "en": "Ireland",
+      "cs": "Irsko",
+      "de": "Irland",
+      "fr": "Irlande",
+      "hr": "Irska",
+      "it": "Irlanda",
+      "ja": "アイルランド",
+      "nl": "Ierland",
+      "pt": "Irlanda",
+      "ru": "Ирландия",
+      "sk": "Írsko",
+      "es": "Irlanda",
+      "fi": "Irlanti",
+      "et": "Iirimaa",
+      "zh": "爱尔兰"
+    }
+  },
+  {
+    "Alpha2Code": "IL",
+    "Alpha3Code": "ISR",
+    "Capital": "Jerusalem",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar",
+      "he"
+    ],
+    "Translations": {
+      "en": "Israel",
+      "cs": "Izrael",
+      "de": "Israel",
+      "fr": "Israël",
+      "hr": "Izrael",
+      "it": "Israele",
+      "ja": "イスラエル",
+      "nl": "Israël",
+      "pt": "Israel",
+      "ru": "Израиль",
+      "sk": "Izrael",
+      "es": "Israel",
+      "fi": "Israel",
+      "et": "Iisrael",
+      "zh": "以色列"
+    }
+  },
+  {
+    "Alpha2Code": "IM",
+    "Alpha3Code": "IMN",
+    "Capital": "Douglas",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "en",
+      "gv"
+    ],
+    "Translations": {
+      "en": "Isle of Man",
+      "cs": "Ostrov Man",
+      "de": "Insel Man",
+      "fr": "Île de Man",
+      "hr": "Otok Man",
+      "it": "Isola di Man",
+      "ja": "マン島",
+      "nl": "Isle of Man",
+      "pt": "Ilha de Man",
+      "ru": "Остров Мэн",
+      "sk": "Man",
+      "es": "Isla de Man",
+      "fi": "Mansaari",
+      "et": "Mani saar",
+      "zh": "马恩岛"
+    }
+  },
+  {
+    "Alpha2Code": "IN",
+    "Alpha3Code": "IND",
+    "Capital": "New Delhi",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "en",
+      "hi",
+      "ta"
+    ],
+    "Translations": {
+      "en": "India",
+      "cs": "Indie",
+      "de": "Indien",
+      "fr": "Inde",
+      "hr": "Indija",
+      "it": "India",
+      "ja": "インド",
+      "nl": "India",
+      "pt": "Índia",
+      "ru": "Индия",
+      "sk": "India",
+      "es": "India",
+      "fi": "Intia",
+      "et": "India",
+      "zh": "印度"
+    }
+  },
+  {
+    "Alpha2Code": "IO",
+    "Alpha3Code": "IOT",
+    "Capital": "Diego Garcia",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "British Indian Ocean Territory",
+      "cs": "Britské indickooceánské území",
+      "cy": "Tiriogaeth Brydeinig Cefnfor India",
+      "de": "Britisches Territorium im Indischen Ozean",
+      "fr": "Territoire britannique de l'océan Indien",
+      "hr": "Britanski Indijskooceanski teritorij",
+      "it": "Territorio britannico dell'oceano indiano",
+      "ja": "イギリス領インド洋地域",
+      "nl": "Britse Gebieden in de Indische Oceaan",
+      "pt": "Território Britânico do Oceano Índico",
+      "ru": "Британская территория в Индийском океане",
+      "sk": "Britské indickooceánske územie",
+      "es": "Territorio Británico del Océano Índico",
+      "fi": "Brittiläinen Intian valtameren alue",
+      "et": "Briti India ookeani ala",
+      "zh": "英属印度洋领地"
+    }
+  },
+  {
+    "Alpha2Code": "IQ",
+    "Alpha3Code": "IRQ",
+    "Capital": "Baghdad",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar",
+      "arc",
+      "ckb"
+    ],
+    "Translations": {
+      "en": "Iraq",
+      "cs": "Irák",
+      "de": "Irak",
+      "fr": "Irak",
+      "hr": "Irak",
+      "it": "Iraq",
+      "ja": "イラク",
+      "nl": "Irak",
+      "pt": "Iraque",
+      "ru": "Ирак",
+      "sk": "Irak",
+      "es": "Irak",
+      "fi": "Irak",
+      "et": "Iraak",
+      "zh": "伊拉克"
+    }
+  },
+  {
+    "Alpha2Code": "IR",
+    "Alpha3Code": "IRN",
+    "Capital": "Tehran",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "fa"
+    ],
+    "Translations": {
+      "en": "Iran",
+      "cs": "Írán",
+      "de": "Iran",
+      "fr": "Iran",
+      "hr": "Iran",
+      "it": "Iran",
+      "ja": "イラン・イスラム共和国",
+      "nl": "Iran",
+      "pt": "Irão",
+      "ru": "Иран",
+      "sk": "Irán",
+      "es": "Iran",
+      "fi": "Iran",
+      "et": "Iraan",
+      "zh": "伊朗"
+    }
+  },
+  {
+    "Alpha2Code": "IS",
+    "Alpha3Code": "ISL",
+    "Capital": "Reykjavik",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "is"
+    ],
+    "Translations": {
+      "en": "Iceland",
+      "cs": "Island",
+      "de": "Island",
+      "fr": "Islande",
+      "hr": "Island",
+      "it": "Islanda",
+      "ja": "アイスランド",
+      "nl": "IJsland",
+      "pt": "Islândia",
+      "ru": "Исландия",
+      "sk": "Island",
+      "es": "Islandia",
+      "fi": "Islanti",
+      "et": "Island",
+      "zh": "冰岛"
+    }
+  },
+  {
+    "Alpha2Code": "IT",
+    "Alpha3Code": "ITA",
+    "Capital": "Rome",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "it"
+    ],
+    "Translations": {
+      "en": "Italy",
+      "cs": "Itálie",
+      "de": "Italien",
+      "fr": "Italie",
+      "hr": "Italija",
+      "it": "Italia",
+      "ja": "イタリア",
+      "nl": "Italië",
+      "pt": "Itália",
+      "ru": "Италия",
+      "sk": "Taliansko",
+      "es": "Italia",
+      "fi": "Italia",
+      "et": "Itaalia",
+      "zh": "意大利"
+    }
+  },
+  {
+    "Alpha2Code": "JE",
+    "Alpha3Code": "JEY",
+    "Capital": "Saint Helier",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "en",
+      "fr",
+      "nrf"
+    ],
+    "Translations": {
+      "en": "Jersey",
+      "cs": "Jersey",
+      "de": "Jersey",
+      "fr": "Jersey",
+      "hr": "Jersey",
+      "it": "Isola di Jersey",
+      "ja": "ジャージー",
+      "nl": "Jersey",
+      "pt": "Jersey",
+      "ru": "Джерси",
+      "sk": "Jersey",
+      "es": "Jersey",
+      "fi": "Jersey",
+      "et": "Jersey",
+      "zh": "泽西岛"
+    }
+  },
+  {
+    "Alpha2Code": "JM",
+    "Alpha3Code": "JAM",
+    "Capital": "Kingston",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en",
+      "jam"
+    ],
+    "Translations": {
+      "en": "Jamaica",
+      "cs": "Jamajka",
+      "de": "Jamaika",
+      "fr": "Jamaïque",
+      "hr": "Jamajka",
+      "it": "Giamaica",
+      "ja": "ジャマイカ",
+      "nl": "Jamaica",
+      "pt": "Jamaica",
+      "ru": "Ямайка",
+      "sk": "Jamajka",
+      "es": "Jamaica",
+      "fi": "Jamaika",
+      "et": "Jamaica",
+      "zh": "牙买加"
+    }
+  },
+  {
+    "Alpha2Code": "JO",
+    "Alpha3Code": "JOR",
+    "Capital": "Amman",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Jordan",
+      "cs": "Jordánsko",
+      "de": "Jordanien",
+      "fr": "Jordanie",
+      "hr": "Jordan",
+      "it": "Giordania",
+      "ja": "ヨルダン",
+      "nl": "Jordanië",
+      "pt": "Jordânia",
+      "ru": "Иордания",
+      "sk": "Jordánsko",
+      "es": "Jordania",
+      "fi": "Jordania",
+      "et": "Jordaania",
+      "zh": "约旦"
+    }
+  },
+  {
+    "Alpha2Code": "JP",
+    "Alpha3Code": "JPN",
+    "Capital": "Tokyo",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "ja"
+    ],
+    "Translations": {
+      "en": "Japan",
+      "cs": "Japonsko",
+      "de": "Japan",
+      "fr": "Japon",
+      "hr": "Japan",
+      "it": "Giappone",
+      "ja": "日本",
+      "nl": "Japan",
+      "pt": "Japão",
+      "ru": "Япония",
+      "sk": "Japonsko",
+      "es": "Japón",
+      "fi": "Japani",
+      "et": "Jaapan",
+      "zh": "日本"
+    }
+  },
+  {
+    "Alpha2Code": "KE",
+    "Alpha3Code": "KEN",
+    "Capital": "Nairobi",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en",
+      "sw"
+    ],
+    "Translations": {
+      "en": "Kenya",
+      "cs": "Keňa",
+      "de": "Kenia",
+      "fr": "Kenya",
+      "hr": "Kenija",
+      "it": "Kenya",
+      "ja": "ケニア",
+      "nl": "Kenia",
+      "pt": "Quénia",
+      "ru": "Кения",
+      "sk": "Keňa",
+      "es": "Kenia",
+      "fi": "Kenia",
+      "et": "Keenia",
+      "zh": "肯尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "KG",
+    "Alpha3Code": "KGZ",
+    "Capital": "Bishkek",
+    "Region": "Asia",
+    "Subregion": "Central Asia",
+    "Languages": [
+      "ky",
+      "ru"
+    ],
+    "Translations": {
+      "en": "Kyrgyzstan",
+      "cs": "Kyrgyzstán",
+      "de": "Kirgisistan",
+      "fr": "Kirghizistan",
+      "hr": "Kirgistan",
+      "it": "Kirghizistan",
+      "ja": "キルギス",
+      "nl": "Kirgizië",
+      "pt": "Quirguistão",
+      "ru": "Киргизия",
+      "sk": "Kirgizsko",
+      "es": "Kirguizistán",
+      "fi": "Kirgisia",
+      "et": "Kõrgõzstan",
+      "zh": "吉尔吉斯斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "KH",
+    "Alpha3Code": "KHM",
+    "Capital": "Phnom Penh",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "km"
+    ],
+    "Translations": {
+      "en": "Cambodia",
+      "cs": "Kambodža",
+      "cy": "Cambodia",
+      "de": "Kambodscha",
+      "fr": "Cambodge",
+      "hr": "Kambodža",
+      "it": "Cambogia",
+      "ja": "カンボジア",
+      "nl": "Cambodja",
+      "pt": "Camboja",
+      "ru": "Камбоджа",
+      "sk": "Kamboǆa",
+      "es": "Camboya",
+      "fi": "Kambodža",
+      "et": "Kambodža",
+      "zh": "柬埔寨"
+    }
+  },
+  {
+    "Alpha2Code": "KI",
+    "Alpha3Code": "KIR",
+    "Capital": "South Tarawa",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "en",
+      "gil"
+    ],
+    "Translations": {
+      "en": "Kiribati",
+      "cs": "Kiribati",
+      "de": "Kiribati",
+      "fr": "Kiribati",
+      "hr": "Kiribati",
+      "it": "Kiribati",
+      "ja": "キリバス",
+      "nl": "Kiribati",
+      "pt": "Kiribati",
+      "ru": "Кирибати",
+      "sk": "Kiribati",
+      "es": "Kiribati",
+      "fi": "Kiribati",
+      "et": "Kiribati",
+      "zh": "基里巴斯"
+    }
+  },
+  {
+    "Alpha2Code": "KM",
+    "Alpha3Code": "COM",
+    "Capital": "Moroni",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "ar",
+      "fr",
+      "zdj"
+    ],
+    "Translations": {
+      "en": "Comoros",
+      "cs": "Komory",
+      "cy": "Y Comoros",
+      "de": "Union der Komoren",
+      "fr": "Comores",
+      "hr": "Komori",
+      "it": "Comore",
+      "ja": "コモロ",
+      "nl": "Comoren",
+      "pt": "Comores",
+      "ru": "Коморы",
+      "sk": "Komory",
+      "es": "Comoras",
+      "fi": "Komorit",
+      "et": "Komoorid",
+      "zh": "科摩罗"
+    }
+  },
+  {
+    "Alpha2Code": "KN",
+    "Alpha3Code": "KNA",
+    "Capital": "Basseterre",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Saint Kitts and Nevis",
+      "cs": "Svatý Kryštof a Nevis",
+      "de": "Saint Christopher und Nevis",
+      "fr": "Saint-Christophe-et-Niévès",
+      "hr": "Sveti Kristof i Nevis",
+      "it": "Saint Kitts e Nevis",
+      "ja": "セントクリストファー・ネイビス",
+      "nl": "Saint Kitts en Nevis",
+      "pt": "São Cristóvão e Nevis",
+      "ru": "Сент-Китс и Невис",
+      "sk": "Svätý Krištof a Nevis",
+      "es": "San Cristóbal y Nieves",
+      "fi": "Saint Kitts ja Nevis",
+      "et": "Saint Kitts ja Nevis",
+      "zh": "圣基茨和尼维斯"
+    }
+  },
+  {
+    "Alpha2Code": "KP",
+    "Alpha3Code": "PRK",
+    "Capital": "Pyongyang",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "ko"
+    ],
+    "Translations": {
+      "en": "North Korea",
+      "cs": "Severní Korea",
+      "de": "Nordkorea",
+      "fr": "Corée du Nord",
+      "hr": "Sjeverna Koreja",
+      "it": "Corea del Nord",
+      "ja": "朝鮮民主主義人民共和国",
+      "nl": "Noord-Korea",
+      "pt": "Coreia do Norte",
+      "ru": "Северная Корея",
+      "sk": "Kórejská ľudovodemokratická republika (KĽR, Severná Kórea)",
+      "es": "Corea del Norte",
+      "fi": "Pohjois-Korea",
+      "et": "Põhja-Korea",
+      "zh": "朝鲜"
+    }
+  },
+  {
+    "Alpha2Code": "KR",
+    "Alpha3Code": "KOR",
+    "Capital": "Seoul",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "ko"
+    ],
+    "Translations": {
+      "en": "South Korea",
+      "cs": "Jižní Korea",
+      "de": "Südkorea",
+      "fr": "Corée du Sud",
+      "hr": "Južna Koreja",
+      "it": "Corea del Sud",
+      "ja": "大韓民国",
+      "nl": "Zuid-Korea",
+      "pt": "Coreia do Sul",
+      "ru": "Южная Корея",
+      "sk": "Južná Kórea",
+      "es": "Corea del Sur",
+      "fi": "Etelä-Korea",
+      "et": "Lõuna-Korea",
+      "zh": "韩国"
+    }
+  },
+  {
+    "Alpha2Code": "KW",
+    "Alpha3Code": "KWT",
+    "Capital": "Kuwait City",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Kuwait",
+      "cs": "Kuvajt",
+      "de": "Kuwait",
+      "fr": "Koweït",
+      "hr": "Kuvajt",
+      "it": "Kuwait",
+      "ja": "クウェート",
+      "nl": "Koeweit",
+      "pt": "Kuwait",
+      "ru": "Кувейт",
+      "sk": "Kuvajt",
+      "es": "Kuwait",
+      "fi": "Kuwait",
+      "et": "Kuveit",
+      "zh": "科威特"
+    }
+  },
+  {
+    "Alpha2Code": "KY",
+    "Alpha3Code": "CYM",
+    "Capital": "George Town",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Cayman Islands",
+      "cs": "Kajmanské ostrovy",
+      "cy": "Ynysoedd Cayman",
+      "de": "Kaimaninseln",
+      "fr": "Îles Caïmans",
+      "hr": "Kajmanski otoci",
+      "it": "Isole Cayman",
+      "ja": "ケイマン諸島",
+      "nl": "Caymaneilanden",
+      "pt": "Ilhas Caimão",
+      "ru": "Каймановы острова",
+      "sk": "Kajmanie ostrovy",
+      "es": "Islas Caimán",
+      "fi": "Caymansaaret",
+      "et": "Kaimanisaared",
+      "zh": "开曼群岛"
+    }
+  },
+  {
+    "Alpha2Code": "KZ",
+    "Alpha3Code": "KAZ",
+    "Capital": "Astana",
+    "Region": "Asia",
+    "Subregion": "Central Asia",
+    "Languages": [
+      "kk",
+      "ru"
+    ],
+    "Translations": {
+      "en": "Kazakhstan",
+      "cs": "Kazachstán",
+      "de": "Kasachstan",
+      "fr": "Kazakhstan",
+      "hr": "Kazahstan",
+      "it": "Kazakistan",
+      "ja": "カザフスタン",
+      "nl": "Kazachstan",
+      "pt": "Cazaquistão",
+      "ru": "Казахстан",
+      "sk": "Kazachstan",
+      "es": "Kazajistán",
+      "fi": "Kazakstan",
+      "et": "Kasahstan",
+      "zh": "哈萨克斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "LA",
+    "Alpha3Code": "LAO",
+    "Capital": "Vientiane",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "lo"
+    ],
+    "Translations": {
+      "en": "Laos",
+      "cs": "Laos",
+      "de": "Laos",
+      "fr": "Laos",
+      "hr": "Laos",
+      "it": "Laos",
+      "ja": "ラオス人民民主共和国",
+      "nl": "Laos",
+      "pt": "Laos",
+      "ru": "Лаос",
+      "sk": "Laos",
+      "es": "Laos",
+      "fi": "Laos",
+      "et": "Laos",
+      "zh": "老挝"
+    }
+  },
+  {
+    "Alpha2Code": "LB",
+    "Alpha3Code": "LBN",
+    "Capital": "Beirut",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Lebanon",
+      "cs": "Libanon",
+      "de": "Libanon",
+      "fr": "Liban",
+      "hr": "Libanon",
+      "it": "Libano",
+      "ja": "レバノン",
+      "nl": "Libanon",
+      "pt": "Líbano",
+      "ru": "Ливан",
+      "sk": "Libanon",
+      "es": "Líbano",
+      "fi": "Libanon",
+      "et": "Liibanon",
+      "zh": "黎巴嫩"
+    }
+  },
+  {
+    "Alpha2Code": "LC",
+    "Alpha3Code": "LCA",
+    "Capital": "Castries",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Saint Lucia",
+      "cs": "Svatá Lucie",
+      "de": "Saint Lucia",
+      "fr": "Sainte-Lucie",
+      "hr": "Sveta Lucija",
+      "it": "Santa Lucia",
+      "ja": "セントルシア",
+      "nl": "Saint Lucia",
+      "pt": "Santa Lúcia",
+      "ru": "Сент-Люсия",
+      "sk": "Svätá Lucia",
+      "es": "Santa Lucía",
+      "fi": "Saint Lucia",
+      "et": "Saint Lucia",
+      "zh": "圣卢西亚"
+    }
+  },
+  {
+    "Alpha2Code": "LI",
+    "Alpha3Code": "LIE",
+    "Capital": "Vaduz",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "de"
+    ],
+    "Translations": {
+      "en": "Liechtenstein",
+      "cs": "Lichtenštejnsko",
+      "de": "Liechtenstein",
+      "fr": "Liechtenstein",
+      "hr": "Lihtenštajn",
+      "it": "Liechtenstein",
+      "ja": "リヒテンシュタイン",
+      "nl": "Liechtenstein",
+      "pt": "Liechtenstein",
+      "ru": "Лихтенштейн",
+      "sk": "Lichtenštajnsko",
+      "es": "Liechtenstein",
+      "fi": "Liechenstein",
+      "et": "Liechtenstein",
+      "zh": "列支敦士登"
+    }
+  },
+  {
+    "Alpha2Code": "LK",
+    "Alpha3Code": "LKA",
+    "Capital": "Colombo",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "si",
+      "ta"
+    ],
+    "Translations": {
+      "en": "Sri Lanka",
+      "cs": "Srí Lanka",
+      "de": "Sri Lanka",
+      "fr": "Sri Lanka",
+      "hr": "Šri Lanka",
+      "it": "Sri Lanka",
+      "ja": "スリランカ",
+      "nl": "Sri Lanka",
+      "pt": "Sri Lanka",
+      "ru": "Шри-Ланка",
+      "sk": "Srí Lanka",
+      "es": "Sri Lanka",
+      "fi": "Sri Lanka",
+      "et": "Sri Lanka",
+      "zh": "斯里兰卡"
+    }
+  },
+  {
+    "Alpha2Code": "LR",
+    "Alpha3Code": "LBR",
+    "Capital": "Monrovia",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Liberia",
+      "cs": "Libérie",
+      "de": "Liberia",
+      "fr": "Liberia",
+      "hr": "Liberija",
+      "it": "Liberia",
+      "ja": "リベリア",
+      "nl": "Liberia",
+      "pt": "Libéria",
+      "ru": "Либерия",
+      "sk": "Libéria",
+      "es": "Liberia",
+      "fi": "Liberia",
+      "et": "Libeeria",
+      "zh": "利比里亚"
+    }
+  },
+  {
+    "Alpha2Code": "LS",
+    "Alpha3Code": "LSO",
+    "Capital": "Maseru",
+    "Region": "Africa",
+    "Subregion": "Southern Africa",
+    "Languages": [
+      "en",
+      "st"
+    ],
+    "Translations": {
+      "en": "Lesotho",
+      "cs": "Lesotho",
+      "de": "Lesotho",
+      "fr": "Lesotho",
+      "hr": "Lesoto",
+      "it": "Lesotho",
+      "ja": "レソト",
+      "nl": "Lesotho",
+      "pt": "Lesoto",
+      "ru": "Лесото",
+      "sk": "Lesotho",
+      "es": "Lesotho",
+      "fi": "Lesotho",
+      "et": "Lesotho",
+      "zh": "莱索托"
+    }
+  },
+  {
+    "Alpha2Code": "LT",
+    "Alpha3Code": "LTU",
+    "Capital": "Vilnius",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "lt"
+    ],
+    "Translations": {
+      "en": "Lithuania",
+      "cs": "Litva",
+      "de": "Litauen",
+      "fr": "Lituanie",
+      "hr": "Litva",
+      "it": "Lituania",
+      "ja": "リトアニア",
+      "nl": "Litouwen",
+      "pt": "Lituânia",
+      "ru": "Литва",
+      "sk": "Litva",
+      "es": "Lituania",
+      "fi": "Liettua",
+      "et": "Leedu",
+      "zh": "立陶宛"
+    }
+  },
+  {
+    "Alpha2Code": "LU",
+    "Alpha3Code": "LUX",
+    "Capital": "Luxembourg",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "de",
+      "fr",
+      "lb"
+    ],
+    "Translations": {
+      "en": "Luxembourg",
+      "cs": "Lucembursko",
+      "de": "Luxemburg",
+      "fr": "Luxembourg",
+      "hr": "Luksemburg",
+      "it": "Lussemburgo",
+      "ja": "ルクセンブルク",
+      "nl": "Luxemburg",
+      "pt": "Luxemburgo",
+      "ru": "Люксембург",
+      "sk": "Luxembursko",
+      "es": "Luxemburgo",
+      "fi": "Luxemburg",
+      "et": "Luksemburg",
+      "zh": "卢森堡"
+    }
+  },
+  {
+    "Alpha2Code": "LV",
+    "Alpha3Code": "LVA",
+    "Capital": "Riga",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "lv"
+    ],
+    "Translations": {
+      "en": "Latvia",
+      "cs": "Lotyšsko",
+      "de": "Lettland",
+      "fr": "Lettonie",
+      "hr": "Latvija",
+      "it": "Lettonia",
+      "ja": "ラトビア",
+      "nl": "Letland",
+      "pt": "Letónia",
+      "ru": "Латвия",
+      "sk": "Lotyšsko",
+      "es": "Letonia",
+      "fi": "Latvia",
+      "et": "Läti",
+      "zh": "拉脱维亚"
+    }
+  },
+  {
+    "Alpha2Code": "LY",
+    "Alpha3Code": "LBY",
+    "Capital": "Tripoli",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Libya",
+      "cs": "Libye",
+      "de": "Libyen",
+      "fr": "Libye",
+      "hr": "Libija",
+      "it": "Libia",
+      "ja": "リビア",
+      "nl": "Libië",
+      "pt": "Líbia",
+      "ru": "Ливия",
+      "sk": "Líbya",
+      "es": "Libia",
+      "fi": "Libya",
+      "et": "Liibüa",
+      "zh": "利比亚"
+    }
+  },
+  {
+    "Alpha2Code": "MA",
+    "Alpha3Code": "MAR",
+    "Capital": "Rabat",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ar",
+      "ber"
+    ],
+    "Translations": {
+      "en": "Morocco",
+      "cs": "Maroko",
+      "de": "Marokko",
+      "fr": "Maroc",
+      "hr": "Maroko",
+      "it": "Marocco",
+      "ja": "モロッコ",
+      "nl": "Marokko",
+      "pt": "Marrocos",
+      "ru": "Марокко",
+      "sk": "Maroko",
+      "es": "Marruecos",
+      "fi": "Marokko",
+      "et": "Maroko",
+      "zh": "摩洛哥"
+    }
+  },
+  {
+    "Alpha2Code": "MC",
+    "Alpha3Code": "MCO",
+    "Capital": "Monaco",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Monaco",
+      "cs": "Monako",
+      "de": "Monaco",
+      "fr": "Monaco",
+      "hr": "Monako",
+      "it": "Principato di Monaco",
+      "ja": "モナコ",
+      "nl": "Monaco",
+      "pt": "Mónaco",
+      "ru": "Монако",
+      "sk": "Monako",
+      "es": "Mónaco",
+      "fi": "Monaco",
+      "et": "Monaco",
+      "zh": "摩纳哥"
+    }
+  },
+  {
+    "Alpha2Code": "MD",
+    "Alpha3Code": "MDA",
+    "Capital": "Chișinău",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "ro"
+    ],
+    "Translations": {
+      "en": "Moldova",
+      "cs": "Moldavsko",
+      "de": "Moldawie",
+      "fr": "Moldavie",
+      "hr": "Moldova",
+      "it": "Moldavia",
+      "ja": "モルドバ共和国",
+      "nl": "Moldavië",
+      "pt": "Moldávia",
+      "ru": "Молдавия",
+      "sk": "Moldavsko",
+      "es": "Moldavia",
+      "fi": "Moldova",
+      "et": "Moldova",
+      "zh": "摩尔多瓦"
+    }
+  },
+  {
+    "Alpha2Code": "ME",
+    "Alpha3Code": "MNE",
+    "Capital": "Podgorica",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "sr"
+    ],
+    "Translations": {
+      "en": "Montenegro",
+      "cs": "Černá Hora",
+      "de": "Montenegro",
+      "fr": "Monténégro",
+      "hr": "Crna Gora",
+      "it": "Montenegro",
+      "ja": "モンテネグロ",
+      "nl": "Montenegro",
+      "pt": "Montenegro",
+      "ru": "Черногория",
+      "sk": "Čierna Hora",
+      "es": "Montenegro",
+      "fi": "Montenegro",
+      "et": "Montenegro",
+      "zh": "黑山"
+    }
+  },
+  {
+    "Alpha2Code": "MF",
+    "Alpha3Code": "MAF",
+    "Capital": "Marigot",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Saint Martin",
+      "cs": "Svatý Martin (Francie)",
+      "de": "Saint Martin",
+      "fr": "Saint-Martin",
+      "hr": "Sveti Martin",
+      "it": "Saint Martin",
+      "ja": "サン・マルタン（フランス領）",
+      "nl": "Saint-Martin",
+      "pt": "São Martinho",
+      "ru": "Сен-Мартен",
+      "sk": "Saint-Martin",
+      "es": "Saint Martin",
+      "fi": "Saint-Martin",
+      "et": "Saint-Martin",
+      "zh": "圣马丁"
+    }
+  },
+  {
+    "Alpha2Code": "MG",
+    "Alpha3Code": "MDG",
+    "Capital": "Antananarivo",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "fr",
+      "mg"
+    ],
+    "Translations": {
+      "en": "Madagascar",
+      "cs": "Madagaskar",
+      "de": "Madagaskar",
+      "fr": "Madagascar",
+      "hr": "Madagaskar",
+      "it": "Madagascar",
+      "ja": "マダガスカル",
+      "nl": "Madagaskar",
+      "pt": "Madagáscar",
+      "ru": "Мадагаскар",
+      "sk": "Madagaskar",
+      "es": "Madagascar",
+      "fi": "Madagaskar",
+      "et": "Madagaskar",
+      "zh": "马达加斯加"
+    }
+  },
+  {
+    "Alpha2Code": "MH",
+    "Alpha3Code": "MHL",
+    "Capital": "Majuro",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "en",
+      "mh"
+    ],
+    "Translations": {
+      "en": "Marshall Islands",
+      "cs": "Marshallovy ostrovy",
+      "de": "Marshallinseln",
+      "fr": "Îles Marshall",
+      "hr": "Maršalovi Otoci",
+      "it": "Isole Marshall",
+      "ja": "マーシャル諸島",
+      "nl": "Marshalleilanden",
+      "pt": "Ilhas Marshall",
+      "ru": "Маршалловы Острова",
+      "sk": "Marshallove ostrovy",
+      "es": "Islas Marshall",
+      "fi": "Marshallinsaaret",
+      "et": "Marshalli Saared",
+      "zh": "马绍尔群岛"
+    }
+  },
+  {
+    "Alpha2Code": "MK",
+    "Alpha3Code": "MKD",
+    "Capital": "Skopje",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "mk"
+    ],
+    "Translations": {
+      "en": "Macedonia",
+      "cs": "Makedonie",
+      "de": "Mazedonien",
+      "fr": "Macédoine",
+      "hr": "Makedonija",
+      "it": "Macedonia",
+      "ja": "マケドニア旧ユーゴスラビア共和国",
+      "nl": "Macedonië",
+      "pt": "Macedónia",
+      "ru": "Республика Македония",
+      "sk": "Macedónsko",
+      "es": "Macedonia",
+      "fi": "Makedonia",
+      "et": "Makedoonia",
+      "zh": "马其顿"
+    }
+  },
+  {
+    "Alpha2Code": "ML",
+    "Alpha3Code": "MLI",
+    "Capital": "Bamako",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Mali",
+      "cs": "Mali",
+      "de": "Mali",
+      "fr": "Mali",
+      "hr": "Mali",
+      "it": "Mali",
+      "ja": "マリ",
+      "nl": "Mali",
+      "pt": "Mali",
+      "ru": "Мали",
+      "sk": "Mali",
+      "es": "Mali",
+      "fi": "Mali",
+      "et": "Mali",
+      "zh": "马里"
+    }
+  },
+  {
+    "Alpha2Code": "MM",
+    "Alpha3Code": "MMR",
+    "Capital": "Naypyidaw",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "my"
+    ],
+    "Translations": {
+      "en": "Myanmar",
+      "cs": "Myanmar",
+      "de": "Myanmar",
+      "fr": "Birmanie",
+      "hr": "Mijanmar",
+      "it": "Birmania",
+      "ja": "ミャンマー",
+      "nl": "Myanmar",
+      "pt": "Myanmar",
+      "ru": "Мьянма",
+      "sk": "Mjanmarsko",
+      "es": "Myanmar",
+      "fi": "Myanmar",
+      "et": "Myanmar",
+      "zh": "缅甸"
+    }
+  },
+  {
+    "Alpha2Code": "MN",
+    "Alpha3Code": "MNG",
+    "Capital": "Ulan Bator",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "mn"
+    ],
+    "Translations": {
+      "en": "Mongolia",
+      "cs": "Mongolsko",
+      "de": "Mongolei",
+      "fr": "Mongolie",
+      "hr": "Mongolija",
+      "it": "Mongolia",
+      "ja": "モンゴル",
+      "nl": "Mongolië",
+      "pt": "Mongólia",
+      "ru": "Монголия",
+      "sk": "Mongolsko",
+      "es": "Mongolia",
+      "fi": "Mongolia",
+      "et": "Mongoolia",
+      "zh": "蒙古"
+    }
+  },
+  {
+    "Alpha2Code": "MO",
+    "Alpha3Code": "MAC",
+    "Capital": "",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "pt",
+      "zh"
+    ],
+    "Translations": {
+      "en": "Macau",
+      "cs": "Macao",
+      "de": "Macao",
+      "fr": "Macao",
+      "hr": "Makao",
+      "it": "Macao",
+      "ja": "マカオ",
+      "nl": "Macao",
+      "pt": "Macau",
+      "ru": "Макао",
+      "sk": "Macao",
+      "es": "Macao",
+      "fi": "Macao",
+      "et": "Macau"
+    }
+  },
+  {
+    "Alpha2Code": "MP",
+    "Alpha3Code": "MNP",
+    "Capital": "Saipan",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "cal",
+      "ch",
+      "en"
+    ],
+    "Translations": {
+      "en": "Northern Mariana Islands",
+      "cs": "Severní Mariany",
+      "de": "Nördliche Marianen",
+      "fr": "Îles Mariannes du Nord",
+      "hr": "Sjevernomarijanski otoci",
+      "it": "Isole Marianne Settentrionali",
+      "ja": "北マリアナ諸島",
+      "nl": "Noordelijke Marianeneilanden",
+      "pt": "Marianas Setentrionais",
+      "ru": "Северные Марианские острова",
+      "sk": "Severné Mariány",
+      "es": "Islas Marianas del Norte",
+      "fi": "Pohjois-Mariaanit",
+      "et": "Põhja-Mariaanid",
+      "zh": "北马里亚纳群岛"
+    }
+  },
+  {
+    "Alpha2Code": "MQ",
+    "Alpha3Code": "MTQ",
+    "Capital": "Fort-de-France",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Martinique",
+      "cs": "Martinik",
+      "de": "Martinique",
+      "fr": "Martinique",
+      "hr": "Martinique",
+      "it": "Martinica",
+      "ja": "マルティニーク",
+      "nl": "Martinique",
+      "pt": "Martinica",
+      "ru": "Мартиника",
+      "es": "Martinica",
+      "sk": "Martinique",
+      "fi": "Martinique",
+      "et": "Martinique",
+      "zh": "马提尼克"
+    }
+  },
+  {
+    "Alpha2Code": "MR",
+    "Alpha3Code": "MRT",
+    "Capital": "Nouakchott",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Mauritania",
+      "cs": "Mauritánie",
+      "de": "Mauretanien",
+      "fr": "Mauritanie",
+      "hr": "Mauritanija",
+      "it": "Mauritania",
+      "ja": "モーリタニア",
+      "nl": "Mauritanië",
+      "pt": "Mauritânia",
+      "ru": "Мавритания",
+      "sk": "Mauritánia",
+      "es": "Mauritania",
+      "fi": "Mauritania",
+      "et": "Mauritaania",
+      "zh": "毛里塔尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "MS",
+    "Alpha3Code": "MSR",
+    "Capital": "Plymouth",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Montserrat",
+      "cs": "Montserrat",
+      "de": "Montserrat",
+      "fr": "Montserrat",
+      "hr": "Montserrat",
+      "it": "Montserrat",
+      "ja": "モントセラト",
+      "nl": "Montserrat",
+      "pt": "Montserrat",
+      "ru": "Монтсеррат",
+      "sk": "Montserrat",
+      "es": "Montserrat",
+      "fi": "Montserrat",
+      "et": "Montserrat",
+      "zh": "蒙特塞拉特"
+    }
+  },
+  {
+    "Alpha2Code": "MT",
+    "Alpha3Code": "MLT",
+    "Capital": "Valletta",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "en",
+      "mt"
+    ],
+    "Translations": {
+      "en": "Malta",
+      "cs": "Malta",
+      "de": "Malta",
+      "fr": "Malte",
+      "hr": "Malta",
+      "it": "Malta",
+      "ja": "マルタ",
+      "nl": "Malta",
+      "pt": "Malta",
+      "ru": "Мальта",
+      "sk": "Malta",
+      "es": "Malta",
+      "fi": "Malta",
+      "et": "Malta",
+      "zh": "马耳他"
+    }
+  },
+  {
+    "Alpha2Code": "MU",
+    "Alpha3Code": "MUS",
+    "Capital": "Port Louis",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en",
+      "fr",
+      "mfe"
+    ],
+    "Translations": {
+      "en": "Mauritius",
+      "cs": "Mauricius",
+      "de": "Mauritius",
+      "fr": "Île Maurice",
+      "hr": "Mauricijus",
+      "it": "Mauritius",
+      "ja": "モーリシャス",
+      "nl": "Mauritius",
+      "pt": "Maurício",
+      "ru": "Маврикий",
+      "sk": "Maurícius",
+      "es": "Mauricio",
+      "fi": "Mauritius",
+      "et": "Mauritius",
+      "zh": "毛里求斯"
+    }
+  },
+  {
+    "Alpha2Code": "MV",
+    "Alpha3Code": "MDV",
+    "Capital": "Malé",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "dv"
+    ],
+    "Translations": {
+      "en": "Maldives",
+      "cs": "Maledivy",
+      "de": "Malediven",
+      "fr": "Maldives",
+      "hr": "Maldivi",
+      "it": "Maldive",
+      "ja": "モルディブ",
+      "nl": "Maldiven",
+      "pt": "Maldivas",
+      "es": "Maldivas",
+      "ru": "Мальдивы",
+      "sk": "Maldivy",
+      "fi": "Malediivit",
+      "et": "Maldiivid",
+      "zh": "马尔代夫"
+    }
+  },
+  {
+    "Alpha2Code": "MW",
+    "Alpha3Code": "MWI",
+    "Capital": "Lilongwe",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en",
+      "ny"
+    ],
+    "Translations": {
+      "en": "Malawi",
+      "cs": "Malawi",
+      "de": "Malawi",
+      "fr": "Malawi",
+      "hr": "Malavi",
+      "it": "Malawi",
+      "ja": "マラウイ",
+      "nl": "Malawi",
+      "pt": "Malawi",
+      "ru": "Малави",
+      "sk": "Malawi",
+      "es": "Malawi",
+      "fi": "Malawi",
+      "et": "Malawi",
+      "zh": "马拉维"
+    }
+  },
+  {
+    "Alpha2Code": "MX",
+    "Alpha3Code": "MEX",
+    "Capital": "Mexico City",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Mexico",
+      "cs": "Mexiko",
+      "de": "Mexiko",
+      "fr": "Mexique",
+      "hr": "Meksiko",
+      "it": "Messico",
+      "ja": "メキシコ",
+      "nl": "Mexico",
+      "pt": "México",
+      "ru": "Мексика",
+      "sk": "Mexiko",
+      "es": "México",
+      "fi": "Meksiko",
+      "et": "Mehhiko",
+      "zh": "墨西哥"
+    }
+  },
+  {
+    "Alpha2Code": "MY",
+    "Alpha3Code": "MYS",
+    "Capital": "Kuala Lumpur",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "en",
+      "ms"
+    ],
+    "Translations": {
+      "en": "Malaysia",
+      "cs": "Malajsie",
+      "de": "Malaysia",
+      "fr": "Malaisie",
+      "hr": "Malezija",
+      "it": "Malesia",
+      "ja": "マレーシア",
+      "nl": "Maleisië",
+      "pt": "Malásia",
+      "ru": "Малайзия",
+      "sk": "Malajzia",
+      "es": "Malasia",
+      "fi": "Malesia",
+      "et": "Malaisia",
+      "zh": "马来西亚"
+    }
+  },
+  {
+    "Alpha2Code": "MZ",
+    "Alpha3Code": "MOZ",
+    "Capital": "Maputo",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "pt"
+    ],
+    "Translations": {
+      "en": "Mozambique",
+      "cs": "Mosambik",
+      "de": "Mosambik",
+      "fr": "Mozambique",
+      "hr": "Mozambik",
+      "it": "Mozambico",
+      "ja": "モザンビーク",
+      "nl": "Mozambique",
+      "pt": "Moçambique",
+      "ru": "Мозамбик",
+      "sk": "Mozambik",
+      "es": "Mozambique",
+      "fi": "Mosambik",
+      "et": "Mosambiik",
+      "zh": "莫桑比克"
+    }
+  },
+  {
+    "Alpha2Code": "NA",
+    "Alpha3Code": "NAM",
+    "Capital": "Windhoek",
+    "Region": "Africa",
+    "Subregion": "Southern Africa",
+    "Languages": [
+      "af",
+      "de",
+      "en",
+      "hz",
+      "hgm",
+      "kwn",
+      "loz",
+      "ng",
+      "tn"
+    ],
+    "Translations": {
+      "en": "Namibia",
+      "cs": "Namibie",
+      "de": "Namibia",
+      "fr": "Namibie",
+      "hr": "Namibija",
+      "it": "Namibia",
+      "ja": "ナミビア",
+      "nl": "Namibië",
+      "pt": "Namíbia",
+      "ru": "Намибия",
+      "sk": "Namíbia",
+      "es": "Namibia",
+      "fi": "Namibia",
+      "et": "Namiibia",
+      "zh": "纳米比亚"
+    }
+  },
+  {
+    "Alpha2Code": "NC",
+    "Alpha3Code": "NCL",
+    "Capital": "Nouméa",
+    "Region": "Oceania",
+    "Subregion": "Melanesia",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "New Caledonia",
+      "cs": "Nová Kaledonie",
+      "de": "Neukaledonien",
+      "fr": "Nouvelle-Calédonie",
+      "hr": "Nova Kaledonija",
+      "it": "Nuova Caledonia",
+      "ja": "ニューカレドニア",
+      "nl": "Nieuw-Caledonië",
+      "pt": "Nova Caledónia",
+      "ru": "Новая Каледония",
+      "sk": "Nová Kaledónia",
+      "es": "Nueva Caledonia",
+      "fi": "Uusi-Kaledonia",
+      "et": "Uus-Kaledoonia",
+      "zh": "新喀里多尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "NE",
+    "Alpha3Code": "NER",
+    "Capital": "Niamey",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Niger",
+      "cs": "Niger",
+      "de": "Niger",
+      "fr": "Niger",
+      "hr": "Niger",
+      "it": "Niger",
+      "ja": "ニジェール",
+      "nl": "Niger",
+      "pt": "Níger",
+      "ru": "Нигер",
+      "sk": "Niger",
+      "es": "Níger",
+      "fi": "Niger",
+      "et": "Niger",
+      "zh": "尼日尔"
+    }
+  },
+  {
+    "Alpha2Code": "NF",
+    "Alpha3Code": "NFK",
+    "Capital": "Kingston",
+    "Region": "Oceania",
+    "Subregion": "Australia and New Zealand",
+    "Languages": [
+      "en",
+      "pih"
+    ],
+    "Translations": {
+      "en": "Norfolk Island",
+      "cs": "Norfolk",
+      "de": "Norfolkinsel",
+      "fr": "Île Norfolk",
+      "hr": "Otok Norfolk",
+      "it": "Isola Norfolk",
+      "ja": "ノーフォーク島",
+      "nl": "Norfolkeiland",
+      "pt": "Ilha Norfolk",
+      "ru": "Норфолк",
+      "sk": "Norfolk",
+      "es": "Isla de Norfolk",
+      "fi": "Norfolkinsaari",
+      "et": "Norfolk",
+      "zh": "诺福克岛"
+    }
+  },
+  {
+    "Alpha2Code": "NG",
+    "Alpha3Code": "NGA",
+    "Capital": "Abuja",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Nigeria",
+      "cs": "Nigérie",
+      "de": "Nigeria",
+      "fr": "Nigéria",
+      "hr": "Nigerija",
+      "it": "Nigeria",
+      "ja": "ナイジェリア",
+      "nl": "Nigeria",
+      "pt": "Nigéria",
+      "ru": "Нигерия",
+      "sk": "Nigéria",
+      "es": "Nigeria",
+      "fi": "Nigeria",
+      "et": "Nigeeria",
+      "zh": "尼日利亚"
+    }
+  },
+  {
+    "Alpha2Code": "NI",
+    "Alpha3Code": "NIC",
+    "Capital": "Managua",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Nicaragua",
+      "cs": "Nikaragua",
+      "de": "Nicaragua",
+      "fr": "Nicaragua",
+      "hr": "Nikaragva",
+      "it": "Nicaragua",
+      "ja": "ニカラグア",
+      "nl": "Nicaragua",
+      "pt": "Nicarágua",
+      "ru": "Никарагуа",
+      "sk": "Nikaragua",
+      "es": "Nicaragua",
+      "fi": "Nicaragua",
+      "et": "Nicaragua",
+      "zh": "尼加拉瓜"
+    }
+  },
+  {
+    "Alpha2Code": "NL",
+    "Alpha3Code": "NLD",
+    "Capital": "Amsterdam",
+    "Region": "Europe",
+    "Subregion": "Western Europe",
+    "Languages": [
+      "nl"
+    ],
+    "Translations": {
+      "en": "Netherlands",
+      "cs": "Nizozemsko",
+      "de": "Niederlande",
+      "fr": "Pays-Bas",
+      "hr": "Nizozemska",
+      "it": "Paesi Bassi",
+      "ja": "オランダ",
+      "nl": "Nederland",
+      "pt": "Holanda",
+      "ru": "Нидерланды",
+      "sk": "Holansko",
+      "es": "Países Bajos",
+      "fi": "Alankomaat",
+      "et": "Holland",
+      "zh": "荷兰"
+    }
+  },
+  {
+    "Alpha2Code": "NO",
+    "Alpha3Code": "NOR",
+    "Capital": "Oslo",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "nn",
+      "nb",
+      "smi"
+    ],
+    "Translations": {
+      "en": "Norway",
+      "cs": "Norsko",
+      "de": "Norwegen",
+      "fr": "Norvège",
+      "hr": "Norveška",
+      "it": "Norvegia",
+      "ja": "ノルウェー",
+      "nl": "Noorwegen",
+      "pt": "Noruega",
+      "ru": "Норвегия",
+      "sk": "Nórsko",
+      "es": "Noruega",
+      "fi": "Norja",
+      "et": "Norra",
+      "zh": "挪威"
+    }
+  },
+  {
+    "Alpha2Code": "NP",
+    "Alpha3Code": "NPL",
+    "Capital": "Kathmandu",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "ne"
+    ],
+    "Translations": {
+      "en": "Nepal",
+      "cs": "Nepál",
+      "de": "Népal",
+      "fr": "Népal",
+      "hr": "Nepal",
+      "it": "Nepal",
+      "ja": "ネパール",
+      "nl": "Nepal",
+      "pt": "Nepal",
+      "ru": "Непал",
+      "sk": "Nepál",
+      "es": "Nepal",
+      "fi": "Nepal",
+      "et": "Nepal",
+      "zh": "尼泊尔"
+    }
+  },
+  {
+    "Alpha2Code": "NR",
+    "Alpha3Code": "NRU",
+    "Capital": "Yaren",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "en",
+      "na"
+    ],
+    "Translations": {
+      "en": "Nauru",
+      "cs": "Nauru",
+      "de": "Nauru",
+      "fr": "Nauru",
+      "hr": "Nauru",
+      "it": "Nauru",
+      "ja": "ナウル",
+      "nl": "Nauru",
+      "pt": "Nauru",
+      "ru": "Науру",
+      "sk": "Nauru",
+      "es": "Nauru",
+      "fi": "Nauru",
+      "et": "Nauru",
+      "zh": "瑙鲁"
+    }
+  },
+  {
+    "Alpha2Code": "NU",
+    "Alpha3Code": "NIU",
+    "Capital": "Alofi",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "niu"
+    ],
+    "Translations": {
+      "en": "Niue",
+      "cs": "Niue",
+      "de": "Niue",
+      "fr": "Niue",
+      "hr": "Niue",
+      "it": "Niue",
+      "ja": "ニウエ",
+      "nl": "Niue",
+      "pt": "Niue",
+      "ru": "Ниуэ",
+      "sk": "Niue",
+      "es": "Niue",
+      "fi": "Niue",
+      "et": "Niue",
+      "zh": "纽埃"
+    }
+  },
+  {
+    "Alpha2Code": "NZ",
+    "Alpha3Code": "NZL",
+    "Capital": "Wellington",
+    "Region": "Oceania",
+    "Subregion": "Australia and New Zealand",
+    "Languages": [
+      "en",
+      "mi",
+      "nzs"
+    ],
+    "Translations": {
+      "en": "New Zealand",
+      "cs": "Nový Zéland",
+      "de": "Neuseeland",
+      "fr": "Nouvelle-Zélande",
+      "hr": "Novi Zeland",
+      "it": "Nuova Zelanda",
+      "ja": "ニュージーランド",
+      "nl": "Nieuw-Zeeland",
+      "pt": "Nova Zelândia",
+      "ru": "Новая Зеландия",
+      "sk": "Nový Zéland",
+      "es": "Nueva Zelanda",
+      "fi": "Uusi-Seelanti",
+      "et": "Uus-Meremaa",
+      "zh": "新西兰"
+    }
+  },
+  {
+    "Alpha2Code": "OM",
+    "Alpha3Code": "OMN",
+    "Capital": "Muscat",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Oman",
+      "cs": "Omán",
+      "de": "Oman",
+      "fr": "Oman",
+      "hr": "Oman",
+      "it": "oman",
+      "ja": "オマーン",
+      "nl": "Oman",
+      "pt": "Omã",
+      "ru": "Оман",
+      "sk": "Omán",
+      "es": "Omán",
+      "fi": "Oman",
+      "et": "Omaan",
+      "zh": "阿曼"
+    }
+  },
+  {
+    "Alpha2Code": "PA",
+    "Alpha3Code": "PAN",
+    "Capital": "Panama City",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Panama",
+      "cs": "Panama",
+      "de": "Panama",
+      "fr": "Panama",
+      "hr": "Panama",
+      "it": "Panama",
+      "ja": "パナマ",
+      "nl": "Panama",
+      "pt": "Panamá",
+      "ru": "Панама",
+      "sk": "Panama",
+      "es": "Panamá",
+      "fi": "Panama",
+      "et": "Panama",
+      "zh": "巴拿马"
+    }
+  },
+  {
+    "Alpha2Code": "PE",
+    "Alpha3Code": "PER",
+    "Capital": "Lima",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "ay",
+      "qu",
+      "es"
+    ],
+    "Translations": {
+      "en": "Peru",
+      "cs": "Peru",
+      "de": "Peru",
+      "fr": "Pérou",
+      "hr": "Peru",
+      "it": "Perù",
+      "ja": "ペルー",
+      "nl": "Peru",
+      "pt": "Perú",
+      "ru": "Перу",
+      "sk": "Peru",
+      "es": "Perú",
+      "fi": "Peru",
+      "et": "Peruu",
+      "zh": "秘鲁"
+    }
+  },
+  {
+    "Alpha2Code": "PF",
+    "Alpha3Code": "PYF",
+    "Capital": "Papeetē",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "French Polynesia",
+      "cs": "Francouzská Polynésie",
+      "de": "Französisch-Polynesien",
+      "fr": "Polynésie française",
+      "hr": "Francuska Polinezija",
+      "it": "Polinesia Francese",
+      "ja": "フランス領ポリネシア",
+      "nl": "Frans-Polynesië",
+      "pt": "Polinésia Francesa",
+      "ru": "Французская Полинезия",
+      "sk": "Francúzska Polynézia",
+      "es": "Polinesia Francesa",
+      "fi": "Ranskan Polynesia",
+      "et": "Prantsuse Polüneesia",
+      "zh": "法属波利尼西亚"
+    }
+  },
+  {
+    "Alpha2Code": "PG",
+    "Alpha3Code": "PNG",
+    "Capital": "Port Moresby",
+    "Region": "Oceania",
+    "Subregion": "Melanesia",
+    "Languages": [
+      "en",
+      "ho",
+      "tpi"
+    ],
+    "Translations": {
+      "en": "Papua New Guinea",
+      "cs": "Papua-Nová Guinea",
+      "de": "Papua-Neuguinea",
+      "fr": "Papouasie-Nouvelle-Guinée",
+      "hr": "Papua Nova Gvineja",
+      "it": "Papua Nuova Guinea",
+      "ja": "パプアニューギニア",
+      "nl": "Papoea-Nieuw-Guinea",
+      "pt": "Papua Nova Guiné",
+      "ru": "Папуа — Новая Гвинея",
+      "sk": "Papua-Nová Guinea",
+      "es": "Papúa Nueva Guinea",
+      "fi": "Papua-Uusi-Guinea",
+      "et": "Paapua Uus-Guinea",
+      "zh": "巴布亚新几内亚"
+    }
+  },
+  {
+    "Alpha2Code": "PH",
+    "Alpha3Code": "PHL",
+    "Capital": "Manila",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "en",
+      "fil"
+    ],
+    "Translations": {
+      "en": "Philippines",
+      "cs": "Filipíny",
+      "de": "Philippinen",
+      "fr": "Philippines",
+      "hr": "Filipini",
+      "it": "Filippine",
+      "ja": "フィリピン",
+      "nl": "Filipijnen",
+      "pt": "Filipinas",
+      "ru": "Филиппины",
+      "sk": "Filipíny",
+      "es": "Filipinas",
+      "fi": "Filippiinit",
+      "et": "Filipiinid",
+      "zh": "菲律宾"
+    }
+  },
+  {
+    "Alpha2Code": "PK",
+    "Alpha3Code": "PAK",
+    "Capital": "Islamabad",
+    "Region": "Asia",
+    "Subregion": "Southern Asia",
+    "Languages": [
+      "en",
+      "ur"
+    ],
+    "Translations": {
+      "en": "Pakistan",
+      "cs": "Pákistán",
+      "de": "Pakistan",
+      "fr": "Pakistan",
+      "hr": "Pakistan",
+      "it": "Pakistan",
+      "ja": "パキスタン",
+      "nl": "Pakistan",
+      "pt": "Paquistão",
+      "ru": "Пакистан",
+      "sk": "Pakistan",
+      "es": "Pakistán",
+      "fi": "Pakistan",
+      "et": "Pakistan",
+      "zh": "巴基斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "PL",
+    "Alpha3Code": "POL",
+    "Capital": "Warsaw",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "pl"
+    ],
+    "Translations": {
+      "en": "Poland",
+      "cs": "Polsko",
+      "de": "Polen",
+      "fr": "Pologne",
+      "hr": "Poljska",
+      "it": "Polonia",
+      "ja": "ポーランド",
+      "nl": "Polen",
+      "pt": "Polónia",
+      "ru": "Польша",
+      "sk": "Poľsko",
+      "es": "Polonia",
+      "fi": "Puola",
+      "et": "Poola",
+      "zh": "波兰"
+    }
+  },
+  {
+    "Alpha2Code": "PM",
+    "Alpha3Code": "SPM",
+    "Capital": "Saint-Pierre",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Saint Pierre and Miquelon",
+      "cs": "Saint-Pierre a Miquelon",
+      "de": "Saint-Pierre und Miquelon",
+      "fr": "Saint-Pierre-et-Miquelon",
+      "hr": "Sveti Petar i Mikelon",
+      "it": "Saint-Pierre e Miquelon",
+      "ja": "サンピエール島・ミクロン島",
+      "nl": "Saint Pierre en Miquelon",
+      "pt": "Saint-Pierre e Miquelon",
+      "ru": "Сен-Пьер и Микелон",
+      "sk": "Saint Pierre a Miquelon",
+      "es": "San Pedro y Miquelón",
+      "fi": "Saint-Pierre ja Miquelon",
+      "et": "Saint-Pierre ja Miquelon",
+      "zh": "圣皮埃尔和密克隆"
+    }
+  },
+  {
+    "Alpha2Code": "PN",
+    "Alpha3Code": "PCN",
+    "Capital": "Adamstown",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Pitcairn Islands",
+      "cs": "Pitcairnovy ostrovy",
+      "de": "Pitcairn",
+      "fr": "Îles Pitcairn",
+      "hr": "Pitcairnovo otočje",
+      "it": "Isole Pitcairn",
+      "ja": "ピトケアン",
+      "nl": "Pitcairneilanden",
+      "pt": "Ilhas Pitcairn",
+      "ru": "Острова Питкэрн",
+      "sk": "Pitcairnove ostrovy",
+      "es": "Islas Pitcairn",
+      "fi": "Pitcairn",
+      "et": "Pitcairn",
+      "zh": "皮特凯恩群岛"
+    }
+  },
+  {
+    "Alpha2Code": "PR",
+    "Alpha3Code": "PRI",
+    "Capital": "San Juan",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en",
+      "es"
+    ],
+    "Translations": {
+      "en": "Puerto Rico",
+      "cs": "Portoriko",
+      "de": "Puerto Rico",
+      "fr": "Porto Rico",
+      "hr": "Portoriko",
+      "it": "Porto Rico",
+      "ja": "プエルトリコ",
+      "nl": "Puerto Rico",
+      "pt": "Porto Rico",
+      "ru": "Пуэрто-Рико",
+      "sk": "Portoriko",
+      "es": "Puerto Rico",
+      "fi": "Puerto Rico",
+      "et": "Puerto Rico",
+      "zh": "波多黎各"
+    }
+  },
+  {
+    "Alpha2Code": "PS",
+    "Alpha3Code": "PSE",
+    "Capital": "Ramallah",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Palestine",
+      "cs": "Palestina",
+      "de": "Palästina",
+      "fr": "Palestine",
+      "hr": "Palestina",
+      "it": "Palestina",
+      "ja": "パレスチナ",
+      "nl": "Palestijnse gebieden",
+      "pt": "Palestina",
+      "ru": "Палестина",
+      "sk": "Palestína",
+      "es": "Palestina",
+      "fi": "Palestiina",
+      "et": "Palestiina",
+      "zh": "巴勒斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "PT",
+    "Alpha3Code": "PRT",
+    "Capital": "Lisbon",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "pt"
+    ],
+    "Translations": {
+      "en": "Portugal",
+      "cs": "Portugalsko",
+      "de": "Portugal",
+      "fr": "Portugal",
+      "hr": "Portugal",
+      "it": "Portogallo",
+      "ja": "ポルトガル",
+      "nl": "Portugal",
+      "pt": "Portugal",
+      "ru": "Португалия",
+      "sk": "Portugalsko",
+      "es": "Portugal",
+      "fi": "Portugali",
+      "et": "Portugal",
+      "zh": "葡萄牙"
+    }
+  },
+  {
+    "Alpha2Code": "PW",
+    "Alpha3Code": "PLW",
+    "Capital": "Ngerulmud",
+    "Region": "Oceania",
+    "Subregion": "Micronesia",
+    "Languages": [
+      "en",
+      "pau"
+    ],
+    "Translations": {
+      "en": "Palau",
+      "cs": "Palau",
+      "de": "Palau",
+      "fr": "Palaos (Palau)",
+      "hr": "Palau",
+      "it": "Palau",
+      "ja": "パラオ",
+      "nl": "Palau",
+      "pt": "Palau",
+      "ru": "Палау",
+      "sk": "Palau",
+      "es": "Palau",
+      "fi": "Palau",
+      "et": "Belau",
+      "zh": "帕劳"
+    }
+  },
+  {
+    "Alpha2Code": "PY",
+    "Alpha3Code": "PRY",
+    "Capital": "Asunción",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "gn",
+      "es"
+    ],
+    "Translations": {
+      "en": "Paraguay",
+      "cs": "Paraguay",
+      "de": "Paraguay",
+      "fr": "Paraguay",
+      "hr": "Paragvaj",
+      "it": "Paraguay",
+      "ja": "パラグアイ",
+      "nl": "Paraguay",
+      "pt": "Paraguai",
+      "ru": "Парагвай",
+      "sk": "Paraguaj",
+      "es": "Paraguay",
+      "fi": "Paraguay",
+      "et": "Paraguay",
+      "zh": "巴拉圭"
+    }
+  },
+  {
+    "Alpha2Code": "QA",
+    "Alpha3Code": "QAT",
+    "Capital": "Doha",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Qatar",
+      "cs": "Katar",
+      "de": "Katar",
+      "fr": "Qatar",
+      "hr": "Katar",
+      "it": "Qatar",
+      "ja": "カタール",
+      "nl": "Qatar",
+      "pt": "Catar",
+      "ru": "Катар",
+      "sk": "Katar",
+      "es": "Catar",
+      "fi": "Qatar",
+      "et": "Katar",
+      "zh": "卡塔尔"
+    }
+  },
+  {
+    "Alpha2Code": "RE",
+    "Alpha3Code": "REU",
+    "Capital": "Saint-Denis",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Réunion",
+      "cs": "Réunion",
+      "de": "Réunion",
+      "fr": "Réunion",
+      "hr": "Réunion",
+      "it": "Riunione",
+      "ja": "レユニオン",
+      "nl": "Réunion",
+      "pt": "Reunião",
+      "ru": "Реюньон",
+      "sk": "Réunion",
+      "es": "Reunión",
+      "fi": "Réunion",
+      "et": "Réunion",
+      "zh": "留尼旺岛"
+    }
+  },
+  {
+    "Alpha2Code": "RO",
+    "Alpha3Code": "ROU",
+    "Capital": "Bucharest",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "ro"
+    ],
+    "Translations": {
+      "en": "Romania",
+      "cs": "Rumunsko",
+      "de": "Rumänien",
+      "fr": "Roumanie",
+      "hr": "Rumunjska",
+      "it": "Romania",
+      "ja": "ルーマニア",
+      "nl": "Roemenië",
+      "pt": "Roménia",
+      "ru": "Румыния",
+      "sk": "Rumunsko",
+      "es": "Rumania",
+      "fi": "Romania",
+      "et": "Rumeenia",
+      "zh": "罗马尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "RS",
+    "Alpha3Code": "SRB",
+    "Capital": "Belgrade",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "sr"
+    ],
+    "Translations": {
+      "en": "Serbia",
+      "cs": "Srbsko",
+      "de": "Serbien",
+      "fr": "Serbie",
+      "hr": "Srbija",
+      "it": "Serbia",
+      "ja": "セルビア",
+      "nl": "Servië",
+      "pt": "Sérvia",
+      "ru": "Сербия",
+      "sk": "Srbsko",
+      "es": "Serbia",
+      "fi": "Serbia",
+      "et": "Serbia",
+      "zh": "塞尔维亚"
+    }
+  },
+  {
+    "Alpha2Code": "RU",
+    "Alpha3Code": "RUS",
+    "Capital": "Moscow",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "ru"
+    ],
+    "Translations": {
+      "en": "Russia",
+      "cs": "Rusko",
+      "de": "Russland",
+      "fr": "Russie",
+      "hr": "Rusija",
+      "it": "Russia",
+      "ja": "ロシア連邦",
+      "nl": "Rusland",
+      "pt": "Rússia",
+      "ru": "Россия",
+      "sk": "Rusko",
+      "es": "Rusia",
+      "fi": "Venäjä",
+      "et": "Venemaa",
+      "zh": "俄罗斯"
+    }
+  },
+  {
+    "Alpha2Code": "RW",
+    "Alpha3Code": "RWA",
+    "Capital": "Kigali",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en",
+      "fr",
+      "rw"
+    ],
+    "Translations": {
+      "en": "Rwanda",
+      "cs": "Rwanda",
+      "de": "Ruanda",
+      "fr": "Rwanda",
+      "hr": "Ruanda",
+      "it": "Ruanda",
+      "ja": "ルワンダ",
+      "nl": "Rwanda",
+      "pt": "Ruanda",
+      "ru": "Руанда",
+      "sk": "Rwanda",
+      "es": "Ruanda",
+      "fi": "Ruanda",
+      "et": "Rwanda",
+      "zh": "卢旺达"
+    }
+  },
+  {
+    "Alpha2Code": "SA",
+    "Alpha3Code": "SAU",
+    "Capital": "Riyadh",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Saudi Arabia",
+      "cs": "Saúdská Arábie",
+      "de": "Saudi-Arabien",
+      "fr": "Arabie Saoudite",
+      "hr": "Saudijska Arabija",
+      "it": "Arabia Saudita",
+      "ja": "サウジアラビア",
+      "nl": "Saoedi-Arabië",
+      "pt": "Arábia Saudita",
+      "ru": "Саудовская Аравия",
+      "sk": "Saudská Arábia",
+      "es": "Arabia Saudí",
+      "fi": "Saudi-Arabia",
+      "et": "Saudi Araabia",
+      "zh": "沙特阿拉伯"
+    }
+  },
+  {
+    "Alpha2Code": "SB",
+    "Alpha3Code": "SLB",
+    "Capital": "Honiara",
+    "Region": "Oceania",
+    "Subregion": "Melanesia",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Solomon Islands",
+      "cs": "Šalamounovy ostrovy",
+      "de": "Salomonen",
+      "fr": "Îles Salomon",
+      "hr": "Solomonski Otoci",
+      "it": "Isole Salomone",
+      "ja": "ソロモン諸島",
+      "nl": "Salomonseilanden",
+      "pt": "Ilhas Salomão",
+      "ru": "Соломоновы Острова",
+      "sk": "Salomonove ostrovy",
+      "es": "Islas Salomón",
+      "fi": "Salomonsaaret",
+      "et": "Saalomoni Saared",
+      "zh": "所罗门群岛"
+    }
+  },
+  {
+    "Alpha2Code": "SC",
+    "Alpha3Code": "SYC",
+    "Capital": "Victoria",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "crs",
+      "en",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Seychelles",
+      "cs": "Seychely",
+      "de": "Seychellen",
+      "fr": "Seychelles",
+      "hr": "Sejšeli",
+      "it": "Seychelles",
+      "ja": "セーシェル",
+      "nl": "Seychellen",
+      "pt": "Seicheles",
+      "ru": "Сейшельские Острова",
+      "sk": "Seychely",
+      "es": "Seychelles",
+      "fi": "Seychellit",
+      "et": "Seišellid",
+      "zh": "塞舌尔"
+    }
+  },
+  {
+    "Alpha2Code": "SD",
+    "Alpha3Code": "SDN",
+    "Capital": "Khartoum",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ar",
+      "en"
+    ],
+    "Translations": {
+      "en": "Sudan",
+      "cs": "Súdán",
+      "de": "Sudan",
+      "fr": "Soudan",
+      "hr": "Sudan",
+      "it": "Sudan",
+      "ja": "スーダン",
+      "nl": "Soedan",
+      "pt": "Sudão",
+      "ru": "Судан",
+      "sk": "Sudán",
+      "es": "Sudán",
+      "fi": "Sudan",
+      "et": "Sudaan",
+      "zh": "苏丹"
+    }
+  },
+  {
+    "Alpha2Code": "SE",
+    "Alpha3Code": "SWE",
+    "Capital": "Stockholm",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "sv"
+    ],
+    "Translations": {
+      "en": "Sweden",
+      "cs": "Švédsko",
+      "de": "Schweden",
+      "fr": "Suède",
+      "hr": "Švedska",
+      "it": "Svezia",
+      "ja": "スウェーデン",
+      "nl": "Zweden",
+      "pt": "Suécia",
+      "ru": "Швеция",
+      "sk": "Švédsko",
+      "es": "Suecia",
+      "fi": "Ruotsi",
+      "et": "Rootsi",
+      "zh": "瑞典"
+    }
+  },
+  {
+    "Alpha2Code": "SG",
+    "Alpha3Code": "SGP",
+    "Capital": "Singapore",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "zh",
+      "en",
+      "ms",
+      "ta"
+    ],
+    "Translations": {
+      "en": "Singapore",
+      "cs": "Singapur",
+      "de": "Singapur",
+      "fr": "Singapour",
+      "hr": "Singapur",
+      "it": "Singapore",
+      "ja": "シンガポール",
+      "nl": "Singapore",
+      "pt": "Singapura",
+      "ru": "Сингапур",
+      "sk": "Singapur",
+      "es": "Singapur",
+      "fi": "Singapore",
+      "et": "Singapur"
+    }
+  },
+  {
+    "Alpha2Code": "SH",
+    "Alpha3Code": "SHN",
+    "Capital": "Jamestown",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Saint Helena, Ascension and Tristan da Cunha",
+      "cs": "Svatá Helena, Ascension a Tristan da Cunha",
+      "de": "St. Helena, Ascension und Tristan da Cunha",
+      "fr": "Sainte-Hélène, Ascension et Tristan da Cunha",
+      "hr": "Sveta Helena",
+      "it": "Sant'Elena, Ascensione e Tristan da Cunha",
+      "ja": "セントヘレナ・アセンションおよびトリスタンダクーニャ",
+      "nl": "Sint-Helena, Ascension en Tristan da Cunha",
+      "pt": "Santa Helena, Ascensão e Tristão da Cunha",
+      "ru": "Острова Святой Елены, Вознесения и Тристан-да-Кунья",
+      "sk": "Svätá Helena (zámorské územie)",
+      "es": "Santa Elena, Ascensión y Tristán de Acuña",
+      "fi": "Saint Helena, Ascension ja Tristan da Cunha",
+      "et": "Saint Helena, Ascension ja Tristan da Cunha",
+      "zh": "圣赫勒拿、阿森松和特里斯坦-达库尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "SI",
+    "Alpha3Code": "SVN",
+    "Capital": "Ljubljana",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "sl"
+    ],
+    "Translations": {
+      "en": "Slovenia",
+      "cs": "Slovinsko",
+      "de": "Slowenien",
+      "fr": "Slovénie",
+      "hr": "Slovenija",
+      "it": "Slovenia",
+      "ja": "スロベニア",
+      "nl": "Slovenië",
+      "pt": "Eslovénia",
+      "ru": "Словения",
+      "sk": "Slovinsko",
+      "es": "Eslovenia",
+      "fi": "Slovenia",
+      "et": "Sloveenia",
+      "zh": "斯洛文尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "SJ",
+    "Alpha3Code": "SJM",
+    "Capital": "Longyearbyen",
+    "Region": "Europe",
+    "Subregion": "Northern Europe",
+    "Languages": [
+      "no"
+    ],
+    "Translations": {
+      "en": "Svalbard and Jan Mayen",
+      "cs": "Špicberky a Jan Mayen",
+      "de": "Spitzbergen",
+      "fr": "Svalbard et Jan Mayen",
+      "hr": "Svalbard i Jan Mayen",
+      "it": "Svalbard e Jan Mayen",
+      "ja": "スヴァールバル諸島およびヤンマイエン島",
+      "nl": "Svalbard en Jan Mayen",
+      "pt": "Ilhas Svalbard e Jan Mayen",
+      "ru": "Шпицберген и Ян-Майен",
+      "sk": "Svalbard a Jan Mayen",
+      "es": "Islas Svalbard y Jan Mayen",
+      "fi": "Huippuvuoret",
+      "et": "Svalbard",
+      "zh": "斯瓦尔巴特"
+    }
+  },
+  {
+    "Alpha2Code": "SK",
+    "Alpha3Code": "SVK",
+    "Capital": "Bratislava",
+    "Region": "Europe",
+    "Subregion": "Central Europe",
+    "Languages": [
+      "sk"
+    ],
+    "Translations": {
+      "en": "Slovakia",
+      "cs": "Slovensko",
+      "de": "Slowakei",
+      "fr": "Slovaquie",
+      "hr": "Slovačka",
+      "it": "Slovacchia",
+      "ja": "スロバキア",
+      "nl": "Slowakije",
+      "pt": "Eslováquia",
+      "ru": "Словакия",
+      "sk": "Slovensko",
+      "es": "República Eslovaca",
+      "fi": "Slovakia",
+      "et": "Slovakkia",
+      "zh": "斯洛伐克"
+    }
+  },
+  {
+    "Alpha2Code": "SL",
+    "Alpha3Code": "SLE",
+    "Capital": "Freetown",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Sierra Leone",
+      "cs": "Sierra Leone",
+      "de": "Sierra Leone",
+      "fr": "Sierra Leone",
+      "hr": "Sijera Leone",
+      "it": "Sierra Leone",
+      "ja": "シエラレオネ",
+      "nl": "Sierra Leone",
+      "pt": "Serra Leoa",
+      "ru": "Сьерра-Леоне",
+      "sk": "Sierra Leone",
+      "es": "Sierra Leone",
+      "fi": "Sierra Leone",
+      "et": "Sierra Leone",
+      "zh": "塞拉利昂"
+    }
+  },
+  {
+    "Alpha2Code": "SM",
+    "Alpha3Code": "SMR",
+    "Capital": "City of San Marino",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "it"
+    ],
+    "Translations": {
+      "en": "San Marino",
+      "cs": "San Marino",
+      "de": "San Marino",
+      "fr": "Saint-Marin",
+      "hr": "San Marino",
+      "it": "San Marino",
+      "ja": "サンマリノ",
+      "nl": "San Marino",
+      "pt": "San Marino",
+      "ru": "Сан-Марино",
+      "sk": "San Maríno",
+      "es": "San Marino",
+      "fi": "San Marino",
+      "et": "San Marino",
+      "zh": "圣马力诺"
+    }
+  },
+  {
+    "Alpha2Code": "SN",
+    "Alpha3Code": "SEN",
+    "Capital": "Dakar",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Senegal",
+      "cs": "Senegal",
+      "de": "Senegal",
+      "fr": "Sénégal",
+      "hr": "Senegal",
+      "it": "Senegal",
+      "ja": "セネガル",
+      "nl": "Senegal",
+      "pt": "Senegal",
+      "ru": "Сенегал",
+      "sk": "Senegal",
+      "es": "Senegal",
+      "fi": "Senegal",
+      "et": "Senegal",
+      "zh": "塞内加尔"
+    }
+  },
+  {
+    "Alpha2Code": "SO",
+    "Alpha3Code": "SOM",
+    "Capital": "Mogadishu",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "ar",
+      "so"
+    ],
+    "Translations": {
+      "en": "Somalia",
+      "cs": "Somálsko",
+      "de": "Somalia",
+      "fr": "Somalie",
+      "hr": "Somalija",
+      "it": "Somalia",
+      "ja": "ソマリア",
+      "nl": "Somalië",
+      "pt": "Somália",
+      "ru": "Сомали",
+      "sk": "Somálsko",
+      "es": "Somalia",
+      "fi": "Somalia",
+      "et": "Somaalia",
+      "zh": "索马里"
+    }
+  },
+  {
+    "Alpha2Code": "SR",
+    "Alpha3Code": "SUR",
+    "Capital": "Paramaribo",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "nl"
+    ],
+    "Translations": {
+      "en": "Suriname",
+      "cs": "Surinam",
+      "de": "Suriname",
+      "fr": "Surinam",
+      "hr": "Surinam",
+      "it": "Suriname",
+      "ja": "スリナム",
+      "nl": "Suriname",
+      "pt": "Suriname",
+      "ru": "Суринам",
+      "sk": "Surinam",
+      "es": "Surinam",
+      "fi": "Suriname",
+      "et": "Suriname",
+      "zh": "苏里南"
+    }
+  },
+  {
+    "Alpha2Code": "SS",
+    "Alpha3Code": "SSD",
+    "Capital": "Juba",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "South Sudan",
+      "cs": "Jižní Súdán",
+      "de": "Südsudan",
+      "fr": "Soudan du Sud",
+      "hr": "Južni Sudan",
+      "it": "Sudan del sud",
+      "ja": "南スーダン",
+      "nl": "Zuid-Soedan",
+      "pt": "Sudão do Sul",
+      "ru": "Южный Судан",
+      "sk": "Južný Sudán",
+      "es": "Sudán del Sur",
+      "fi": "Etelä-Sudan",
+      "et": "Lõuna-Sudaan",
+      "zh": "南苏丹"
+    }
+  },
+  {
+    "Alpha2Code": "ST",
+    "Alpha3Code": "STP",
+    "Capital": "São Tomé",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "pt"
+    ],
+    "Translations": {
+      "en": "São Tomé and Príncipe",
+      "cs": "Svatý Tomáš a Princův ostrov",
+      "de": "São Tomé und Príncipe",
+      "fr": "São Tomé et Príncipe",
+      "hr": "Sveti Toma i Princip",
+      "it": "São Tomé e Príncipe",
+      "ja": "サントメ・プリンシペ",
+      "nl": "Sao Tomé en Principe",
+      "pt": "São Tomé e Príncipe",
+      "es": "Santo Tomé y Príncipe",
+      "ru": "Сан-Томе и Принсипи",
+      "sk": "Svätý Tomáš a Princov ostrov",
+      "fi": "São Téme ja Príncipe",
+      "et": "São Tomé ja Príncipe",
+      "zh": "圣多美和普林西比"
+    }
+  },
+  {
+    "Alpha2Code": "SV",
+    "Alpha3Code": "SLV",
+    "Capital": "San Salvador",
+    "Region": "Americas",
+    "Subregion": "Central America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "El Salvador",
+      "cs": "Salvador",
+      "cy": "El Salfador",
+      "de": "El Salvador",
+      "fr": "Salvador",
+      "hr": "Salvador",
+      "it": "El Salvador",
+      "ja": "エルサルバドル",
+      "nl": "El Salvador",
+      "pt": "El Salvador",
+      "ru": "Сальвадор",
+      "sk": "Salvádor",
+      "es": "El Salvador",
+      "fi": "El Salvador",
+      "et": "El Salvador",
+      "zh": "萨尔瓦多"
+    }
+  },
+  {
+    "Alpha2Code": "SX",
+    "Alpha3Code": "SXM",
+    "Capital": "Philipsburg",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en",
+      "fr",
+      "nl"
+    ],
+    "Translations": {
+      "en": "Sint Maarten",
+      "cs": "Svatý Martin (Nizozemsko)",
+      "de": "Sint Maarten",
+      "fr": "Saint-Martin",
+      "it": "Sint Maarten",
+      "ja": "シント・マールテン",
+      "nl": "Sint Maarten",
+      "pt": "São Martinho",
+      "ru": "Синт-Мартен",
+      "sk": "Sint Maarten",
+      "es": "Sint Maarten",
+      "fi": "Sint Maarten",
+      "et": "Sint Maarten",
+      "zh": "圣马丁岛"
+    }
+  },
+  {
+    "Alpha2Code": "SY",
+    "Alpha3Code": "SYR",
+    "Capital": "Damascus",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Syria",
+      "cs": "Sýrie",
+      "de": "Syrien",
+      "fr": "Syrie",
+      "hr": "Sirija",
+      "it": "Siria",
+      "ja": "シリア・アラブ共和国",
+      "nl": "Syrië",
+      "pt": "Síria",
+      "ru": "Сирия",
+      "sk": "Sýria",
+      "es": "Siria",
+      "fi": "Syyria",
+      "et": "Süüria",
+      "zh": "叙利亚"
+    }
+  },
+  {
+    "Alpha2Code": "SZ",
+    "Alpha3Code": "SWZ",
+    "Capital": "Lobamba",
+    "Region": "Africa",
+    "Subregion": "Southern Africa",
+    "Languages": [
+      "en",
+      "ss"
+    ],
+    "Translations": {
+      "en": "Swaziland",
+      "cs": "Svazijsko",
+      "de": "Swasiland",
+      "fr": "Swaziland",
+      "hr": "Svazi",
+      "it": "Swaziland",
+      "ja": "スワジランド",
+      "nl": "Swaziland",
+      "pt": "Suazilândia",
+      "ru": "Свазиленд",
+      "sk": "Svazijsko",
+      "es": "Suazilandia",
+      "fi": "Swazimaa",
+      "et": "Svaasimaa",
+      "zh": "斯威士兰"
+    }
+  },
+  {
+    "Alpha2Code": "TC",
+    "Alpha3Code": "TCA",
+    "Capital": "Cockburn Town",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Turks and Caicos Islands",
+      "cs": "Turks a Caicos",
+      "de": "Turks-und Caicosinseln",
+      "fr": "Îles Turques-et-Caïques",
+      "hr": "Otoci Turks i Caicos",
+      "it": "Isole Turks e Caicos",
+      "ja": "タークス・カイコス諸島",
+      "nl": "Turks-en Caicoseilanden",
+      "pt": "Ilhas Turks e Caicos",
+      "ru": "Теркс и Кайкос",
+      "sk": "Turks a Caicos",
+      "es": "Islas Turks y Caicos",
+      "fi": "Turks-ja Caicossaaret",
+      "et": "Turks ja Caicos",
+      "zh": "特克斯和凯科斯群岛"
+    }
+  },
+  {
+    "Alpha2Code": "TD",
+    "Alpha3Code": "TCD",
+    "Capital": "N'Djamena",
+    "Region": "Africa",
+    "Subregion": "Middle Africa",
+    "Languages": [
+      "ar",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Chad",
+      "cs": "Čad",
+      "cy": "Tsiad",
+      "de": "Tschad",
+      "fr": "Tchad",
+      "hr": "Čad",
+      "it": "Ciad",
+      "ja": "チャド",
+      "nl": "Tsjaad",
+      "pt": "Chade",
+      "ru": "Чад",
+      "sk": "Čad",
+      "es": "Chad",
+      "fi": "Tšad",
+      "et": "Tšaad",
+      "zh": "乍得"
+    }
+  },
+  {
+    "Alpha2Code": "TF",
+    "Alpha3Code": "ATF",
+    "Capital": "Port-aux-Français",
+    "Region": "Antarctic",
+    "Subregion": "",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "French Southern and Antarctic Lands",
+      "cs": "Francouzská jižní a antarktická území",
+      "de": "Französische Süd-und Antarktisgebiete",
+      "fr": "Terres australes et antarctiques françaises",
+      "hr": "Francuski južni i antarktički teritoriji",
+      "it": "Territori Francesi del Sud",
+      "ja": "フランス領南方・南極地域",
+      "nl": "Franse Gebieden in de zuidelijke Indische Oceaan",
+      "pt": "Terras Austrais e Antárticas Francesas",
+      "ru": "Французские Южные и Антарктические территории",
+      "sk": "Francúzske juŽné a antarktické územia",
+      "es": "Tierras Australes y Antárticas Francesas",
+      "fi": "Ranskan eteläiset ja antarktiset alueet",
+      "et": "Prantsuse Lõunaalad",
+      "zh": "法国南部和南极土地"
+    }
+  },
+  {
+    "Alpha2Code": "TG",
+    "Alpha3Code": "TGO",
+    "Capital": "Lomé",
+    "Region": "Africa",
+    "Subregion": "Western Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Togo",
+      "cs": "Togo",
+      "de": "Togo",
+      "fr": "Togo",
+      "hr": "Togo",
+      "it": "Togo",
+      "ja": "トーゴ",
+      "nl": "Togo",
+      "pt": "Togo",
+      "ru": "Того",
+      "sk": "Togo",
+      "es": "Togo",
+      "fi": "Togo",
+      "et": "Togo",
+      "zh": "多哥"
+    }
+  },
+  {
+    "Alpha2Code": "TH",
+    "Alpha3Code": "THA",
+    "Capital": "Bangkok",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "th"
+    ],
+    "Translations": {
+      "en": "Thailand",
+      "cs": "Thajsko",
+      "de": "Thailand",
+      "fr": "Thaïlande",
+      "hr": "Tajland",
+      "it": "Tailandia",
+      "ja": "タイ",
+      "nl": "Thailand",
+      "pt": "Tailândia",
+      "ru": "Таиланд",
+      "sk": "Thajsko",
+      "es": "Tailandia",
+      "fi": "Thaimaa",
+      "et": "Tai",
+      "zh": "泰国"
+    }
+  },
+  {
+    "Alpha2Code": "TJ",
+    "Alpha3Code": "TJK",
+    "Capital": "Dushanbe",
+    "Region": "Asia",
+    "Subregion": "Central Asia",
+    "Languages": [
+      "ru",
+      "tg"
+    ],
+    "Translations": {
+      "en": "Tajikistan",
+      "cs": "Tádžikistán",
+      "de": "Tadschikistan",
+      "fr": "Tadjikistan",
+      "hr": "Tađikistan",
+      "it": "Tagikistan",
+      "ja": "タジキスタン",
+      "nl": "Tadzjikistan",
+      "pt": "Tajiquistão",
+      "ru": "Таджикистан",
+      "sk": "Taǆikistan",
+      "es": "Tayikistán",
+      "fi": "Tadžikistan",
+      "et": "Tadžikistan",
+      "zh": "塔吉克斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "TK",
+    "Alpha3Code": "TKL",
+    "Capital": "Fakaofo",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "sm",
+      "tkl"
+    ],
+    "Translations": {
+      "en": "Tokelau",
+      "cs": "Tokelau",
+      "de": "Tokelau",
+      "fr": "Tokelau",
+      "hr": "Tokelau",
+      "it": "Isole Tokelau",
+      "ja": "トケラウ",
+      "nl": "Tokelau",
+      "pt": "Tokelau",
+      "ru": "Токелау",
+      "sk": "Tokelau",
+      "es": "Islas Tokelau",
+      "fi": "Tokelau",
+      "et": "Tokelau",
+      "zh": "托克劳"
+    }
+  },
+  {
+    "Alpha2Code": "TL",
+    "Alpha3Code": "TLS",
+    "Capital": "Dili",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "pt",
+      "tet"
+    ],
+    "Translations": {
+      "en": "Timor-Leste",
+      "cs": "Východní Timor",
+      "de": "Timor-Leste",
+      "fr": "Timor oriental",
+      "hr": "Istočni Timor",
+      "it": "Timor Est",
+      "ja": "東ティモール",
+      "nl": "Oost-Timor",
+      "pt": "Timor-Leste",
+      "ru": "Восточный Тимор",
+      "sk": "Východný Timor",
+      "es": "Timor Oriental",
+      "fi": "Itä-Timor",
+      "et": "Ida-Timor",
+      "zh": "东帝汶"
+    }
+  },
+  {
+    "Alpha2Code": "TM",
+    "Alpha3Code": "TKM",
+    "Capital": "Ashgabat",
+    "Region": "Asia",
+    "Subregion": "Central Asia",
+    "Languages": [
+      "ru",
+      "tk"
+    ],
+    "Translations": {
+      "en": "Turkmenistan",
+      "cs": "Turkmenistán",
+      "de": "Turkmenistan",
+      "fr": "Turkménistan",
+      "hr": "Turkmenistan",
+      "it": "Turkmenistan",
+      "ja": "トルクメニスタン",
+      "nl": "Turkmenistan",
+      "pt": "Turquemenistão",
+      "ru": "Туркмения",
+      "sk": "Turkménsko",
+      "es": "Turkmenistán",
+      "fi": "Turkmenistan",
+      "et": "Türkmenistan",
+      "zh": "土库曼斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "TN",
+    "Alpha3Code": "TUN",
+    "Capital": "Tunis",
+    "Region": "Africa",
+    "Subregion": "Northern Africa",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Tunisia",
+      "cs": "Tunisko",
+      "de": "Tunesien",
+      "fr": "Tunisie",
+      "hr": "Tunis",
+      "it": "Tunisia",
+      "ja": "チュニジア",
+      "nl": "Tunesië",
+      "pt": "Tunísia",
+      "ru": "Тунис",
+      "sk": "Tunisko",
+      "es": "Túnez",
+      "fi": "Tunisia",
+      "et": "Tuneesia",
+      "zh": "突尼斯"
+    }
+  },
+  {
+    "Alpha2Code": "TO",
+    "Alpha3Code": "TON",
+    "Capital": "Nuku'alofa",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "to"
+    ],
+    "Translations": {
+      "en": "Tonga",
+      "cs": "Tonga",
+      "de": "Tonga",
+      "fr": "Tonga",
+      "hr": "Tonga",
+      "it": "Tonga",
+      "ja": "トンガ",
+      "nl": "Tonga",
+      "pt": "Tonga",
+      "ru": "Тонга",
+      "sk": "Tonga",
+      "es": "Tonga",
+      "fi": "Tonga",
+      "et": "Tonga",
+      "zh": "汤加"
+    }
+  },
+  {
+    "Alpha2Code": "TR",
+    "Alpha3Code": "TUR",
+    "Capital": "Ankara",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "tr"
+    ],
+    "Translations": {
+      "en": "Turkey",
+      "cs": "Turecko",
+      "de": "Türkei",
+      "fr": "Turquie",
+      "hr": "Turska",
+      "it": "Turchia",
+      "ja": "トルコ",
+      "nl": "Turkije",
+      "pt": "Turquia",
+      "ru": "Турция",
+      "sk": "Turecko",
+      "es": "Turquía",
+      "fi": "Turkki",
+      "et": "Türgi",
+      "zh": "土耳其"
+    }
+  },
+  {
+    "Alpha2Code": "TT",
+    "Alpha3Code": "TTO",
+    "Capital": "Port of Spain",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Trinidad and Tobago",
+      "cs": "Trinidad a Tobago",
+      "de": "Trinidad und Tobago",
+      "fr": "Trinité-et-Tobago",
+      "hr": "Trinidad i Tobago",
+      "it": "Trinidad e Tobago",
+      "ja": "トリニダード・トバゴ",
+      "nl": "Trinidad en Tobago",
+      "pt": "Trinidade e Tobago",
+      "ru": "Тринидад и Тобаго",
+      "sk": "Trinidad a Tobago",
+      "es": "Trinidad y Tobago",
+      "fi": "Trinidad ja Tobago",
+      "et": "Trinidad ja Tobago",
+      "zh": "特立尼达和多巴哥"
+    }
+  },
+  {
+    "Alpha2Code": "TV",
+    "Alpha3Code": "TUV",
+    "Capital": "Funafuti",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "tvl"
+    ],
+    "Translations": {
+      "en": "Tuvalu",
+      "cs": "Tuvalu",
+      "de": "Tuvalu",
+      "fr": "Tuvalu",
+      "hr": "Tuvalu",
+      "it": "Tuvalu",
+      "ja": "ツバル",
+      "nl": "Tuvalu",
+      "pt": "Tuvalu",
+      "ru": "Тувалу",
+      "sk": "Tuvalu",
+      "es": "Tuvalu",
+      "fi": "Tuvalu",
+      "et": "Tuvalu",
+      "zh": "图瓦卢"
+    }
+  },
+  {
+    "Alpha2Code": "TW",
+    "Alpha3Code": "TWN",
+    "Capital": "Taipei",
+    "Region": "Asia",
+    "Subregion": "Eastern Asia",
+    "Languages": [
+      "zh"
+    ],
+    "Translations": {
+      "en": "Taiwan",
+      "cs": "Tchaj-wan",
+      "de": "Taiwan",
+      "fr": "Taïwan",
+      "hr": "Tajvan",
+      "it": "Taiwan",
+      "ja": "台湾",
+      "nl": "Taiwan",
+      "pt": "Ilha Formosa",
+      "ru": "Тайвань",
+      "sk": "Taiwan",
+      "es": "Taiwán",
+      "fi": "Taiwan",
+      "et": "Taiwan"
+    }
+  },
+  {
+    "Alpha2Code": "TZ",
+    "Alpha3Code": "TZA",
+    "Capital": "Dodoma",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en",
+      "sw"
+    ],
+    "Translations": {
+      "en": "Tanzania",
+      "cs": "Tanzanie",
+      "de": "Tansania",
+      "fr": "Tanzanie",
+      "hr": "Tanzanija",
+      "it": "Tanzania",
+      "ja": "タンザニア",
+      "nl": "Tanzania",
+      "pt": "Tanzânia",
+      "ru": "Танзания",
+      "sk": "Tanzánia",
+      "es": "Tanzania",
+      "fi": "Tansania",
+      "et": "Tansaania",
+      "zh": "坦桑尼亚"
+    }
+  },
+  {
+    "Alpha2Code": "UA",
+    "Alpha3Code": "UKR",
+    "Capital": "Kyiv",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "uk"
+    ],
+    "Translations": {
+      "en": "Ukraine",
+      "cs": "Ukrajina",
+      "de": "Ukraine",
+      "fr": "Ukraine",
+      "hr": "Ukrajina",
+      "it": "Ucraina",
+      "ja": "ウクライナ",
+      "nl": "Oekraïne",
+      "pt": "Ucrânia",
+      "ru": "Украина",
+      "sk": "Ukrajina",
+      "es": "Ucrania",
+      "fi": "Ukraina",
+      "et": "Ukraina",
+      "zh": "乌克兰"
+    }
+  },
+  {
+    "Alpha2Code": "UG",
+    "Alpha3Code": "UGA",
+    "Capital": "Kampala",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en",
+      "sw"
+    ],
+    "Translations": {
+      "en": "Uganda",
+      "cs": "Uganda",
+      "de": "Uganda",
+      "fr": "Ouganda",
+      "hr": "Uganda",
+      "it": "Uganda",
+      "ja": "ウガンダ",
+      "nl": "Oeganda",
+      "pt": "Uganda",
+      "ru": "Уганда",
+      "sk": "Uganda",
+      "es": "Uganda",
+      "fi": "Uganda",
+      "et": "Uganda",
+      "zh": "乌干达"
+    }
+  },
+  {
+    "Alpha2Code": "UM",
+    "Alpha3Code": "UMI",
+    "Capital": "",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "United States Minor Outlying Islands",
+      "cs": "Menší odlehlé ostrovy USA",
+      "de": "Kleinere Inselbesitzungen der Vereinigten Staaten",
+      "fr": "Îles mineures éloignées des États-Unis",
+      "hr": "Mali udaljeni otoci SAD-a",
+      "it": "Isole minori esterne degli Stati Uniti d'America",
+      "ja": "合衆国領有小離島",
+      "nl": "Kleine afgelegen eilanden van de Verenigde Staten",
+      "pt": "Ilhas Menores Distantes dos Estados Unidos",
+      "ru": "Внешние малые острова США",
+      "sk": "Menšie odľahlé ostrovy USA",
+      "es": "Islas Ultramarinas Menores de Estados Unidos",
+      "fi": "Yhdysvaltain asumattomat saaret",
+      "et": "Ühendriikide hajasaared",
+      "zh": "美国本土外小岛屿"
+    }
+  },
+  {
+    "Alpha2Code": "US",
+    "Alpha3Code": "USA",
+    "Capital": "Washington D.C.",
+    "Region": "Americas",
+    "Subregion": "North America",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "United States",
+      "cs": "Spojené státy",
+      "de": "Vereinigte Staaten von Amerika",
+      "fr": "États-Unis",
+      "hr": "Sjedinjene Američke Države",
+      "it": "Stati Uniti d'America",
+      "ja": "アメリカ合衆国",
+      "nl": "Verenigde Staten",
+      "pt": "Estados Unidos",
+      "ru": "Соединённые Штаты Америки",
+      "sk": "Spojené štáty americké",
+      "es": "Estados Unidos",
+      "fi": "Yhdysvallat",
+      "et": "Ameerika Ühendriigid",
+      "zh": "美国"
+    }
+  },
+  {
+    "Alpha2Code": "UY",
+    "Alpha3Code": "URY",
+    "Capital": "Montevideo",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Uruguay",
+      "cs": "Uruguay",
+      "de": "Uruguay",
+      "fr": "Uruguay",
+      "hr": "Urugvaj",
+      "it": "Uruguay",
+      "ja": "ウルグアイ",
+      "nl": "Uruguay",
+      "pt": "Uruguai",
+      "ru": "Уругвай",
+      "sk": "Uruguaj",
+      "es": "Uruguay",
+      "fi": "Uruguay",
+      "et": "Uruguay",
+      "zh": "乌拉圭"
+    }
+  },
+  {
+    "Alpha2Code": "UZ",
+    "Alpha3Code": "UZB",
+    "Capital": "Tashkent",
+    "Region": "Asia",
+    "Subregion": "Central Asia",
+    "Languages": [
+      "ru",
+      "uz"
+    ],
+    "Translations": {
+      "en": "Uzbekistan",
+      "cs": "Uzbekistán",
+      "de": "Usbekistan",
+      "fr": "Ouzbékistan",
+      "hr": "Uzbekistan",
+      "it": "Uzbekistan",
+      "ja": "ウズベキスタン",
+      "nl": "Oezbekistan",
+      "pt": "Uzbequistão",
+      "ru": "Узбекистан",
+      "sk": "Uzbekistan",
+      "es": "Uzbekistán",
+      "fi": "Uzbekistan",
+      "et": "Usbekistan",
+      "zh": "乌兹别克斯坦"
+    }
+  },
+  {
+    "Alpha2Code": "VA",
+    "Alpha3Code": "VAT",
+    "Capital": "Vatican City",
+    "Region": "Europe",
+    "Subregion": "Southern Europe",
+    "Languages": [
+      "it",
+      "la"
+    ],
+    "Translations": {
+      "en": "Vatican City",
+      "cs": "Vatikán",
+      "de": "Vatikanstadt",
+      "fr": "Cité du Vatican",
+      "hr": "Vatikan",
+      "it": "Città del Vaticano",
+      "ja": "バチカン市国",
+      "nl": "Vaticaanstad",
+      "pt": "Cidade do Vaticano",
+      "ru": "Ватикан",
+      "sk": "Vatikán",
+      "es": "Ciudad del Vaticano",
+      "fi": "Vatikaani",
+      "et": "Vatikan",
+      "zh": "梵蒂冈"
+    }
+  },
+  {
+    "Alpha2Code": "VC",
+    "Alpha3Code": "VCT",
+    "Capital": "Kingstown",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Saint Vincent and the Grenadines",
+      "cs": "Svatý Vincenc a Grenadiny",
+      "de": "Saint Vincent und die Grenadinen",
+      "fr": "Saint-Vincent-et-les-Grenadines",
+      "hr": "Sveti Vincent i Grenadini",
+      "it": "Saint Vincent e Grenadine",
+      "ja": "セントビンセントおよびグレナディーン諸島",
+      "nl": "Saint Vincent en de Grenadines",
+      "pt": "São Vincente e Granadinas",
+      "ru": "Сент-Винсент и Гренадины",
+      "sk": "Svätý Vincent a Grenadíny",
+      "es": "San Vicente y Granadinas",
+      "fi": "Saint Vincent ja Grenadiinit",
+      "et": "Saint Vincent",
+      "zh": "圣文森特和格林纳丁斯"
+    }
+  },
+  {
+    "Alpha2Code": "VE",
+    "Alpha3Code": "VEN",
+    "Capital": "Caracas",
+    "Region": "Americas",
+    "Subregion": "South America",
+    "Languages": [
+      "es"
+    ],
+    "Translations": {
+      "en": "Venezuela",
+      "cs": "Venezuela",
+      "de": "Venezuela",
+      "fr": "Venezuela",
+      "hr": "Venezuela",
+      "it": "Venezuela",
+      "ja": "ベネズエラ・ボリバル共和国",
+      "nl": "Venezuela",
+      "pt": "Venezuela",
+      "ru": "Венесуэла",
+      "sk": "Venezuela",
+      "es": "Venezuela",
+      "fi": "Venezuela",
+      "et": "Venezuela",
+      "zh": "委内瑞拉"
+    }
+  },
+  {
+    "Alpha2Code": "VG",
+    "Alpha3Code": "VGB",
+    "Capital": "Road Town",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "British Virgin Islands",
+      "cs": "Britské Panenské ostrovy",
+      "de": "Britische Jungferninseln",
+      "fr": "Îles Vierges britanniques",
+      "hr": "Britanski Djevičanski Otoci",
+      "it": "Isole Vergini Britanniche",
+      "ja": "イギリス領ヴァージン諸島",
+      "nl": "Britse Maagdeneilanden",
+      "pt": "Ilhas Virgens",
+      "ru": "Британские Виргинские острова",
+      "sk": "Panenské ostrovy",
+      "es": "Islas Vírgenes del Reino Unido",
+      "fi": "Neitsytsaaret",
+      "et": "Briti Neitsisaared",
+      "zh": "英属维尔京群岛"
+    }
+  },
+  {
+    "Alpha2Code": "VI",
+    "Alpha3Code": "VIR",
+    "Capital": "Charlotte Amalie",
+    "Region": "Americas",
+    "Subregion": "Caribbean",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "United States Virgin Islands",
+      "cs": "Americké Panenské ostrovy",
+      "de": "Amerikanische Jungferninseln",
+      "fr": "Îles Vierges des États-Unis",
+      "hr": "Američki Djevičanski Otoci",
+      "it": "Isole Vergini americane",
+      "ja": "アメリカ領ヴァージン諸島",
+      "nl": "Amerikaanse Maagdeneilanden",
+      "pt": "Ilhas Virgens dos Estados Unidos",
+      "ru": "Виргинские Острова",
+      "sk": "Americké Panenské ostrovy",
+      "es": "Islas Vírgenes de los Estados Unidos",
+      "fi": "Neitsytsaaret",
+      "et": "Neitsisaared, USA",
+      "zh": "美属维尔京群岛"
+    }
+  },
+  {
+    "Alpha2Code": "VN",
+    "Alpha3Code": "VNM",
+    "Capital": "Hanoi",
+    "Region": "Asia",
+    "Subregion": "South-Eastern Asia",
+    "Languages": [
+      "vi"
+    ],
+    "Translations": {
+      "en": "Vietnam",
+      "cs": "Vietnam",
+      "de": "Vietnam",
+      "fr": "Viêt Nam",
+      "hr": "Vijetnam",
+      "it": "Vietnam",
+      "ja": "ベトナム",
+      "nl": "Vietnam",
+      "pt": "Vietname",
+      "ru": "Вьетнам",
+      "sk": "Vietnam",
+      "es": "Vietnam",
+      "fi": "Vietnam",
+      "et": "Vietnam",
+      "zh": "越南"
+    }
+  },
+  {
+    "Alpha2Code": "VU",
+    "Alpha3Code": "VUT",
+    "Capital": "Port Vila",
+    "Region": "Oceania",
+    "Subregion": "Melanesia",
+    "Languages": [
+      "bi",
+      "en",
+      "fr"
+    ],
+    "Translations": {
+      "en": "Vanuatu",
+      "cs": "Vanuatu",
+      "de": "Vanuatu",
+      "fr": "Vanuatu",
+      "hr": "Vanuatu",
+      "it": "Vanuatu",
+      "ja": "バヌアツ",
+      "nl": "Vanuatu",
+      "pt": "Vanuatu",
+      "ru": "Вануату",
+      "sk": "Vanuatu",
+      "es": "Vanuatu",
+      "fi": "Vanuatu",
+      "et": "Vanuatu",
+      "zh": "瓦努阿图"
+    }
+  },
+  {
+    "Alpha2Code": "WF",
+    "Alpha3Code": "WLF",
+    "Capital": "Mata-Utu",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Wallis and Futuna",
+      "cs": "Wallis a Futuna",
+      "de": "Wallis und Futuna",
+      "fr": "Wallis-et-Futuna",
+      "hr": "Wallis i Fortuna",
+      "it": "Wallis e Futuna",
+      "ja": "ウォリス・フツナ",
+      "nl": "Wallis en Futuna",
+      "pt": "Wallis e Futuna",
+      "ru": "Уоллис и Футуна",
+      "sk": "Wallis a Futuna",
+      "es": "Wallis y Futuna",
+      "fi": "Wallis ja Futuna",
+      "et": "Wallis ja Futuna",
+      "zh": "瓦利斯和富图纳群岛"
+    }
+  },
+  {
+    "Alpha2Code": "WS",
+    "Alpha3Code": "WSM",
+    "Capital": "Apia",
+    "Region": "Oceania",
+    "Subregion": "Polynesia",
+    "Languages": [
+      "en",
+      "sm"
+    ],
+    "Translations": {
+      "en": "Samoa",
+      "cs": "Samoa",
+      "de": "Samoa",
+      "fr": "Samoa",
+      "hr": "Samoa",
+      "it": "Samoa",
+      "ja": "サモア",
+      "nl": "Samoa",
+      "pt": "Samoa",
+      "ru": "Самоа",
+      "sk": "Samoa",
+      "es": "Samoa",
+      "fi": "Samoa",
+      "et": "Samoa",
+      "zh": "萨摩亚"
+    }
+  },
+  {
+    "Alpha2Code": "XK",
+    "Alpha3Code": "UNK",
+    "Capital": "Pristina",
+    "Region": "Europe",
+    "Subregion": "Eastern Europe",
+    "Languages": [
+      "sq",
+      "sr"
+    ],
+    "Translations": {
+      "en": "Kosovo",
+      "cs": "Kosovo",
+      "de": "Kosovo",
+      "fr": "Kosovo",
+      "hr": "Kosovo",
+      "it": "Kosovo",
+      "nl": "Kosovo",
+      "pt": "Kosovo",
+      "ru": "Республика Косово",
+      "sk": "Kosovo",
+      "es": "Kosovo",
+      "fi": "Kosovo",
+      "et": "Kosovo",
+      "zh": "科索沃"
+    }
+  },
+  {
+    "Alpha2Code": "YE",
+    "Alpha3Code": "YEM",
+    "Capital": "Sana'a",
+    "Region": "Asia",
+    "Subregion": "Western Asia",
+    "Languages": [
+      "ar"
+    ],
+    "Translations": {
+      "en": "Yemen",
+      "cs": "Jemen",
+      "de": "Jemen",
+      "fr": "Yémen",
+      "hr": "Jemen",
+      "it": "Yemen",
+      "ja": "イエメン",
+      "nl": "Jemen",
+      "pt": "Iémen",
+      "ru": "Йемен",
+      "sk": "Jemen",
+      "es": "Yemen",
+      "fi": "Jemen",
+      "et": "Jeemen",
+      "zh": "也门"
+    }
+  },
+  {
+    "Alpha2Code": "YT",
+    "Alpha3Code": "MYT",
+    "Capital": "Mamoudzou",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "fr"
+    ],
+    "Translations": {
+      "en": "Mayotte",
+      "cs": "Mayotte",
+      "de": "Mayotte",
+      "fr": "Mayotte",
+      "hr": "Mayotte",
+      "it": "Mayotte",
+      "ja": "マヨット",
+      "nl": "Mayotte",
+      "pt": "Mayotte",
+      "ru": "Майотта",
+      "sk": "Mayotte",
+      "es": "Mayotte",
+      "fi": "Mayotte",
+      "et": "Mayotte",
+      "zh": "马约特"
+    }
+  },
+  {
+    "Alpha2Code": "ZA",
+    "Alpha3Code": "ZAF",
+    "Capital": "Pretoria",
+    "Region": "Africa",
+    "Subregion": "Southern Africa",
+    "Languages": [
+      "af",
+      "en",
+      "nr",
+      "nso",
+      "st",
+      "ss",
+      "tn",
+      "ts",
+      "ve",
+      "xh",
+      "zu"
+    ],
+    "Translations": {
+      "en": "South Africa",
+      "cs": "Jihoafrická republika",
+      "de": "Republik Südafrika",
+      "fr": "Afrique du Sud",
+      "hr": "Južnoafrička Republika",
+      "it": "Sud Africa",
+      "ja": "南アフリカ",
+      "nl": "Zuid-Afrika",
+      "pt": "África do Sul",
+      "ru": "Южно-Африканская Республика",
+      "sk": "Juhoafrická republika",
+      "es": "República de Sudáfrica",
+      "fi": "Etelä-Afrikka",
+      "et": "Lõuna-Aafrika Vabariik",
+      "zh": "南非"
+    }
+  },
+  {
+    "Alpha2Code": "ZM",
+    "Alpha3Code": "ZMB",
+    "Capital": "Lusaka",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "en"
+    ],
+    "Translations": {
+      "en": "Zambia",
+      "cs": "Zambie",
+      "de": "Sambia",
+      "fr": "Zambie",
+      "hr": "Zambija",
+      "it": "Zambia",
+      "ja": "ザンビア",
+      "nl": "Zambia",
+      "pt": "Zâmbia",
+      "ru": "Замбия",
+      "sk": "Zambia",
+      "es": "Zambia",
+      "fi": "Sambia",
+      "et": "Sambia",
+      "zh": "赞比亚"
+    }
+  },
+  {
+    "Alpha2Code": "ZW",
+    "Alpha3Code": "ZWE",
+    "Capital": "Harare",
+    "Region": "Africa",
+    "Subregion": "Eastern Africa",
+    "Languages": [
+      "bwg",
+      "en",
+      "kck",
+      "khi",
+      "ndc",
+      "nd",
+      "ny",
+      "sn",
+      "st",
+      "toi",
+      "tn",
+      "ts",
+      "ve",
+      "xh",
+      "zib"
+    ],
+    "Translations": {
+      "en": "Zimbabwe",
+      "cs": "Zimbabwe",
+      "de": "Simbabwe",
+      "fr": "Zimbabwe",
+      "hr": "Zimbabve",
+      "it": "Zimbabwe",
+      "ja": "ジンバブエ",
+      "nl": "Zimbabwe",
+      "pt": "Zimbabwe",
+      "ru": "Зимбабве",
+      "sk": "Zimbabwe",
+      "es": "Zimbabue",
+      "fi": "Zimbabwe",
+      "et": "Zimbabwe",
+      "zh": "津巴布韦"
+    }
+  }
+]

@@ -1,9 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace People.Infrastructure.Prohibitions
+namespace People.Infrastructure.Forbidden
 {
-    public interface IProhibitionService
+    public interface IForbiddenService
     {
         Task<bool> IsPasswordForbidden(string password, CancellationToken ct = default);
         

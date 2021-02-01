@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +33,11 @@ namespace People.Api
 
                 await scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>()
                     .OnModelCreatingAsync();
+
+                // await new InfrastructureContextSeed(
+                //     scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>(),
+                //     scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>()
+                // ).SeedAsync();
             }
 
             await host.RunAsync();

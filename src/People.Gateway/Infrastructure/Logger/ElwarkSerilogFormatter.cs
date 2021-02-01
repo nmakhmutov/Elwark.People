@@ -4,7 +4,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
 
-namespace People.Api.Infrastructure.Logger
+namespace People.Gateway.Infrastructure.Logger
 {
     public class ElwarkSerilogFormatter : ITextFormatter
     {

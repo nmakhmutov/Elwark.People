@@ -20,14 +20,12 @@ namespace People.Worker.Services.IpInformation
         {
             var response = await _httpClient.GetAsync($"/json/{ip}?lang={lang}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadFromJsonAsync<IpInformationDto>();
-                if (data.Status == IpInformationStatus.Success)
-                    return data;
-            }
+            if (!response.IsSuccessStatusCode) 
+                return null;
+            
+            var data = await response.Content.ReadFromJsonAsync<IpInformationDto>();
 
-            return null;
+            return data?.Status == IpInformationStatus.Success ? data : null;
         }
     }
 }
