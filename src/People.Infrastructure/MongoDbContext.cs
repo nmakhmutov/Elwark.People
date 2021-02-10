@@ -15,11 +15,8 @@ namespace People.Infrastructure
             // mongoSettings.ClusterConfigurator =
             //     builder => builder.Subscribe<CommandStartedEvent>(e =>
             //         Console.WriteLine(e.Command.ToJson(new JsonWriterSettings {Indent = true})));
+            
             var client = new MongoClient(mongoSettings);
-
-            if (client is null)
-                throw new MongoException("Client is null");
-
             Database = client.GetDatabase(settings.Database);
         }
 
@@ -39,8 +36,7 @@ namespace People.Infrastructure
             await (await collection.Indexes.ListAsync())
                 .ForEachAsync(document => dbIndexNames.Add(document["name"].AsString));
 
-            var newIndexes = indexes.Where(x => !dbIndexNames.Contains(x.Options.Name))
-                .ToArray();
+            var newIndexes = indexes.Where(x => !dbIndexNames.Contains(x.Options.Name)).ToArray();
 
             if (newIndexes.Length > 0)
                 await collection.Indexes.CreateManyAsync(newIndexes);

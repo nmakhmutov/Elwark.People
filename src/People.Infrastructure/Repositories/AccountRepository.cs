@@ -48,7 +48,7 @@ namespace People.Infrastructure.Repositories
                 Builders<Account>.Filter.Eq(x => x.Version, entity.Version)
             );
 
-            entity.Version = (entity.Version == long.MaxValue ? long.MinValue : entity.Version) + 1;
+            entity.Version = (entity.Version == int.MaxValue ? int.MinValue : entity.Version) + 1;
 
             var result = await _dbContext.Accounts
                 .ReplaceOneAsync(filter, entity, new ReplaceOptions {IsUpsert = false}, ct);

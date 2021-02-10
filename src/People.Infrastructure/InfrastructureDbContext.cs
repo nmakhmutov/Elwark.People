@@ -69,10 +69,9 @@ namespace People.Infrastructure
                 new CreateIndexModel<Confirmation>(
                     Builders<Confirmation>.IndexKeys.Combine(
                         Builders<Confirmation>.IndexKeys.Ascending(x => x.AccountId),
-                        Builders<Confirmation>.IndexKeys.Ascending(x => x.Type),
                         Builders<Confirmation>.IndexKeys.Descending(x => x.ExpireAt)
                     ),
-                    new CreateIndexOptions {Name = "AccountId_Type_ExpireAt"}
+                    new CreateIndexOptions {Name = "AccountId_ExpireAt"}
                 )
             );
         }
