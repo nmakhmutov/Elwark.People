@@ -5,6 +5,7 @@ using MediatR;
 using MongoDB.Driver;
 using People.Domain.AggregateModels.Account;
 using People.Domain.AggregateModels.Account.Identities;
+using People.Infrastructure.Mongo;
 using People.Infrastructure.Sequences;
 
 namespace People.Infrastructure.Repositories

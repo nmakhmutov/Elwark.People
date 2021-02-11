@@ -1,4 +1,4 @@
-﻿namespace People.Infrastructure
+﻿namespace People.Infrastructure.Mongo
 {
     public sealed record DbContextSettings
     {

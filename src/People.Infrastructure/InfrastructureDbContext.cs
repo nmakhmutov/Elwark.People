@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
 using People.Infrastructure.Forbidden;
+using People.Infrastructure.Mongo;
 using People.Infrastructure.Timezones;
 
 namespace People.Infrastructure

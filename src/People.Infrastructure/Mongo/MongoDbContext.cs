@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 
-namespace People.Infrastructure
+namespace People.Infrastructure.Mongo
 {
     public abstract class MongoDbContext
     {

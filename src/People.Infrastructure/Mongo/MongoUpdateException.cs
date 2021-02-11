@@ -1,6 +1,6 @@
 using MongoDB.Driver;
 
-namespace People.Infrastructure
+namespace People.Infrastructure.Mongo
 {
     public class MongoUpdateException : MongoException
     {
