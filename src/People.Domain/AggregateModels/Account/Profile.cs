@@ -11,6 +11,6 @@ namespace People.Domain.AggregateModels.Account
     )
     {
         public static Uri DefaultPicture => 
-            new Uri("https://res.cloudinary.com/elwark/image/upload/v1610430646/People/default_j21xml.png");
+            new("https://res.cloudinary.com/elwark/image/upload/v1610430646/People/default_j21xml.png");
     }
 }

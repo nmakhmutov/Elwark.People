@@ -24,7 +24,7 @@ namespace People.Domain.AggregateModels.Account
         {
             var now = DateTime.UtcNow;
             Id = long.MinValue;
-            Version = long.MinValue;
+            Version = int.MinValue;
             _password = null;
             Ban = null;
             _roles = new HashSet<string>();
@@ -39,7 +39,7 @@ namespace People.Domain.AggregateModels.Account
             AddDomainEvent(new AccountCreatedDomainEvent(this));
         }
 
-        public long Version { get; set; }
+        public int Version { get; set; }
 
         public Name Name { get; private set; }
 
@@ -91,9 +91,27 @@ namespace People.Domain.AggregateModels.Account
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public void SetName(Name name)
+        {
+            Name = name;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         public void SetProfile(Profile profile)
         {
             Profile = profile;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetAddress(Address address)
+        {
+            Address = address;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetTimezone(Timezone timezone)
+        {
+            Timezone = timezone;
             UpdatedAt = DateTime.UtcNow;
         }
 
@@ -160,13 +178,15 @@ namespace People.Domain.AggregateModels.Account
         }
 
         public void AddRole(string role) => _roles.Add(role);
-        
+
         public void UpdateRegistrationCountry(CountryCode code)
         {
-            if(_registration.CountryCode != CountryCode.Empty)
+            if (_registration.CountryCode != CountryCode.Empty)
                 return;
 
             _registration = _registration with {CountryCode = code};
         }
+
+        public string GetRegisteredIp() => _registration.Ip;
     }
 }
