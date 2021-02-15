@@ -7,32 +7,25 @@ namespace People.Infrastructure.Confirmations
 {
     public sealed class Confirmation
     {
-        public Confirmation(AccountId accountId, ConfirmationType type, int code, TimeSpan lifetime)
+        public Confirmation(AccountId accountId, uint code, DateTime expireAt)
         {
             Id = ObjectId.Empty;
             AccountId = accountId;
             Code = code;
-            Type = type;
             CreatedAt = DateTime.UtcNow;
-            ExpireAt = CreatedAt.Add(lifetime);
+            ExpireAt = expireAt;
         }
 
         public ObjectId Id { get; private set; }
 
         public AccountId AccountId { get; private set; }
 
-        public ConfirmationType Type { get; private set; }
-
-        public int Code { get; private set; }
+        public uint Code { get; private set; }
 
         public DateTime CreatedAt { get; private set; }
 
         public DateTime ExpireAt { get; private set; }
-    }
 
-    public enum ConfirmationType
-    {
-        SignUp,
-        ResetPassword
+        public TimeSpan Lifetime => DateTime.UtcNow - ExpireAt;
     }
 }

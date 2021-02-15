@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using People.Domain.AggregateModels.Account;
 using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.SeedWork;
+using People.Infrastructure.Mongo;
 using People.Infrastructure.Sequences;
 using People.Infrastructure.Serializers;
 
