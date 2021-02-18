@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
@@ -11,6 +12,10 @@ namespace People.Infrastructure.Timezones
         public TimezoneService(InfrastructureDbContext dbContext) =>
             _dbContext = dbContext;
 
+        public async Task<IReadOnlyCollection<Timezone>> GetAsync(CancellationToken ct) =>
+            await _dbContext.Timezones.Find(FilterDefinition<Timezone>.Empty)
+                .ToListAsync(ct);
+        
         public async Task<Timezone?> GetAsync(string name, CancellationToken ct) =>
             await _dbContext.Timezones
                 .Find(Builders<Timezone>.Filter.Eq(x => x.Name, name))
