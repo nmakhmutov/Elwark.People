@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using People.Domain;
 
 namespace People.Infrastructure.Countries
 {
@@ -10,6 +12,13 @@ namespace People.Infrastructure.Countries
 
         public CountryService(InfrastructureDbContext dbContext) =>
             _dbContext = dbContext;
+
+        public async Task<IReadOnlyCollection<CountrySummary>> GetAsync(Language language, CancellationToken ct) =>
+            await _dbContext.Countries
+                .Find(FilterDefinition<Country>.Empty)
+                .SortBy(x => x.Translations[language.ToString()])
+                .Project(x => new CountrySummary(x.Alpha2Code, x.Translations[language.ToString()]))
+                .ToListAsync(ct);
 
         public async Task<Country?> GetAsync(string code, CancellationToken ct) =>
             code.Length switch
