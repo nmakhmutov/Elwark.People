@@ -4,7 +4,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Json;
 
-namespace People.Api.Infrastructure.Logger
+namespace People.Host
 {
     public class ElwarkSerilogFormatter : ITextFormatter
     {
@@ -44,7 +44,7 @@ namespace People.Api.Infrastructure.Logger
 
             foreach (var (key, value) in logEvent.Properties)
             {
-                string str = key;
+                var str = key;
                 if (str.Length > 0 && str[0] == '@')
                     str = "@" + str;
                 output.Write(',');
