@@ -4,6 +4,6 @@ namespace People.Domain.AggregateModels.Account
 {
     public sealed record AccountEmail(EmailType Type, string Address, bool IsConfirmed)
     {
-        public EmailIdentity Key() => new(Address);
+        public EmailIdentity GetIdentity() => new(Address);
     }
 }

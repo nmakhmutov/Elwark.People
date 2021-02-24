@@ -1,0 +1,70 @@
+name: people.service
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  people_api:
+    name: Build People API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+
+      - name: Compose build people.api
+        run: sudo -E docker-compose build people.api
+        working-directory: ./src
+        shell: bash
+        env:
+          TAG: ${{ env.BRANCH }}
+
+  people_gateway:
+    name: Build People Gateway
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+
+      - name: Compose build people.gateway
+        run: sudo -E docker-compose build people.gateway
+        working-directory: ./src
+        shell: bash
+        env:
+          TAG: ${{ env.BRANCH }}
+
+  people_notification:
+    name: Build People notifications
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+
+      - name: Compose build people.notification
+        run: sudo -E docker-compose build people.notification
+        working-directory: ./src
+        shell: bash
+        env:
+          TAG: ${{ env.BRANCH }}
+
+  people_worker:
+    name: Build People worker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+
+      - name: Compose build people.worker
+        run: sudo -E docker-compose build people.worker
+        working-directory: ./src
+        shell: bash
+        env:
+          TAG: ${{ env.BRANCH }}
+
+  result:
+    name: Send notification
+    runs-on: ubuntu-latest
+    needs: [ people_api, people_gateway, people_notification, people_worker ]
+    if: always()
+    steps:
+      - run: echo "Pipiline finished with status ${{ job.status }}"

@@ -9,6 +9,7 @@ namespace People.Domain.Exceptions
 
         public const string IdentityNotConfirmed = nameof(IdentityNotConfirmed);
         public const string IdentityAlreadyConfirmed = nameof(IdentityAlreadyConfirmed);
+        public const string IdentityNotFound = nameof(IdentityNotFound);
         
         public const string EmailAlreadyExists = nameof(EmailAlreadyExists);
         public const string EmailIncorrectFormat = nameof(EmailIncorrectFormat);
@@ -32,5 +33,10 @@ namespace People.Domain.Exceptions
         public const string ConfirmationAlreadySent = nameof(ConfirmationAlreadySent);
         public const string ConfirmationNotMatch = nameof(ConfirmationNotMatch);
         public const string ConfirmationNotFound = nameof(ConfirmationNotFound);
+
+        public const string CountryCodeNotFound = nameof(CountryCodeNotFound);
+        public const string TimezoneNotFound = nameof(TimezoneNotFound);
+        public const string PrimaryEmailCannotBeRemoved = nameof(PrimaryEmailCannotBeRemoved);
+        public const string PrimaryEmailCannotBeChanged = nameof(PrimaryEmailCannotBeChanged);
     }
 }

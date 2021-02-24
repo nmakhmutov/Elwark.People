@@ -7,7 +7,12 @@ namespace People.Domain.AggregateModels.Account.Identities
     public sealed record EmailIdentity : Identity
     {
         public EmailIdentity(string email)
-            : base(IdentityType.Email, email.ToLowerInvariant())
+            : this(new MailAddress(email))
+        {
+        }
+
+        public EmailIdentity(MailAddress address)
+            : base(IdentityType.Email, address.ToString().ToLowerInvariant())
         {
         }
 

@@ -26,14 +26,9 @@ namespace People.Domain.AggregateModels.Account.Identities
         public bool IsConfirmed() => 
             ConfirmedAt.HasValue;
         
-        public IdentityModel SetAsConfirmed(DateTime confirmedAt)
+        public void SetAsConfirmed(DateTime confirmedAt)
         {
-            if (IsConfirmed())
-                return this;
-
             ConfirmedAt = confirmedAt;
-
-            return this;
         }
     }
 }

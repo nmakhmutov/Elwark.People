@@ -1,11 +1,11 @@
 using System;
 
-namespace People.Domain.AggregateModels.Account
+namespace People.Domain
 {
     public readonly struct Language : IComparable, IComparable<Language>, IEquatable<Language>
     {
         public static Language Default => new("en");
-        
+
         private readonly string _value;
 
         public Language(string value)
@@ -16,6 +16,9 @@ namespace People.Domain.AggregateModels.Account
             if (value.Length != 2)
                 throw new ArgumentOutOfRangeException(nameof(value), value,
                     $"{nameof(Language)} value must be two chars");
+
+            if ("iv".Equals(value, StringComparison.InvariantCultureIgnoreCase))
+                throw new ArgumentException("Language cannot be invariant", nameof(value));
 
             _value = value.ToLowerInvariant();
         }

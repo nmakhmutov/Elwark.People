@@ -14,29 +14,29 @@ namespace People.Domain.AggregateModels.Account
 {
     public sealed class Account : Entity<AccountId>, IAggregateRoot
     {
-        private HashSet<string> _roles;
         private List<IdentityModel> _identities;
+        private DateTime _lastSignIn;
         private Password? _password;
         private Registration _registration;
-        private DateTime _lastSignIn;
+        private HashSet<string> _roles;
 
         public Account(Name name, Language language, Uri picture, IPAddress ip)
         {
             var now = DateTime.UtcNow;
             Id = long.MinValue;
             Version = int.MinValue;
-            _password = null;
             Ban = null;
-            _roles = new HashSet<string>();
-            _identities = new List<IdentityModel>();
-            UpdatedAt = _lastSignIn = now;
             Name = name;
             Timezone = Timezone.Default;
             Address = new Address(CountryCode.Empty, string.Empty);
             Profile = new Profile(language, Gender.Female, picture);
-            _registration = new Registration(ip.ToString(), CountryCode.Empty, now);
+            UpdatedAt = _lastSignIn = now;
+            _password = null;
+            _roles = new HashSet<string>();
+            _identities = new List<IdentityModel>();
+            _registration = new Registration(Array.Empty<byte>(), CountryCode.Empty, now);
 
-            AddDomainEvent(new AccountCreatedDomainEvent(this));
+            AddDomainEvent(new AccountCreatedDomainEvent(this, ip));
         }
 
         public int Version { get; set; }
@@ -52,6 +52,8 @@ namespace People.Domain.AggregateModels.Account
         public Ban? Ban { get; private set; }
 
         public DateTime UpdatedAt { get; private set; }
+
+        public DateTime CreatedAt => _registration.CreatedAt;
 
         public IReadOnlyCollection<string> Roles => _roles;
 
@@ -81,14 +83,38 @@ namespace People.Domain.AggregateModels.Account
         public bool IsConfirmed() =>
             _identities.Any(x => x.ConfirmedAt.HasValue);
 
-        public bool IsConfirmed(Identity key) =>
+        private bool IsConfirmed(Identity key) =>
             _identities.Any(x => x.Type == key.Type && x.Value == key.Value && x.IsConfirmed());
+
+        public IdentityModel? GetIdentity(Identity key) =>
+            _identities.FirstOrDefault(x => x.GetIdentity() == key);
 
         public void ConfirmIdentity(Identity key, DateTime confirmedAt)
         {
             var identity = _identities.First(x => x.GetIdentity() == key);
+            if(identity.IsConfirmed())
+                return;
+            
             identity.SetAsConfirmed(confirmedAt);
+            
             UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void DeleteIdentity(Identity key)
+        {
+            var identity = _identities.FirstOrDefault(x => x.GetIdentity() == key);
+            switch (identity)
+            {
+                case null:
+                    return;
+                
+                case EmailIdentityModel {EmailType: EmailType.Primary}:
+                    throw new ElwarkException(ElwarkExceptionCodes.PrimaryEmailCannotBeRemoved);
+                
+                default:
+                    _identities.Remove(identity);
+                    break;
+            }
         }
 
         public void SetName(Name name)
@@ -149,7 +175,7 @@ namespace People.Domain.AggregateModels.Account
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public bool IsPasswordEqual(string password, Func<string, byte[], byte[]> hasher)
+        private bool IsPasswordEqual(string password, Func<string, byte[], byte[]> hasher)
         {
             if (_password is null)
                 throw new ElwarkException(ElwarkExceptionCodes.Internal, "Password not created");
@@ -158,7 +184,36 @@ namespace People.Domain.AggregateModels.Account
             return hash.SequenceEqual(_password.Hash);
         }
 
-        public void SignInSuccess(DateTime dateTime, IPAddress ip)
+        public void SignIn(Identity identity, DateTime dateTime, IPAddress ip)
+        {
+            if (Ban is not null)
+                throw new AccountBannedException(Ban);
+
+            if (!IsConfirmed(identity))
+                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+
+            SignInSuccess(dateTime, ip);
+        }
+
+        public void SignIn(EmailIdentity identity, DateTime dateTime, IPAddress ip, string password,
+            Func<string, byte[], byte[]> hasher)
+        {
+            if (Ban is not null)
+                throw new AccountBannedException(Ban);
+
+            if (!IsConfirmed(identity))
+                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+
+            if (!IsPasswordAvailable())
+                throw new ElwarkException(ElwarkExceptionCodes.PasswordNotCreated);
+
+            if (!IsPasswordEqual(password, hasher))
+                throw new ElwarkException(ElwarkExceptionCodes.PasswordMismatch);
+
+            SignInSuccess(dateTime, ip);
+        }
+
+        private void SignInSuccess(DateTime dateTime, IPAddress ip)
         {
             if (_lastSignIn > dateTime)
                 return;
@@ -177,16 +232,42 @@ namespace People.Domain.AggregateModels.Account
             Id = id;
         }
 
-        public void AddRole(string role) => _roles.Add(role);
+        public void AddRole(string role) => 
+            _roles.Add(role);
 
-        public void UpdateRegistrationCountry(CountryCode code)
+        public void SetRegistration(IPAddress ip, CountryCode code, Func<IPAddress, byte[]> ipHasher)
         {
-            if (_registration.CountryCode != CountryCode.Empty)
+            if (!_registration.IsEmpty())
                 return;
 
-            _registration = _registration with {CountryCode = code};
+            _registration = _registration with
+            {
+                Ip = ipHasher(ip),
+                CountryCode = code
+            };
         }
 
-        public string GetRegisteredIp() => _registration.Ip;
+        public void ChangeEmailType(EmailIdentity email, EmailType type)
+        {
+            var emails = _identities.Where(x => x.Type == IdentityType.Email)
+                .Cast<EmailIdentityModel>()
+                .ToArray();
+            
+            var result = emails.FirstOrDefault(x => x.Value == email.Value);
+            if (result is null)
+                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotFound);
+
+            if (result.EmailType == EmailType.Primary)
+                throw new ElwarkException(ElwarkExceptionCodes.PrimaryEmailCannotBeRemoved);
+            
+            if (!result.IsConfirmed())
+                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+
+            if (type == EmailType.Primary)
+                emails.First(x => x.EmailType == EmailType.Primary)
+                    .ChangeType(EmailType.Secondary);
+
+            result.ChangeType(type);
+        }
     }
 }
