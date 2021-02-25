@@ -1,6 +1,6 @@
 using System;
 using MongoDB.Bson.Serialization;
-using People.Domain.AggregateModels.Account;
+using People.Domain;
 
 namespace People.Infrastructure.Serializers
 {

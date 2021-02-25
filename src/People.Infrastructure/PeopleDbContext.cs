@@ -70,13 +70,17 @@ namespace People.Infrastructure
                 new CreateIndexModel<Account>(
                     Builders<Account>.IndexKeys.Combine(
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Identities)}.{nameof(Identity.Type)}"
+                            $"{nameof(Account.Identities)}.{nameof(IdentityModel.Type)}"
                         ),
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Identities)}.{nameof(Identity.Value)}"
+                            $"{nameof(Account.Identities)}.{nameof(IdentityModel.Value)}"
                         )
                     ),
-                    new CreateIndexOptions {Name = "Identities.Type_Identities.Value", Unique = true}
+                    new CreateIndexOptions
+                    {
+                        Name = "Identities.Type_Identities.Value",
+                        Unique = true
+                    }
                 )
             );
 
