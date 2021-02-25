@@ -17,11 +17,8 @@ jobs:
         with:
           dotnet-version: '5.0.x'
 
-      - name: Install dependencies
-        run: dotnet restore
-
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
