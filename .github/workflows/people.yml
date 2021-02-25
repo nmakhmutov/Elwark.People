@@ -4,6 +4,9 @@ on:
   push:
     branches: [ master ]
 
+env:
+  WORKING_DIRECTORY: ./src
+  
 jobs:
   build:
     name: Build and test solution
@@ -13,16 +16,19 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
-      
+
       - name: Install dependencies
         run: dotnet restore
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
-        
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
   people_api:
     name: Docker build API
     runs-on: ubuntu-latest
@@ -33,7 +39,7 @@ jobs:
 
       - name: Compose build people.api
         run: sudo -E docker-compose build people.api
-        working-directory: ./src
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         env:
           TAG: ${{ env.BRANCH }}
@@ -48,7 +54,7 @@ jobs:
 
       - name: Compose build people.gateway
         run: sudo -E docker-compose build people.gateway
-        working-directory: ./src
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         env:
           TAG: ${{ env.BRANCH }}
@@ -63,7 +69,7 @@ jobs:
 
       - name: Compose build people.notification
         run: sudo -E docker-compose build people.notification
-        working-directory: ./src
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         env:
           TAG: ${{ env.BRANCH }}
@@ -78,7 +84,7 @@ jobs:
 
       - name: Compose build people.worker
         run: sudo -E docker-compose build people.worker
-        working-directory: ./src
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         env:
           TAG: ${{ env.BRANCH }}
