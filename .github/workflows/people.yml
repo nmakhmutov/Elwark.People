@@ -20,6 +20,9 @@ jobs:
       - name: Echo
         run: echo "The selected color is ${{ github.workspace }}"
         
+      - name: ls
+        run: ls -la
+        
       - name: Build
         run: dotnet build --configuration Release
 
