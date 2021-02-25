@@ -12,6 +12,9 @@ jobs:
     name: Build and test solution
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+        
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
