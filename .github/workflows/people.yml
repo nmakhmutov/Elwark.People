@@ -6,7 +6,7 @@ on:
 
 env:
   WORKING_DIRECTORY: ./src
-  
+
 jobs:
   build:
     name: Build and test solution
@@ -19,15 +19,12 @@ jobs:
 
       - name: Install dependencies
         run: dotnet restore
-        working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
-        working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
-        working-directory: ${{ env.WORKING_DIRECTORY }}
 
   people_api:
     name: Docker build API
