@@ -12,6 +12,9 @@ jobs:
     name: Build and test solution
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
@@ -41,7 +44,7 @@ jobs:
   people_gateway:
     name: Docker build Gateway
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, people_api, people_notification]
     steps:
       - name: Checkout Github Action
         uses: actions/checkout@master
@@ -71,7 +74,7 @@ jobs:
   people_worker:
     name: Docker build Worker
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, people_api]
     steps:
       - name: Checkout Github Action
         uses: actions/checkout@master
