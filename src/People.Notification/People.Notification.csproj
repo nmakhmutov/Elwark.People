@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\Proto\notification.proto" Link="Protos\notification.proto" GrpcServices="Server" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CorrelationId" Version="3.0.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.35.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+        <PackageReference Include="Serilog" Version="2.10.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\People.Host\People.Host.csproj" />
+      <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
