@@ -9,7 +9,7 @@ services:
 
   people.gateway:
     container_name: "people_gateway"
-    image: "elwark/people-gateway:latest"
+    image: "elwark/people-gateway:${TAG:-latest}"
     build:
       context: .
       dockerfile: People.Gateway/Dockerfile
@@ -26,7 +26,7 @@ services:
 
   people.api:
     container_name: "people_api"
-    image: "elwark/people-api:latest"
+    image: "elwark/people-api:${TAG:-latest}"
     build:
       context: .
       dockerfile: People.Api/Dockerfile
@@ -42,7 +42,7 @@ services:
         
   people.worker:
     container_name: "people_worker"
-    image: "elwark/people-worker:latest"
+    image: "elwark/people-worker:${TAG:-latest}"
     build:
       context: .
       dockerfile: People.Worker/Dockerfile
@@ -58,7 +58,7 @@ services:
   
   people.notification:
     container_name: "people_notification"
-    image: "elwark/people-notification:latest"
+    image: "elwark/people-notification:${TAG:-latest}"
     build:
       context: .
       dockerfile: People.Notification/Dockerfile

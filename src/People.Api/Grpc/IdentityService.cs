@@ -1,9 +1,10 @@
-using System;
+using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using MongoDB.Bson;
 using People.Api.Application.Commands;
 using People.Api.Application.Queries;
 using People.Api.Infrastructure.Providers.Google;
@@ -12,6 +13,7 @@ using People.Api.Mappers;
 using People.Domain.AggregateModels.Account;
 using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.Exceptions;
+using People.Grpc.Common;
 using People.Grpc.Identity;
 using AccountId = People.Grpc.Common.AccountId;
 using Identity = People.Grpc.Identity.Identity;
@@ -23,12 +25,14 @@ namespace People.Api.Grpc
         private readonly IGoogleApiService _google;
         private readonly IMediator _mediator;
         private readonly IMicrosoftApiService _microsoft;
+        private readonly Language _language;
 
         public IdentityService(IMediator mediator, IGoogleApiService google, IMicrosoftApiService microsoft)
         {
             _mediator = mediator;
             _google = google;
             _microsoft = microsoft;
+            _language = new Language(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
         }
 
         public override async Task<AccountReply> GetAccountById(AccountId request, ServerCallContext context)

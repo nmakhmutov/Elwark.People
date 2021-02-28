@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using People.Api.Infrastructure.Logger;
+using People.Host;
 using People.Infrastructure;
 using Serilog;
 
@@ -15,17 +15,17 @@ namespace People.Api
 {
     public class Program
     {
-        public const string AppName = "Elwark.People.Api";
+        public const string AppName = "People.Api";
 
         public static async Task Main(string[] args)
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-            var configuration = CreateConfiguration(environment, args);
+            var configuration = HostExtensions.CreateConfiguration(environment, args);
 
-            Log.Logger = CreateLogger(configuration, environment, AppName);
+            Log.Logger = HostExtensions.CreateLogger(configuration, environment, AppName);
 
             var host = CreateHost(configuration, args);
-
+            
             using (var scope = host.Services.CreateScope())
             {
                 await scope.ServiceProvider.GetRequiredService<PeopleDbContext>()
@@ -44,7 +44,7 @@ namespace People.Api
         }
 
         private static IHost CreateHost(IConfiguration configuration, string[] args) =>
-            Host.CreateDefaultBuilder(args)
+            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureWebHostDefaults(builder =>
@@ -58,30 +58,5 @@ namespace People.Api
                 )
                 .UseSerilog()
                 .Build();
-
-        private static IConfiguration CreateConfiguration(string environment, string[] args) =>
-            new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile($"appsettings.{environment}.json", true)
-                .AddEnvironmentVariables()
-                .AddCommandLine(args)
-                .Build();
-
-        private static ILogger CreateLogger(IConfiguration configuration, string environment, string app)
-        {
-            var logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .Enrich.WithProperty("application", app);
-
-            if ("Development".Equals(environment, StringComparison.InvariantCultureIgnoreCase))
-                logger.WriteTo.Console();
-            else
-                logger.WriteTo.Console(new ElwarkSerilogFormatter());
-
-            return logger
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
     }
 }
