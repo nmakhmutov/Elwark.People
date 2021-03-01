@@ -10,7 +10,7 @@ using People.Api.Application.Queries;
 using People.Api.Infrastructure.Providers.Google;
 using People.Api.Infrastructure.Providers.Microsoft;
 using People.Api.Mappers;
-using People.Domain.AggregateModels.Account;
+using People.Domain;
 using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
