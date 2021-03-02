@@ -24,18 +24,222 @@ namespace People.Api.Grpc
     public class GatewayService : Gateway.GatewayBase
     {
         private readonly IMediator _mediator;
+        private readonly ICountryService _country;
+        private readonly ITimezoneService _timezone;
+        private readonly Language _language;
 
-        public GatewayService(IMediator mediator) =>
+        public GatewayService(IMediator mediator, ICountryService country, ITimezoneService timezone)
+        {
             _mediator = mediator;
+            _country = country;
+            _timezone = timezone;
+            _language = new Language(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
+        }
 
         public override async Task<AccountReply> GetAccount(AccountId request, ServerCallContext context)
         {
-            var data = await _mediator.Send(new GetAccountByIdQuery(request.Value), context.CancellationToken);
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.ToAccountId()), context.CancellationToken);
             if (data is not null)
                 return data.ToGatewayAccountReply();
 
             context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
             return new AccountReply();
+        }
+
+        public override async Task<ProfileReply> GetProfile(AccountId request, ServerCallContext context)
+        {
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.ToAccountId()), context.CancellationToken);
+            if (data is not null)
+                return data.ToGatewayProfileReply();
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new ProfileReply();
+        }
+
+        public override async Task<ProfileReply> UpdateProfile(UpdateProfileRequest request, ServerCallContext context)
+        {
+            var command = new UpdateProfileCommand(request.Id.ToAccountId(), request.FirstName, request.LastName,
+                request.Nickname, request.Bio, request.Birthday.ToDateTime(), request.Gender.FromGrpc(),
+                request.Language, request.Timezone, request.CountryCode, request.CityName ?? string.Empty);
+
+            await _mediator.Send(command, context.CancellationToken);
+
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
+            if (data is not null)
+                return data.ToGatewayProfileReply();
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new ProfileReply();
+        }
+
+        public override async Task<Confirming> ConfirmingIdentity(ConfirmingRequest request, ServerCallContext context)
+        {
+            var query = new GetAccountByIdQuery(request.Id.ToAccountId());
+            var account = await _mediator.Send(query, context.CancellationToken);
+
+            if (account is null)
+            {
+                context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+                return new Confirming();
+            }
+
+            if (account.GetIdentity(request.Identity.ToIdentityKey()) is EmailIdentityModel identity)
+            {
+                var confirmationId = await _mediator.Send(
+                    new SendConfirmationCommand(account.Id, identity.GetIdentity(), _language),
+                    context.CancellationToken
+                );
+
+                return new Confirming
+                {
+                    Id = confirmationId.ToString()
+                };
+            }
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new Confirming();
+        }
+
+        public override async Task<ProfileReply> ConfirmIdentity(ConfirmRequest request, ServerCallContext context)
+        {
+            var command = new ConfirmIdentityCommand(
+                request.Id.ToAccountId(),
+                new ObjectId(request.Confirm.Id),
+                request.Confirm.Code,
+                request.Identity.ToIdentityKey()
+            );
+
+            await _mediator.Send(command, context.CancellationToken);
+
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
+            if (data is not null)
+                return data.ToGatewayProfileReply();
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new ProfileReply();
+        }
+
+        public override async Task<ProfileReply> ChangeEmailType(ChangeEmailTypeRequest request,
+            ServerCallContext context)
+        {
+            var command = new ChangeEmailTypeCommand(
+                request.Id.ToAccountId(),
+                request.Email,
+                request.Type.ToEmailType()
+            );
+
+            await _mediator.Send(command);
+
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
+            if (data is not null)
+                return data.ToGatewayProfileReply();
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new ProfileReply();
+        }
+
+        public override async Task<ProfileReply> DeleteIdentity(DeleteIdentityRequest request,
+            ServerCallContext context)
+        {
+            var command = new DeleteIdentityCommand(request.Id.ToAccountId(), request.Identity.ToIdentityKey());
+            await _mediator.Send(command, context.CancellationToken);
+
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
+            if (data is not null)
+                return data.ToGatewayProfileReply();
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new ProfileReply();
+        }
+
+        public override async Task<Confirming> CreatingPassword(AccountId request, ServerCallContext context)
+        {
+            var query = new GetAccountByIdQuery(request.ToAccountId());
+            var account = await _mediator.Send(query, context.CancellationToken);
+
+            if (account is null)
+            {
+                context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+                return new Confirming();
+            }
+
+            if (account.IsPasswordAvailable())
+            {
+                context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.PasswordAlreadyCreated);
+                return new Confirming();
+            }
+
+            var confirmationId = await _mediator.Send(
+                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), _language),
+                context.CancellationToken
+            );
+
+            return new Confirming
+            {
+                Id = confirmationId.ToString()
+            };
+        }
+
+        public override async Task<ProfileReply> CreatePassword(CreatePasswordRequest request,
+            ServerCallContext context)
+        {
+            var command = new CreatePasswordCommand(
+                request.Id.ToAccountId(),
+                new ObjectId(request.Confirm.Id),
+                request.Confirm.Code,
+                request.Password
+            );
+            
+            await _mediator.Send(command, context.CancellationToken);
+            
+            var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
+            if (data is not null)
+                return data.ToGatewayProfileReply();
+
+            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+            return new ProfileReply();
+        }
+
+        public override async Task<Empty> UpdatePassword(UpdatePasswordRequest request, ServerCallContext context)
+        {
+            await _mediator.Send(new UpdatePasswordCommand(request.Id.ToAccountId(), request.OldPassword,
+                request.NewPassword), context.CancellationToken);
+
+            return new Empty();
+        }
+
+        public override async Task<CountriesReply> GetCountries(Empty _, ServerCallContext context)
+        {
+            var result = await _country.GetAsync(_language, context.CancellationToken);
+
+            return new CountriesReply
+            {
+                Countries =
+                {
+                    result.Select(x => new Country
+                    {
+                        Code = x.Alpha2Code,
+                        Name = x.Name
+                    })
+                }
+            };
+        }
+
+        public override async Task<TimezonesReply> GetTimezones(Empty request, ServerCallContext context)
+        {
+            var result = await _timezone.GetAsync(context.CancellationToken);
+
+            return new TimezonesReply
+            {
+                Timezones =
+                {
+                    result.Select(x => new Timezone
+                    {
+                        Name = x.Name,
+                        Offset = x.Offset.ToDuration()
+                    })
+                }
+            };
         }
     }
 }
