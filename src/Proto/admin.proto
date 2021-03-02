@@ -1,5 +1,4 @@
 syntax = "proto3";
-import "common.proto";
 option csharp_namespace = "People.Grpc.Admin";
 
 service Admin {

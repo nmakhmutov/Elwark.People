@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using People.Api.Application.Commands;
 using People.Api.Infrastructure.Password;
+using People.Domain.AggregateModels.Account;
 using People.Domain.Exceptions;
 using People.Infrastructure.Forbidden;
 

@@ -6,87 +6,88 @@ import "common.proto";
 option csharp_namespace = "People.Grpc.Identity";
 
 service Identity {
-    rpc GetAccountById (people.AccountId) returns (AccountReply);
-    rpc GetStatus (people.AccountId) returns (StatusReply);
+  rpc GetAccountById (people.AccountId) returns (AccountReply);
+  rpc GetStatus (people.AccountId) returns (StatusReply);
 
-    rpc SignInByEmail (SignInByEmailRequest) returns (SignInReply);
-    rpc SignInByGoogle (SignInByProviderRequest) returns (SignInReply);
-    rpc SignInByMicrosoft (SignInByProviderRequest) returns (SignInReply);
+  rpc SignInByEmail (SignInByEmailRequest) returns (SignInReply);
+  rpc SignInByGoogle (SignInByProviderRequest) returns (SignInReply);
+  rpc SignInByMicrosoft (SignInByProviderRequest) returns (SignInReply);
 
-    rpc SignUpByEmail (SignUpByEmailRequest) returns (SignUpReply);
-    rpc SignUpByGoogle (SignUpByProviderRequest) returns (SignUpReply);
-    rpc SignUpByMicrosoft (SignUpByProviderRequest) returns (SignUpReply);
-    rpc CheckSignUpConfirmation (people.AccountId) returns (CheckSignUpConfirmationReply);
-    rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
-    rpc ResendSignUpConfirmation (people.AccountId) returns (google.protobuf.Empty);
+  rpc SignUpByEmail (SignUpByEmailRequest) returns (SignUpReply);
+  rpc SignUpByGoogle (SignUpByProviderRequest) returns (SignUpReply);
+  rpc SignUpByMicrosoft (SignUpByProviderRequest) returns (SignUpReply);
+  rpc IsConfirmationAvailable (people.Confirming) returns (people.AccountId);
+  rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
+  rpc ResendSignUpConfirmation (people.AccountId) returns (people.Confirming);
 
-    rpc ResetPassword (people.Identity) returns (people.AccountId);
-    rpc RestorePassword (RestorePasswordRequest) returns (google.protobuf.Empty);
+  rpc AttachEmail(AttachRequest) returns (google.protobuf.Empty);
+  rpc AttachGoogle(AttachRequest) returns (google.protobuf.Empty);
+  rpc AttachMicrosoft(AttachRequest) returns (google.protobuf.Empty);
+
+  rpc ResetPassword (people.Identity) returns (people.AccountId);
+  rpc RestorePassword (RestorePasswordRequest) returns (google.protobuf.Empty);
 }
 
 message SignInByEmailRequest {
-    string email = 1;
-    string password = 2;
-    string ip = 3;
+  string email = 1;
+  string password = 2;
+  string ip = 3;
 }
 
 message SignInByProviderRequest {
-    string access_token = 1;
-    string ip = 2;
+  string access_token = 1;
+  string ip = 2;
 }
 
 message SignUpByEmailRequest {
-    string email = 1;
-    string password = 2;
-    string language = 3;
-    string ip = 4;
+  string email = 1;
+  string password = 2;
+  string ip = 3;
 }
 
 message SignUpByProviderRequest {
-    string access_token = 1;
-    string language = 2;
-    string ip = 3;
+  string access_token = 1;
+  string ip = 2;
 }
 
 message RestorePasswordRequest {
-    people.AccountId id = 1;
-    int32 code = 2;
-    string password = 3;
+  people.AccountId id = 1;
+  people.Confirm confirm = 2;
+  string password = 3;
 }
 
 message SignInReply {
-    people.AccountId id = 1;
-    string display_name = 2;
+  people.AccountId id = 1;
+  string display_name = 2;
 }
 
 message SignUpReply {
-    people.AccountId id = 1;
-    string display_name = 2;
-    bool is_sent_confirmation = 3;
+  people.AccountId id = 1;
+  string display_name = 2;
+  people.Confirming confirmation = 3;
 }
 
 message ConfirmSignUpRequest {
-    people.AccountId id = 1;
-    int32 code = 2;
-}
-
-message CheckSignUpConfirmationReply {
-    people.Identity key = 1;
-    google.protobuf.Timestamp created_at = 2;
-    google.protobuf.Timestamp expire_at = 3;
+  people.AccountId id = 1;
+  people.Confirm confirm = 2;
 }
 
 message AccountReply {
-    people.AccountId id = 1;
-    people.Name name = 2;
-    people.PrimaryEmail email = 3;
-    people.Address address = 4;
-    people.Timezone timezone = 5;
-    people.Profile profile = 6;
-    people.Ban ban = 7;
-    google.protobuf.Timestamp updated_at = 8;
+  people.AccountId id = 1;
+  people.Name name = 2;
+  people.PrimaryEmail email = 3;
+  people.Address address = 4;
+  people.Timezone timezone = 5;
+  people.Profile profile = 6;
+  people.Ban ban = 7;
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 message StatusReply {
-    bool is_active = 1;
+  bool is_active = 1;
+}
+
+message AttachRequest {
+  people.AccountId id = 1;
+  string value = 2;
 }

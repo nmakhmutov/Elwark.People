@@ -6,56 +6,71 @@ package people;
 option csharp_namespace = "People.Grpc.Common";
 
 enum IdentityType {
-    EMAIL = 0;
-    GOOGLE = 1;
-    MICROSOFT = 2;
+  EMAIL = 0;
+  GOOGLE = 1;
+  MICROSOFT = 2;
 }
 
 enum Gender {
-    FEMALE = 0;
-    MALE = 1;
+  FEMALE = 0;
+  MALE = 1;
+}
+
+enum EmailType {
+  NONE = 0;
+  PRIMARY_EMAIL = 1;
+  SECONDARY_EMAIL = 2;
 }
 
 message AccountId {
-    int64 value = 1;
+  int64 value = 1;
 }
 
 message Identity {
-    IdentityType type = 1;
-    string value = 2;
+  IdentityType type = 1;
+  string value = 2;
 }
 
 message PrimaryEmail {
-    string email = 1;
-    bool is_confirmed = 2;
+  string email = 1;
+  bool is_confirmed = 2;
 }
 
 message Name {
-    string nickname = 1;
-    google.protobuf.StringValue first_name = 2;
-    google.protobuf.StringValue last_name = 3;
-    string full_name = 4;
+  string nickname = 1;
+  google.protobuf.StringValue first_name = 2;
+  google.protobuf.StringValue last_name = 3;
+  string full_name = 4;
 }
 
 message Address {
-    string country_code = 1;
-    string city_name = 2;
+  string country_code = 1;
+  string city_name = 2;
 }
 
 message Timezone {
-    string Name = 1;
-    google.protobuf.Duration offset = 2;
+  string Name = 1;
+  google.protobuf.Duration offset = 2;
 }
 
 message Profile {
-    string language = 1;
-    people.Gender gender = 2;
-    google.protobuf.Timestamp birthday = 3;
-    google.protobuf.StringValue bio = 4;
-    string picture = 5;
+  string language = 1;
+  people.Gender gender = 2;
+  google.protobuf.Timestamp birthday = 3;
+  google.protobuf.StringValue bio = 4;
+  string picture = 5;
 }
 
 message Ban {
-    string reason = 1;
-    google.protobuf.Timestamp expires_at = 2;
+  string reason = 1;
+  google.protobuf.Timestamp expires_at = 2;
+}
+
+message Confirming {
+  string id = 1;
+}
+
+message Confirm {
+  string id = 1;
+  uint32 code = 2;
 }
