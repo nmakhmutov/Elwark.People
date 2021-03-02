@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using People.Api.Application.Models;
+using People.Domain;
 using People.Domain.AggregateModels.Account;
 using People.Domain.AggregateModels.Account.Identities;
 

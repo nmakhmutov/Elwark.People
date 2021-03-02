@@ -1,21 +1,133 @@
 syntax = "proto3";
-import "google/protobuf/wrappers.proto";
-import "google/protobuf/duration.proto";
-import "google/protobuf/timestamp.proto";
 import "common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 option csharp_namespace = "People.Grpc.Gateway";
 
 service Gateway {
-    rpc GetAccount (people.AccountId) returns (AccountReply);
+  rpc GetAccount (people.AccountId) returns (AccountReply);
+
+  rpc GetProfile (people.AccountId) returns (ProfileReply);
+  rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);
+  rpc ConfirmingIdentity(ConfirmingRequest) returns (people.Confirming);
+  rpc ConfirmIdentity(ConfirmRequest) returns (ProfileReply);
+  rpc ChangeEmailType(ChangeEmailTypeRequest) returns (ProfileReply);
+  rpc DeleteIdentity(DeleteIdentityRequest) returns (ProfileReply);
+
+  rpc CreatingPassword(people.AccountId) returns(people.Confirming);
+  rpc CreatePassword(CreatePasswordRequest) returns (ProfileReply);
+  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
+
+  rpc GetCountries(google.protobuf.Empty) returns(CountriesReply);
+  rpc GetTimezones(google.protobuf.Empty) returns(TimezonesReply);
 }
 
 message AccountReply {
-    people.AccountId id = 1;
-    people.Name name = 2;
-    people.PrimaryEmail email = 3;
-    people.Address address = 4;
-    people.Timezone timezone = 5;
-    people.Profile profile = 6;
-    bool is_banned = 7;
+  people.AccountId id = 1;
+  people.Name name = 2;
+  people.PrimaryEmail email = 3;
+  people.Address address = 4;
+  people.Timezone timezone = 5;
+  people.Profile profile = 6;
+  bool is_banned = 7;
+}
+
+message ProfileReply {
+  people.AccountId id = 1;
+  people.Name name = 2;
+  people.Address address = 3;
+  people.Timezone timezone = 4;
+  people.Profile profile = 5;
+  people.Ban ban = 6;
+  bool is_password_available = 7;
+  google.protobuf.Timestamp created_at = 8;
+  repeated ProfileIdentity identities = 9;
+}
+
+message ProfileIdentity {
+  people.IdentityType type = 1;
+  string value = 2;
+  bool is_confirmed = 3;
+
+  oneof IdentityType {
+    EmailIdentity email = 4;
+    SocialIdentity social = 5;
+  }
+}
+
+message EmailIdentity {
+  people.EmailType type = 1;
+}
+
+message SocialIdentity {
+  string name = 1;
+}
+
+message CountriesReply {
+  repeated Country countries = 1;
+}
+
+message Country {
+  string code = 1;
+  string name = 2;
+}
+
+message TimezonesReply {
+  repeated Timezone timezones = 1;
+}
+
+message Timezone {
+  string name = 1;
+  google.protobuf.Duration offset = 2;
+}
+
+message UpdateProfileRequest {
+  people.AccountId id = 1;
+  google.protobuf.StringValue first_name = 2;
+  google.protobuf.StringValue last_name = 3;
+  string nickname = 4;
+  string language = 5;
+  people.Gender gender = 6;
+  google.protobuf.Timestamp birthday = 7;
+  google.protobuf.StringValue bio = 8;
+  string country_code = 9;
+  google.protobuf.StringValue city_name = 10;
+  string timezone = 11;
+}
+
+message ConfirmingRequest {
+  people.AccountId id = 1;
+  people.Identity identity = 2;
+}
+
+message ConfirmRequest {
+  people.AccountId id = 1;
+  people.Identity identity = 2;
+  people.Confirm confirm = 3;
+}
+
+message ChangeEmailTypeRequest {
+  people.AccountId id = 1;
+  string email = 2;
+  people.EmailType type = 3;
+}
+
+message DeleteIdentityRequest{
+  people.AccountId id = 1;
+  people.Identity identity = 2;
+}
+
+message CreatePasswordRequest{
+  people.AccountId id = 1;
+  people.Confirm confirm = 2;
+  string password = 3;
+}
+
+message UpdatePasswordRequest{
+  people.AccountId id = 1;
+  string old_password = 2;
+  string new_password = 3;
 }

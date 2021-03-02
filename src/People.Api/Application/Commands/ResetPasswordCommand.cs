@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using People.Domain;
 using People.Domain.AggregateModels.Account;
 using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.Exceptions;
