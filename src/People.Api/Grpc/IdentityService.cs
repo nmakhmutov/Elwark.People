@@ -15,7 +15,6 @@ using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Identity;
-using AccountId = People.Grpc.Common.AccountId;
 using Identity = People.Grpc.Identity.Identity;
 
 namespace People.Api.Grpc
@@ -23,9 +22,9 @@ namespace People.Api.Grpc
     public sealed class IdentityService : Identity.IdentityBase
     {
         private readonly IGoogleApiService _google;
+        private readonly Language _language;
         private readonly IMediator _mediator;
         private readonly IMicrosoftApiService _microsoft;
-        private readonly Language _language;
 
         public IdentityService(IMediator mediator, IGoogleApiService google, IMicrosoftApiService microsoft)
         {
@@ -93,7 +92,7 @@ namespace People.Api.Grpc
             var command = new SignUpByEmailCommand(
                 new EmailIdentity(request.Email),
                 request.Password,
-                ParseLanguage(request.Language),
+                _language,
                 ParseIpAddress(request.Ip)
             );
             var data = await _mediator.Send(command);
@@ -112,7 +111,7 @@ namespace People.Api.Grpc
                 google.LastName,
                 google.Picture,
                 google.IsEmailVerified,
-                ParseLanguage(google.Locale?.TwoLetterISOLanguageName ?? request.Language),
+                _language,
                 ParseIpAddress(request.Ip)
             );
             var data = await _mediator.Send(command);
@@ -129,7 +128,7 @@ namespace People.Api.Grpc
                 microsoft.Email,
                 microsoft.FirstName,
                 microsoft.LastName,
-                ParseLanguage(request.Language),
+                _language,
                 ParseIpAddress(request.Ip)
             );
             var data = await _mediator.Send(command);
@@ -137,39 +136,74 @@ namespace People.Api.Grpc
             return data.ToSignUpReply();
         }
 
-        public override async Task<CheckSignUpConfirmationReply> CheckSignUpConfirmation(
-            AccountId request, ServerCallContext context)
+        public override async Task<AccountId> IsConfirmationAvailable(Confirming request, ServerCallContext context)
         {
-            var query = new CheckSignUpConfirmationQuery(request.ToAccountId());
+            var query = new CheckSignUpConfirmationQuery(new ObjectId(request.Id));
             var confirmation = await _mediator.Send(query, context.CancellationToken);
 
-            return new CheckSignUpConfirmationReply
+            return confirmation.AccountId.ToAccountId();
+        }
+
+        public override async Task<Empty> ConfirmSignUp(ConfirmSignUpRequest request, ServerCallContext context)
+        {
+            var command = new ConfirmIdentityCommand(
+                request.Id.ToAccountId(),
+                new ObjectId(request.Confirm.Id),
+                request.Confirm.Code
+            );
+            await _mediator.Send(command);
+
+            return new Empty();
+        }
+
+        public override async Task<Confirming> ResendSignUpConfirmation(AccountId request, ServerCallContext context)
+        {
+            var command = new ResendSignUpConfirmationCommand(request.ToAccountId(), _language);
+            var confirmationId = await _mediator.Send(command, context.CancellationToken);
+
+            return new Confirming
             {
-                Key = confirmation.Key.ToIdentityKey(),
-                CreatedAt = confirmation.CreatedAt.ToTimestamp(),
-                ExpireAt = confirmation.ExpireAt.ToTimestamp()
+                Id = confirmationId.ToString()
             };
         }
 
-        public override async Task<Empty> ResendSignUpConfirmation(AccountId request,
-            ServerCallContext context)
+        public override async Task<Empty> AttachEmail(AttachRequest request, ServerCallContext context)
         {
-            var query = new GetAccountByIdQuery(request.ToAccountId());
-            var account = await _mediator.Send(query, context.CancellationToken);
-            if (account is null)
-            {
-                context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
-                return new Empty();
-            }
+            var command = new AttachEmailCommand(request.Id.ToAccountId(), new EmailIdentity(request.Value));
+            await _mediator.Send(command, context.CancellationToken);
 
-            if (account.IsConfirmed())
-            {
-                context.Status = new Status(StatusCode.FailedPrecondition,
-                    ElwarkExceptionCodes.IdentityAlreadyConfirmed);
-                return new Empty();
-            }
+            return new Empty();
+        }
 
-            var command = new SendPrimaryEmailConfirmationCommand(account.Id, account.GetPrimaryEmail());
+        public override async Task<Empty> AttachGoogle(AttachRequest request, ServerCallContext context)
+        {
+            var google = await _google.GetAsync(request.Value, context.CancellationToken);
+            var command = new AttachGoogleCommand(
+                request.Id.ToAccountId(),
+                google.Identity,
+                google.Email,
+                google.FirstName,
+                google.LastName,
+                google.Picture,
+                google.IsEmailVerified
+            );
+
+            await _mediator.Send(command, context.CancellationToken);
+
+            return new Empty();
+        }
+
+        public override async Task<Empty> AttachMicrosoft(AttachRequest request, ServerCallContext context)
+        {
+            var microsoft = await _microsoft.GetAsync(request.Value, context.CancellationToken);
+            var command = new AttachMicrosoftCommand(
+                request.Id.ToAccountId(),
+                microsoft.Identity,
+                microsoft.Email,
+                microsoft.FirstName,
+                microsoft.LastName
+            );
+
             await _mediator.Send(command, context.CancellationToken);
 
             return new Empty();
@@ -178,23 +212,20 @@ namespace People.Api.Grpc
         public override async Task<AccountId> ResetPassword(People.Grpc.Common.Identity request,
             ServerCallContext context)
         {
-            var command = new ResetPasswordCommand(request.ToIdentityKey());
+            var command = new ResetPasswordCommand(request.ToIdentityKey(), _language);
             var data = await _mediator.Send(command, context.CancellationToken);
 
             return data.ToAccountId();
         }
 
-        public override async Task<Empty> ConfirmSignUp(ConfirmSignUpRequest request, ServerCallContext context)
-        {
-            var command = new ConfirmEmailSignUpCommand(request.Id.ToAccountId(), request.Code);
-            await _mediator.Send(command);
-
-            return new Empty();
-        }
-
         public override async Task<Empty> RestorePassword(RestorePasswordRequest request, ServerCallContext context)
         {
-            var command = new RestorePasswordCommand(request.Id.ToAccountId(), request.Code, request.Password);
+            var command = new CreatePasswordCommand(
+                request.Id.ToAccountId(),
+                new ObjectId(request.Confirm.Id),
+                request.Confirm.Code,
+                request.Password
+            );
             await _mediator.Send(command);
 
             return new Empty();
@@ -202,15 +233,5 @@ namespace People.Api.Grpc
 
         private static IPAddress ParseIpAddress(string? ip) =>
             IPAddress.TryParse(ip, out var value) ? value : IPAddress.None;
-
-        private static Language ParseLanguage(string? language)
-        {
-            if (string.IsNullOrEmpty(language))
-                return Language.Default;
-
-            return string.Equals("iv", language, StringComparison.InvariantCultureIgnoreCase)
-                ? Language.Default
-                : new Language(language);
-        }
     }
 }

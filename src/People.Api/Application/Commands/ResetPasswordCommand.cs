@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -6,21 +5,20 @@ using People.Domain;
 using People.Domain.AggregateModels.Account;
 using People.Domain.AggregateModels.Account.Identities;
 using People.Domain.Exceptions;
-using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands
 {
-    public sealed record ResetPasswordCommand(Identity Key) : IRequest<AccountId>;
+    public sealed record ResetPasswordCommand(Identity Key, Language Language) : IRequest<AccountId>;
 
     public sealed class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, AccountId>
     {
+        private readonly IMediator _mediator;
         private readonly IAccountRepository _repository;
-        private readonly IConfirmationService _confirmation;
 
-        public ResetPasswordCommandHandler(IAccountRepository repository, IConfirmationService confirmation)
+        public ResetPasswordCommandHandler(IAccountRepository repository, IMediator mediator)
         {
             _repository = repository;
-            _confirmation = confirmation;
+            _mediator = mediator;
         }
 
         public async Task<AccountId> Handle(ResetPasswordCommand request, CancellationToken ct)
@@ -32,11 +30,10 @@ namespace People.Api.Application.Commands
             if (!account.IsPasswordAvailable())
                 throw new ElwarkException(ElwarkExceptionCodes.PasswordNotCreated);
 
-            var confirmation = await _confirmation.GetResetPasswordConfirmation(account.Id, ct);
-            if (confirmation is not null && (DateTime.UtcNow - confirmation.CreatedAt).TotalMinutes > 1)
-                throw new ElwarkException(ElwarkExceptionCodes.ConfirmationAlreadySent);
-            
-            var code = await _confirmation.CreateResetPasswordConfirmation(account.Id, ct);
+            await _mediator.Send(
+                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), request.Language),
+                ct
+            );
 
             return account.Id;
         }
