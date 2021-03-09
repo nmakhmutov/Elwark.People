@@ -38,7 +38,7 @@ namespace People.Api.Application.Behaviors
             if (failures.Length == 0)
                 return await next();
 
-            _logger.LogWarning("Validation errors for '{type}' {@command}. Errors: {@errors}", type, request, failures);
+            _logger.LogWarning("Validation errors for '{T}' {C}. Errors: {E}", type, request, failures);
 
             throw new ValidationException($"Validation error in command {type}", failures);
         }

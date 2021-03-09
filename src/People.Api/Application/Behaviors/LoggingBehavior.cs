@@ -18,11 +18,11 @@ namespace People.Api.Application.Behaviors
         {
             var type = request.GetType().Name;
 
-            _logger.LogInformation("Handling command '{name}'. {@command}", type, request);
+            _logger.LogInformation("Handling command '{T}'. {R}", type, request);
 
             var response = await next();
 
-            _logger.LogInformation("Command '{name}' handled. {@response}", type, response);
+            _logger.LogInformation("Command '{T}' handled. {R}", type, response);
 
             return response;
         }
