@@ -59,9 +59,22 @@ namespace People.Domain.AggregateModels.Account
 
         public IReadOnlyCollection<IdentityModel> Identities => _identities.AsReadOnly();
 
-        public void AddEmail(MailAddress email, EmailType type, bool isConfirmed)
+        public void AddEmail(MailAddress email, bool isConfirmed)
         {
             var now = DateTime.UtcNow;
+            var emails = _identities
+                .Where(x => x.Type == IdentityType.Email)
+                .Cast<EmailIdentityModel>()
+                .ToArray();
+
+            EmailType type;
+            if (emails.Any(x => x.EmailType == EmailType.Primary) == false)
+                type = EmailType.Primary;
+            else if (emails.Any(x => x.EmailType == EmailType.Secondary) == false)
+                type = EmailType.Secondary;
+            else
+                type = EmailType.None;
+
             _identities.Add(new EmailIdentityModel(email, type, isConfirmed ? now : null));
             UpdatedAt = now;
         }
@@ -175,7 +188,7 @@ namespace People.Domain.AggregateModels.Account
             UpdatedAt = DateTime.UtcNow;
         }
 
-        private bool IsPasswordEqual(string password, Func<string, byte[], byte[]> hasher)
+        public bool IsPasswordEqual(string password, Func<string, byte[], byte[]> hasher)
         {
             if (_password is null)
                 throw new ElwarkException(ElwarkExceptionCodes.Internal, "Password not created");
