@@ -25,6 +25,7 @@ namespace People.Domain.Exceptions
         public const string PasswordRequiresUniqueChars = nameof(PasswordRequiresUniqueChars);
         public const string PasswordRequiresUpper = nameof(PasswordRequiresUpper);
         public const string PasswordTooShort = nameof(PasswordTooShort);
+        public const string PasswordAlreadyCreated = nameof(PasswordAlreadyCreated);
 
         public const string ProviderUnauthorized = nameof(ProviderUnauthorized);
         public const string ProviderUnknown = nameof(ProviderUnknown);

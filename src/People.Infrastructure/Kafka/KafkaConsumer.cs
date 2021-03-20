@@ -12,37 +12,27 @@ using Polly.Retry;
 
 namespace People.Infrastructure.Kafka
 {
-    public class KafkaConsumer<T> : BackgroundService where T : IKafkaMessage
+    public class KafkaConsumer<TMessage, THandler> : BackgroundService
+        where TMessage : IKafkaMessage
+        where THandler : class, IKafkaHandler<TMessage>
     {
-        private readonly KafkaConsumerConfig<T> _config;
-        private readonly ILogger<KafkaConsumer<T>> _logger;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IHostApplicationLifetime _application;
-        private readonly ConsumerBuilder<Null, T> _builder;
+        private readonly ConsumerBuilder<Null, TMessage> _builder;
+        private readonly KafkaConsumerConfig<TMessage> _config;
+        private readonly ILogger<KafkaConsumer<TMessage, THandler>> _logger;
         private readonly AsyncRetryPolicy _policy;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public KafkaConsumer(IServiceScopeFactory serviceScopeFactory, ILogger<KafkaConsumer<T>> logger,
-            IOptions<ConsumerConfig> config, IOptions<KafkaConsumerConfig<T>> consumerConfig,
-            IHostApplicationLifetime application)
+        public KafkaConsumer(IServiceScopeFactory serviceScopeFactory, IHostApplicationLifetime application,
+            ILogger<KafkaConsumer<TMessage, THandler>> logger, IOptions<ConsumerConfig> config,
+            IOptions<KafkaConsumerConfig<TMessage>> consumerConfig)
         {
             _logger = logger;
             _application = application;
             _serviceScopeFactory = serviceScopeFactory;
             _config = consumerConfig.Value;
-            _builder = new ConsumerBuilder<Null, T>(config.Value)
-                // .SetErrorHandler((consumer, error) =>
-                // {
-                //     var level = error.IsFatal ? LogLevel.Critical : LogLevel.Error;
-                //
-                //     logger.Log(level, "Consumer {N}. Code {C}. Reason {R}", consumer.Name, error.Code, error.Reason);
-                // })
-                // .SetLogHandler((consumer, error) =>
-                // {
-                //     var level = (LogLevel) error.LevelAs(LogLevelType.MicrosoftExtensionsLogging);
-                //
-                //     logger.Log(level, "Consumer {N}. Code {C}. Message {M}", consumer.Name, error.Name, error.Message);
-                // })
-                .SetValueDeserializer(KafkaDataConverter<T>.Instance);
+            _builder = new ConsumerBuilder<Null, TMessage>(config.Value)
+                .SetValueDeserializer(KafkaDataConverter<TMessage>.Instance);
 
             _policy = Policy
                 .Handle<Exception>()
@@ -75,7 +65,7 @@ namespace People.Infrastructure.Kafka
             return Task.WhenAll(consumers);
         }
 
-        private async Task CreateConsumerTask(ConsumerBuilder<Null, T> builder, CancellationToken ct)
+        private async Task CreateConsumerTask(ConsumerBuilder<Null, TMessage> builder, CancellationToken ct)
         {
             using var consumer = builder.Build();
             consumer.Subscribe(_config.Topic);
@@ -98,7 +88,7 @@ namespace People.Infrastructure.Kafka
 
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
-                        var handler = scope.ServiceProvider.GetRequiredService<IKafkaHandler<T>>();
+                        var handler = scope.ServiceProvider.GetRequiredService<IKafkaHandler<TMessage>>();
 
                         await _policy.ExecuteAsync(() => handler.HandleAsync(result.Message.Value))
                             .ConfigureAwait(false);

@@ -7,21 +7,23 @@ namespace People.Infrastructure.Kafka
 {
     internal sealed class KafkaDataConverter<T> : ISerializer<T>, IDeserializer<T>
     {
-        public static KafkaDataConverter<T> Instance => new();
-        
+        public static KafkaDataConverter<T> Instance { get; } = new();
+
         private readonly Type _null = typeof(Null);
         private readonly Type _ignore = typeof(Ignore);
 
-        private KafkaDataConverter(){}
-        
+        private KafkaDataConverter()
+        {
+        }
+
         public byte[] Serialize(T data, SerializationContext context)
         {
             var type = typeof(T);
-            
+
             if (type == _null)
                 return Array.Empty<byte>();
-            
-            if(type == _ignore)
+
+            if (type == _ignore)
                 throw new NotSupportedException("Ignore type not supported");
 
             var json = JsonConvert.SerializeObject(data);
@@ -32,7 +34,7 @@ namespace People.Infrastructure.Kafka
         public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {
             var type = typeof(T);
-            
+
             if (type == _null || type == _ignore)
                 return default!;
 
