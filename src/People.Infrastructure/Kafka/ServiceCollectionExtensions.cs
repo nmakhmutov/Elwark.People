@@ -39,7 +39,7 @@ namespace People.Infrastructure.Kafka
                 var logger = sp.GetRequiredService<ILogger<KafkaProducer<T>>>();
 
                 var producer = new ProducerBuilder<Null, T>(options.Value)
-                    .SetErrorHandler((_, error) => logger.LogError("Producer error: {R}", error.Reason))
+                    .SetErrorHandler((_, error) => logger.LogError(error.Reason))
                     .SetValueSerializer(KafkaDataConverter<T>.Instance);
 
                 return producer.Build();
@@ -55,7 +55,7 @@ namespace People.Infrastructure.Kafka
         {
             builder.Services.Configure(config);
             builder.Services.AddScoped<IKafkaHandler<TMessage>, THandler>();
-            builder.Services.AddHostedService<KafkaConsumer<TMessage>>();
+            builder.Services.AddHostedService<KafkaConsumer<TMessage, THandler>>();
 
             return builder;
         }
