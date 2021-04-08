@@ -11,13 +11,13 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands
 {
-    public sealed record SignInByEmailCommand(EmailIdentity Email, string Password, IPAddress Ip) 
+    public sealed record SignInByEmailCommand(EmailIdentity Email, string Password, IPAddress Ip)
         : IRequest<SignInResult>;
 
     public sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailCommand, SignInResult>
     {
-        private readonly IAccountRepository _repository;
         private readonly IPasswordHasher _hasher;
+        private readonly IAccountRepository _repository;
 
         public SignInByEmailCommandHandler(IAccountRepository repository, IPasswordHasher hasher)
         {
@@ -31,19 +31,8 @@ namespace People.Api.Application.Commands
             if (account is null)
                 throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
 
-            if (account.Ban is not null)
-                throw new AccountBannedException(account.Ban);
+            account.SignIn(request.Email, DateTime.UtcNow, request.Ip, request.Password, _hasher.CreateHash);
 
-            if (!account.IsConfirmed(request.Email))
-                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
-
-            if (!account.IsPasswordAvailable())
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordNotCreated);
-
-            if (!account.IsPasswordEqual(request.Password, _hasher.CreateHash))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordMismatch);
-
-            account.SignInSuccess(DateTime.UtcNow, request.Ip);
             await _repository.UpdateAsync(account, ct);
 
             return new SignInResult(account.Id, account.Name.FullName());
