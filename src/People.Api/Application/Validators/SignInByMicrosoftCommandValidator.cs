@@ -5,8 +5,7 @@ namespace People.Api.Application.Validators
 {
     public sealed class SignInByMicrosoftCommandValidator : AbstractValidator<SignInByMicrosoftCommand>
     {
-        public SignInByMicrosoftCommandValidator()
-        {
+        public SignInByMicrosoftCommandValidator() =>
             RuleFor(x => x.Identity)
                 .NotNull()
                 .ChildRules(x =>
@@ -14,6 +13,5 @@ namespace People.Api.Application.Validators
                         .NotEmpty()
                         .OverridePropertyName(nameof(SignInByMicrosoftCommand.Identity))
                 );
-        }
     }
 }

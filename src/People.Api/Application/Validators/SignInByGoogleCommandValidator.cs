@@ -5,8 +5,7 @@ namespace People.Api.Application.Validators
 {
     public sealed class SignInByGoogleCommandValidator : AbstractValidator<SignInByGoogleCommand>
     {
-        public SignInByGoogleCommandValidator()
-        {
+        public SignInByGoogleCommandValidator() =>
             RuleFor(x => x.Identity)
                 .NotNull()
                 .ChildRules(x =>
@@ -14,6 +13,5 @@ namespace People.Api.Application.Validators
                         .NotEmpty()
                         .OverridePropertyName(nameof(SignInByGoogleCommand.Identity))
                 );
-        }
     }
 }

@@ -25,13 +25,8 @@ namespace People.Api.Application.Commands
             if (account is null)
                 throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
 
-            if (account.Ban is not null)
-                throw new AccountBannedException(account.Ban);
+            account.SignIn(request.Identity, DateTime.UtcNow, request.Ip);
 
-            if (!account.IsConfirmed(request.Identity))
-                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
-
-            account.SignInSuccess(DateTime.UtcNow, request.Ip);
             await _repository.UpdateAsync(account, ct);
 
             return new SignInResult(account.Id, account.Name.FullName());
