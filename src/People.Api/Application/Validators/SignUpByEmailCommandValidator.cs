@@ -10,26 +10,22 @@ namespace People.Api.Application.Validators
 {
     public sealed class SignUpByEmailCommandValidator : AbstractValidator<SignUpByEmailCommand>
     {
-        public SignUpByEmailCommandValidator(IPasswordValidator validator, IForbiddenService forbiddenService)
+        public SignUpByEmailCommandValidator(IAccountRepository repository, IPasswordValidator validator,
+            IForbiddenService forbiddenService)
         {
             CascadeMode = CascadeMode.Stop;
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .CustomAsync(async (password, context, token) =>
                 {
-                    try
-                    {
-                        await validator.ValidateAsync(password, token);
-                    }
-                    catch (ElwarkException ex)
-                    {
-                        var failure = new ValidationFailure(nameof(SignUpByEmailCommand.Password), "Incorrect password")
-                        {
-                            ErrorCode = ex.Code
-                        };
-
-                        context.AddFailure(failure);
-                    }
+                    var (isSuccess, error) = await validator.ValidateAsync(password, token);
+                    if (!isSuccess)
+                        context.AddFailure(
+                            new ValidationFailure(nameof(SignUpByEmailCommand.Password), "Incorrect password")
+                            {
+                                ErrorCode = error
+                            }
+                        );
                 });
 
             RuleFor(x => x.Email)
@@ -38,6 +34,8 @@ namespace People.Api.Application.Validators
                     .EmailAddress()
                     .WithErrorCode(ElwarkExceptionCodes.EmailIncorrectFormat)
                 )
+                .MustAsync(async (email, ct) => !await repository.IsExists(email, ct))
+                .WithErrorCode(ElwarkExceptionCodes.EmailAlreadyExists)
                 .MustAsync(async (email, ct) =>
                 {
                     var host = email.GetMailAddress().Host;

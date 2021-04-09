@@ -11,8 +11,8 @@ namespace People.Api.Application.Validators
         public SignUpByGoogleCommandValidator(IAccountRepository repository, IForbiddenService forbiddenService)
         {
             CascadeMode = CascadeMode.Stop;
-            RuleFor(x => x.Identity)
-                .NotEmpty()
+            RuleFor(x => x.Google)
+                .NotNull()
                 .MustAsync(async (google, ct) => !await repository.IsExists(google, ct))
                 .WithErrorCode(ElwarkExceptionCodes.ProviderAlreadyExists);
 
