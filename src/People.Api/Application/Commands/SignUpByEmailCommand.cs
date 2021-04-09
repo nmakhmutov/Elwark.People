@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using MongoDB.Bson;
 using People.Api.Application.Models;
 using People.Api.Infrastructure.Password;
 using People.Domain;
@@ -16,40 +17,51 @@ namespace People.Api.Application.Commands
 
     internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmailCommand, SignUpResult>
     {
-        private readonly IAccountRepository _repository;
-        private readonly IPasswordHasher _hasher;
         private readonly IMediator _mediator;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly IAccountRepository _repository;
 
-        public SignUpByEmailCommandHandler(IAccountRepository repository, IPasswordHasher hasher, IMediator mediator)
+        public SignUpByEmailCommandHandler(IAccountRepository repository, IPasswordHasher passwordHasher,
+            IMediator mediator)
         {
             _repository = repository;
-            _hasher = hasher;
+            _passwordHasher = passwordHasher;
             _mediator = mediator;
         }
 
         public async Task<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
         {
             var exists = await _repository.GetAsync(request.Email, ct);
+            ObjectId confirmationId;
+
             if (exists is not null)
             {
                 if (exists.IsConfirmed())
                     throw new ElwarkException(ElwarkExceptionCodes.EmailAlreadyExists);
 
-                await _mediator.Send(new SendPrimaryEmailConfirmationCommand(exists.Id, exists.GetPrimaryEmail()), ct);
-                return new SignUpResult(exists.Id, exists.Name.FullName(), true);
+                confirmationId = await _mediator.Send(
+                    new SendConfirmationCommand(exists.Id, exists.GetPrimaryEmail().GetIdentity(), request.Language),
+                    ct
+                );
+
+                return new SignUpResult(exists.Id, exists.Name.FullName(), confirmationId);
             }
 
             var email = request.Email.GetMailAddress();
             var account = new Account(new Name(email.User), request.Language, Profile.DefaultPicture, request.Ip);
-            account.AddEmail(email, EmailType.Primary, false);
-            
-            var salt = _hasher.CreateSalt();
-            account.SetPassword(request.Password, salt, _hasher.CreateHash);
+
+            account.AddEmail(email, false);
+
+            var salt = _passwordHasher.CreateSalt();
+            account.SetPassword(request.Password, salt, _passwordHasher.CreateHash);
 
             await _repository.CreateAsync(account, ct);
-            await _mediator.Send(new SendPrimaryEmailConfirmationCommand(account.Id, account.GetPrimaryEmail()), ct);
+            confirmationId = await _mediator.Send(
+                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), request.Language),
+                ct
+            );
 
-            return new SignUpResult(account.Id, account.Name.FullName(), true);
+            return new SignUpResult(account.Id, account.Name.FullName(), confirmationId);
         }
     }
 }

@@ -23,10 +23,8 @@ namespace People.Api.Application.Commands
     {
         private readonly IAccountRepository _repository;
 
-        public SignUpByMicrosoftCommandHandler(IAccountRepository repository)
-        {
+        public SignUpByMicrosoftCommandHandler(IAccountRepository repository) =>
             _repository = repository;
-        }
 
         public async Task<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
         {
@@ -34,12 +32,12 @@ namespace People.Api.Application.Commands
             var name = new Name(email.User, request.FirstName, request.LastName);
 
             var account = new Account(name, request.Language, Profile.DefaultPicture, request.Ip);
-            account.AddEmail(email, EmailType.Primary, true);
+            account.AddEmail(email, true);
             account.AddMicrosoft(request.Identity, name.FullName());
 
             await _repository.CreateAsync(account, ct);
 
-            return new SignUpResult(account.Id, account.Name.FullName(), false);
+            return new SignUpResult(account.Id, account.Name.FullName(), null);
         }
     }
 }

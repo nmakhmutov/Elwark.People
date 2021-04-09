@@ -11,7 +11,7 @@ using People.Domain.AggregateModels.Account.Identities;
 namespace People.Api.Application.Commands
 {
     public sealed record SignUpByGoogleCommand(
-            GoogleIdentity Identity,
+            GoogleIdentity Google,
             EmailIdentity Email,
             string? FirstName,
             string? LastName,
@@ -37,12 +37,12 @@ namespace People.Api.Application.Commands
             var picture = request.Picture ?? Profile.DefaultPicture;
 
             var account = new Account(name, request.Language, picture, request.Ip);
-            account.AddEmail(mailAddress, EmailType.Primary, request.IsEmailVerified);
-            account.AddGoogle(request.Identity, name.FullName());
+            account.AddEmail(mailAddress, request.IsEmailVerified);
+            account.AddGoogle(request.Google, name.FullName());
 
             await _repository.CreateAsync(account, ct);
 
-            return new SignUpResult(account.Id, account.Name.FullName(), false);
+            return new SignUpResult(account.Id, account.Name.FullName(), null);
         }
     }
 }
