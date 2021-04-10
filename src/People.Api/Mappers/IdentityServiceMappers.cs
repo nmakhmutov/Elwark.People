@@ -1,6 +1,7 @@
 using Google.Protobuf.WellKnownTypes;
 using People.Api.Application.Models;
 using People.Domain.AggregateModels.Account;
+using People.Grpc.Common;
 
 namespace People.Api.Mappers
 {
@@ -16,7 +17,8 @@ namespace People.Api.Mappers
                 Email = account.GetPrimaryEmail().ToPrimaryEmail(),
                 Profile = account.Profile.ToProfile(),
                 Timezone = account.Timezone.ToTimezone(),
-                UpdatedAt = account.UpdatedAt.ToTimestamp()
+                UpdatedAt = account.UpdatedAt.ToTimestamp(),
+                Roles = {account.Roles}
             };
 
         public static People.Grpc.Identity.SignUpReply ToSignUpReply(this SignUpResult result) =>
@@ -24,10 +26,15 @@ namespace People.Api.Mappers
             {
                 Id = result.Id.ToAccountId(),
                 DisplayName = result.FullName,
-                IsSentConfirmation = result.IsSentConfirmation
+                Confirmation = result.ConfirmationId.HasValue
+                    ? new Confirming
+                    {
+                        Id = result.ConfirmationId.ToString()
+                    }
+                    : null
             };
-        
-        
+
+
         public static People.Grpc.Identity.SignInReply ToSignInReply(this SignInResult result) =>
             new()
             {
