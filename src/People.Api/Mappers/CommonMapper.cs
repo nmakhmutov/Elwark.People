@@ -43,6 +43,24 @@ namespace People.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
+        public static People.Grpc.Common.EmailType ToEmailType(this EmailType type) =>
+            type switch
+            {
+                EmailType.None => People.Grpc.Common.EmailType.None,
+                EmailType.Primary => People.Grpc.Common.EmailType.PrimaryEmail,
+                EmailType.Secondary => People.Grpc.Common.EmailType.SecondaryEmail,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
+        public static EmailType ToEmailType(this People.Grpc.Common.EmailType type) =>
+            type switch
+            {
+                People.Grpc.Common.EmailType.None => EmailType.None,
+                People.Grpc.Common.EmailType.PrimaryEmail => EmailType.Primary,
+                People.Grpc.Common.EmailType.SecondaryEmail => EmailType.Secondary,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
         public static People.Grpc.Common.IdentityType ToIdentityType(this IdentityType type) =>
             type switch
             {
@@ -58,6 +76,14 @@ namespace People.Api.Mappers
                 Gender.Female => People.Grpc.Common.Gender.Female,
                 Gender.Male => People.Grpc.Common.Gender.Male,
                 _ => throw new ArgumentOutOfRangeException(nameof(Gender), gender, "Unknown gender")
+            };
+
+        public static Gender FromGrpc(this People.Grpc.Common.Gender gender) =>
+            gender switch
+            {
+                People.Grpc.Common.Gender.Female => Gender.Female,
+                People.Grpc.Common.Gender.Male => Gender.Male,
+                _ => throw new ArgumentOutOfRangeException(nameof(gender), gender, "Unknown gender")
             };
 
         public static People.Grpc.Common.Address ToAddress(this Address address) =>
