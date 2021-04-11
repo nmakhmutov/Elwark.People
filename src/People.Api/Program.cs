@@ -30,7 +30,7 @@ namespace People.Api
             {
                 await scope.ServiceProvider.GetRequiredService<PeopleDbContext>()
                     .OnModelCreatingAsync();
-
+                
                 await scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>()
                     .OnModelCreatingAsync();
 

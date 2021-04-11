@@ -6,6 +6,8 @@ using Grpc.Core;
 using MediatR;
 using MongoDB.Bson;
 using People.Api.Application.Commands;
+using People.Api.Application.Commands.Email;
+using People.Api.Application.Commands.Password;
 using People.Api.Application.Queries;
 using People.Api.Mappers;
 using People.Domain;
@@ -240,6 +242,14 @@ namespace People.Api.Grpc
                     })
                 }
             };
+        }
+
+        public override async Task<Empty> SendEmail(SendEmailRequest request, ServerCallContext context)
+        {
+            var command = new AddEmailToQueueCommand(request.Email, request.Subject, request.Body); 
+            await _mediator.Send(command, context.CancellationToken);
+        
+            return new Empty();
         }
     }
 }

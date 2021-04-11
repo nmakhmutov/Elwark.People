@@ -14,14 +14,16 @@ namespace People.Api.Application.DomainEventHandlers
         public AccountCreatedDomainEventHandler(IKafkaMessageBus bus) =>
             _bus = bus;
 
-        public Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct) =>
-            _bus.PublishAsync(new AccountCreatedIntegrationEvent(
-                    (long) notification.Account.Id,
-                    notification.Account.GetPrimaryEmail().Address,
-                    notification.IpAddress.ToString(),
-                    notification.Account.Profile.Language.ToString()
-                ),
-                ct
+        public Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct)
+        {
+            var evt = new AccountCreatedIntegrationEvent(
+                (long) notification.Account.Id,
+                notification.Account.GetPrimaryEmail().Address,
+                notification.IpAddress.ToString(),
+                notification.Account.Profile.Language.ToString()
             );
+            
+            return _bus.PublishAsync(evt, ct);
+        }
     }
 }
