@@ -55,19 +55,3 @@ services:
       - "5003:80"
     networks:
       - elwarknetwork
-  
-  people.notification:
-    container_name: "people_notification"
-    image: "elwark/people-notification:${TAG:-latest}"
-    build:
-      context: .
-      dockerfile: People.Notification/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - Grpc__Port=80
-      - Mongodb__ConnectionString=mongodb://master_account:master_password@mongo
-      - Kafka__Servers=broker:29092
-    ports:
-      - "5004:80"
-    networks:
-      - elwarknetwork
