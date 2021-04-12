@@ -25,12 +25,12 @@ namespace People.Api
             Log.Logger = HostExtensions.CreateLogger(configuration, environment, AppName);
 
             var host = CreateHost(configuration, args);
-            
+
             using (var scope = host.Services.CreateScope())
             {
                 await scope.ServiceProvider.GetRequiredService<PeopleDbContext>()
                     .OnModelCreatingAsync();
-                
+
                 await scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>()
                     .OnModelCreatingAsync();
 

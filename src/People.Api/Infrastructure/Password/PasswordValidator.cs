@@ -8,7 +8,7 @@ using People.Infrastructure.Forbidden;
 
 namespace People.Api.Infrastructure.Password
 {
-    public class PasswordValidator: IPasswordValidator
+    public class PasswordValidator : IPasswordValidator
     {
         private readonly IForbiddenService _forbidden;
         private readonly PasswordValidationOptions _options;
@@ -19,33 +19,35 @@ namespace People.Api.Infrastructure.Password
             _options = settings.Value ?? throw new ArgumentNullException(nameof(settings));
         }
 
-        public async Task ValidateAsync(string password, CancellationToken ct)
+        public async Task<PasswordResult> ValidateAsync(string password, CancellationToken ct)
         {
             if (string.IsNullOrWhiteSpace(password))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordEmpty);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordEmpty);
 
             if (password.Length < _options.RequiredLength)
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordTooShort);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordTooShort);
 
             if (_options.RequireNonAlphanumeric && password.All(IsLetterOrDigit))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordRequiresNonAlphanumeric);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresNonAlphanumeric);
 
             if (_options.RequireDigit && !password.Any(IsDigit))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordRequiresDigit);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresDigit);
 
             if (_options.RequireLowercase && !password.Any(IsLower))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordRequiresLower);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresLower);
 
             if (_options.RequireUppercase && !password.Any(IsUpper))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordRequiresUpper);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresUpper);
 
             if (_options.RequiredUniqueChars > 1 && password.Distinct().Count() <= _options.RequiredUniqueChars)
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordRequiresUniqueChars);
-            
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresUniqueChars);
+
             if (await _forbidden.IsPasswordForbidden(password, ct))
-                throw new ElwarkException(ElwarkExceptionCodes.PasswordForbidden);
+                return PasswordResult.Fail(ElwarkExceptionCodes.PasswordForbidden);
+            
+            return PasswordResult.Success();
         }
-        
+
         private static bool IsDigit(char c) =>
             c >= '0' && c <= '9';
 
