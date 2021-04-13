@@ -1,15 +1,14 @@
 using FluentValidation;
-using People.Notification.Application.Commands;
+using People.Api.Application.Commands.Email;
 
-namespace People.Notification.Application.Validators
+namespace People.Api.Application.Validators.Email
 {
     public sealed class SendEmailCommandValidator : AbstractValidator<SendEmailCommand>
     {
         public SendEmailCommandValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty()
-                .EmailAddress();
+                .NotNull();
 
             RuleFor(x => x.Subject)
                 .NotEmpty();

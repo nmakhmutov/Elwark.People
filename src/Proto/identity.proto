@@ -81,6 +81,7 @@ message AccountReply {
   people.Profile profile = 6;
   people.Ban ban = 7;
   google.protobuf.Timestamp updated_at = 8;
+  repeated string roles = 9;
 }
 
 message StatusReply {

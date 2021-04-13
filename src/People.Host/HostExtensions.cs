@@ -48,19 +48,18 @@ namespace People.Host
                 .AddCommandLine(args)
                 .Build();
 
-        public static ILogger CreateLogger(IConfiguration configuration, string environment, string app)
+        public static ILogger CreateLogger(IConfiguration configuration, string env, string app)
         {
             var logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .Enrich.WithProperty("application", app);
 
-            if ("Development".Equals(environment, StringComparison.InvariantCultureIgnoreCase))
+            if ("Development".Equals(env, StringComparison.InvariantCultureIgnoreCase))
                 logger.WriteTo.Console();
             else
                 logger.WriteTo.Console(new ElwarkSerilogFormatter());
 
-            return logger
-                .ReadFrom.Configuration(configuration)
+            return logger.ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
     }

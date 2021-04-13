@@ -1,7 +1,7 @@
 using FluentValidation;
-using People.Notification.Application.Commands;
+using People.Api.Application.Commands.Email;
 
-namespace People.Notification.Application.Validators
+namespace People.Api.Application.Validators.Email
 {
     public sealed class AddEmailToQueueCommandValidator : AbstractValidator<AddEmailToQueueCommand>
     {
