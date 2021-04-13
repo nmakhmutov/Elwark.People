@@ -39,7 +39,13 @@ namespace People.Api.Application.Commands
                 new ConfirmationCodeModel(confirmation.Code)
             );
 
-            var evt = new EmailMessageCreatedIntegrationEvent(request.Email.Value, email.Subject, email.Body);
+            var evt = new EmailMessageCreatedIntegrationEvent(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                request.Email.Value,
+                email.Subject,
+                email.Body
+            );
             await _bus.PublishAsync(evt, ct);
 
             return confirmation.Id;

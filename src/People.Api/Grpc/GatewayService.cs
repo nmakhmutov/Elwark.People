@@ -1,5 +1,7 @@
+using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -167,7 +169,7 @@ namespace People.Api.Grpc
 
             if (account.IsPasswordAvailable())
             {
-                context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.PasswordAlreadyCreated);
+                context.Status = new Status(StatusCode.InvalidArgument, ElwarkExceptionCodes.PasswordAlreadyCreated);
                 return new Confirming();
             }
 
@@ -191,9 +193,9 @@ namespace People.Api.Grpc
                 request.Confirm.Code,
                 request.Password
             );
-            
+
             await _mediator.Send(command, context.CancellationToken);
-            
+
             var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
             if (data is not null)
                 return data.ToGatewayProfileReply();
@@ -246,10 +248,32 @@ namespace People.Api.Grpc
 
         public override async Task<Empty> SendEmail(SendEmailRequest request, ServerCallContext context)
         {
-            var command = new AddEmailToQueueCommand(request.Email, request.Subject, request.Body); 
-            await _mediator.Send(command, context.CancellationToken);
-        
+            await (request.IdentityCase switch
+            {
+                SendEmailRequest.IdentityOneofCase.Email =>
+                    SendEmailAsync(request.Email, request.Subject, request.Body, context.CancellationToken),
+
+                SendEmailRequest.IdentityOneofCase.Id =>
+                    SendEmailAsync(request.Id, request.Subject, request.Body, context.CancellationToken),
+
+                _ => throw new ArgumentOutOfRangeException(nameof(request), "Unknown identity for send email message")
+            });
+
             return new Empty();
         }
+
+        private async Task SendEmailAsync(Domain.AggregateModels.Account.AccountId id, string subject, string body,
+            CancellationToken ct)
+        {
+            var account = await _mediator.Send(new GetAccountByIdQuery(id), ct);
+
+            if (account is null)
+                return;
+
+            await SendEmailAsync(account.GetPrimaryEmail().Address, subject, body, ct);
+        }
+
+        private Task SendEmailAsync(string email, string subject, string body, CancellationToken ct) =>
+            _mediator.Send(new AddEmailToQueueCommand(email, subject, body), ct);
     }
 }

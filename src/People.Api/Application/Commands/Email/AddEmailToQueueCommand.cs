@@ -1,10 +1,11 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
 
-namespace People.Notification.Application.Commands
+namespace People.Api.Application.Commands.Email
 {
     public sealed record AddEmailToQueueCommand(string Email, string Subject, string Body) : IRequest;
 
@@ -17,7 +18,13 @@ namespace People.Notification.Application.Commands
 
         public async Task<Unit> Handle(AddEmailToQueueCommand request, CancellationToken ct)
         {
-            var evt = new EmailMessageCreatedIntegrationEvent(request.Email, request.Subject, request.Body);
+            var evt = new EmailMessageCreatedIntegrationEvent(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                request.Email,
+                request.Subject,
+                request.Body
+            );
             await _bus.PublishAsync(evt, ct);
 
             return Unit.Value;

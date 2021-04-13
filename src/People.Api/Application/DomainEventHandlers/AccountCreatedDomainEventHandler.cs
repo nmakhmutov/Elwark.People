@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -17,6 +18,8 @@ namespace People.Api.Application.DomainEventHandlers
         public Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct)
         {
             var evt = new AccountCreatedIntegrationEvent(
+                Guid.NewGuid(),
+                notification.Account.CreatedAt,
                 (long) notification.Account.Id,
                 notification.Account.GetPrimaryEmail().Address,
                 notification.IpAddress.ToString(),

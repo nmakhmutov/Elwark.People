@@ -1,4 +1,4 @@
-namespace People.Notification.Options
+namespace People.Api.Infrastructure.Provider.Email.Gmail
 {
     public sealed record GmailOptions
     {

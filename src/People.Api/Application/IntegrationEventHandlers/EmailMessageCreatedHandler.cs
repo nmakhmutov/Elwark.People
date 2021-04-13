@@ -1,10 +1,11 @@
+using System.Net.Mail;
 using System.Threading.Tasks;
 using MediatR;
+using People.Api.Application.Commands.Email;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
-using People.Notification.Application.Commands;
 
-namespace People.Notification.Application.IntegrationEventHandler
+namespace People.Api.Application.IntegrationEventHandlers
 {
     internal sealed class EmailMessageCreatedHandler : IKafkaHandler<EmailMessageCreatedIntegrationEvent>
     {
@@ -14,6 +15,6 @@ namespace People.Notification.Application.IntegrationEventHandler
             _mediator = mediator;
 
         public Task HandleAsync(EmailMessageCreatedIntegrationEvent message) =>
-            _mediator.Send(new SendEmailCommand(message.Email, message.Subject, message.Body));
+            _mediator.Send(new SendEmailCommand(new MailAddress(message.Email), message.Subject, message.Body));
     }
 }

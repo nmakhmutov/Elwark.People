@@ -23,6 +23,8 @@ service Gateway {
 
   rpc GetCountries(google.protobuf.Empty) returns(CountriesReply);
   rpc GetTimezones(google.protobuf.Empty) returns(TimezonesReply);
+
+  rpc SendEmail (SendEmailRequest) returns (google.protobuf.Empty);
 }
 
 message AccountReply {
@@ -130,4 +132,14 @@ message UpdatePasswordRequest{
   people.AccountId id = 1;
   string old_password = 2;
   string new_password = 3;
+}
+
+message SendEmailRequest {
+  oneof Identity {
+    string email = 1;
+    int64 id = 2;
+  }
+
+  string subject = 3;
+  string body = 4;
 }

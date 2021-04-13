@@ -4,7 +4,7 @@ using People.Domain.AggregateModels.EmailProvider;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
 
-namespace People.Notification.Application.IntegrationEventHandler
+namespace People.Api.Application.IntegrationEventHandlers
 {
     internal sealed class UpdateExpiredProviderEventHandler : IKafkaHandler<ProviderExpiredIntegrationEvent>
     {
