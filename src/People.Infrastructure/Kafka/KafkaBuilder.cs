@@ -4,9 +4,9 @@ namespace People.Infrastructure.Kafka
 {
     public class KafkaBuilder : IKafkaBuilder
     {
-        public IServiceCollection Services { get; }
-
         public KafkaBuilder(IServiceCollection services) =>
             Services = services;
+
+        public IServiceCollection Services { get; }
     }
 }

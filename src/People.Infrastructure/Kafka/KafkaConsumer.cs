@@ -70,7 +70,7 @@ namespace People.Infrastructure.Kafka
             using var consumer = builder.Build();
             consumer.Subscribe(_config.Topic);
 
-            _logger.LogInformation("Consumer for '{N}' handling by '{C}' on topic '{T}'",
+            _logger.LogInformation("Consumer for '{N}' handling by '{C}' from topic '{T}'",
                 _config.MessageType.Name,
                 consumer.Name,
                 _config.Topic
@@ -83,8 +83,8 @@ namespace People.Infrastructure.Kafka
                     if (result.IsPartitionEOF)
                         continue;
 
-                    _logger.LogInformation("Consumer '{N}' received event '{E}'", consumer.Name,
-                        _config.MessageType.Name);
+                    _logger.LogInformation("Consumer '{N}' received event '{E}' from topic '{T}'", consumer.Name,
+                        _config.MessageType.Name, _config.Topic);
 
                     using (var scope = _serviceScopeFactory.CreateScope())
                     {
@@ -94,8 +94,8 @@ namespace People.Infrastructure.Kafka
                             .ConfigureAwait(false);
                     }
 
-                    _logger.LogInformation("Consumer '{N}' handled event '{E}'", consumer.Name,
-                        _config.MessageType.Name);
+                    _logger.LogInformation("Consumer '{N}' handled event '{E}' from topic '{T}'", consumer.Name,
+                        _config.MessageType.Name, _config.Topic);
 
                     consumer.Commit(result);
                 }
