@@ -16,10 +16,10 @@ namespace People.Infrastructure.Kafka
         {
             using var scope = _factory.CreateScope();
             var producer = scope.ServiceProvider.GetService<KafkaProducer<T>>();
-            
-            if(producer is null)
-                throw new NotImplementedException($"For message type {typeof(T)} producer not found");
-            
+
+            if (producer is null)
+                throw new Exception($"For message type '{typeof(T)}' producer not found");
+
             await producer.ProduceAsync(message, ct);
         }
     }
