@@ -10,10 +10,10 @@ namespace People.Infrastructure.Repositories
 {
     public sealed class EmailProviderRepository : IEmailProviderRepository
     {
-        private readonly NotificationDbContext _dbContext;
+        private readonly PeopleDbContext _dbContext;
         private readonly IMediator _mediator;
 
-        public EmailProviderRepository(NotificationDbContext dbContext, IMediator mediator)
+        public EmailProviderRepository(PeopleDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
             _mediator = mediator;
