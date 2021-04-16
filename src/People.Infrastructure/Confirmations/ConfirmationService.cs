@@ -14,6 +14,16 @@ namespace People.Infrastructure.Confirmations
         public ConfirmationService(InfrastructureDbContext dbContext) =>
             _dbContext = dbContext;
 
+        public async Task<Confirmation?> GetAsync(ObjectId id, CancellationToken ct)
+        {
+            var filter = Builders<Confirmation>.Filter.Eq(x => x.Id, id);
+
+            return await _dbContext.Confirmations
+                .Find(filter)
+                .SortByDescending(x => x.ExpireAt)
+                .FirstOrDefaultAsync(ct);
+        }
+        
         public async Task<Confirmation?> GetAsync(AccountId id, CancellationToken ct)
         {
             var filter = Builders<Confirmation>.Filter.Eq(x => x.AccountId, id);
@@ -24,7 +34,7 @@ namespace People.Infrastructure.Confirmations
                 .FirstOrDefaultAsync(ct);
         }
 
-        public async Task<uint> CreateAsync(AccountId id, TimeSpan lifetime, CancellationToken ct)
+        public async Task<Confirmation> CreateAsync(AccountId id, TimeSpan lifetime, CancellationToken ct)
         {
             var random = new Random();
             var code = (uint) random.Next(1_000, 10_000);
@@ -32,10 +42,10 @@ namespace People.Infrastructure.Confirmations
             var confirmation = new Confirmation(id, code, DateTime.UtcNow.Add(lifetime));
             await _dbContext.Confirmations.InsertOneAsync(confirmation, new InsertOneOptions(), ct);
 
-            return code;
+            return confirmation;
         }
 
-        public Task DeleteAsync(ObjectId id, CancellationToken ct) =>
-            _dbContext.Confirmations.DeleteOneAsync(Builders<Confirmation>.Filter.Eq(x => x.Id, id), ct);
+        public Task DeleteAsync(AccountId id, CancellationToken ct) =>
+            _dbContext.Confirmations.DeleteManyAsync(Builders<Confirmation>.Filter.Eq(x => x.AccountId, id), ct);
     }
 }
