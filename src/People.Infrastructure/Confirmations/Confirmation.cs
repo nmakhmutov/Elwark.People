@@ -25,7 +25,5 @@ namespace People.Infrastructure.Confirmations
         public DateTime CreatedAt { get; private set; }
 
         public DateTime ExpireAt { get; private set; }
-
-        public TimeSpan Lifetime => DateTime.UtcNow - ExpireAt;
     }
 }
