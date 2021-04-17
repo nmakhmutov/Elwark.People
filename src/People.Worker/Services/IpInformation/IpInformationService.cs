@@ -1,13 +1,12 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace People.Worker.Services.IpInformation
 {
     public interface IIpInformationService
     {
-        Task<IpInformationDto?> GetIpInformationAsync(IPAddress ip, string lang);
+        Task<IpInformationDto?> GetAsync(string ip, string lang);
     }
 
     public class IpInformationService : IIpInformationService
@@ -16,16 +15,20 @@ namespace People.Worker.Services.IpInformation
 
         public IpInformationService(HttpClient httpClient) => _httpClient = httpClient;
 
-        public async Task<IpInformationDto?> GetIpInformationAsync(IPAddress ip, string lang)
+        public async Task<IpInformationDto?> GetAsync(string ip, string lang)
         {
             var response = await _httpClient.GetAsync($"/json/{ip}?lang={lang}");
 
-            if (!response.IsSuccessStatusCode) 
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var json = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(json))
                 return null;
             
-            var data = await response.Content.ReadFromJsonAsync<IpInformationDto>();
+            var data = JsonConvert.DeserializeObject<IpInformationDto>(json);
 
-            return data?.Status == IpInformationStatus.Success ? data : null;
+            return data.Status == IpInformationStatus.Success ? data : null;
         }
     }
 }
