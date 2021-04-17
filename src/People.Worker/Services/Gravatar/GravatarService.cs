@@ -29,7 +29,7 @@ namespace People.Worker.Services.Gravatar
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogInformation($"Gravatar sent status code {response.StatusCode} for hash {id}");
+                _logger.LogInformation("Gravatar sent status code {Code} for hash {Id}", response.StatusCode, id);
                 return null;
             }
 
