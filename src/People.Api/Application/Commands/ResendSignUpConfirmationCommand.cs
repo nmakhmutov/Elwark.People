@@ -31,8 +31,7 @@ namespace People.Api.Application.Commands
             if (account.IsConfirmed())
                 throw new ElwarkException(ElwarkExceptionCodes.IdentityAlreadyConfirmed);
 
-            var command =
-                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), request.Language); 
+            var command = new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), request.Language); 
             
             return await _mediator.Send(command, ct);
         }
