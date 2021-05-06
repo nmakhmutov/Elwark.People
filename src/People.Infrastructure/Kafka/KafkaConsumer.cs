@@ -108,15 +108,15 @@ namespace People.Infrastructure.Kafka
                 }
                 catch (ConsumeException ex)
                 {
-                    _logger.LogCritical(ex, "Consumer exception in '{N}' for message '{M}'", consumer.Name,
+                    _logger.LogWarning(ex, "Consumer exception in '{N}' for message '{M}'", consumer.Name,
                         _config.MessageType.Name);
 
-                    if (ex.Error.IsFatal)
-                    {
-                        _logger.LogCritical(ex, "Consumer exception is fatal. Application will stop");
-                        _application.StopApplication();
-                        break;
-                    }
+                    if (!ex.Error.IsFatal)
+                        continue;
+                    
+                    _logger.LogCritical(ex, "Consumer exception is fatal. Application will stop");
+                    _application.StopApplication();
+                    break;
                 }
                 catch (Exception ex)
                 {
