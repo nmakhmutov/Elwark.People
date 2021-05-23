@@ -5,7 +5,7 @@ using People.Grpc.Common;
 namespace People.Gateway.Requests
 {
     public sealed record UpdateAccount(string? FirstName, string? LastName, string Nickname, string Language,
-        Gender Gender, DateTime Birthday, string? Bio, string? CountryCode, string? CityName, string Timezone)
+        Gender Gender, DateTime DateOfBirth, string? Bio, string? CountryCode, string? CityName, string Timezone)
     {
         public sealed class Validator : AbstractValidator<UpdateAccount>
         {
@@ -14,7 +14,7 @@ namespace People.Gateway.Requests
                 RuleFor(x => x.Nickname)
                     .NotEmpty();
 
-                RuleFor(x => x.Birthday)
+                RuleFor(x => x.DateOfBirth)
                     .NotEmpty()
                     .Must(x => x < DateTime.UtcNow);
 

@@ -51,7 +51,7 @@ namespace People.Gateway.Controllers
                         Value = _identity.GetAccountId()
                     },
                     Bio = string.IsNullOrEmpty(request.Bio) ? null : request.Bio,
-                    Birthday = request.Birthday.ToTimestamp(),
+                    DateOfBirth = request.DateOfBirth.ToTimestamp(),
                     Gender = request.Gender,
                     Language = request.Language,
                     Nickname = request.Nickname,

@@ -39,7 +39,7 @@ namespace People.Gateway.Controllers
                     account.Name.FullName,
                     account.Profile.Language,
                     account.Profile.Gender,
-                    account.Profile.Birthday?.ToDateTime(),
+                    account.Profile.DateOfBirth?.ToDateTime(),
                     account.Profile.Bio,
                     account.Profile.Picture,
                     account.Address.ToAddress(),

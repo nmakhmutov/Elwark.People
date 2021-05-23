@@ -12,7 +12,7 @@ namespace People.Gateway.Models
         string FullName,
         string Language,
         Gender Gender,
-        DateTime? Birthday,
+        DateTime? DateOfBirth,
         string? Bio,
         string Picture,
         Address Address,

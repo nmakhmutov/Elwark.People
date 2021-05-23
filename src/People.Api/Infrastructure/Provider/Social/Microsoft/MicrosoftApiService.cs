@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -25,12 +26,8 @@ namespace People.Api.Infrastructure.Provider.Social.Microsoft
 
             return response.StatusCode switch
             {
-                HttpStatusCode.OK => new MicrosoftAccount(
-                    new MicrosoftIdentity(json.Value<string>("id")),
-                    new EmailIdentity(json.Value<string>("userPrincipalName")),
-                    json.Value<string?>("givenName"),
-                    json.Value<string?>("surname")
-                ),
+                HttpStatusCode.OK =>
+                    ParseSuccessResponse(json),
 
                 HttpStatusCode.Unauthorized =>
                     throw new ElwarkException(ElwarkExceptionCodes.ProviderUnauthorized),
@@ -38,6 +35,20 @@ namespace People.Api.Infrastructure.Provider.Social.Microsoft
                 _ => throw new ElwarkException(ElwarkExceptionCodes.ProviderUnknown,
                     json.SelectToken("error.message")?.Value<string?>())
             };
+        }
+
+        private static MicrosoftAccount ParseSuccessResponse(JToken json)
+        {
+            var id = json.Value<string>("id") ?? throw new InvalidOperationException("Microsoft id not found");
+            var email = json.Value<string>("userPrincipalName") ??
+                        throw new InvalidOperationException("Microsoft email not found");
+
+            return new MicrosoftAccount(
+                new MicrosoftIdentity(id),
+                new EmailIdentity(email),
+                json.Value<string>("givenName"),
+                json.Value<string>("surname")
+            );
         }
     }
 }

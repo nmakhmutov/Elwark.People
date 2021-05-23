@@ -1,7 +1,8 @@
 using System;
+using Fluid.MvcViewEngine;
+using Fluid.ViewEngine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using People.Api.Infrastructure.EmailBuilder.Fluid;
 
 namespace People.Api.Infrastructure.EmailBuilder
 {
@@ -12,17 +13,17 @@ namespace People.Api.Infrastructure.EmailBuilder
         {
             if (services is null)
                 throw new ArgumentNullException(nameof(services));
-            
-            if (setupAction is not null)
-                services.Configure(setupAction);
-            
+
             services
-                .AddTransient<IConfigureOptions<FluidViewEngineOptions>, FluidViewEngineOptionsSetup>()
                 .AddOptions()
                 .AddMemoryCache()
+                .AddSingleton<IEmailBuilder, EmailBuilder>()
                 .AddSingleton<IFluidRendering, FluidRendering>()
-                .AddSingleton<IEmailBuilder, EmailBuilder>();
-            
+                .AddTransient<IConfigureOptions<FluidViewEngineOptions>, FluidViewEngineOptionsSetup>();
+
+            if (setupAction is not null)
+                services.Configure(setupAction);
+
             return services;
         }
     }

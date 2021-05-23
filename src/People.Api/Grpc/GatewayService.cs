@@ -63,7 +63,7 @@ namespace People.Api.Grpc
         public override async Task<ProfileReply> UpdateProfile(UpdateProfileRequest request, ServerCallContext context)
         {
             var command = new UpdateProfileCommand(request.Id.ToAccountId(), request.FirstName, request.LastName,
-                request.Nickname, request.Bio, request.Birthday.ToDateTime(), request.Gender.FromGrpc(),
+                request.Nickname, request.Bio, request.DateOfBirth.ToDateTime(), request.Gender.FromGrpc(),
                 request.Language, request.Timezone, request.CountryCode, request.CityName ?? string.Empty);
 
             await _mediator.Send(command, context.CancellationToken);

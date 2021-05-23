@@ -135,7 +135,7 @@ namespace People.Api.Mappers
             new()
             {
                 Bio = profile.Bio,
-                Birthday = profile.Birthday?.ToTimestamp(),
+                DateOfBirth = profile.DateOfBirth?.ToTimestamp(),
                 Gender = profile.Gender.ToGender(),
                 Language = profile.Language.ToString(),
                 Picture = profile.Picture.ToString()

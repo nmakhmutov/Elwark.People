@@ -4,6 +4,8 @@ using Confluent.Kafka;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using FluentValidation;
+using Fluid;
+using Fluid.MvcViewEngine;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -123,7 +125,11 @@ namespace People.Api
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             services
-                .AddEmailBuilder()
+                .AddEmailBuilder(options =>
+                {
+                    options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
+                    options.ViewLocationFormats.Add("Email/Views/{0}" + FluidViewEngine.ViewExtension);
+                })
                 .AddMediatR(assemblies)
                 .AddValidatorsFromAssemblies(assemblies)
                 .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))

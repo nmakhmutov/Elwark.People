@@ -28,7 +28,7 @@ namespace People.Worker.Services.IpInformation
             
             var data = JsonConvert.DeserializeObject<IpInformationDto>(json);
 
-            return data.Status == IpInformationStatus.Success ? data : null;
+            return data is not null && data.Status == IpInformationStatus.Success ? data : null;
         }
     }
 }

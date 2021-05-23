@@ -7,7 +7,7 @@ namespace People.Domain.AggregateModels.Account
         Gender Gender,
         Uri Picture,
         string? Bio = null,
-        DateTime? Birthday = null
+        DateTime? DateOfBirth = null
     )
     {
         public static Uri DefaultPicture => 

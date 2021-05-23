@@ -14,7 +14,7 @@ namespace People.Api.Application.Validators
             RuleFor(x => x.Bio)
                 .MaximumLength(260);
 
-            RuleFor(x => x.Birthday)
+            RuleFor(x => x.DateOfBirth)
                 .NotEmpty()
                 .Must(x => x < DateTime.UtcNow);
 

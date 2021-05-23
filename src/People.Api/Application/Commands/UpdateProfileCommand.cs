@@ -16,7 +16,7 @@ namespace People.Api.Application.Commands
         string? LastName,
         string Nickname,
         string? Bio,
-        DateTime Birthday,
+        DateTime DateOfBirth,
         Gender Gender,
         string Language,
         string Timezone,
@@ -51,7 +51,7 @@ namespace People.Api.Application.Commands
             account.SetProfile(account.Profile with
             {
                 Bio = request.Bio,
-                Birthday = request.Birthday.Date,
+                DateOfBirth = request.DateOfBirth.Date,
                 Gender = request.Gender,
                 Language = new Language(request.Language)
             });

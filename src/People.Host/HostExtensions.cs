@@ -52,14 +52,15 @@ namespace People.Host
         {
             var logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("application", app);
+                .Enrich.WithProperty("application", app)
+                .ReadFrom.Configuration(configuration);
 
             if ("Development".Equals(env, StringComparison.InvariantCultureIgnoreCase))
                 logger.WriteTo.Console();
             else
                 logger.WriteTo.Console(new ElwarkSerilogFormatter());
 
-            return logger.ReadFrom.Configuration(configuration)
+            return logger
                 .CreateLogger();
         }
     }

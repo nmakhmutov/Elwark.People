@@ -93,7 +93,7 @@ message UpdateProfileRequest {
   string nickname = 4;
   string language = 5;
   people.Gender gender = 6;
-  google.protobuf.Timestamp birthday = 7;
+  google.protobuf.Timestamp date_of_birth = 7;
   google.protobuf.StringValue bio = 8;
   string country_code = 9;
   google.protobuf.StringValue city_name = 10;

@@ -19,7 +19,7 @@ namespace People.Gateway.Mappers
                 profile.Name.FullName,
                 profile.Profile.Language,
                 profile.Profile.Gender,
-                profile.Profile.Birthday?.ToDateTime(),
+                profile.Profile.DateOfBirth?.ToDateTime(),
                 profile.Profile.Bio,
                 profile.Profile.Picture,
                 profile.Address.ToAddress(),

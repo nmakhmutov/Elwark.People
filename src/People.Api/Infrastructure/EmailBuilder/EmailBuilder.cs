@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Fluid.MvcViewEngine;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using People.Api.Infrastructure.EmailBuilder.Fluid;
 
 namespace People.Api.Infrastructure.EmailBuilder
 {
@@ -25,13 +25,10 @@ namespace People.Api.Infrastructure.EmailBuilder
 
         public async Task<EmailTemplateResult> CreateEmailAsync(string templateName, ITemplateModel model)
         {
-            var body = await _rendering.RenderAsync(CreatePath(templateName), model, _viewData, _modelState);
-
+            var body = await _rendering.RenderAsync($"Email/Views/{templateName}", model, _viewData, _modelState);
             var subject = _emailTitleRegex.Match(body).Value.Trim();
 
             return new EmailTemplateResult(subject, body);
         }
-
-        private static string CreatePath(string template) => $"Email/Views/{template}";
     }
 }

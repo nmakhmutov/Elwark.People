@@ -41,12 +41,15 @@ namespace People.Api.Infrastructure.Provider.Social.Google
 
         private static GoogleAccount ParseSuccessResponse(JToken json)
         {
+            var id = json.Value<string>("id") ?? throw new InvalidOperationException("Google id not found");
+            var email = json.Value<string>("email") ?? throw new InvalidOperationException("Google email not found");
+            
             var locale = json.Value<string?>("locale");
             var picture = json.Value<string?>("picture");
-
+            
             return new GoogleAccount(
-                new GoogleIdentity(json.Value<string>("id")),
-                new EmailIdentity(json.Value<string>("email")),
+                new GoogleIdentity(id),
+                new EmailIdentity(email),
                 json.Value<bool>("verified_email"),
                 json.Value<string?>("given_name"),
                 json.Value<string?>("family_name"),

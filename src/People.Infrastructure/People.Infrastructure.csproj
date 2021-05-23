@@ -13,7 +13,7 @@
       <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
         <PackageReference Include="MongoDB.Bson" Version="2.12.3" />
         <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
-        <PackageReference Include="Confluent.Kafka" Version="1.6.3" />
+        <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-preview.3.21201.4" />
