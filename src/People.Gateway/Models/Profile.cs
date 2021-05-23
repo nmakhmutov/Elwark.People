@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using People.Grpc.Common;
 
 namespace People.Gateway.Models
 {
-    internal sealed record Account(
+    internal sealed record Profile(
         long Id,
         string Nickname,
         string? FirstName,
@@ -16,6 +17,9 @@ namespace People.Gateway.Models
         string Picture,
         Address Address,
         Timezone Timezone,
-        bool IsBanned
+        Ban? Ban,
+        bool IsPasswordAvailable,
+        DateTime CreatedAt,
+        IEnumerable<Identity> Identities
     );
 }
