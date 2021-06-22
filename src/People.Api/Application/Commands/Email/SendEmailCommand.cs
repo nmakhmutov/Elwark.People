@@ -8,7 +8,7 @@ using MediatR;
 using People.Api.Infrastructure.Provider.Email;
 using People.Api.Infrastructure.Provider.Email.Gmail;
 using People.Api.Infrastructure.Provider.Email.SendGrid;
-using People.Domain.AggregateModels.EmailProvider;
+using People.Domain.Aggregates.EmailProvider;
 using People.Infrastructure.Mongo;
 using Polly;
 using Polly.Retry;

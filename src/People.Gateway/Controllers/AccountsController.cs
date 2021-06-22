@@ -25,7 +25,7 @@ namespace People.Gateway.Controllers
         }
 
         [HttpGet("me"), Authorize(Policy = Policy.RequireAccountId)]
-        public async Task<ActionResult> MeAsync(CancellationToken ct)
+        public async Task<ActionResult> GetAsync(CancellationToken ct)
         {
             var id = _identity.GetAccountId();
             var account = await _client.GetAccountAsync(new AccountId {Value = id}, cancellationToken: ct);
@@ -37,11 +37,35 @@ namespace People.Gateway.Controllers
                     account.Name.FirstName,
                     account.Name.LastName,
                     account.Name.FullName,
-                    account.Profile.Language,
-                    account.Profile.Gender,
-                    account.Profile.DateOfBirth?.ToDateTime(),
-                    account.Profile.Bio,
-                    account.Profile.Picture,
+                    account.Language,
+                    account.Gender,
+                    account.DateOfBirth?.ToDateTime(),
+                    account.Bio,
+                    account.Picture,
+                    account.Address.ToAddress(),
+                    account.Timezone.ToTimezone(),
+                    account.IsBanned
+                )
+            );
+        }
+
+        [HttpGet("{id:long}"), Authorize(Policy = Policy.RequireCommonAccess)]
+        public async Task<ActionResult> GetAsync(long id, CancellationToken ct)
+        {
+            var account = await _client.GetAccountAsync(new AccountId {Value = id}, cancellationToken: ct);
+
+            return Ok(
+                new Account(
+                    account.Id.Value,
+                    account.Name.Nickname,
+                    account.Name.FirstName,
+                    account.Name.LastName,
+                    account.Name.FullName,
+                    account.Language,
+                    account.Gender,
+                    account.DateOfBirth?.ToDateTime(),
+                    account.Bio,
+                    account.Picture,
                     account.Address.ToAddress(),
                     account.Timezone.ToTimezone(),
                     account.IsBanned

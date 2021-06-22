@@ -94,7 +94,7 @@ namespace People.Gateway
             services.AddControllers(options =>
                 {
                     options.AllowEmptyInputInBodyModelBinding = false;
-                    options.Filters.Add<HttpGlobalExceptionFilter>();
+                    options.Filters.Add<GlobalExceptionFilter>();
                 })
                 .ConfigureApiBehaviorOptions(options => options.InvalidModelStateResponseFactory = context =>
                 {
@@ -124,8 +124,7 @@ namespace People.Gateway
                 );
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env) =>
             app.UseForwardedHeaders(new ForwardedHeadersOptions
                 {
                     ForwardedHeaders = ForwardedHeaders.All
@@ -136,7 +135,6 @@ namespace People.Gateway
                 .UseAuthentication()
                 .UseAuthorization()
                 .UsePeopleLocalization()
-                .UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
+                .UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }

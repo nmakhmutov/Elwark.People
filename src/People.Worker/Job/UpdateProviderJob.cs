@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using People.Domain.AggregateModels.EmailProvider;
+using People.Domain.Aggregates.EmailProvider;
 using People.Infrastructure;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;

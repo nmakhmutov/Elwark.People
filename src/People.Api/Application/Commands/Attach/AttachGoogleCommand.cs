@@ -2,8 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 using People.Infrastructure.Forbidden;
 
@@ -40,17 +40,21 @@ namespace People.Api.Application.Commands.Attach
             if (await IsAvailableToAttach(request.Email, ct))
                 account.AddEmail(request.Email.GetMailAddress(), request.IsEmailVerified);
 
-            account.SetName(account.Name with
-            {
-                FirstName = account.Name.FirstName ?? request.FirstName,
-                LastName = account.Name.LastName ?? request.LastName
-            });
-
-            if (request.Picture is not null && account.Profile.Picture == Profile.DefaultPicture)
-                account.SetProfile(account.Profile with
+            account.Update(account.Name with
                 {
-                    Picture = request.Picture
-                });
+                    FirstName = account.Name.FirstName ?? request.FirstName?[..Name.FirstNameLength],
+                    LastName = account.Name.LastName ?? request.LastName?[..Name.LastNameLength]
+                },
+                account.Address,
+                account.Timezone,
+                account.Language,
+                account.Gender,
+                request.Picture is not null && account.Picture == Account.DefaultPicture
+                    ? request.Picture
+                    : account.Picture,
+                account.Bio,
+                account.DateOfBirth
+            );
 
             await _repository.UpdateAsync(account, ct);
 
@@ -70,7 +74,7 @@ namespace People.Api.Application.Commands.Attach
 
         private static string GetName(string? firstName, string? lastName)
         {
-            var name = $"{firstName} {lastName}".Trim();
+            var name = $"{firstName} {lastName}".Trim()[..Name.FullNameLength];
 
             return string.IsNullOrEmpty(name) ? "Unknown" : name;
         }

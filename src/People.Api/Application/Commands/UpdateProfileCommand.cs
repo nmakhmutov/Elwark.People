@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using People.Domain;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Domain.Exceptions;
 using People.Infrastructure.Timezones;
-using Timezone = People.Domain.AggregateModels.Account.Timezone;
+using Timezone = People.Domain.Aggregates.Account.Timezone;
 
 namespace People.Api.Application.Commands
 {
@@ -45,16 +45,16 @@ namespace People.Api.Application.Commands
             if (timezone is null)
                 throw new ElwarkException(ElwarkExceptionCodes.TimezoneNotFound);
 
-            account.SetName(new Name(request.Nickname, request.FirstName, request.LastName));
-            account.SetAddress(new Address(new CountryCode(request.CountryCode), request.City));
-            account.SetTimezone(new Timezone(timezone.Name, timezone.Offset));
-            account.SetProfile(account.Profile with
-            {
-                Bio = request.Bio,
-                DateOfBirth = request.DateOfBirth.Date,
-                Gender = request.Gender,
-                Language = new Language(request.Language)
-            });
+            account.Update(
+                new Name(request.Nickname, request.FirstName, request.LastName),
+                new Address(new CountryCode(request.CountryCode), request.City),
+                new Timezone(timezone.Name, timezone.Offset),
+                new Language(request.Language),
+                request.Gender,
+                account.Picture,
+                request.Bio,
+                request.DateOfBirth
+            );
 
             await _repository.UpdateAsync(account, ct);
 

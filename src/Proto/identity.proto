@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 import "common.proto";
 
 option csharp_namespace = "People.Grpc.Identity";
@@ -78,10 +79,14 @@ message AccountReply {
   people.PrimaryEmail email = 3;
   people.Address address = 4;
   people.Timezone timezone = 5;
-  people.Profile profile = 6;
-  people.Ban ban = 7;
-  google.protobuf.Timestamp updated_at = 8;
-  repeated string roles = 9;
+  string language = 6;
+  people.Gender gender = 7;
+  google.protobuf.Timestamp date_of_birth = 8;
+  google.protobuf.StringValue bio = 9;
+  string picture = 10;
+  people.Ban ban = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  repeated string roles = 13;
 }
 
 message StatusReply {

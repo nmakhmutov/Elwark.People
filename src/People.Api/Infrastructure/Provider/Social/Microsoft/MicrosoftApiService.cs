@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Provider.Social.Microsoft

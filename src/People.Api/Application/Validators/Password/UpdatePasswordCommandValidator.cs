@@ -15,6 +15,7 @@ namespace People.Api.Application.Validators.Password
 
             RuleFor(x => x.NewPassword)
                 .NotEmpty()
+                .MaximumLength(Domain.Aggregates.Account.Password.MaxLength)
                 .CustomAsync(async (password, context, token) =>
                 {
                     var (isSuccess, error) = await validator.ValidateAsync(password, token);

@@ -1,6 +1,6 @@
 using System;
 using MongoDB.Bson;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 namespace People.Infrastructure.Confirmations

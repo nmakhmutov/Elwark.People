@@ -2,7 +2,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using People.Api.Application.Commands.SignUp;
 using People.Api.Infrastructure.Password;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Domain.Exceptions;
 using People.Infrastructure.Forbidden;
 
@@ -16,6 +16,7 @@ namespace People.Api.Application.Validators.SignUp
             CascadeMode = CascadeMode.Stop;
             RuleFor(x => x.Password)
                 .NotEmpty()
+                .MaximumLength(Domain.Aggregates.Account.Password.MaxLength)
                 .CustomAsync(async (password, context, token) =>
                 {
                     var (isSuccess, error) = await validator.ValidateAsync(password, token);

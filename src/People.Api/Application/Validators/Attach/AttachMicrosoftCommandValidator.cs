@@ -1,6 +1,6 @@
 using FluentValidation;
 using People.Api.Application.Commands.Attach;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Domain.Exceptions;
 
 namespace People.Api.Application.Validators.Attach

@@ -1,6 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
 using People.Api.Application.Models;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Grpc.Common;
 
 namespace People.Api.Mappers
@@ -15,7 +15,11 @@ namespace People.Api.Mappers
                 Ban = account.Ban.ToBan(),
                 Name = account.Name.ToName(),
                 Email = account.GetPrimaryEmail().ToPrimaryEmail(),
-                Profile = account.Profile.ToProfile(),
+                Bio = account.Bio,
+                DateOfBirth = account.DateOfBirth?.ToTimestamp(),
+                Gender = account.Gender.ToGender(),
+                Language = account.Language.ToString(),
+                Picture = account.Picture.ToString(),
                 Timezone = account.Timezone.ToTimezone(),
                 UpdatedAt = account.UpdatedAt.ToTimestamp(),
                 Roles = {account.Roles}

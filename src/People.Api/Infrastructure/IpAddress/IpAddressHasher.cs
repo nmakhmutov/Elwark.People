@@ -6,23 +6,22 @@ namespace People.Api.Infrastructure.IpAddress
 {
     public sealed class IpAddressHasher : IIpAddressHasher
     {
-        private readonly RijndaelManaged _rijndael;
+        private readonly Aes _aes;
 
         public IpAddressHasher(string hash)
         {
-            _rijndael = new RijndaelManaged
-            {
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7,
-                Key = Encoding.UTF8.GetBytes(hash)
-            };
+            _aes = Aes.Create();
+
+            _aes.Mode = CipherMode.CBC;
+            _aes.Padding = PaddingMode.PKCS7;
+            _aes.Key = Encoding.UTF8.GetBytes(hash);
         }
 
         public byte[] CreateHash(IPAddress ip)
         {
-            using var transform = _rijndael.CreateEncryptor();
+            using var transform = _aes.CreateEncryptor();
             var bytes = ip.GetAddressBytes();
-            
+
             return transform.TransformFinalBlock(bytes, 0, bytes.Length);
         }
     }

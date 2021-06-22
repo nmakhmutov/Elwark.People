@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Bson;
 using People.Domain;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands

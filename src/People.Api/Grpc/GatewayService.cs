@@ -13,7 +13,7 @@ using People.Api.Application.Commands.Password;
 using People.Api.Application.Queries;
 using People.Api.Mappers;
 using People.Domain;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
@@ -262,7 +262,7 @@ namespace People.Api.Grpc
             return new Empty();
         }
 
-        private async Task SendEmailAsync(Domain.AggregateModels.Account.AccountId id, string subject, string body,
+        private async Task SendEmailAsync(Domain.Aggregates.Account.AccountId id, string subject, string body,
             CancellationToken ct)
         {
             var account = await _mediator.Send(new GetAccountByIdQuery(id), ct);

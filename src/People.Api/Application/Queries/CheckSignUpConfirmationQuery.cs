@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Bson;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Domain.Exceptions;
 using People.Infrastructure.Confirmations;
 

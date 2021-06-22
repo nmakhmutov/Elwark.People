@@ -6,18 +6,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\People.Domain\People.Domain.csproj" />
+        <ProjectReference Include="..\People.Domain\People.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
-        <PackageReference Include="MongoDB.Bson" Version="2.12.3" />
-        <PackageReference Include="MongoDB.Driver" Version="2.12.3" />
-        <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0-preview.3.21201.4" />
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-preview.3.21201.4" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+        <PackageReference Include="MongoDB.Bson" Version="2.13.0-beta1" />
+        <PackageReference Include="MongoDB.Driver" Version="2.13.0-beta1" />
+        <PackageReference Include="Confluent.Kafka" Version="1.5.3" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0-preview.5.21301.5" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0-preview.5.21301.5" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-preview.5.21301.5" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0-preview.5.21301.5" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Polly" Version="7.2.2" />
     </ItemGroup>

@@ -15,7 +15,7 @@ using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
 using People.Api.Mappers;
 using People.Domain;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Identity;

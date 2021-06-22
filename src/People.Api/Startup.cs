@@ -24,8 +24,8 @@ using People.Api.Infrastructure.Provider.Email.Gmail;
 using People.Api.Infrastructure.Provider.Email.SendGrid;
 using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.EmailProvider;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.EmailProvider;
 using People.Host;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
@@ -96,6 +96,8 @@ namespace People.Api
                     config.EnablePartitionEof = true;
                     config.AllowAutoCreateTopics = true;
                 })
+                .AddProducer<AccountCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.CreatedAccounts)
+                .AddProducer<AccountUpdatedIntegrationEvent>(config => config.Topic = IntegrationEvent.UpdatedAccounts)
                 .AddProducer<EmailMessageCreatedIntegrationEvent>(
                     config => config.Topic = IntegrationEvent.EmailMessages
                 )
@@ -104,7 +106,6 @@ namespace People.Api
                     config.Topic = IntegrationEvent.EmailMessages;
                     config.Threads = 2;
                 })
-                .AddProducer<AccountCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.CreatedAccounts)
                 .AddConsumer<AccountInfoReceivedIntegrationEvent, AccountInfoEventHandler>(config =>
                 {
                     config.Topic = IntegrationEvent.CollectedInformation;
@@ -135,7 +136,7 @@ namespace People.Api
                 .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
                 .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
 
-            services.AddGrpc(options => options.Interceptors.Add<GlobalErrorInterceptor>());
+            services.AddGrpc(options => options.Interceptors.Add<GlobalExceptionInterceptor>());
         }
 
         public void Configure(IApplicationBuilder app)

@@ -13,7 +13,7 @@ using Serilog;
 
 namespace People.Api
 {
-    public class Program
+    internal static class Program
     {
         public const string AppName = "People.Api";
 

@@ -8,7 +8,7 @@ using People.Infrastructure.Kafka;
 
 namespace People.Api.Application.DomainEventHandlers
 {
-    public class AccountCreatedDomainEventHandler : INotificationHandler<AccountCreatedDomainEvent>
+    internal sealed class AccountCreatedDomainEventHandler : INotificationHandler<AccountCreatedDomainEvent>
     {
         private readonly IKafkaMessageBus _bus;
 
@@ -23,7 +23,7 @@ namespace People.Api.Application.DomainEventHandlers
                 (long) notification.Account.Id,
                 notification.Account.GetPrimaryEmail().Address,
                 notification.IpAddress.ToString(),
-                notification.Account.Profile.Language.ToString()
+                notification.Account.Language.ToString()
             );
             
             return _bus.PublishAsync(evt, ct);

@@ -1,5 +1,5 @@
 using System;
-using People.Domain.AggregateModels.EmailProvider;
+using People.Domain.Aggregates.EmailProvider;
 using People.Infrastructure.Kafka;
 
 namespace People.Infrastructure.IntegrationEvents

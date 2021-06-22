@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 using People.Infrastructure.Forbidden;
 
@@ -37,11 +37,19 @@ namespace People.Api.Application.Commands.Attach
             if (await IsAvailableToAttach(request.Email, ct))
                 account.AddEmail(request.Email.GetMailAddress(), false);
 
-            account.SetName(account.Name with
-            {
-                FirstName = account.Name.FirstName ?? request.FirstName,
-                LastName = account.Name.LastName ?? request.LastName
-            });
+            account.Update(account.Name with
+                {
+                    FirstName = account.Name.FirstName ?? request.FirstName,
+                    LastName = account.Name.LastName ?? request.LastName
+                },
+                account.Address,
+                account.Timezone,
+                account.Language,
+                account.Gender,
+                account.Picture,
+                account.Bio,
+                account.DateOfBirth
+            );
 
             await _repository.UpdateAsync(account, ct);
 

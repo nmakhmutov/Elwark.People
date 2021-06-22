@@ -1,6 +1,6 @@
 using FluentValidation;
 using People.Api.Application.Commands.SignUp;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Domain.Exceptions;
 using People.Infrastructure.Forbidden;
 

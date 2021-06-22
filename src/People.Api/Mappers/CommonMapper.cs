@@ -1,9 +1,9 @@
 using System;
 using Google.Protobuf.WellKnownTypes;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.Account.Identities;
-using Identity = People.Domain.AggregateModels.Account.Identities.Identity;
-using IdentityType = People.Domain.AggregateModels.Account.Identities.IdentityType;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.Account.Identities;
+using Identity = People.Domain.Aggregates.Account.Identities.Identity;
+using IdentityType = People.Domain.Aggregates.Account.Identities.IdentityType;
 
 namespace People.Api.Mappers
 {
@@ -129,16 +129,6 @@ namespace People.Api.Mappers
                 FirstName = name.FirstName,
                 LastName = name.LastName,
                 FullName = name.FullName()
-            };
-
-        public static People.Grpc.Common.Profile ToProfile(this Profile profile) =>
-            new()
-            {
-                Bio = profile.Bio,
-                DateOfBirth = profile.DateOfBirth?.ToTimestamp(),
-                Gender = profile.Gender.ToGender(),
-                Language = profile.Language.ToString(),
-                Picture = profile.Picture.ToString()
             };
 
         public static People.Grpc.Common.Timezone ToTimezone(this Timezone timezone) =>

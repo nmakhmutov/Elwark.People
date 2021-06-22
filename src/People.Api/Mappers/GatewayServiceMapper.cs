@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using Google.Protobuf.WellKnownTypes;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.Account.Identities;
 using People.Grpc.Gateway;
 
 namespace People.Api.Mappers
@@ -16,7 +16,11 @@ namespace People.Api.Mappers
                 Email = account.GetPrimaryEmail().ToPrimaryEmail(),
                 Id = account.Id.ToAccountId(),
                 Name = account.Name.ToName(),
-                Profile = account.Profile.ToProfile(),
+                Bio = account.Bio,
+                DateOfBirth = account.DateOfBirth?.ToTimestamp(),
+                Gender = account.Gender.ToGender(),
+                Language = account.Language.ToString(),
+                Picture = account.Picture.ToString(),
                 Timezone = account.Timezone.ToTimezone(),
                 IsBanned = account.Ban is not null
             };
@@ -27,7 +31,11 @@ namespace People.Api.Mappers
                 Address = account.Address.ToAddress(),
                 Id = account.Id.ToAccountId(),
                 Name = account.Name.ToName(),
-                Profile = account.Profile.ToProfile(),
+                Bio = account.Bio,
+                DateOfBirth = account.DateOfBirth?.ToTimestamp(),
+                Gender = account.Gender.ToGender(),
+                Language = account.Language.ToString(),
+                Picture = account.Picture.ToString(),
                 Timezone = account.Timezone.ToTimezone(),
                 Ban = account.Ban.ToBan(),
                 IsPasswordAvailable = account.IsPasswordAvailable(),

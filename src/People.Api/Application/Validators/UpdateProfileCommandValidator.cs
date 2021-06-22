@@ -2,6 +2,7 @@ using System;
 using FluentValidation;
 using People.Api.Application.Commands;
 using People.Domain;
+using People.Domain.Aggregates.Account;
 using People.Infrastructure.Countries;
 using People.Infrastructure.Timezones;
 
@@ -31,13 +32,13 @@ namespace People.Api.Application.Validators
             RuleFor(x => x.Nickname)
                 .NotEmpty()
                 .MinimumLength(3)
-                .MaximumLength(100);
+                .MaximumLength(Name.NicknameLength);
 
             RuleFor(x => x.FirstName)
-                .MaximumLength(100);
+                .MaximumLength(Name.FirstNameLength);
 
             RuleFor(x => x.LastName)
-                .MaximumLength(100);
+                .MaximumLength(Name.LastNameLength);
 
             RuleFor(x => x.Timezone)
                 .NotEmpty()

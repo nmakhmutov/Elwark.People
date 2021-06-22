@@ -33,8 +33,12 @@ message AccountReply {
   people.PrimaryEmail email = 3;
   people.Address address = 4;
   people.Timezone timezone = 5;
-  people.Profile profile = 6;
-  bool is_banned = 7;
+  string language = 6;
+  people.Gender gender = 7;
+  google.protobuf.Timestamp date_of_birth = 8;
+  google.protobuf.StringValue bio = 9;
+  string picture = 10;
+  bool is_banned = 11;
 }
 
 message ProfileReply {
@@ -42,11 +46,15 @@ message ProfileReply {
   people.Name name = 2;
   people.Address address = 3;
   people.Timezone timezone = 4;
-  people.Profile profile = 5;
-  people.Ban ban = 6;
-  bool is_password_available = 7;
-  google.protobuf.Timestamp created_at = 8;
-  repeated ProfileIdentity identities = 9;
+  string language = 5;
+  people.Gender gender = 6;
+  google.protobuf.Timestamp date_of_birth = 7;
+  google.protobuf.StringValue bio = 8;
+  string picture = 9;
+  people.Ban ban =10;
+  bool is_password_available = 11;
+  google.protobuf.Timestamp created_at = 12;
+  repeated ProfileIdentity identities = 13;
 }
 
 message ProfileIdentity {

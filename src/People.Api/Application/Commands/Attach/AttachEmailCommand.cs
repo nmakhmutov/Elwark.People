@@ -1,8 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.Attach

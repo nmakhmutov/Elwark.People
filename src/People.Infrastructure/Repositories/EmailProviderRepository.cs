@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Driver;
-using People.Domain.AggregateModels.EmailProvider;
+using People.Domain.Aggregates.EmailProvider;
 using People.Infrastructure.Mongo;
 
 namespace People.Infrastructure.Repositories

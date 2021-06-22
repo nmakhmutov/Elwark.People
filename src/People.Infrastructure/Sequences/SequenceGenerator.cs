@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 
 namespace People.Infrastructure.Sequences
 {

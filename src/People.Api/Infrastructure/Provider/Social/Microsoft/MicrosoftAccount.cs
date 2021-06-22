@@ -1,4 +1,4 @@
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account.Identities;
 
 namespace People.Api.Infrastructure.Provider.Social.Microsoft
 {

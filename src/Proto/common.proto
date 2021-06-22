@@ -53,14 +53,6 @@ message Timezone {
   google.protobuf.Duration offset = 2;
 }
 
-message Profile {
-  string language = 1;
-  people.Gender gender = 2;
-  google.protobuf.Timestamp date_of_birth = 3;
-  google.protobuf.StringValue bio = 4;
-  string picture = 5;
-}
-
 message Ban {
   string reason = 1;
   google.protobuf.Timestamp expires_at = 2;

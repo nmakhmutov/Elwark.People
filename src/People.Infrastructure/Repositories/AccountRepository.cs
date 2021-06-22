@@ -3,10 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Driver;
-using People.Domain.AggregateModels.Account;
-using People.Domain.AggregateModels.Account.Identities;
+using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.Account.Identities;
 using People.Infrastructure.Mongo;
-using People.Infrastructure.Sequences;
 
 namespace People.Infrastructure.Repositories
 {
@@ -14,13 +13,11 @@ namespace People.Infrastructure.Repositories
     {
         private readonly PeopleDbContext _dbContext;
         private readonly IMediator _mediator;
-        private readonly ISequenceGenerator _generator;
 
-        public AccountRepository(PeopleDbContext dbContext, IMediator mediator, ISequenceGenerator generator)
+        public AccountRepository(PeopleDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
             _mediator = mediator;
-            _generator = generator;
         }
 
         public async Task<Account?> GetAsync(AccountId id, CancellationToken ct) =>
@@ -31,7 +28,6 @@ namespace People.Infrastructure.Repositories
         public async Task CreateAsync(Account entity, CancellationToken ct)
         {
             entity.Version++;
-            entity.SetNewId(await _generator.NextAccountIdAsync(ct));
 
             await _dbContext.Accounts.InsertOneAsync(entity, new InsertOneOptions(), ct);
 

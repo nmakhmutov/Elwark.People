@@ -1,12 +1,12 @@
 using System.Net;
 using System.Threading.Tasks;
 using People.Api.Infrastructure.IpAddress;
-using People.Domain.AggregateModels.Account;
+using People.Domain.Aggregates.Account;
 using People.Infrastructure.Countries;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
 using People.Infrastructure.Timezones;
-using Timezone = People.Domain.AggregateModels.Account.Timezone;
+using Timezone = People.Domain.Aggregates.Account.Timezone;
 
 namespace People.Api.Application.IntegrationEventHandlers
 {
@@ -33,30 +33,26 @@ namespace People.Api.Application.IntegrationEventHandlers
                 return;
 
             var countryCode = await GetCountryCode(message.CountryCode);
-
-            account.SetAddress(new Address(countryCode, message.City ?? account.Address.City));
+            var timezone = string.IsNullOrEmpty(message.Timezone)
+                ? account.Timezone
+                : await GetTimezoneAsync(message.Timezone);
             account.SetRegistration(IPAddress.Parse(message.Ip), countryCode, _ipAddressHasher.CreateHash);
 
-            if (message.Timezone is not null)
-            {
-                var timezone = await _timezone.GetAsync(message.Timezone);
-                if (timezone is not null && account.Timezone == Timezone.Default)
-                    account.SetTimezone(new Timezone(timezone.Name, timezone.Offset));
-            }
-
-            account.SetName(account.Name with
-            {
-                FirstName = account.Name.FirstName ?? message.FirstName,
-                LastName = account.Name.LastName ?? message.FirstName
-            });
-
-            account.SetProfile(account.Profile with
-            {
-                Bio = account.Profile.Bio ?? message.AboutMe,
-                Picture = account.Profile.Picture == Profile.DefaultPicture
-                    ? message.Image ?? account.Profile.Picture
-                    : account.Profile.Picture
-            });
+            account.Update(account.Name with
+                {
+                    FirstName = account.Name.FirstName ?? message.FirstName?[..Name.FirstNameLength],
+                    LastName = account.Name.LastName ?? message.FirstName?[..Name.LastNameLength]
+                },
+                new Address(countryCode, message.City ?? account.Address.City),
+                timezone,
+                account.Language,
+                account.Gender,
+                account.Picture == Account.DefaultPicture
+                    ? message.Image ?? account.Picture
+                    : account.Picture,
+                account.Bio ?? message.AboutMe,
+                account.DateOfBirth
+            );
 
             await _repository.UpdateAsync(account);
         }
@@ -70,6 +66,12 @@ namespace People.Api.Application.IntegrationEventHandlers
             return country is null
                 ? CountryCode.Empty
                 : new CountryCode(country.Alpha2Code);
+        }
+
+        private async Task<Timezone> GetTimezoneAsync(string timezone)
+        {
+            var zone = await _timezone.GetAsync(timezone);
+            return zone is null ? Timezone.Default : new Timezone(zone.Name, zone.Offset);
         }
     }
 }
