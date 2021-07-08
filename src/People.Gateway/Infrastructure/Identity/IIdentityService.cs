@@ -1,7 +1,11 @@
-﻿namespace People.Gateway.Infrastructure.Identity
+﻿using People.Grpc.Common;
+
+namespace People.Gateway.Infrastructure.Identity
 {
     public interface IIdentityService
     {
-        long GetAccountId();
+        long GetId();
+        
+        AccountId GetAccountId();
     }
 }

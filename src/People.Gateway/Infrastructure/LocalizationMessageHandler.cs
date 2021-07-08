@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace People.Host
+namespace People.Gateway.Infrastructure
 {
     public class LocalizationMessageHandler : DelegatingHandler
     {

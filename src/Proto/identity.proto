@@ -19,13 +19,13 @@ service Identity {
   rpc SignUpByMicrosoft (SignUpByProviderRequest) returns (SignUpReply);
   rpc IsConfirmationAvailable (people.Confirming) returns (people.AccountId);
   rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
-  rpc ResendSignUpConfirmation (people.AccountId) returns (people.Confirming);
+  rpc ResendSignUpConfirmation (ResendSignUpConfirmationRequest) returns (people.Confirming);
 
   rpc AttachEmail(AttachRequest) returns (google.protobuf.Empty);
   rpc AttachGoogle(AttachRequest) returns (google.protobuf.Empty);
   rpc AttachMicrosoft(AttachRequest) returns (google.protobuf.Empty);
 
-  rpc ResetPassword (people.Identity) returns (people.AccountId);
+  rpc ResetPassword (ResetPasswordRequest) returns (people.AccountId);
   rpc RestorePassword (RestorePasswordRequest) returns (google.protobuf.Empty);
 }
 
@@ -33,22 +33,31 @@ message SignInByEmailRequest {
   string email = 1;
   string password = 2;
   string ip = 3;
+  string language = 4;
 }
 
 message SignInByProviderRequest {
   string access_token = 1;
   string ip = 2;
+  string language = 3;
 }
 
 message SignUpByEmailRequest {
   string email = 1;
   string password = 2;
   string ip = 3;
+  string language = 4;
 }
 
 message SignUpByProviderRequest {
   string access_token = 1;
   string ip = 2;
+  string language = 3;
+}
+
+message ResetPasswordRequest {
+  people.Identity identity = 1;
+  string language = 2;
 }
 
 message RestorePasswordRequest {
@@ -71,6 +80,11 @@ message SignUpReply {
 message ConfirmSignUpRequest {
   people.AccountId id = 1;
   people.Confirm confirm = 2;
+}
+
+message ResendSignUpConfirmationRequest {
+  people.AccountId id = 1;
+  string language = 2;
 }
 
 message AccountReply {

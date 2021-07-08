@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
@@ -25,9 +24,8 @@ namespace People.Api.Grpc
 {
     public sealed class IdentityService : Identity.IdentityBase
     {
-        private readonly IGoogleApiService _google;
-        private readonly Language _language;
         private readonly IMediator _mediator;
+        private readonly IGoogleApiService _google;
         private readonly IMicrosoftApiService _microsoft;
 
         public IdentityService(IMediator mediator, IGoogleApiService google, IMicrosoftApiService microsoft)
@@ -35,7 +33,6 @@ namespace People.Api.Grpc
             _mediator = mediator;
             _google = google;
             _microsoft = microsoft;
-            _language = new Language(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
         }
 
         public override async Task<AccountReply> GetAccountById(AccountId request, ServerCallContext context)
@@ -96,7 +93,7 @@ namespace People.Api.Grpc
             var command = new SignUpByEmailCommand(
                 new EmailIdentity(request.Email),
                 request.Password,
-                _language,
+                new Language(request.Language),
                 ParseIpAddress(request.Ip)
             );
             var data = await _mediator.Send(command);
@@ -115,7 +112,7 @@ namespace People.Api.Grpc
                 google.LastName,
                 google.Picture,
                 google.IsEmailVerified,
-                _language,
+                new Language(request.Language),
                 ParseIpAddress(request.Ip)
             );
             var data = await _mediator.Send(command);
@@ -132,7 +129,7 @@ namespace People.Api.Grpc
                 microsoft.Email,
                 microsoft.FirstName,
                 microsoft.LastName,
-                _language,
+                new Language(request.Language),
                 ParseIpAddress(request.Ip)
             );
             var data = await _mediator.Send(command);
@@ -160,9 +157,9 @@ namespace People.Api.Grpc
             return new Empty();
         }
 
-        public override async Task<Confirming> ResendSignUpConfirmation(AccountId request, ServerCallContext context)
+        public override async Task<Confirming> ResendSignUpConfirmation(ResendSignUpConfirmationRequest request, ServerCallContext context)
         {
-            var command = new ResendSignUpConfirmationCommand(request.ToAccountId(), _language);
+            var command = new ResendSignUpConfirmationCommand(request.Id.ToAccountId(), new Language(request.Language));
             var confirmationId = await _mediator.Send(command, context.CancellationToken);
 
             return new Confirming
@@ -213,10 +210,9 @@ namespace People.Api.Grpc
             return new Empty();
         }
 
-        public override async Task<AccountId> ResetPassword(People.Grpc.Common.Identity request,
-            ServerCallContext context)
+        public override async Task<AccountId> ResetPassword(ResetPasswordRequest request, ServerCallContext context)
         {
-            var command = new ResetPasswordCommand(request.ToIdentityKey(), _language);
+            var command = new ResetPasswordCommand(request.Identity.ToIdentityKey(), new Language(request.Language));
             var data = await _mediator.Send(command, context.CancellationToken);
 
             return data.ToAccountId();

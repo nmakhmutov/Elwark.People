@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
+using People.Grpc.Common;
 
 namespace People.Gateway.Infrastructure.Identity
 {
@@ -10,7 +11,7 @@ namespace People.Gateway.Infrastructure.Identity
         public IdentityService(IHttpContextAccessor httpContextAccessor) =>
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 
-        public long GetAccountId()
+        public long GetId()
         {
             var sub = _httpContextAccessor.HttpContext?.User.FindFirst(x => x.Type == "sub");
             if (sub is not null)
@@ -18,5 +19,8 @@ namespace People.Gateway.Infrastructure.Identity
 
             throw new ArgumentException("Account id cannot be null in identity service");
         }
+
+        public AccountId GetAccountId() =>
+            new() {Value = GetId()};
     }
 }

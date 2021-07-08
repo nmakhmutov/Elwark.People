@@ -17,11 +17,11 @@ service Gateway {
   rpc ChangeEmailType(ChangeEmailTypeRequest) returns (ProfileReply);
   rpc DeleteIdentity(DeleteIdentityRequest) returns (ProfileReply);
 
-  rpc CreatingPassword(people.AccountId) returns(people.Confirming);
+  rpc CreatingPassword(CreatingPasswordRequest) returns(people.Confirming);
   rpc CreatePassword(CreatePasswordRequest) returns (ProfileReply);
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
 
-  rpc GetCountries(google.protobuf.Empty) returns(CountriesReply);
+  rpc GetCountries(CountriesRequest) returns(CountriesReply);
   rpc GetTimezones(google.protobuf.Empty) returns(TimezonesReply);
 
   rpc SendEmail (SendEmailRequest) returns (google.protobuf.Empty);
@@ -51,7 +51,7 @@ message ProfileReply {
   google.protobuf.Timestamp date_of_birth = 7;
   google.protobuf.StringValue bio = 8;
   string picture = 9;
-  people.Ban ban =10;
+  people.Ban ban = 10;
   bool is_password_available = 11;
   google.protobuf.Timestamp created_at = 12;
   repeated ProfileIdentity identities = 13;
@@ -74,6 +74,10 @@ message EmailIdentity {
 
 message SocialIdentity {
   string name = 1;
+}
+
+message CountriesRequest {
+  string language = 1;
 }
 
 message CountriesReply {
@@ -111,6 +115,7 @@ message UpdateProfileRequest {
 message ConfirmingRequest {
   people.AccountId id = 1;
   people.Identity identity = 2;
+  string language = 3;
 }
 
 message ConfirmRequest {
@@ -130,6 +135,10 @@ message DeleteIdentityRequest{
   people.Identity identity = 2;
 }
 
+message CreatingPasswordRequest {
+  people.AccountId id = 1;
+  string language = 2;
+}
 message CreatePasswordRequest{
   people.AccountId id = 1;
   people.Confirm confirm = 2;
@@ -145,7 +154,7 @@ message UpdatePasswordRequest{
 message SendEmailRequest {
   oneof Identity {
     string email = 1;
-    int64 id = 2;
+    people.AccountId id = 2;
   }
 
   string subject = 3;

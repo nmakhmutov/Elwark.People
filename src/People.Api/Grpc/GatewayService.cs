@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,14 +29,12 @@ namespace People.Api.Grpc
         private readonly IMediator _mediator;
         private readonly ICountryService _country;
         private readonly ITimezoneService _timezone;
-        private readonly Language _language;
 
         public GatewayService(IMediator mediator, ICountryService country, ITimezoneService timezone)
         {
             _mediator = mediator;
             _country = country;
             _timezone = timezone;
-            _language = new Language(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
         }
 
         public override async Task<AccountReply> GetAccount(AccountId request, ServerCallContext context)
@@ -90,7 +87,7 @@ namespace People.Api.Grpc
             if (account.GetIdentity(request.Identity.ToIdentityKey()) is EmailIdentityModel identity)
             {
                 var confirmationId = await _mediator.Send(
-                    new SendConfirmationCommand(account.Id, identity.GetIdentity(), _language),
+                    new SendConfirmationCommand(account.Id, identity.GetIdentity(), new Language(request.Language)),
                     context.CancellationToken
                 );
 
@@ -156,9 +153,9 @@ namespace People.Api.Grpc
             return new ProfileReply();
         }
 
-        public override async Task<Confirming> CreatingPassword(AccountId request, ServerCallContext context)
+        public override async Task<Confirming> CreatingPassword(CreatingPasswordRequest request, ServerCallContext context)
         {
-            var query = new GetAccountByIdQuery(request.ToAccountId());
+            var query = new GetAccountByIdQuery(request.Id.ToAccountId());
             var account = await _mediator.Send(query, context.CancellationToken);
 
             if (account is null)
@@ -174,7 +171,7 @@ namespace People.Api.Grpc
             }
 
             var confirmationId = await _mediator.Send(
-                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), _language),
+                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), new Language(request.Language)),
                 context.CancellationToken
             );
 
@@ -212,9 +209,9 @@ namespace People.Api.Grpc
             return new Empty();
         }
 
-        public override async Task<CountriesReply> GetCountries(Empty _, ServerCallContext context)
+        public override async Task<CountriesReply> GetCountries(CountriesRequest request, ServerCallContext context)
         {
-            var result = await _country.GetAsync(_language, context.CancellationToken);
+            var result = await _country.GetAsync(new Language(request.Language), context.CancellationToken);
 
             return new CountriesReply
             {
@@ -254,7 +251,7 @@ namespace People.Api.Grpc
                     SendEmailAsync(request.Email, request.Subject, request.Body, context.CancellationToken),
 
                 SendEmailRequest.IdentityOneofCase.Id =>
-                    SendEmailAsync(request.Id, request.Subject, request.Body, context.CancellationToken),
+                    SendEmailAsync(request.Id.Value, request.Subject, request.Body, context.CancellationToken),
 
                 _ => throw new ArgumentOutOfRangeException(nameof(request), "Unknown identity for send email message")
             });

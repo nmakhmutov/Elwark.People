@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
 using People.Gateway.Mappers;
-using People.Gateway.Models;
 using People.Grpc.Common;
 
-namespace People.Gateway.Controllers
+namespace People.Gateway.Features.Account
 {
     [ApiController, Route("accounts")]
     public sealed class AccountsController : ControllerBase
@@ -27,11 +26,10 @@ namespace People.Gateway.Controllers
         [HttpGet("me"), Authorize(Policy = Policy.RequireAccountId)]
         public async Task<ActionResult> GetAsync(CancellationToken ct)
         {
-            var id = _identity.GetAccountId();
-            var account = await _client.GetAccountAsync(new AccountId {Value = id}, cancellationToken: ct);
+            var account = await _client.GetAccountAsync(_identity.GetAccountId(), cancellationToken: ct);
 
             return Ok(
-                new Account(
+                new Models.Account(
                     account.Id.Value,
                     account.Name.Nickname,
                     account.Name.FirstName,
@@ -55,7 +53,7 @@ namespace People.Gateway.Controllers
             var account = await _client.GetAccountAsync(new AccountId {Value = id}, cancellationToken: ct);
 
             return Ok(
-                new Account(
+                new Models.Account(
                     account.Id.Value,
                     account.Name.Nickname,
                     account.Name.FirstName,
@@ -81,7 +79,7 @@ namespace People.Gateway.Controllers
 
             await _client.SendEmailAsync(new Grpc.Gateway.SendEmailRequest
                 {
-                    Id = id,
+                    Id = new AccountId {Value = id},
                     Body = request.Body,
                     Subject = request.Subject
                 },

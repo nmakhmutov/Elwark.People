@@ -26,7 +26,6 @@ using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
 using People.Domain.Aggregates.Account;
 using People.Domain.Aggregates.EmailProvider;
-using People.Host;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
@@ -147,7 +146,6 @@ namespace People.Api
                 })
                 .UseCorrelationId()
                 .UseRouting()
-                .UsePeopleLocalization()
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapGrpcService<GatewayService>();

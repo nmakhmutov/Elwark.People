@@ -1,5 +1,6 @@
 using System;
 using People.Grpc.Common;
+using Timezone = People.Gateway.Features.Timezone.Timezone;
 
 namespace People.Gateway.Models
 {

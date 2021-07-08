@@ -4,12 +4,13 @@ using People.Gateway.Models;
 using People.Grpc.Gateway;
 using EmailIdentity = People.Gateway.Models.EmailIdentity;
 using SocialIdentity = People.Gateway.Models.SocialIdentity;
-using Timezone = People.Gateway.Models.Timezone;
+using Timezone = People.Gateway.Features.Timezone.Timezone;
 
 namespace People.Gateway.Mappers
 {
     internal static class CommonMappers
     {
+        
         public static Profile ToProfile(this ProfileReply profile) =>
             new(
                 profile.Id.Value,

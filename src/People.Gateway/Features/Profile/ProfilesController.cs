@@ -1,7 +1,7 @@
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using People.Gateway.Infrastructure;
@@ -14,7 +14,7 @@ using Confirming = People.Gateway.Models.Confirming;
 using Confirm = People.Gateway.Requests.ConfirmRequest;
 using Identity = People.Grpc.Common.Identity;
 
-namespace People.Gateway.Controllers
+namespace People.Gateway.Features.Profile
 {
     [ApiController, Route("profiles/me"), Authorize(Policy = Policy.RequireProfileAccess)]
     public sealed class ProfilesController : ControllerBase
@@ -31,10 +31,8 @@ namespace People.Gateway.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAsync(CancellationToken ct)
         {
-            var id = _identity.GetAccountId();
-            var callOption = new CallOptions(cancellationToken: ct);
+            var profile = await _client.GetProfileAsync(_identity.GetAccountId(), cancellationToken: ct);
 
-            var profile = await _client.GetProfileAsync(new AccountId {Value = id}, callOption);
             if (profile is null)
                 return NotFound();
 
@@ -46,10 +44,7 @@ namespace People.Gateway.Controllers
         {
             var profile = await _client.UpdateProfileAsync(new UpdateProfileRequest
                 {
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
+                    Id = _identity.GetAccountId(),
                     Bio = string.IsNullOrEmpty(request.Bio) ? null : request.Bio,
                     DateOfBirth = request.DateOfBirth.ToTimestamp(),
                     Gender = request.Gender,
@@ -61,7 +56,7 @@ namespace People.Gateway.Controllers
                     FirstName = string.IsNullOrEmpty(request.FirstName) ? null : request.FirstName,
                     LastName = string.IsNullOrEmpty(request.LastName) ? null : request.LastName
                 },
-                new CallOptions(cancellationToken: ct)
+                cancellationToken: ct
             );
 
             return Ok(profile.ToProfile());
@@ -74,15 +69,13 @@ namespace People.Gateway.Controllers
             var confirmation = await _client.ConfirmingIdentityAsync(
                 new ConfirmingRequest
                 {
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
+                    Id = _identity.GetAccountId(),
                     Identity = new Identity
                     {
                         Type = type,
                         Value = value
-                    }
+                    },
+                    Language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
                 },
                 cancellationToken: ct
             );
@@ -96,10 +89,7 @@ namespace People.Gateway.Controllers
         {
             var profile = await _client.ConfirmIdentityAsync(new Grpc.Gateway.ConfirmRequest
                 {
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
+                    Id = _identity.GetAccountId(),
                     Confirm = new Grpc.Common.Confirm
                     {
                         Code = request.Code,
@@ -122,11 +112,8 @@ namespace People.Gateway.Controllers
         {
             var profile = await _client.ChangeEmailTypeAsync(new ChangeEmailTypeRequest
                 {
+                    Id = _identity.GetAccountId(),
                     Email = request.Email,
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
                     Type = request.Type
                 },
                 cancellationToken: ct
@@ -141,17 +128,14 @@ namespace People.Gateway.Controllers
         {
             var profile = await _client.DeleteIdentityAsync(new DeleteIdentityRequest
                 {
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
+                    Id = _identity.GetAccountId(),
                     Identity = new Identity
                     {
                         Type = type,
                         Value = value
                     }
                 },
-                new CallOptions(cancellationToken: ct)
+                cancellationToken: ct
             );
 
             return Ok(profile.ToProfile());
@@ -160,11 +144,13 @@ namespace People.Gateway.Controllers
         [HttpPost("password/confirm")]
         public async Task<ActionResult> CreatingPasswordAsync(CancellationToken ct)
         {
-            var confirmation = await _client.CreatingPasswordAsync(new AccountId
+            var confirmation = await _client.CreatingPasswordAsync(
+                new CreatingPasswordRequest
                 {
-                    Value = _identity.GetAccountId()
+                    Id = _identity.GetAccountId(),
+                    Language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
                 },
-                new CallOptions(cancellationToken: ct)
+                cancellationToken: ct
             );
 
             return Ok(new Confirming(confirmation.Id));
@@ -176,10 +162,7 @@ namespace People.Gateway.Controllers
             var profile = await _client.CreatePasswordAsync(
                 new CreatePasswordRequest
                 {
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
+                    Id = _identity.GetAccountId(),
                     Confirm = new Grpc.Common.Confirm
                     {
                         Id = request.Id,
@@ -187,7 +170,7 @@ namespace People.Gateway.Controllers
                     },
                     Password = request.Password
                 },
-                new CallOptions(cancellationToken: ct)
+                cancellationToken: ct
             );
 
             return Ok(profile.ToProfile());
@@ -198,14 +181,11 @@ namespace People.Gateway.Controllers
         {
             await _client.UpdatePasswordAsync(new UpdatePasswordRequest
                 {
-                    Id = new AccountId
-                    {
-                        Value = _identity.GetAccountId()
-                    },
+                    Id = _identity.GetAccountId(),
                     NewPassword = request.NewPassword,
                     OldPassword = request.OldPassword
                 },
-                new CallOptions(cancellationToken: ct)
+                cancellationToken: ct
             );
 
             return NoContent();
