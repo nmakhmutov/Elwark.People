@@ -43,7 +43,7 @@ namespace People.Api.Application.Commands.SignUp
             var id = await _generator.NextAccountIdAsync(ct);
             var account = new Account(id, name, request.Language, picture, request.Ip);
             account.AddEmail(mailAddress, request.IsEmailVerified);
-            account.AddGoogle(request.Google, name.FullName());
+            account.AddGoogle(request.Google, request.FirstName, request.LastName);
 
             await _repository.CreateAsync(account, ct);
 

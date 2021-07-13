@@ -3,17 +3,17 @@ using System;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 namespace People.Domain.Aggregates.Account.Identities
 {
-    public abstract class IdentityModel
+    public abstract class Connection
     {
-        protected IdentityModel(Identity identity, DateTime? confirmedAt)
+        protected Connection(IdentityType identityType, string value, DateTime? confirmedAt)
         {
-            Type = identity.Type;
-            Value = identity.Value;
+            IdentityType = identityType;
+            Value = value;
             ConfirmedAt = confirmedAt;
             CreatedAt = DateTime.UtcNow;
         }
 
-        public IdentityType Type { get; private set; }
+        public IdentityType IdentityType { get; private set; }
 
         public string Value { get; private set; }
 
@@ -21,9 +21,9 @@ namespace People.Domain.Aggregates.Account.Identities
 
         public DateTime CreatedAt { get; private set; }
 
-        public abstract Identity GetIdentity();
+        public abstract Identity Identity { get; }
 
-        public bool IsConfirmed() => 
+        public bool IsConfirmed => 
             ConfirmedAt.HasValue;
         
         public void SetAsConfirmed(DateTime confirmedAt)

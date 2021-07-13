@@ -12,7 +12,6 @@ using People.Api.Application.Commands.Password;
 using People.Api.Application.Queries;
 using People.Api.Mappers;
 using People.Domain;
-using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
@@ -20,6 +19,7 @@ using People.Infrastructure.Countries;
 using People.Infrastructure.Timezones;
 using AccountId = People.Grpc.Common.AccountId;
 using Country = People.Grpc.Gateway.Country;
+using EmailConnection = People.Domain.Aggregates.Account.Identities.EmailConnection;
 using Timezone = People.Grpc.Gateway.Timezone;
 
 namespace People.Api.Grpc
@@ -59,9 +59,19 @@ namespace People.Api.Grpc
 
         public override async Task<ProfileReply> UpdateProfile(UpdateProfileRequest request, ServerCallContext context)
         {
-            var command = new UpdateProfileCommand(request.Id.ToAccountId(), request.FirstName, request.LastName,
-                request.Nickname, request.Bio, request.DateOfBirth.ToDateTime(), request.Gender.FromGrpc(),
-                request.Language, request.Timezone, request.CountryCode, request.CityName ?? string.Empty);
+            var command = new UpdateProfileCommand(
+                request.Id.ToAccountId(),
+                request.FirstName,
+                request.LastName,
+                request.Nickname,
+                request.Bio,
+                request.DateOfBirth.ToDateTime(),
+                request.Gender.FromGrpc(),
+                request.Language,
+                request.Timezone,
+                request.CountryCode,
+                request.CityName ?? string.Empty
+            );
 
             await _mediator.Send(command, context.CancellationToken);
 
@@ -73,7 +83,7 @@ namespace People.Api.Grpc
             return new ProfileReply();
         }
 
-        public override async Task<Confirming> ConfirmingIdentity(ConfirmingRequest request, ServerCallContext context)
+        public override async Task<Confirming> ConfirmingConnection(ConfirmingRequest request, ServerCallContext context)
         {
             var query = new GetAccountByIdQuery(request.Id.ToAccountId());
             var account = await _mediator.Send(query, context.CancellationToken);
@@ -84,10 +94,10 @@ namespace People.Api.Grpc
                 return new Confirming();
             }
 
-            if (account.GetIdentity(request.Identity.ToIdentityKey()) is EmailIdentityModel identity)
+            if (account.GetIdentity(request.Identity.ToIdentityKey()) is EmailConnection connection)
             {
                 var confirmationId = await _mediator.Send(
-                    new SendConfirmationCommand(account.Id, identity.GetIdentity(), new Language(request.Language)),
+                    new SendConfirmationCommand(account.Id, connection.Identity, new Language(request.Language)),
                     context.CancellationToken
                 );
 
@@ -101,7 +111,7 @@ namespace People.Api.Grpc
             return new Confirming();
         }
 
-        public override async Task<ProfileReply> ConfirmIdentity(ConfirmRequest request, ServerCallContext context)
+        public override async Task<ProfileReply> ConfirmConnection(ConfirmRequest request, ServerCallContext context)
         {
             var command = new ConfirmIdentityCommand(
                 request.Id.ToAccountId(),
@@ -139,8 +149,7 @@ namespace People.Api.Grpc
             return new ProfileReply();
         }
 
-        public override async Task<ProfileReply> DeleteIdentity(DeleteIdentityRequest request,
-            ServerCallContext context)
+        public override async Task<ProfileReply> DeleteConnection(DeleteConnectionRequest request, ServerCallContext context)
         {
             var command = new DeleteIdentityCommand(request.Id.ToAccountId(), request.Identity.ToIdentityKey());
             await _mediator.Send(command, context.CancellationToken);
@@ -153,7 +162,8 @@ namespace People.Api.Grpc
             return new ProfileReply();
         }
 
-        public override async Task<Confirming> CreatingPassword(CreatingPasswordRequest request, ServerCallContext context)
+        public override async Task<Confirming> CreatingPassword(CreatingPasswordRequest request,
+            ServerCallContext context)
         {
             var query = new GetAccountByIdQuery(request.Id.ToAccountId());
             var account = await _mediator.Send(query, context.CancellationToken);
@@ -171,7 +181,8 @@ namespace People.Api.Grpc
             }
 
             var confirmationId = await _mediator.Send(
-                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(), new Language(request.Language)),
+                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(),
+                    new Language(request.Language)),
                 context.CancellationToken
             );
 

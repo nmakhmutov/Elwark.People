@@ -63,10 +63,10 @@ namespace People.Infrastructure.Repositories
         public async Task<Account?> GetAsync(Identity key, CancellationToken ct)
         {
             var filter = Builders<Account>.Filter
-                .ElemMatch($"{nameof(Account.Identities)}",
-                    Builders<IdentityModel>.Filter.And(
-                        Builders<IdentityModel>.Filter.Eq(x => x.Type, key.Type),
-                        Builders<IdentityModel>.Filter.Eq(x => x.Value, key.Value)
+                .ElemMatch($"{nameof(Account.Connections)}",
+                    Builders<Connection>.Filter.And(
+                        Builders<Connection>.Filter.Eq(x => x.IdentityType, key.Type),
+                        Builders<Connection>.Filter.Eq(x => x.Value, key.Value)
                     )
                 );
 
@@ -77,16 +77,15 @@ namespace People.Infrastructure.Repositories
         public async Task<bool> IsExists(Identity key, CancellationToken ct)
         {
             var filter = Builders<Account>.Filter
-                .ElemMatch($"{nameof(Account.Identities)}",
-                    Builders<IdentityModel>.Filter.And(
-                        Builders<IdentityModel>.Filter.Eq(x => x.Type, key.Type),
-                        Builders<IdentityModel>.Filter.Eq(x => x.Value, key.Value)
+                .ElemMatch($"{nameof(Account.Connections)}",
+                    Builders<Connection>.Filter.And(
+                        Builders<Connection>.Filter.Eq(x => x.IdentityType, key.Type),
+                        Builders<Connection>.Filter.Eq(x => x.Value, key.Value)
                     )
                 );
 
-            return await _dbContext.Accounts.Find(filter)
-                .Project(x => x.Name)
-                .FirstOrDefaultAsync(ct) is not null;
+            return await _dbContext.Accounts
+                .CountDocumentsAsync(filter, new CountOptions{Limit = 1}, ct) > 0;
         }
     }
 }

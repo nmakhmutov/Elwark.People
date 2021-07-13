@@ -17,7 +17,7 @@ namespace People.Domain.Aggregates.Account
         public static Uri DefaultPicture =>
             new("https://res.cloudinary.com/elwark/image/upload/v1610430646/People/default_j21xml.png");
 
-        private List<IdentityModel> _identities;
+        private List<Connection> _connections;
         private DateTime _lastSignIn;
         private Password? _password;
         private Registration _registration;
@@ -38,7 +38,7 @@ namespace People.Domain.Aggregates.Account
             UpdatedAt = _lastSignIn = now;
             _password = null;
             _roles = new HashSet<string>();
-            _identities = new List<IdentityModel>();
+            _connections = new List<Connection>();
             _registration = new Registration(Array.Empty<byte>(), CountryCode.Empty, now);
 
             AddDomainEvent(new AccountCreatedDomainEvent(this, ip));
@@ -70,14 +70,14 @@ namespace People.Domain.Aggregates.Account
 
         public IReadOnlyCollection<string> Roles => _roles;
 
-        public IReadOnlyCollection<IdentityModel> Identities => _identities.AsReadOnly();
+        public IReadOnlyCollection<Connection> Connections => _connections.AsReadOnly();
 
         public void AddEmail(MailAddress email, bool isConfirmed)
         {
             var now = DateTime.UtcNow;
-            var emails = _identities
-                .Where(x => x.Type == IdentityType.Email)
-                .Cast<EmailIdentityModel>()
+            var emails = _connections
+                .Where(x => x.IdentityType == IdentityType.Email)
+                .Cast<EmailConnection>()
                 .ToArray();
 
             EmailType type;
@@ -88,37 +88,37 @@ namespace People.Domain.Aggregates.Account
             else
                 type = EmailType.None;
 
-            _identities.Add(new EmailIdentityModel(email, type, isConfirmed ? now : null));
+            _connections.Add(new EmailConnection(email, type, isConfirmed ? now : null));
             UpdatedAt = now;
         }
 
-        public void AddGoogle(GoogleIdentity identity, string name)
+        public void AddGoogle(GoogleIdentity identity, string? firstName, string? lastName)
         {
             var now = DateTime.UtcNow;
-            _identities.Add(new GoogleIdentityModel(identity.Value, name, now));
+            _connections.Add(new GoogleConnection(identity.Value, firstName, lastName, now));
             UpdatedAt = now;
         }
 
-        public void AddMicrosoft(MicrosoftIdentity identity, string name)
+        public void AddMicrosoft(MicrosoftIdentity identity, string? firstName, string? lastName)
         {
             var now = DateTime.UtcNow;
-            _identities.Add(new MicrosoftIdentityModel(identity.Value, name, now));
+            _connections.Add(new MicrosoftConnection(identity.Value, firstName, lastName, now));
             UpdatedAt = now;
         }
 
         public bool IsConfirmed() =>
-            _identities.Any(x => x.ConfirmedAt.HasValue);
+            _connections.Any(x => x.ConfirmedAt.HasValue);
 
         private bool IsConfirmed(Identity key) =>
-            _identities.Any(x => x.Type == key.Type && x.Value == key.Value && x.IsConfirmed());
+            _connections.Any(x => x.IdentityType == key.Type && x.Value == key.Value && x.IsConfirmed);
 
-        public IdentityModel? GetIdentity(Identity key) =>
-            _identities.FirstOrDefault(x => x.GetIdentity() == key);
+        public Connection? GetIdentity(Identity key) =>
+            _connections.FirstOrDefault(x => x.Identity == key);
 
         public void ConfirmIdentity(Identity key, DateTime confirmedAt)
         {
-            var identity = _identities.First(x => x.GetIdentity() == key);
-            if (identity.IsConfirmed())
+            var identity = _connections.First(x => x.Identity == key);
+            if (identity.IsConfirmed)
                 return;
 
             identity.SetAsConfirmed(confirmedAt);
@@ -128,17 +128,17 @@ namespace People.Domain.Aggregates.Account
 
         public void DeleteIdentity(Identity key)
         {
-            var identity = _identities.FirstOrDefault(x => x.GetIdentity() == key);
+            var identity = _connections.FirstOrDefault(x => x.Identity == key);
             switch (identity)
             {
                 case null:
                     return;
 
-                case EmailIdentityModel {EmailType: EmailType.Primary}:
+                case EmailConnection {EmailType: EmailType.Primary}:
                     throw new ElwarkException(ElwarkExceptionCodes.PrimaryEmailCannotBeRemoved);
 
                 default:
-                    _identities.Remove(identity);
+                    _connections.Remove(identity);
                     break;
             }
         }
@@ -161,12 +161,12 @@ namespace People.Domain.Aggregates.Account
 
         public AccountEmail GetPrimaryEmail()
         {
-            var identity = _identities
-                .Where(x => x.Type == IdentityType.Email)
-                .Cast<EmailIdentityModel>()
+            var identity = _connections
+                .Where(x => x.IdentityType == IdentityType.Email)
+                .Cast<EmailConnection>()
                 .First(x => x.EmailType == EmailType.Primary);
 
-            return new AccountEmail(identity.EmailType, identity.Value, identity.IsConfirmed());
+            return new AccountEmail(identity.EmailType, identity.Value, identity.IsConfirmed);
         }
 
         public bool IsActive()
@@ -262,20 +262,20 @@ namespace People.Domain.Aggregates.Account
 
         public void ChangeEmailType(EmailIdentity email, EmailType type)
         {
-            var emails = _identities.Where(x => x.Type == IdentityType.Email)
-                .Cast<EmailIdentityModel>()
+            var emails = _connections.Where(x => x.IdentityType == IdentityType.Email)
+                .Cast<EmailConnection>()
                 .ToArray();
 
             var result = emails.FirstOrDefault(x => x.Value == email.Value);
             if (result is null)
                 throw new ElwarkException(ElwarkExceptionCodes.IdentityNotFound);
-
+            
+            if (!result.IsConfirmed)
+                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+            
             if (result.EmailType == EmailType.Primary)
                 throw new ElwarkException(ElwarkExceptionCodes.PrimaryEmailCannotBeRemoved);
-
-            if (!result.IsConfirmed())
-                throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
-
+            
             if (type == EmailType.Primary)
                 emails.First(x => x.EmailType == EmailType.Primary)
                     .ChangeType(EmailType.Secondary);

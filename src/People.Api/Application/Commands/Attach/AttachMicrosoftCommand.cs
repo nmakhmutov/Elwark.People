@@ -33,7 +33,7 @@ namespace People.Api.Application.Commands.Attach
             if (account is null)
                 throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
 
-            account.AddMicrosoft(request.Microsoft, GetName(request.FirstName, request.LastName));
+            account.AddMicrosoft(request.Microsoft, request.FirstName, request.LastName);
             if (await IsAvailableToAttach(request.Email, ct))
                 account.AddEmail(request.Email.GetMailAddress(), false);
 
@@ -65,13 +65,6 @@ namespace People.Api.Application.Commands.Attach
                 return false;
 
             return true;
-        }
-
-        private static string GetName(string? firstName, string? lastName)
-        {
-            var name = $"{firstName} {lastName}".Trim();
-
-            return string.IsNullOrEmpty(name) ? "Unknown" : name;
         }
     }
 }

@@ -40,13 +40,13 @@ namespace People.Infrastructure
                 map.MapField("_lastSignIn");
                 map.MapField("_roles")
                     .SetElementName(nameof(Account.Roles));
-                map.MapField("_identities")
-                    .SetElementName(nameof(Account.Identities));
+                map.MapField("_connections")
+                    .SetElementName(nameof(Account.Connections));
             });
 
-            BsonClassMap.RegisterClassMap<EmailIdentityModel>();
-            BsonClassMap.RegisterClassMap<GoogleIdentityModel>();
-            BsonClassMap.RegisterClassMap<MicrosoftIdentityModel>();
+            BsonClassMap.RegisterClassMap<EmailConnection>();
+            BsonClassMap.RegisterClassMap<GoogleConnection>();
+            BsonClassMap.RegisterClassMap<MicrosoftConnection>();
             
             BsonClassMap.RegisterClassMap<Entity<EmailProviderType>>(map =>
             {
@@ -84,15 +84,15 @@ namespace People.Infrastructure
                 new CreateIndexModel<Account>(
                     Builders<Account>.IndexKeys.Combine(
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Identities)}.{nameof(IdentityModel.Type)}"
+                            $"{nameof(Account.Connections)}.{nameof(Connection.IdentityType)}"
                         ),
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Identities)}.{nameof(IdentityModel.Value)}"
+                            $"{nameof(Account.Connections)}.{nameof(Connection.Value)}"
                         )
                     ),
                     new CreateIndexOptions
                     {
-                        Name = "Identities.Type_Identities.Value",
+                        Name = "Connections.Type_Connections.Value",
                         Unique = true
                     }
                 )

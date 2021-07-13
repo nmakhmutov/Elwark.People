@@ -38,7 +38,7 @@ namespace People.Api.Application.Commands.SignUp
             var id = await _generator.NextAccountIdAsync(ct);
             var account = new Account(id, name, request.Language, Account.DefaultPicture, request.Ip);
             account.AddEmail(email, true);
-            account.AddMicrosoft(request.Identity, name.FullName());
+            account.AddMicrosoft(request.Identity, request.FirstName, request.LastName);
 
             await _repository.CreateAsync(account, ct);
 

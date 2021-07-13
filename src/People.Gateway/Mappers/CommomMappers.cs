@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using People.Gateway.Models;
 using People.Grpc.Gateway;
-using EmailIdentity = People.Gateway.Models.EmailIdentity;
-using SocialIdentity = People.Gateway.Models.SocialIdentity;
+using Connection = People.Gateway.Models.Connection;
+using EmailConnection = People.Gateway.Models.EmailConnection;
+using SocialConnection = People.Gateway.Models.SocialConnection;
 using Timezone = People.Gateway.Features.Timezone.Timezone;
 
 namespace People.Gateway.Mappers
@@ -28,14 +29,14 @@ namespace People.Gateway.Mappers
                 profile.Ban.ToBan(),
                 profile.IsPasswordAvailable,
                 profile.CreatedAt.ToDateTime(),
-                profile.Identities.Select(x => (Identity) (x.IdentityTypeCase switch
+                profile.Connections.Select(x => (Connection) (x.ConnectionTypeCase switch
                 {
-                    ProfileIdentity.IdentityTypeOneofCase.Email =>
-                        new EmailIdentity(x.Type, x.Value, x.IsConfirmed, x.Email.Type),
+                    Grpc.Gateway.Connection.ConnectionTypeOneofCase.Email =>
+                        new EmailConnection(x.Type, x.Value, x.IsConfirmed, x.Email.Type),
 
-                    ProfileIdentity.IdentityTypeOneofCase.Social =>
-                        new SocialIdentity(x.Type, x.Value, x.IsConfirmed, x.Social.Name),
-
+                    Grpc.Gateway.Connection.ConnectionTypeOneofCase.Social =>
+                        new SocialConnection(x.Type, x.Value, x.IsConfirmed, x.Social.FirstName, x.Social.LastName),
+                    
                     _ => throw new ArgumentOutOfRangeException()
                 }))
             );

@@ -4,6 +4,8 @@ using Google.Protobuf.WellKnownTypes;
 using People.Domain.Aggregates.Account;
 using People.Domain.Aggregates.Account.Identities;
 using People.Grpc.Gateway;
+using Connection = People.Grpc.Gateway.Connection;
+using EmailConnection = People.Domain.Aggregates.Account.Identities.EmailConnection;
 
 namespace People.Api.Mappers
 {
@@ -24,7 +26,7 @@ namespace People.Api.Mappers
                 Timezone = account.Timezone.ToTimezone(),
                 IsBanned = account.Ban is not null
             };
-        
+
         public static ProfileReply ToGatewayProfileReply(this Account account) =>
             new()
             {
@@ -40,45 +42,49 @@ namespace People.Api.Mappers
                 Ban = account.Ban.ToBan(),
                 IsPasswordAvailable = account.IsPasswordAvailable(),
                 CreatedAt = account.CreatedAt.ToTimestamp(),
-                Identities =
+                Connections =
                 {
-                    account.Identities.Select(x =>
+                    account.Connections.Select(connection => connection switch
                     {
-                        var profile =  new ProfileIdentity
-                        {
-                            Type = x.Type.ToIdentityType(),
-                            Value = x.Value,
-                            IsConfirmed = x.IsConfirmed()
-                        };
+                        EmailConnection x =>
+                            new Connection
+                            {
+                                Type = x.IdentityType.ToIdentityType(),
+                                Value = x.Value,
+                                IsConfirmed = x.IsConfirmed,
+                                Email = new People.Grpc.Gateway.EmailConnection
+                                {
+                                    Type = x.EmailType.ToEmailType()
+                                }
+                            },
+                        
+                        GoogleConnection x =>
+                            new Connection
+                            {
+                                Type = x.IdentityType.ToIdentityType(),
+                                Value = x.Value,
+                                IsConfirmed = x.IsConfirmed,
+                                Social = new SocialConnection
+                                {
+                                    FirstName = x.FirstName,
+                                    LastName = x.LastName
+                                }
+                            },
+                        
+                        MicrosoftConnection x =>
+                            new Connection
+                            {
+                                Type = x.IdentityType.ToIdentityType(),
+                                Value = x.Value,
+                                IsConfirmed = x.IsConfirmed,
+                                Social = new SocialConnection
+                                {
+                                    FirstName = x.FirstName,
+                                    LastName = x.LastName
+                                }
+                            },
 
-                        switch (x)
-                        {
-                            case EmailIdentityModel t:
-                                profile.Email = new People.Grpc.Gateway.EmailIdentity
-                                {
-                                    Type = t.EmailType.ToEmailType()
-                                };
-                                break;
-                            
-                            case GoogleIdentityModel t:
-                                profile.Social = new SocialIdentity
-                                {
-                                    Name = t.Name
-                                };
-                                break;
-                            
-                            case MicrosoftIdentityModel t:
-                                profile.Social = new SocialIdentity
-                                {
-                                    Name = t.Name
-                                };
-                                break;
-                            
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(x));
-                        }
-
-                        return profile;
+                        _ => throw new ArgumentOutOfRangeException(nameof(connection))
                     })
                 }
             };

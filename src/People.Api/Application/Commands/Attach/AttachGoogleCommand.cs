@@ -36,7 +36,7 @@ namespace People.Api.Application.Commands.Attach
             if (account is null)
                 throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
 
-            account.AddGoogle(request.Google, GetName(request.FirstName, request.LastName));
+            account.AddGoogle(request.Google, request.FirstName, request.LastName);
             if (await IsAvailableToAttach(request.Email, ct))
                 account.AddEmail(request.Email.GetMailAddress(), request.IsEmailVerified);
 
@@ -65,18 +65,11 @@ namespace People.Api.Application.Commands.Attach
         {
             if (await _repository.IsExists(email, ct))
                 return false;
-
+            
             if (await _forbidden.IsEmailHostDenied(email.GetMailAddress().Host, ct))
                 return false;
 
             return true;
-        }
-
-        private static string GetName(string? firstName, string? lastName)
-        {
-            var name = $"{firstName} {lastName}".Trim()[..Name.FullNameLength];
-
-            return string.IsNullOrEmpty(name) ? "Unknown" : name;
         }
     }
 }

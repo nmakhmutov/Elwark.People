@@ -12,10 +12,10 @@ service Gateway {
 
   rpc GetProfile (people.AccountId) returns (ProfileReply);
   rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);
-  rpc ConfirmingIdentity(ConfirmingRequest) returns (people.Confirming);
-  rpc ConfirmIdentity(ConfirmRequest) returns (ProfileReply);
+  rpc ConfirmingConnection(ConfirmingRequest) returns (people.Confirming);
+  rpc ConfirmConnection(ConfirmRequest) returns (ProfileReply);
   rpc ChangeEmailType(ChangeEmailTypeRequest) returns (ProfileReply);
-  rpc DeleteIdentity(DeleteIdentityRequest) returns (ProfileReply);
+  rpc DeleteConnection(DeleteConnectionRequest) returns (ProfileReply);
 
   rpc CreatingPassword(CreatingPasswordRequest) returns(people.Confirming);
   rpc CreatePassword(CreatePasswordRequest) returns (ProfileReply);
@@ -54,26 +54,27 @@ message ProfileReply {
   people.Ban ban = 10;
   bool is_password_available = 11;
   google.protobuf.Timestamp created_at = 12;
-  repeated ProfileIdentity identities = 13;
+  repeated Connection connections = 13;
 }
 
-message ProfileIdentity {
+message Connection {
   people.IdentityType type = 1;
   string value = 2;
   bool is_confirmed = 3;
 
-  oneof IdentityType {
-    EmailIdentity email = 4;
-    SocialIdentity social = 5;
+  oneof ConnectionType {
+    EmailConnection email = 4;
+    SocialConnection social = 5;
   }
 }
 
-message EmailIdentity {
+message EmailConnection {
   people.EmailType type = 1;
 }
 
-message SocialIdentity {
-  string name = 1;
+message SocialConnection {
+  google.protobuf.StringValue first_name = 1;
+  google.protobuf.StringValue last_name = 2;
 }
 
 message CountriesRequest {
@@ -130,7 +131,7 @@ message ChangeEmailTypeRequest {
   people.EmailType type = 3;
 }
 
-message DeleteIdentityRequest{
+message DeleteConnectionRequest{
   people.AccountId id = 1;
   people.Identity identity = 2;
 }

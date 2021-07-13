@@ -21,6 +21,6 @@ namespace People.Gateway.Models
         Ban? Ban,
         bool IsPasswordAvailable,
         DateTime CreatedAt,
-        IEnumerable<Identity> Identities
+        IEnumerable<Connection> Connections
     );
 }

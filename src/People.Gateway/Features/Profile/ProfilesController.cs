@@ -12,6 +12,7 @@ using People.Grpc.Common;
 using People.Grpc.Gateway;
 using Confirming = People.Gateway.Models.Confirming;
 using Confirm = People.Gateway.Requests.ConfirmRequest;
+using ConfirmRequest = People.Grpc.Gateway.ConfirmRequest;
 using Identity = People.Grpc.Common.Identity;
 
 namespace People.Gateway.Features.Profile
@@ -62,11 +63,10 @@ namespace People.Gateway.Features.Profile
             return Ok(profile.ToProfile());
         }
 
-        [HttpPost("identities/{type}/value/{value}/confirm")]
-        public async Task<ActionResult> ConfirmingIdentityAsync([FromRoute] IdentityType type, [FromRoute] string value,
-            CancellationToken ct)
+        [HttpPost("connections/{type}/{value}/confirm")]
+        public async Task<ActionResult> ConfirmingIdentityAsync(IdentityType type, string value, CancellationToken ct)
         {
-            var confirmation = await _client.ConfirmingIdentityAsync(
+            var confirmation = await _client.ConfirmingConnectionAsync(
                 new ConfirmingRequest
                 {
                     Id = _identity.GetAccountId(),
@@ -83,11 +83,11 @@ namespace People.Gateway.Features.Profile
             return Ok(new Confirming(confirmation.Id));
         }
 
-        [HttpPut("identities/{type}/value/{value}/confirm")]
-        public async Task<ActionResult> ConfirmIdentityAsync([FromRoute] IdentityType type, [FromRoute] string value,
+        [HttpPut("connections/{type}/{value}/confirm")]
+        public async Task<ActionResult> ConfirmIdentityAsync(IdentityType type, string value,
             [FromBody] Confirm request, CancellationToken ct)
         {
-            var profile = await _client.ConfirmIdentityAsync(new Grpc.Gateway.ConfirmRequest
+            var profile = await _client.ConfirmConnectionAsync(new ConfirmRequest
                 {
                     Id = _identity.GetAccountId(),
                     Confirm = new Grpc.Common.Confirm
@@ -107,14 +107,14 @@ namespace People.Gateway.Features.Profile
             return Ok(profile.ToProfile());
         }
 
-        [HttpPut("identities/email")]
-        public async Task<ActionResult> UpdateIdentityAsync([FromBody] ChangeEmailType request, CancellationToken ct)
+        [HttpPut("connections/email/{value}/{email}")]
+        public async Task<ActionResult> UpdateIdentityAsync(string value, EmailType email, CancellationToken ct)
         {
             var profile = await _client.ChangeEmailTypeAsync(new ChangeEmailTypeRequest
                 {
                     Id = _identity.GetAccountId(),
-                    Email = request.Email,
-                    Type = request.Type
+                    Email = value,
+                    Type = email
                 },
                 cancellationToken: ct
             );
@@ -122,11 +122,10 @@ namespace People.Gateway.Features.Profile
             return Ok(profile.ToProfile());
         }
 
-        [HttpDelete("identities/{type}/value/{value}")]
-        public async Task<ActionResult> DeleteIdentityAsync([FromRoute] IdentityType type, [FromRoute] string value,
-            CancellationToken ct)
+        [HttpDelete("connections/{type}/{value}")]
+        public async Task<ActionResult> DeleteIdentityAsync(IdentityType type, string value, CancellationToken ct)
         {
-            var profile = await _client.DeleteIdentityAsync(new DeleteIdentityRequest
+            var profile = await _client.DeleteConnectionAsync(new DeleteConnectionRequest
                 {
                     Id = _identity.GetAccountId(),
                     Identity = new Identity
