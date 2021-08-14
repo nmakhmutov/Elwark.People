@@ -12,7 +12,7 @@ namespace People.Api.Mappers
         public static People.Grpc.Common.AccountId ToAccountId(this AccountId id) =>
             new()
             {
-                Value = (long) id
+                Value = (long)id
             };
 
         public static AccountId ToAccountId(this People.Grpc.Common.AccountId id) =>
@@ -128,7 +128,41 @@ namespace People.Api.Mappers
                 Nickname = name.Nickname,
                 FirstName = name.FirstName,
                 LastName = name.LastName,
-                FullName = name.FullName()
+                FullName = name.FullName(),
+                PreferNickname = name.PreferNickname
+            };
+
+        public static People.Grpc.Common.TimeInfo ToTimeInfo(this TimeInfo timeInfo) =>
+            new()
+            {
+                Timezone = timeInfo.Timezone.ToTimezone(),
+                FirstDayOfWeek = timeInfo.FirstDayOfWeek.ToDayOfWeek()
+            };
+
+        public static People.Grpc.Common.DayOfWeek ToDayOfWeek(this DayOfWeek dayOfWeek) =>
+            dayOfWeek switch
+            {
+                DayOfWeek.Sunday => People.Grpc.Common.DayOfWeek.Sunday,
+                DayOfWeek.Monday => People.Grpc.Common.DayOfWeek.Monday,
+                DayOfWeek.Tuesday => People.Grpc.Common.DayOfWeek.Tuesday,
+                DayOfWeek.Wednesday => People.Grpc.Common.DayOfWeek.Wednesday,
+                DayOfWeek.Thursday => People.Grpc.Common.DayOfWeek.Thursday,
+                DayOfWeek.Friday => People.Grpc.Common.DayOfWeek.Friday,
+                DayOfWeek.Saturday => People.Grpc.Common.DayOfWeek.Saturday,
+                _ => throw new ArgumentOutOfRangeException(nameof(dayOfWeek), dayOfWeek, null)
+            };
+        
+        public static DayOfWeek ToDayOfWeek(this People.Grpc.Common.DayOfWeek dayOfWeek) =>
+            dayOfWeek switch
+            {
+                People.Grpc.Common.DayOfWeek.Sunday => DayOfWeek.Sunday,
+                People.Grpc.Common.DayOfWeek.Monday => DayOfWeek.Monday,
+                People.Grpc.Common.DayOfWeek.Tuesday => DayOfWeek.Tuesday,
+                People.Grpc.Common.DayOfWeek.Wednesday => DayOfWeek.Wednesday,
+                People.Grpc.Common.DayOfWeek.Thursday => DayOfWeek.Thursday,
+                People.Grpc.Common.DayOfWeek.Friday => DayOfWeek.Friday,
+                People.Grpc.Common.DayOfWeek.Saturday => DayOfWeek.Saturday,
+                _ => throw new ArgumentOutOfRangeException(nameof(dayOfWeek), dayOfWeek, null)
             };
 
         public static People.Grpc.Common.Timezone ToTimezone(this Timezone timezone) =>

@@ -15,11 +15,13 @@ namespace People.Api.Application.Commands
         string? FirstName,
         string? LastName,
         string Nickname,
+        bool PreferNickname,
         string? Bio,
         DateTime DateOfBirth,
         Gender Gender,
         string Language,
         string Timezone,
+        DayOfWeek FirstDayOfWeek,
         string CountryCode,
         string City
     ) : IRequest;
@@ -46,9 +48,9 @@ namespace People.Api.Application.Commands
                 throw new ElwarkException(ElwarkExceptionCodes.TimezoneNotFound);
 
             account.Update(
-                new Name(request.Nickname, request.FirstName, request.LastName),
+                new Name(request.Nickname, request.FirstName, request.LastName, request.PreferNickname),
                 new Address(new CountryCode(request.CountryCode), request.City),
-                new Timezone(timezone.Name, timezone.Offset),
+                new TimeInfo(new Timezone(timezone.Name, timezone.Offset), request.FirstDayOfWeek),
                 new Language(request.Language),
                 request.Gender,
                 account.Picture,

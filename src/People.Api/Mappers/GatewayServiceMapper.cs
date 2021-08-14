@@ -11,22 +11,6 @@ namespace People.Api.Mappers
 {
     public static class GatewayServiceMapper
     {
-        public static AccountReply ToGatewayAccountReply(this Account account) =>
-            new()
-            {
-                Address = account.Address.ToAddress(),
-                Email = account.GetPrimaryEmail().ToPrimaryEmail(),
-                Id = account.Id.ToAccountId(),
-                Name = account.Name.ToName(),
-                Bio = account.Bio,
-                DateOfBirth = account.DateOfBirth?.ToTimestamp(),
-                Gender = account.Gender.ToGender(),
-                Language = account.Language.ToString(),
-                Picture = account.Picture.ToString(),
-                Timezone = account.Timezone.ToTimezone(),
-                IsBanned = account.Ban is not null
-            };
-
         public static ProfileReply ToGatewayProfileReply(this Account account) =>
             new()
             {
@@ -38,7 +22,7 @@ namespace People.Api.Mappers
                 Gender = account.Gender.ToGender(),
                 Language = account.Language.ToString(),
                 Picture = account.Picture.ToString(),
-                Timezone = account.Timezone.ToTimezone(),
+                TimeInfo = account.TimeInfo.ToTimeInfo(),
                 Ban = account.Ban.ToBan(),
                 IsPasswordAvailable = account.IsPasswordAvailable(),
                 CreatedAt = account.CreatedAt.ToTimestamp(),

@@ -46,7 +46,7 @@ namespace People.Api.Application.Commands.Attach
                     LastName = account.Name.LastName ?? request.LastName?[..Name.LastNameLength]
                 },
                 account.Address,
-                account.Timezone,
+                account.TimeInfo,
                 account.Language,
                 account.Gender,
                 request.Picture is not null && account.Picture == Account.DefaultPicture

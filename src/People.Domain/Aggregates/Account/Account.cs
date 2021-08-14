@@ -30,7 +30,7 @@ namespace People.Domain.Aggregates.Account
             Version = int.MinValue;
             Ban = null;
             Name = name;
-            Timezone = Timezone.Default;
+            TimeInfo = TimeInfo.Default;
             Address = new Address(CountryCode.Empty, string.Empty);
             Language = language;
             Gender = Gender.Female;
@@ -50,7 +50,7 @@ namespace People.Domain.Aggregates.Account
 
         public Address Address { get; private set; }
 
-        public Timezone Timezone { get; private set; }
+        public TimeInfo TimeInfo { get; private set; }
 
         public Language Language { get; private set; }
 
@@ -143,12 +143,12 @@ namespace People.Domain.Aggregates.Account
             }
         }
 
-        public void Update(Name name, Address address, Timezone timezone, Language language, Gender gender, Uri picture,
+        public void Update(Name name, Address address, TimeInfo timeInfo, Language language, Gender gender, Uri picture,
             string? bio = null, DateTime? dateOfBirth = null)
         {
             Name = name;
             Address = address;
-            Timezone = timezone;
+            TimeInfo = timeInfo;
             Language = language;
             Gender = gender;
             Picture = picture;

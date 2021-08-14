@@ -1,11 +1,14 @@
 using System;
+using System.Data;
 using FluentValidation;
 using People.Grpc.Common;
+using DayOfWeek = System.DayOfWeek;
 
 namespace People.Gateway.Requests
 {
-    public sealed record UpdateAccount(string? FirstName, string? LastName, string Nickname, string Language,
-        Gender Gender, DateTime DateOfBirth, string? Bio, string? CountryCode, string? CityName, string Timezone)
+    public sealed record UpdateAccount(string? FirstName, string? LastName, string Nickname, bool PreferNickname,
+        string Language, Gender Gender, DateTime DateOfBirth, string? Bio, string? CountryCode, string? CityName,
+        string Timezone, DayOfWeek FirstDayOfWeek)
     {
         public sealed class Validator : AbstractValidator<UpdateAccount>
         {
@@ -31,7 +34,10 @@ namespace People.Gateway.Requests
 
                 RuleFor(x => x.Timezone)
                     .NotEmpty();
+
+                RuleFor(x => x.FirstDayOfWeek)
+                    .IsInEnum();
             }
-        }        
+        }
     }
 }

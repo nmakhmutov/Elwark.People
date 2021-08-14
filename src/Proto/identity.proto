@@ -92,7 +92,7 @@ message AccountReply {
   people.Name name = 2;
   people.PrimaryEmail email = 3;
   people.Address address = 4;
-  people.Timezone timezone = 5;
+  people.TimeInfo time_info = 5;
   string language = 6;
   people.Gender gender = 7;
   google.protobuf.Timestamp date_of_birth = 8;

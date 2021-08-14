@@ -20,7 +20,7 @@ namespace People.Api.Mappers
                 Gender = account.Gender.ToGender(),
                 Language = account.Language.ToString(),
                 Picture = account.Picture.ToString(),
-                Timezone = account.Timezone.ToTimezone(),
+                TimeInfo = account.TimeInfo.ToTimeInfo(),
                 UpdatedAt = account.UpdatedAt.ToTimestamp(),
                 Roles = {account.Roles}
             };

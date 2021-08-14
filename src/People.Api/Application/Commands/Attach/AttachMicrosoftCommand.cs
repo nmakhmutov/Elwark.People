@@ -43,7 +43,7 @@ namespace People.Api.Application.Commands.Attach
                     LastName = account.Name.LastName ?? request.LastName
                 },
                 account.Address,
-                account.Timezone,
+                account.TimeInfo,
                 account.Language,
                 account.Gender,
                 account.Picture,

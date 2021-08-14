@@ -1,7 +1,7 @@
 using System;
 using System.Text;
+using System.Text.Json;
 using Confluent.Kafka;
-using Newtonsoft.Json;
 
 namespace People.Infrastructure.Kafka
 {
@@ -25,8 +25,8 @@ namespace People.Infrastructure.Kafka
                 return default!;
 
             var json = Encoding.UTF8.GetString(data);
-
-            return JsonConvert.DeserializeObject<T>(json)!;
+            
+            return JsonSerializer.Deserialize<T>(json)!;
         }
 
         public byte[] Serialize(T data, SerializationContext context)
@@ -39,7 +39,7 @@ namespace People.Infrastructure.Kafka
             if (type == _ignore)
                 throw new NotSupportedException("Ignore type not supported");
 
-            var json = JsonConvert.SerializeObject(data);
+            var json = JsonSerializer.Serialize(data);
 
             return Encoding.UTF8.GetBytes(json);
         }

@@ -34,7 +34,7 @@ namespace People.Api.Application.IntegrationEventHandlers
 
             var countryCode = await GetCountryCode(message.CountryCode);
             var timezone = string.IsNullOrEmpty(message.Timezone)
-                ? account.Timezone
+                ? account.TimeInfo.Timezone
                 : await GetTimezoneAsync(message.Timezone);
             account.SetRegistration(IPAddress.Parse(message.Ip), countryCode, _ipAddressHasher.CreateHash);
 
@@ -44,7 +44,7 @@ namespace People.Api.Application.IntegrationEventHandlers
                     LastName = account.Name.LastName ?? message.FirstName?[..Name.LastNameLength]
                 },
                 new Address(countryCode, message.City ?? account.Address.City),
-                timezone,
+                account.TimeInfo with { Timezone = timezone },
                 account.Language,
                 account.Gender,
                 account.Picture == Account.DefaultPicture

@@ -22,6 +22,17 @@ enum EmailType {
   SECONDARY_EMAIL = 2;
 }
 
+enum DayOfWeek
+{
+  SUNDAY = 0;
+  MONDAY = 1;
+  TUESDAY = 2;
+  WEDNESDAY = 3;
+  THURSDAY = 4;
+  FRIDAY = 5;
+  SATURDAY = 6;
+}
+
 message AccountId {
   int64 value = 1;
 }
@@ -41,6 +52,7 @@ message Name {
   google.protobuf.StringValue first_name = 2;
   google.protobuf.StringValue last_name = 3;
   string full_name = 4;
+  bool prefer_nickname = 5;
 }
 
 message Address {
@@ -51,6 +63,11 @@ message Address {
 message Timezone {
   string Name = 1;
   google.protobuf.Duration offset = 2;
+}
+
+message TimeInfo {
+  Timezone timezone = 1;
+  DayOfWeek first_day_of_week = 2;
 }
 
 message Ban {

@@ -26,7 +26,7 @@ namespace People.Gateway.Features.Account
         [HttpGet("me"), Authorize(Policy = Policy.RequireAccountId)]
         public async Task<ActionResult> GetAsync(CancellationToken ct)
         {
-            var account = await _client.GetAccountAsync(_identity.GetAccountId(), cancellationToken: ct);
+            var account = await _client.GetProfileAsync(_identity.GetAccountId(), cancellationToken: ct);
 
             return Ok(
                 new Models.Account(
@@ -41,8 +41,8 @@ namespace People.Gateway.Features.Account
                     account.Bio,
                     account.Picture,
                     account.Address.ToAddress(),
-                    account.Timezone.ToTimezone(),
-                    account.IsBanned
+                    account.TimeInfo.ToTimeInfo(),
+                    account.Ban is not null
                 )
             );
         }
@@ -50,7 +50,7 @@ namespace People.Gateway.Features.Account
         [HttpGet("{id:long}"), Authorize(Policy = Policy.RequireCommonAccess)]
         public async Task<ActionResult> GetAsync(long id, CancellationToken ct)
         {
-            var account = await _client.GetAccountAsync(new AccountId {Value = id}, cancellationToken: ct);
+            var account = await _client.GetProfileAsync(new AccountId {Value = id}, cancellationToken: ct);
 
             return Ok(
                 new Models.Account(
@@ -65,8 +65,8 @@ namespace People.Gateway.Features.Account
                     account.Bio,
                     account.Picture,
                     account.Address.ToAddress(),
-                    account.Timezone.ToTimezone(),
-                    account.IsBanned
+                    account.TimeInfo.ToTimeInfo(),
+                    account.Ban is not null
                 )
             );
         }

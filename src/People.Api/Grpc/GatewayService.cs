@@ -37,16 +37,6 @@ namespace People.Api.Grpc
             _timezone = timezone;
         }
 
-        public override async Task<AccountReply> GetAccount(AccountId request, ServerCallContext context)
-        {
-            var data = await _mediator.Send(new GetAccountByIdQuery(request.ToAccountId()), context.CancellationToken);
-            if (data is not null)
-                return data.ToGatewayAccountReply();
-
-            context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
-            return new AccountReply();
-        }
-
         public override async Task<ProfileReply> GetProfile(AccountId request, ServerCallContext context)
         {
             var data = await _mediator.Send(new GetAccountByIdQuery(request.ToAccountId()), context.CancellationToken);
@@ -64,11 +54,13 @@ namespace People.Api.Grpc
                 request.FirstName,
                 request.LastName,
                 request.Nickname,
+                request.PreferNickname,
                 request.Bio,
                 request.DateOfBirth.ToDateTime(),
                 request.Gender.FromGrpc(),
                 request.Language,
                 request.Timezone,
+                request.FirstDayOfWeek.ToDayOfWeek(),
                 request.CountryCode,
                 request.CityName ?? string.Empty
             );
@@ -83,7 +75,8 @@ namespace People.Api.Grpc
             return new ProfileReply();
         }
 
-        public override async Task<Confirming> ConfirmingConnection(ConfirmingRequest request, ServerCallContext context)
+        public override async Task<Confirming> ConfirmingConnection(ConfirmingRequest request,
+            ServerCallContext context)
         {
             var query = new GetAccountByIdQuery(request.Id.ToAccountId());
             var account = await _mediator.Send(query, context.CancellationToken);
@@ -149,7 +142,8 @@ namespace People.Api.Grpc
             return new ProfileReply();
         }
 
-        public override async Task<ProfileReply> DeleteConnection(DeleteConnectionRequest request, ServerCallContext context)
+        public override async Task<ProfileReply> DeleteConnection(DeleteConnectionRequest request,
+            ServerCallContext context)
         {
             var command = new DeleteIdentityCommand(request.Id.ToAccountId(), request.Identity.ToIdentityKey());
             await _mediator.Send(command, context.CancellationToken);

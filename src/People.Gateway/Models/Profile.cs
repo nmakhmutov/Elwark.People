@@ -8,6 +8,7 @@ namespace People.Gateway.Models
     internal sealed record Profile(
         long Id,
         string Nickname,
+        bool PreferNickname,
         string? FirstName,
         string? LastName,
         string FullName,
@@ -17,7 +18,7 @@ namespace People.Gateway.Models
         string? Bio,
         string Picture,
         Address Address,
-        Timezone Timezone,
+        TimeInfo TimeInfo,
         Ban? Ban,
         bool IsPasswordAvailable,
         DateTime CreatedAt,

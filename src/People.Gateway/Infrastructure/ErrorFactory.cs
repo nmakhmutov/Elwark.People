@@ -22,7 +22,7 @@ namespace People.Gateway.Infrastructure
                 StatusCode.InvalidArgument => new ValidationProblemDetails(
                     exception.Trailers
                         .Where(x => x.Key.StartsWith("field-"))
-                        .ToDictionary(x => x.Key.Substring(6), x => x.Value.Split("|").ToArray())
+                        .ToDictionary(x => x.Key[6..], x => x.Value.Split("|").ToArray())
                 )
                 {
                     Title = exception.Status.Detail,
