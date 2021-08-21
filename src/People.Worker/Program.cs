@@ -80,8 +80,7 @@ namespace People.Worker
 
                     services.AddQuartz(options =>
                         {
-                            options.UseMicrosoftDependencyInjectionScopedJobFactory();
-
+                            options.UseMicrosoftDependencyInjectionJobFactory();
                             options.AddJobAndTrigger<UpdateProviderJob>("0 */1 * ? * *");
                         })
                         .AddQuartzHostedService(options => options.WaitForJobsToComplete = true);

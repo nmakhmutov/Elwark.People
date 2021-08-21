@@ -31,7 +31,7 @@ public class ExperimentalSerializing
         var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(b);
         var systemTextJson = System.Text.Json.JsonSerializer.Serialize(b);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
+        Assert.NotEqual(newtonsoftJson, systemTextJson);
     }
 
     [Fact]
