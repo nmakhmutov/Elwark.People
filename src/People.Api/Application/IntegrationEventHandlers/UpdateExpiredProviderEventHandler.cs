@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using People.Domain.Aggregates.EmailProvider;
+using People.Domain.Aggregates.EmailProviderAggregate;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
 

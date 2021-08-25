@@ -21,7 +21,7 @@ namespace People.Api.Application.DomainEventHandlers
                 Guid.NewGuid(),
                 notification.Account.CreatedAt,
                 (long) notification.Account.Id,
-                notification.Account.GetPrimaryEmail().Address,
+                notification.Account.GetPrimaryEmail().Value,
                 notification.IpAddress.ToString(),
                 notification.Account.Language.ToString()
             );

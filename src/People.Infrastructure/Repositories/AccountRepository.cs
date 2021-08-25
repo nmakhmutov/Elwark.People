@@ -3,13 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Driver;
-using People.Domain.Aggregates.Account;
-using People.Domain.Aggregates.Account.Identities;
+using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Infrastructure.Mongo;
 
 namespace People.Infrastructure.Repositories
 {
-    public class AccountRepository : IAccountRepository
+    internal sealed class AccountRepository : IAccountRepository
     {
         private readonly PeopleDbContext _dbContext;
         private readonly IMediator _mediator;
@@ -65,7 +65,7 @@ namespace People.Infrastructure.Repositories
             var filter = Builders<Account>.Filter
                 .ElemMatch($"{nameof(Account.Connections)}",
                     Builders<Connection>.Filter.And(
-                        Builders<Connection>.Filter.Eq(x => x.IdentityType, key.Type),
+                        Builders<Connection>.Filter.Eq(x => x.ConnectionType, key.Type),
                         Builders<Connection>.Filter.Eq(x => x.Value, key.Value)
                     )
                 );
@@ -79,7 +79,7 @@ namespace People.Infrastructure.Repositories
             var filter = Builders<Account>.Filter
                 .ElemMatch($"{nameof(Account.Connections)}",
                     Builders<Connection>.Filter.And(
-                        Builders<Connection>.Filter.Eq(x => x.IdentityType, key.Type),
+                        Builders<Connection>.Filter.Eq(x => x.ConnectionType, key.Type),
                         Builders<Connection>.Filter.Eq(x => x.Value, key.Value)
                     )
                 );

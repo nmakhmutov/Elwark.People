@@ -16,13 +16,13 @@ namespace People.Api.Application.Behaviors
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
-            var type = request.GetType().Name;
+            var name = request.GetType().Name;
 
-            _logger.LogInformation("Handling command '{T}'. {R}", type, request);
+            _logger.LogInformation("Request {Name} handling {@Request}", name, request);
 
             var response = await next();
 
-            _logger.LogInformation("Command '{T}' handled. {R}", type, response);
+            _logger.LogInformation("Request {T} handled {@Response}", name, response);
 
             return response;
         }

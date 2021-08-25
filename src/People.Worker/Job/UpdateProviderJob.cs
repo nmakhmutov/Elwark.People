@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using People.Domain.Aggregates.EmailProvider;
+using People.Domain.Aggregates.EmailProviderAggregate;
 using People.Infrastructure;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
@@ -27,7 +27,7 @@ namespace People.Worker.Job
         public async Task Execute(IJobExecutionContext context)
         {
             var filter = Builders<EmailProvider>.Filter.And(
-                Builders<EmailProvider>.Filter.Lt(x => x.ShouldUpdateAt, DateTime.UtcNow),
+                Builders<EmailProvider>.Filter.Lt(x => x.UpdateAt, DateTime.UtcNow),
                 Builders<EmailProvider>.Filter.Eq(x => x.IsEnabled, true)
             );
 

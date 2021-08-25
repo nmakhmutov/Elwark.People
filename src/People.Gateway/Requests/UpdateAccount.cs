@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using FluentValidation;
 using People.Grpc.Common;
 using DayOfWeek = System.DayOfWeek;

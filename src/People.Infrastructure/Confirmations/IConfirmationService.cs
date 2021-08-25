@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Bson;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Infrastructure.Confirmations
 {

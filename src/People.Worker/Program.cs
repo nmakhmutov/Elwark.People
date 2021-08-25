@@ -28,7 +28,7 @@ namespace People.Worker
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
             var configuration = HostExtensions.CreateConfiguration(environment, args);
 
-            Log.Logger = HostExtensions.CreateLogger(configuration, environment, AppName);
+            Log.Logger = HostExtensions.CreateLogger(configuration, AppName);
 
             var host = CreateHostBuilder(configuration, args);
 
@@ -86,7 +86,7 @@ namespace People.Worker
                         .AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
                     services
-                        .Configure<DbContextSettings>(context.Configuration.GetSection("Mongodb"))
+                        .Configure<MongoDbOptions>(context.Configuration.GetSection("Mongodb"))
                         .AddTransient<PeopleDbContext>();
                 })
                 .UseSerilog()

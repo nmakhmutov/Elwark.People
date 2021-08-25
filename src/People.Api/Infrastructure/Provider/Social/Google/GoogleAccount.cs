@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Globalization;
-using People.Domain.Aggregates.Account.Identities;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 
 namespace People.Api.Infrastructure.Provider.Social.Google
 {
     public class GoogleAccount
     {
-        public GoogleAccount(GoogleIdentity identity, EmailIdentity email, bool isEmailVerified, string? firstName,
+        public GoogleAccount(Identity.Google identity, Identity.Email email, bool isEmailVerified, string? firstName,
             string? lastName, Uri? picture, CultureInfo? locale)
         {
             Identity = identity;
@@ -18,9 +18,9 @@ namespace People.Api.Infrastructure.Provider.Social.Google
             Locale = locale;
         }
 
-        public GoogleIdentity Identity { get; }
+        public Identity.Google Identity { get; }
 
-        public EmailIdentity Email { get; }
+        public Identity.Email Email { get; }
 
         public bool IsEmailVerified { get; }
 

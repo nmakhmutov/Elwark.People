@@ -1,10 +1,10 @@
-using People.Domain.Aggregates.Account.Identities;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 
 namespace People.Api.Infrastructure.Provider.Social.Microsoft
 {
     public class MicrosoftAccount
     {
-        public MicrosoftAccount(MicrosoftIdentity identity, EmailIdentity email, string? firstName, string? lastName)
+        public MicrosoftAccount(Identity.Microsoft identity, Identity.Email email, string? firstName, string? lastName)
         {
             Identity = identity;
             Email = email;
@@ -12,9 +12,9 @@ namespace People.Api.Infrastructure.Provider.Social.Microsoft
             LastName = lastName;
         }
 
-        public MicrosoftIdentity Identity { get; }
+        public Identity.Microsoft Identity { get; }
         
-        public EmailIdentity Email { get; }
+        public Identity.Email Email { get; }
 
         public string? FirstName { get; }
 

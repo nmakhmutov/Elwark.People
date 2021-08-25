@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace People.Infrastructure.Forbidden
 {
-    public class ForbiddenService : IForbiddenService
+    internal sealed class ForbiddenService : IForbiddenService
     {
         private readonly InfrastructureDbContext _dbContext;
 

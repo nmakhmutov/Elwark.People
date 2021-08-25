@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Infrastructure.Confirmations
 {
-    public sealed class ConfirmationService : IConfirmationService
+    internal sealed class ConfirmationService : IConfirmationService
     {
         private readonly InfrastructureDbContext _dbContext;
 

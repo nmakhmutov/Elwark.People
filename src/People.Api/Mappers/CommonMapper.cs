@@ -1,9 +1,8 @@
 using System;
 using Google.Protobuf.WellKnownTypes;
-using People.Domain.Aggregates.Account;
-using People.Domain.Aggregates.Account.Identities;
-using Identity = People.Domain.Aggregates.Account.Identities.Identity;
-using IdentityType = People.Domain.Aggregates.Account.Identities.IdentityType;
+using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.Aggregates.AccountAggregate.Identities;
+using Identity = People.Domain.Aggregates.AccountAggregate.Identities.Identity;
 
 namespace People.Api.Mappers
 {
@@ -28,18 +27,18 @@ namespace People.Api.Mappers
         public static Identity ToIdentityKey(this People.Grpc.Common.Identity identity) =>
             identity.Type switch
             {
-                People.Grpc.Common.IdentityType.Email => new EmailIdentity(identity.Value),
-                People.Grpc.Common.IdentityType.Google => new GoogleIdentity(identity.Value),
-                People.Grpc.Common.IdentityType.Microsoft => new MicrosoftIdentity(identity.Value),
+                People.Grpc.Common.IdentityType.Email => new Identity.Email(identity.Value),
+                People.Grpc.Common.IdentityType.Google => new Identity.Google(identity.Value),
+                People.Grpc.Common.IdentityType.Microsoft => new Identity.Microsoft(identity.Value),
                 _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
             };
 
-        public static IdentityType ToIdentityType(this People.Grpc.Common.IdentityType type) =>
+        public static Connection.Type ToIdentityType(this People.Grpc.Common.IdentityType type) =>
             type switch
             {
-                People.Grpc.Common.IdentityType.Email => IdentityType.Email,
-                People.Grpc.Common.IdentityType.Google => IdentityType.Google,
-                People.Grpc.Common.IdentityType.Microsoft => IdentityType.Microsoft,
+                People.Grpc.Common.IdentityType.Email => Connection.Type.Email,
+                People.Grpc.Common.IdentityType.Google => Connection.Type.Google,
+                People.Grpc.Common.IdentityType.Microsoft => Connection.Type.Microsoft,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
@@ -61,12 +60,12 @@ namespace People.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
-        public static People.Grpc.Common.IdentityType ToIdentityType(this IdentityType type) =>
+        public static People.Grpc.Common.IdentityType ToIdentityType(this Connection.Type type) =>
             type switch
             {
-                IdentityType.Email => People.Grpc.Common.IdentityType.Email,
-                IdentityType.Google => People.Grpc.Common.IdentityType.Google,
-                IdentityType.Microsoft => People.Grpc.Common.IdentityType.Microsoft,
+                Connection.Type.Email => People.Grpc.Common.IdentityType.Email,
+                Connection.Type.Google => People.Grpc.Common.IdentityType.Google,
+                Connection.Type.Microsoft => People.Grpc.Common.IdentityType.Microsoft,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
@@ -95,10 +94,10 @@ namespace People.Api.Mappers
                     : address.CountryCode.ToString()
             };
 
-        public static People.Grpc.Common.PrimaryEmail ToPrimaryEmail(this AccountEmail email) =>
+        public static People.Grpc.Common.PrimaryEmail ToPrimaryEmail(this EmailConnection email) =>
             new()
             {
-                Email = email.Address,
+                Email = email.Value,
                 IsConfirmed = email.IsConfirmed
             };
 

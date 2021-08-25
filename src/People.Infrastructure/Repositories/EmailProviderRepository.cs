@@ -3,12 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Driver;
-using People.Domain.Aggregates.EmailProvider;
+using People.Domain.Aggregates.EmailProviderAggregate;
 using People.Infrastructure.Mongo;
 
 namespace People.Infrastructure.Repositories
 {
-    public sealed class EmailProviderRepository : IEmailProviderRepository
+    internal sealed class EmailProviderRepository : IEmailProviderRepository
     {
         private readonly PeopleDbContext _dbContext;
         private readonly IMediator _mediator;
@@ -19,7 +19,7 @@ namespace People.Infrastructure.Repositories
             _mediator = mediator;
         }
 
-        public async Task<EmailProvider?> GetAsync(EmailProviderType id, CancellationToken ct) =>
+        public async Task<EmailProvider?> GetAsync(EmailProvider.Type id, CancellationToken ct) =>
             await _dbContext.EmailProviders.Find(Builders<EmailProvider>.Filter.Eq(x => x.Id, id))
                 .FirstOrDefaultAsync(ct);
 

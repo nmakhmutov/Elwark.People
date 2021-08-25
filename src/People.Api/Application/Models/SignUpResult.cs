@@ -1,5 +1,5 @@
 using MongoDB.Bson;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Api.Application.Models
 {

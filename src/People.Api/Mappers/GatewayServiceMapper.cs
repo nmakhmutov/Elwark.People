@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using Google.Protobuf.WellKnownTypes;
-using People.Domain.Aggregates.Account;
-using People.Domain.Aggregates.Account.Identities;
+using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Gateway;
 using Connection = People.Grpc.Gateway.Connection;
-using EmailConnection = People.Domain.Aggregates.Account.Identities.EmailConnection;
+using EmailConnection = People.Domain.Aggregates.AccountAggregate.Identities.EmailConnection;
 
 namespace People.Api.Mappers
 {
@@ -33,7 +33,7 @@ namespace People.Api.Mappers
                         EmailConnection x =>
                             new Connection
                             {
-                                Type = x.IdentityType.ToIdentityType(),
+                                Type = x.ConnectionType.ToIdentityType(),
                                 Value = x.Value,
                                 IsConfirmed = x.IsConfirmed,
                                 Email = new People.Grpc.Gateway.EmailConnection
@@ -45,7 +45,7 @@ namespace People.Api.Mappers
                         GoogleConnection x =>
                             new Connection
                             {
-                                Type = x.IdentityType.ToIdentityType(),
+                                Type = x.ConnectionType.ToIdentityType(),
                                 Value = x.Value,
                                 IsConfirmed = x.IsConfirmed,
                                 Social = new SocialConnection
@@ -58,7 +58,7 @@ namespace People.Api.Mappers
                         MicrosoftConnection x =>
                             new Connection
                             {
-                                Type = x.IdentityType.ToIdentityType(),
+                                Type = x.ConnectionType.ToIdentityType(),
                                 Value = x.Value,
                                 IsConfirmed = x.IsConfirmed,
                                 Social = new SocialConnection

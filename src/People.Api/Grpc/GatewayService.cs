@@ -1,14 +1,20 @@
 using System;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using MongoDB.Bson;
-using People.Api.Application.Commands;
-using People.Api.Application.Commands.Email;
-using People.Api.Application.Commands.Password;
+using People.Api.Application.Commands.AcceptEmail;
+using People.Api.Application.Commands.ChangeEmailType;
+using People.Api.Application.Commands.ConfirmConnection;
+using People.Api.Application.Commands.CreatePassword;
+using People.Api.Application.Commands.DeleteConnection;
+using People.Api.Application.Commands.SendConfirmation;
+using People.Api.Application.Commands.UpdatePassword;
+using People.Api.Application.Commands.UpdateProfile;
 using People.Api.Application.Queries;
 using People.Api.Mappers;
 using People.Domain;
@@ -19,7 +25,8 @@ using People.Infrastructure.Countries;
 using People.Infrastructure.Timezones;
 using AccountId = People.Grpc.Common.AccountId;
 using Country = People.Grpc.Gateway.Country;
-using EmailConnection = People.Domain.Aggregates.Account.Identities.EmailConnection;
+using EmailConnection = People.Domain.Aggregates.AccountAggregate.Identities.EmailConnection;
+using Identity = People.Domain.Aggregates.AccountAggregate.Identities.Identity;
 using Timezone = People.Grpc.Gateway.Timezone;
 
 namespace People.Api.Grpc
@@ -106,7 +113,7 @@ namespace People.Api.Grpc
 
         public override async Task<ProfileReply> ConfirmConnection(ConfirmRequest request, ServerCallContext context)
         {
-            var command = new ConfirmIdentityCommand(
+            var command = new ConfirmConnectionCommand(
                 request.Id.ToAccountId(),
                 new ObjectId(request.Confirm.Id),
                 request.Confirm.Code,
@@ -128,7 +135,7 @@ namespace People.Api.Grpc
         {
             var command = new ChangeEmailTypeCommand(
                 request.Id.ToAccountId(),
-                request.Email,
+                new Identity.Email(request.Email),
                 request.Type.ToEmailType()
             );
 
@@ -145,7 +152,7 @@ namespace People.Api.Grpc
         public override async Task<ProfileReply> DeleteConnection(DeleteConnectionRequest request,
             ServerCallContext context)
         {
-            var command = new DeleteIdentityCommand(request.Id.ToAccountId(), request.Identity.ToIdentityKey());
+            var command = new DeleteConnectionCommand(request.Id.ToAccountId(), request.Identity.ToIdentityKey());
             await _mediator.Send(command, context.CancellationToken);
 
             var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.ToAccountId()));
@@ -175,7 +182,7 @@ namespace People.Api.Grpc
             }
 
             var confirmationId = await _mediator.Send(
-                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().GetIdentity(),
+                new SendConfirmationCommand(account.Id, account.GetPrimaryEmail().Identity,
                     new Language(request.Language)),
                 context.CancellationToken
             );
@@ -253,7 +260,7 @@ namespace People.Api.Grpc
             await (request.IdentityCase switch
             {
                 SendEmailRequest.IdentityOneofCase.Email =>
-                    SendEmailAsync(request.Email, request.Subject, request.Body, context.CancellationToken),
+                    SendEmailAsync(new MailAddress(request.Email), request.Subject, request.Body, context.CancellationToken),
 
                 SendEmailRequest.IdentityOneofCase.Id =>
                     SendEmailAsync(request.Id.Value, request.Subject, request.Body, context.CancellationToken),
@@ -264,7 +271,7 @@ namespace People.Api.Grpc
             return new Empty();
         }
 
-        private async Task SendEmailAsync(Domain.Aggregates.Account.AccountId id, string subject, string body,
+        private async Task SendEmailAsync(Domain.Aggregates.AccountAggregate.AccountId id, string subject, string body,
             CancellationToken ct)
         {
             var account = await _mediator.Send(new GetAccountByIdQuery(id), ct);
@@ -272,10 +279,10 @@ namespace People.Api.Grpc
             if (account is null)
                 return;
 
-            await SendEmailAsync(account.GetPrimaryEmail().Address, subject, body, ct);
+            await SendEmailAsync(new MailAddress(account.GetPrimaryEmail().Identity.Value), subject, body, ct);
         }
 
-        private Task SendEmailAsync(string email, string subject, string body, CancellationToken ct) =>
-            _mediator.Send(new AddEmailToQueueCommand(email, subject, body), ct);
+        private Task SendEmailAsync(MailAddress email, string subject, string body, CancellationToken ct) =>
+            _mediator.Send(new AcceptEmailCommand(email, subject, body), ct);
     }
 }

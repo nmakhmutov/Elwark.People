@@ -2,9 +2,8 @@ version: '3.7'
 
 networks:
   elwarknetwork:
-    external:
-      name: elwark_network
-      
+    name: elwark_network
+
 services:
 
   people.gateway:
@@ -39,7 +38,7 @@ services:
       - "5002:80"
     networks:
       - elwarknetwork
-        
+
   people.worker:
     container_name: "people_worker"
     image: "elwark/people-worker:${TAG:-latest}"

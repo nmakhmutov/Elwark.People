@@ -1,6 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
 using People.Api.Application.Models;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 using People.Grpc.Common;
 
 namespace People.Api.Mappers

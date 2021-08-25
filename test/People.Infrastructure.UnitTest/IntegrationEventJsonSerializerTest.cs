@@ -1,90 +1,148 @@
 using System;
-using People.Domain.Aggregates.EmailProvider;
+using People.Domain.Aggregates.EmailProviderAggregate;
 using People.Infrastructure.IntegrationEvents;
 using Xunit;
 
-namespace People.Infrastructure.UnitTest;
-
-public class IntegrationEventJsonSerializerTest
+namespace People.Infrastructure.UnitTest
 {
-    [Fact]
-    public void AccountCreatedIntegrationEvent_SerializeTest()
+    public class IntegrationEventJsonSerializerTest
     {
-        var evt = new AccountCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, 1, "test@test.test", "::1", "en");
+        [Fact]
+        public void AccountCreatedIntegrationEvent_SerializeTest()
+        {
+            var evt = new AccountCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, 1, "test@test.test", "::1",
+                "en");
 
-        var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
-        var systemTextJson = System.Text.Json.JsonSerializer.Serialize(evt);
+            var json = System.Text.Json.JsonSerializer.Serialize(evt);
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountCreatedIntegrationEvent>(json);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
-    }
+            Assert.Equal(evt, obj);
+        }
 
-    [Fact]
-    public void AccountCreatedIntegrationEvent_DeserializeTest()
-    {
-        const string evt =
-            "{\"MessageId\":\"44f5000c-fb76-4062-a50e-585abeed7f91\",\"CreatedAt\":\"2021-08-19T11:52:08.677534Z\",\"AccountId\":1,\"Email\":\"test@test.test\",\"Ip\":\"::1\",\"Language\":\"en\"}";
+        [Fact]
+        public void AccountCreatedIntegrationEvent_DeserializeTest()
+        {
+            var evt = new AccountCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, 1, "test@test.test", "::1",
+                "en");
 
-        var newtonsoftJson = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountCreatedIntegrationEvent>(evt);
-        var systemTextJson = System.Text.Json.JsonSerializer.Deserialize<AccountCreatedIntegrationEvent>(evt);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
+            var obj = System.Text.Json.JsonSerializer.Deserialize<AccountCreatedIntegrationEvent>(json);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
-    }
+            Assert.Equal(evt, obj);
+        }
 
-    [Fact]
-    public void AccountInfoReceivedIntegrationEvent_SerializeTest()
-    {
-        var evt = new AccountInfoReceivedIntegrationEvent(
-            Guid.NewGuid(),
-            DateTime.UtcNow,
-            1,
-            "::1",
-            "us",
-            null,
-            null,
-            "name",
-            "not name",
-            null,
-            new Uri("http://localhost")
-        );
+        [Fact]
+        public void AccountInfoReceivedIntegrationEvent_SerializeTest()
+        {
+            var evt = new AccountInfoReceivedIntegrationEvent(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                1,
+                "::1",
+                "us",
+                null,
+                null,
+                "name",
+                "not name",
+                null,
+                new Uri("http://localhost")
+            );
 
-        var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
-        var systemTextJson = System.Text.Json.JsonSerializer.Serialize(evt);
+            var json = System.Text.Json.JsonSerializer.Serialize(evt);
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountInfoReceivedIntegrationEvent>(json);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
-    }
+            Assert.Equal(evt, obj);
+        }
 
-    [Fact]
-    public void AccountInfoReceivedIntegrationEvent_DeserializeTest()
-    {
-        const string evt =
-            "{\"MessageId\":\"d52e8c38-ba75-4fce-b4af-88ba3dda7d07\",\"CreatedAt\":\"2021-08-19T11:56:30.393241Z\",\"AccountId\":1,\"Ip\":\"::1\",\"CountryCode\":\"us\",\"City\":null,\"Timezone\":null,\"FirstName\":\"name\",\"LastName\":\"not name\",\"AboutMe\":null,\"Image\":\"http://localhost\"}";
+        [Fact]
+        public void AccountInfoReceivedIntegrationEvent_DeserializeTest()
+        {
+            var evt = new AccountInfoReceivedIntegrationEvent(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                1,
+                "::1",
+                "us",
+                null,
+                null,
+                "name",
+                "not name",
+                null,
+                new Uri("http://localhost")
+            );
 
-        var newtonsoftJson = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountInfoReceivedIntegrationEvent>(evt);
-        var systemTextJson = System.Text.Json.JsonSerializer.Deserialize<AccountInfoReceivedIntegrationEvent>(evt);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
+            var obj = System.Text.Json.JsonSerializer.Deserialize<AccountInfoReceivedIntegrationEvent>(json);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
-    }
+            Assert.Equal(evt, obj);
+        }
 
-    [Fact]
-    public void ProviderExpiredIntegrationEvent_SerializationTest()
-    {
-        var evt = new ProviderExpiredIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, EmailProviderType.Gmail);
+        [Fact]
+        public void ProviderExpiredIntegrationEvent_SerializationTest()
+        {
+            var evt = new ProviderExpiredIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, EmailProvider.Type.Gmail);
 
-        var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
-        var systemTextJson = System.Text.Json.JsonSerializer.Serialize(evt);
+            var json = System.Text.Json.JsonSerializer.Serialize(evt);
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ProviderExpiredIntegrationEvent>(json);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
-    }
+            Assert.Equal(evt, obj);
+        }
 
-    [Fact]
-    public void ProviderExpiredIntegrationEvent_DeserializationTest()
-    {
-        const string evt =
-            "{\"MessageId\":\"a48a0185-4639-499c-aa4a-a76bf1da2585\",\"CreatedAt\":\"2021-08-19T12:00:29.006728Z\",\"Type\":2}";
+        [Fact]
+        public void ProviderExpiredIntegrationEvent_DeserializationTest()
+        {
+            var evt = new ProviderExpiredIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, EmailProvider.Type.Gmail);
 
-        var newtonsoftJson = Newtonsoft.Json.JsonConvert.DeserializeObject<ProviderExpiredIntegrationEvent>(evt);
-        var systemTextJson = System.Text.Json.JsonSerializer.Deserialize<ProviderExpiredIntegrationEvent>(evt);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
+            var obj = System.Text.Json.JsonSerializer.Deserialize<ProviderExpiredIntegrationEvent>(json);
 
-        Assert.Equal(newtonsoftJson, systemTextJson);
+            Assert.Equal(evt, obj);
+        }
+
+        [Fact]
+        public void AccountUpdatedIntegrationEvent_SerializationTest()
+        {
+            var evt = new AccountUpdatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, 1);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(evt);
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<AccountUpdatedIntegrationEvent>(json);
+
+            Assert.Equal(evt, obj);
+        }
+
+        [Fact]
+        public void AccountUpdatedIntegrationEvent_DeserializationTest()
+        {
+            var evt = new AccountUpdatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, 1);
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
+            var obj = System.Text.Json.JsonSerializer.Deserialize<AccountUpdatedIntegrationEvent>(json);
+
+            Assert.Equal(evt, obj);
+        }
+
+        [Fact]
+        public void EmailMessageCreatedIntegrationEvent_SerializationTest()
+        {
+            var evt = new EmailMessageCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, "email", "subject",
+                "body");
+
+            var json = System.Text.Json.JsonSerializer.Serialize(evt);
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<EmailMessageCreatedIntegrationEvent>(json);
+
+            Assert.Equal(evt, obj);
+        }
+
+        [Fact]
+        public void EmailMessageCreatedIntegrationEvent_DeserializationTest()
+        {
+            var evt = new EmailMessageCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, "email", "subject",
+                "body");
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
+            var obj = System.Text.Json.JsonSerializer.Deserialize<EmailMessageCreatedIntegrationEvent>(json);
+
+            Assert.Equal(evt, obj);
+        }
     }
 }

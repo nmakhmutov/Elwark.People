@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Infrastructure.Sequences
 {
-    public class SequenceGenerator : ISequenceGenerator
+    internal sealed class SequenceGenerator : ISequenceGenerator
     {
         private const string SequenceName = nameof(SequenceName);
 

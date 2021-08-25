@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using MediatR;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Domain.Events
 {

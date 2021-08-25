@@ -3,7 +3,8 @@ namespace People.Domain.Exceptions
     public static class ElwarkExceptionCodes
     {
         public const string Internal = nameof(Internal);
-        
+
+        public const string Required = nameof(Required);
         public const string AccountNotFound = nameof(AccountNotFound);
         public const string AccountBanned = nameof(AccountBanned);
 
@@ -29,7 +30,7 @@ namespace People.Domain.Exceptions
 
         public const string ProviderUnauthorized = nameof(ProviderUnauthorized);
         public const string ProviderUnknown = nameof(ProviderUnknown);
-        public const string ProviderAlreadyExists = nameof(ProviderAlreadyExists);
+        public const string ConnectionAlreadyExists = nameof(ConnectionAlreadyExists);
 
         public const string ConfirmationAlreadySent = nameof(ConfirmationAlreadySent);
         public const string ConfirmationNotMatch = nameof(ConfirmationNotMatch);

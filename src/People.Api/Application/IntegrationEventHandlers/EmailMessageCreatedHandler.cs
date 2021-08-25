@@ -1,7 +1,7 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 using MediatR;
-using People.Api.Application.Commands.Email;
+using People.Api.Application.Commands.SendEmail;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
 

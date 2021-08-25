@@ -1,12 +1,11 @@
 using System.Net;
 using System.Threading.Tasks;
-using People.Api.Infrastructure.IpAddress;
-using People.Domain.Aggregates.Account;
+using People.Domain.Aggregates.AccountAggregate;
 using People.Infrastructure.Countries;
 using People.Infrastructure.IntegrationEvents;
 using People.Infrastructure.Kafka;
 using People.Infrastructure.Timezones;
-using Timezone = People.Domain.Aggregates.Account.Timezone;
+using Timezone = People.Domain.Aggregates.AccountAggregate.Timezone;
 
 namespace People.Api.Application.IntegrationEventHandlers
 {
@@ -36,7 +35,7 @@ namespace People.Api.Application.IntegrationEventHandlers
             var timezone = string.IsNullOrEmpty(message.Timezone)
                 ? account.TimeInfo.Timezone
                 : await GetTimezoneAsync(message.Timezone);
-            account.SetRegistration(IPAddress.Parse(message.Ip), countryCode, _ipAddressHasher.CreateHash);
+            account.SetRegistration(IPAddress.Parse(message.Ip), countryCode, _ipAddressHasher);
 
             account.Update(account.Name with
                 {

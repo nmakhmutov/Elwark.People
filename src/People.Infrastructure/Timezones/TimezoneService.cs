@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace People.Infrastructure.Timezones
 {
-    public sealed class TimezoneService : ITimezoneService
+    internal sealed class TimezoneService : ITimezoneService
     {
         private readonly InfrastructureDbContext _dbContext;
 

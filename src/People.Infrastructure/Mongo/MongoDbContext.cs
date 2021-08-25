@@ -9,7 +9,7 @@ namespace People.Infrastructure.Mongo
     {
         protected readonly IMongoDatabase Database;
 
-        protected MongoDbContext(DbContextSettings settings)
+        protected MongoDbContext(MongoDbOptions settings)
         {
             var mongoSettings = MongoClientSettings.FromUrl(new MongoUrl(settings.ConnectionString));
             // mongoSettings.ClusterConfigurator =

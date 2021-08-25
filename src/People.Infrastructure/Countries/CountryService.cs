@@ -6,7 +6,7 @@ using People.Domain;
 
 namespace People.Infrastructure.Countries
 {
-    public sealed class CountryService : ICountryService
+    internal sealed class CountryService : ICountryService
     {
         private readonly InfrastructureDbContext _dbContext;
 

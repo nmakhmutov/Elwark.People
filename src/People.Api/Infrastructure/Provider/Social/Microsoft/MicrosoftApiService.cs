@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using People.Domain.Aggregates.Account.Identities;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Provider.Social.Microsoft
@@ -44,8 +44,8 @@ namespace People.Api.Infrastructure.Provider.Social.Microsoft
                         throw new InvalidOperationException("Microsoft email not found");
 
             return new MicrosoftAccount(
-                new MicrosoftIdentity(id),
-                new EmailIdentity(email),
+                new Identity.Microsoft(id),
+                new Identity.Email(email),
                 json.Value<string>("givenName"),
                 json.Value<string>("surname")
             );

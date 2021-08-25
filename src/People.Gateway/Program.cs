@@ -32,7 +32,7 @@ AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
-Log.Logger = HostExtensions.CreateLogger(configuration, environment, appName);
+Log.Logger = HostExtensions.CreateLogger(configuration, appName);
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddConfiguration(configuration);

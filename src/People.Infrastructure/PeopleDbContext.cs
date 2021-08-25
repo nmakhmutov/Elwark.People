@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using People.Domain.Aggregates.Account;
-using People.Domain.Aggregates.Account.Identities;
-using People.Domain.Aggregates.EmailProvider;
+using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.Aggregates.EmailProviderAggregate;
 using People.Domain.SeedWork;
 using People.Infrastructure.Mongo;
 using People.Infrastructure.Sequences;
@@ -20,11 +20,7 @@ namespace People.Infrastructure
             BsonSerializer.RegisterSerializer(new CountryCodeSerializer());
             BsonSerializer.RegisterSerializer(new LanguageSerializer());
 
-            BsonClassMap.RegisterClassMap<Entity>(map =>
-            {
-                map.UnmapField("_domainEvents");
-                map.UnmapProperty(f => f.DomainEvents);
-            });
+            BsonClassMap.RegisterClassMap<Entity>(map => map.UnmapProperty(x => x.DomainEvents));
 
             BsonClassMap.RegisterClassMap<Entity<AccountId>>(map =>
             {
@@ -48,7 +44,7 @@ namespace People.Infrastructure
             BsonClassMap.RegisterClassMap<GoogleConnection>();
             BsonClassMap.RegisterClassMap<MicrosoftConnection>();
             
-            BsonClassMap.RegisterClassMap<Entity<EmailProviderType>>(map =>
+            BsonClassMap.RegisterClassMap<Entity<EmailProvider.Type>>(map =>
             {
                 map.AutoMap();
                 map.MapIdProperty(x => x.Id);
@@ -58,7 +54,7 @@ namespace People.Infrastructure
             BsonClassMap.RegisterClassMap<Gmail>();
         }
 
-        public PeopleDbContext(IOptions<DbContextSettings> settings)
+        public PeopleDbContext(IOptions<MongoDbOptions> settings)
             : base(settings.Value)
         {
         }
@@ -84,7 +80,7 @@ namespace People.Infrastructure
                 new CreateIndexModel<Account>(
                     Builders<Account>.IndexKeys.Combine(
                         Builders<Account>.IndexKeys.Ascending(
-                            $"{nameof(Account.Connections)}.{nameof(Connection.IdentityType)}"
+                            $"{nameof(Account.Connections)}.{nameof(Connection.ConnectionType)}"
                         ),
                         Builders<Account>.IndexKeys.Ascending(
                             $"{nameof(Account.Connections)}.{nameof(Connection.Value)}"

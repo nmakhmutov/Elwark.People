@@ -4,17 +4,24 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using MongoDB.Bson;
-using People.Api.Application.Commands;
-using People.Api.Application.Commands.Attach;
-using People.Api.Application.Commands.Password;
-using People.Api.Application.Commands.SignIn;
-using People.Api.Application.Commands.SignUp;
+using People.Api.Application.Commands.AttachEmail;
+using People.Api.Application.Commands.AttachGoogle;
+using People.Api.Application.Commands.AttachMicrosoft;
+using People.Api.Application.Commands.ConfirmConnection;
+using People.Api.Application.Commands.CreatePassword;
+using People.Api.Application.Commands.ResendSignUpConfirmation;
+using People.Api.Application.Commands.ResetPassword;
+using People.Api.Application.Commands.SignInByEmail;
+using People.Api.Application.Commands.SignInByGoogle;
+using People.Api.Application.Commands.SignInByMicrosoft;
+using People.Api.Application.Commands.SignUpByEmail;
+using People.Api.Application.Commands.SignUpByGoogle;
+using People.Api.Application.Commands.SignUpByMicrosoft;
 using People.Api.Application.Queries;
 using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
 using People.Api.Mappers;
 using People.Domain;
-using People.Domain.Aggregates.Account.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Identity;
@@ -24,8 +31,8 @@ namespace People.Api.Grpc
 {
     public sealed class IdentityService : Identity.IdentityBase
     {
-        private readonly IMediator _mediator;
         private readonly IGoogleApiService _google;
+        private readonly IMediator _mediator;
         private readonly IMicrosoftApiService _microsoft;
 
         public IdentityService(IMediator mediator, IGoogleApiService google, IMicrosoftApiService microsoft)
@@ -59,7 +66,7 @@ namespace People.Api.Grpc
         public override async Task<SignInReply> SignInByEmail(SignInByEmailRequest request, ServerCallContext context)
         {
             var command = new SignInByEmailCommand(
-                new EmailIdentity(request.Email),
+                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(request.Email),
                 request.Password,
                 ParseIpAddress(request.Ip)
             );
@@ -91,7 +98,7 @@ namespace People.Api.Grpc
         public override async Task<SignUpReply> SignUpByEmail(SignUpByEmailRequest request, ServerCallContext context)
         {
             var command = new SignUpByEmailCommand(
-                new EmailIdentity(request.Email),
+                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(request.Email),
                 request.Password,
                 new Language(request.Language),
                 ParseIpAddress(request.Ip)
@@ -147,7 +154,7 @@ namespace People.Api.Grpc
 
         public override async Task<Empty> ConfirmSignUp(ConfirmSignUpRequest request, ServerCallContext context)
         {
-            var command = new ConfirmIdentityCommand(
+            var command = new ConfirmConnectionCommand(
                 request.Id.ToAccountId(),
                 new ObjectId(request.Confirm.Id),
                 request.Confirm.Code
@@ -157,7 +164,8 @@ namespace People.Api.Grpc
             return new Empty();
         }
 
-        public override async Task<Confirming> ResendSignUpConfirmation(ResendSignUpConfirmationRequest request, ServerCallContext context)
+        public override async Task<Confirming> ResendSignUpConfirmation(ResendSignUpConfirmationRequest request,
+            ServerCallContext context)
         {
             var command = new ResendSignUpConfirmationCommand(request.Id.ToAccountId(), new Language(request.Language));
             var confirmationId = await _mediator.Send(command, context.CancellationToken);
@@ -170,7 +178,8 @@ namespace People.Api.Grpc
 
         public override async Task<Empty> AttachEmail(AttachRequest request, ServerCallContext context)
         {
-            var command = new AttachEmailCommand(request.Id.ToAccountId(), new EmailIdentity(request.Value));
+            var command = new AttachEmailCommand(request.Id.ToAccountId(),
+                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(request.Value));
             await _mediator.Send(command, context.CancellationToken);
 
             return new Empty();

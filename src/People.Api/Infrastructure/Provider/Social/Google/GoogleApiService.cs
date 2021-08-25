@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using People.Domain.Aggregates.Account.Identities;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Provider.Social.Google
@@ -48,8 +48,8 @@ namespace People.Api.Infrastructure.Provider.Social.Google
             var picture = json.Value<string?>("picture");
             
             return new GoogleAccount(
-                new GoogleIdentity(id),
-                new EmailIdentity(email),
+                new Identity.Google(id),
+                new Identity.Email(email),
                 json.Value<bool>("verified_email"),
                 json.Value<string?>("given_name"),
                 json.Value<string?>("family_name"),

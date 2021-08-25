@@ -6,13 +6,13 @@ using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
 using People.Infrastructure.Forbidden;
 using People.Infrastructure.Mongo;
-using People.Infrastructure.Timezones;
+using Timezone = People.Infrastructure.Timezones.Timezone;
 
 namespace People.Infrastructure
 {
     public sealed class InfrastructureDbContext : MongoDbContext
     {
-        public InfrastructureDbContext(IOptions<DbContextSettings> settings)
+        public InfrastructureDbContext(IOptions<MongoDbOptions> settings)
             : base(settings.Value)
         {
         }
@@ -41,14 +41,14 @@ namespace People.Infrastructure
             await CreateIndexesAsync(Countries,
                 new CreateIndexModel<Country>(
                     Builders<Country>.IndexKeys.Ascending(x => x.Alpha2Code),
-                    new CreateIndexOptions {Name = "Alpha2Code", Unique = true}
+                    new CreateIndexOptions { Name = "Alpha2Code", Unique = true }
                 )
             );
 
             await CreateIndexesAsync(Timezones,
                 new CreateIndexModel<Timezone>(
                     Builders<Timezone>.IndexKeys.Ascending(x => x.Name),
-                    new CreateIndexOptions {Name = "Name", Unique = true}
+                    new CreateIndexOptions { Name = "Name", Unique = true }
                 )
             );
 
@@ -58,21 +58,21 @@ namespace People.Infrastructure
                         Builders<ForbiddenItem>.IndexKeys.Ascending(x => x.Type),
                         Builders<ForbiddenItem>.IndexKeys.Ascending(x => x.Value)
                     ),
-                    new CreateIndexOptions {Name = "Type_Value", Unique = true}
+                    new CreateIndexOptions { Name = "Type_Value", Unique = true }
                 )
             );
 
             await CreateIndexesAsync(Confirmations,
                 new CreateIndexModel<Confirmation>(
                     Builders<Confirmation>.IndexKeys.Descending(x => x.ExpireAt),
-                    new CreateIndexOptions {Name = "ExpireAt", ExpireAfter = TimeSpan.Zero}
+                    new CreateIndexOptions { Name = "ExpireAt", ExpireAfter = TimeSpan.Zero }
                 ),
                 new CreateIndexModel<Confirmation>(
                     Builders<Confirmation>.IndexKeys.Combine(
                         Builders<Confirmation>.IndexKeys.Ascending(x => x.AccountId),
                         Builders<Confirmation>.IndexKeys.Descending(x => x.ExpireAt)
                     ),
-                    new CreateIndexOptions {Name = "AccountId_ExpireAt"}
+                    new CreateIndexOptions { Name = "AccountId_ExpireAt" }
                 )
             );
         }

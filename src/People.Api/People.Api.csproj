@@ -23,7 +23,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.1" />
     </ItemGroup>
 
     <ItemGroup>
