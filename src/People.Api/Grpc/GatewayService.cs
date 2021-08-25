@@ -260,7 +260,7 @@ namespace People.Api.Grpc
             await (request.IdentityCase switch
             {
                 SendEmailRequest.IdentityOneofCase.Email =>
-                    SendEmailAsync(new MailAddress(request.Email), request.Subject, request.Body, context.CancellationToken),
+                    SendEmailAsync(new Identity.Email(request.Email), request.Subject, request.Body, context.CancellationToken),
 
                 SendEmailRequest.IdentityOneofCase.Id =>
                     SendEmailAsync(request.Id.Value, request.Subject, request.Body, context.CancellationToken),
@@ -279,10 +279,10 @@ namespace People.Api.Grpc
             if (account is null)
                 return;
 
-            await SendEmailAsync(new MailAddress(account.GetPrimaryEmail().Identity.Value), subject, body, ct);
+            await SendEmailAsync(account.GetPrimaryEmail().Identity, subject, body, ct);
         }
 
-        private Task SendEmailAsync(MailAddress email, string subject, string body, CancellationToken ct) =>
+        private Task SendEmailAsync(Identity.Email email, string subject, string body, CancellationToken ct) =>
             _mediator.Send(new AcceptEmailCommand(email, subject, body), ct);
     }
 }
