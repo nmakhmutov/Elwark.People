@@ -16,23 +16,23 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - Urls__Identity=http://identity
-      - Urls__People.Api=http://people_api
-      - Urls__People.Notification=http://people_notification
+      - Urls__People.Account.Api=http://people_account_api
+      - Urls__People.Notification.Api=http://people_notification_api
     ports:
       - "5001:80"
     networks:
       - elwarknetwork
 
-  people.api:
-    container_name: "people_api"
-    image: "elwark/people-api:${TAG:-latest}"
+  people.account:
+    container_name: "people_account_api"
+    image: "elwark/people-account-api:${TAG:-latest}"
     build:
       context: .
-      dockerfile: People.Api/Dockerfile
+      dockerfile: People.Account.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - Grpc__Port=80
-      - Mongodb__ConnectionString=mongodb://master_account:master_password@mongo
+      - Kestrel__EndPoints__Grpc__Url=http://+:80
+      - Mongodb__ConnectionString=mongodb://mongo-1,mongo-2/?replicaSet=rs0
       - Kafka__Servers=broker:29092
     ports:
       - "5002:80"
@@ -40,17 +40,33 @@ services:
       - elwarknetwork
 
   people.worker:
-    container_name: "people_worker"
+    container_name: "people_account_worker"
     image: "elwark/people-worker:${TAG:-latest}"
     build:
       context: .
-      dockerfile: People.Worker/Dockerfile
+      dockerfile: People.Account.Worker/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - Mongodb__ConnectionString=mongodb://master_account:master_password@mongo
+      - Mongodb__ConnectionString=mongodb://mongo-1,mongo-2/?replicaSet=rs0
       - Kafka__Servers=broker:29092
     ports:
       - "5003:80"
+    networks:
+      - elwarknetwork
+
+  people.notification:
+    container_name: "people_notification_api"
+    image: "elwark/people-notification-api:${TAG:-latest}"
+    build:
+      context: .
+      dockerfile: People.Notification.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Kestrel__EndPoints__Grpc__Url=http://+:80
+      - Mongodb__ConnectionString=mongodb://mongo-1,mongo-2/?replicaSet=rs0
+      - Kafka__Servers=broker:29092
+    ports:
+      - "5004:80"
     networks:
       - elwarknetwork

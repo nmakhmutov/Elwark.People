@@ -37,7 +37,7 @@ namespace People.Domain.Exceptions
         public const string ConfirmationNotFound = nameof(ConfirmationNotFound);
 
         public const string CountryCodeNotFound = nameof(CountryCodeNotFound);
-        public const string TimezoneNotFound = nameof(TimezoneNotFound);
+        public const string TimeZoneNotFound = nameof(TimeZoneNotFound);
         public const string PrimaryEmailCannotBeRemoved = nameof(PrimaryEmailCannotBeRemoved);
         public const string PrimaryEmailCannotBeChanged = nameof(PrimaryEmailCannotBeChanged);
     }

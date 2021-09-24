@@ -16,12 +16,6 @@ enum Gender {
   MALE = 1;
 }
 
-enum EmailType {
-  NONE = 0;
-  PRIMARY_EMAIL = 1;
-  SECONDARY_EMAIL = 2;
-}
-
 enum DayOfWeek
 {
   SUNDAY = 0;
@@ -60,14 +54,9 @@ message Address {
   string city_name = 2;
 }
 
-message Timezone {
+message TimeZone {
   string Name = 1;
   google.protobuf.Duration offset = 2;
-}
-
-message TimeInfo {
-  Timezone timezone = 1;
-  DayOfWeek first_day_of_week = 2;
 }
 
 message Ban {

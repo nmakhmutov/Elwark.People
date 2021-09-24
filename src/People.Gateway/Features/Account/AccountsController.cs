@@ -8,28 +8,32 @@ using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
 using People.Gateway.Mappers;
 using People.Grpc.Common;
+using People.Grpc.Notification;
 
 namespace People.Gateway.Features.Account
 {
     [ApiController, Route("accounts")]
     public sealed class AccountsController : ControllerBase
     {
-        private readonly Grpc.Gateway.Gateway.GatewayClient _client;
+        private readonly Grpc.Gateway.Gateway.GatewayClient _gateway;
+        private readonly NotificationService.NotificationServiceClient _notification;
         private readonly IIdentityService _identity;
 
-        public AccountsController(Grpc.Gateway.Gateway.GatewayClient client, IIdentityService identity)
+        public AccountsController(Grpc.Gateway.Gateway.GatewayClient gateway, IIdentityService identity,
+            NotificationService.NotificationServiceClient notification)
         {
-            _client = client;
+            _gateway = gateway;
             _identity = identity;
+            _notification = notification;
         }
 
         [HttpGet("me"), Authorize(Policy = Policy.RequireAccountId)]
         public async Task<ActionResult> GetAsync(CancellationToken ct)
         {
-            var account = await _client.GetProfileAsync(_identity.GetAccountId(), cancellationToken: ct);
+            var account = await _gateway.GetProfileAsync(_identity.GetAccountId(), cancellationToken: ct);
 
             return Ok(
-                new Models.Account(
+                new Account(
                     account.Id.Value,
                     account.Name.Nickname,
                     account.Name.FirstName,
@@ -41,7 +45,8 @@ namespace People.Gateway.Features.Account
                     account.Bio,
                     account.Picture,
                     account.Address.ToAddress(),
-                    account.TimeInfo.ToTimeInfo(),
+                    account.TimeZone,
+                    account.FirstDayOfWeek.ToDayOfWeek(),
                     account.Ban is not null
                 )
             );
@@ -50,10 +55,10 @@ namespace People.Gateway.Features.Account
         [HttpGet("{id:long}"), Authorize(Policy = Policy.RequireCommonAccess)]
         public async Task<ActionResult> GetAsync(long id, CancellationToken ct)
         {
-            var account = await _client.GetProfileAsync(new AccountId {Value = id}, cancellationToken: ct);
+            var account = await _gateway.GetProfileAsync(new AccountId { Value = id }, cancellationToken: ct);
 
             return Ok(
-                new Models.Account(
+                new Account(
                     account.Id.Value,
                     account.Name.Nickname,
                     account.Name.FirstName,
@@ -65,7 +70,8 @@ namespace People.Gateway.Features.Account
                     account.Bio,
                     account.Picture,
                     account.Address.ToAddress(),
-                    account.TimeInfo.ToTimeInfo(),
+                    account.TimeZone,
+                    account.FirstDayOfWeek.ToDayOfWeek(),
                     account.Ban is not null
                 )
             );
@@ -75,15 +81,17 @@ namespace People.Gateway.Features.Account
         public async Task<ActionResult> SendEmailAsync([FromRoute] long id, [FromBody] SendEmailRequest request,
             CancellationToken ct)
         {
-            var callOptions = new CallOptions(cancellationToken: ct);
+            var options = new CallOptions(cancellationToken: ct);
 
-            await _client.SendEmailAsync(new Grpc.Gateway.SendEmailRequest
+            var email = await _gateway.GetPrimaryEmailAsync(new AccountId { Value = id }, options);
+            
+            await _notification.SendEmailAsync(new Grpc.Notification.SendEmailRequest
                 {
-                    Id = new AccountId {Value = id},
+                    Email = email.Value,
                     Body = request.Body,
                     Subject = request.Subject
                 },
-                callOptions
+                options
             );
 
             return Accepted();

@@ -1,6 +1,5 @@
 using System;
-using People.Domain.Aggregates.EmailProviderAggregate;
-using People.Infrastructure.IntegrationEvents;
+using People.Integration.Event;
 using Xunit;
 
 namespace People.Infrastructure.UnitTest
@@ -73,28 +72,6 @@ namespace People.Infrastructure.UnitTest
 
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
             var obj = System.Text.Json.JsonSerializer.Deserialize<AccountInfoReceivedIntegrationEvent>(json);
-
-            Assert.Equal(evt, obj);
-        }
-
-        [Fact]
-        public void ProviderExpiredIntegrationEvent_SerializationTest()
-        {
-            var evt = new ProviderExpiredIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, EmailProvider.Type.Gmail);
-
-            var json = System.Text.Json.JsonSerializer.Serialize(evt);
-            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<ProviderExpiredIntegrationEvent>(json);
-
-            Assert.Equal(evt, obj);
-        }
-
-        [Fact]
-        public void ProviderExpiredIntegrationEvent_DeserializationTest()
-        {
-            var evt = new ProviderExpiredIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, EmailProvider.Type.Gmail);
-
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
-            var obj = System.Text.Json.JsonSerializer.Deserialize<ProviderExpiredIntegrationEvent>(json);
 
             Assert.Equal(evt, obj);
         }

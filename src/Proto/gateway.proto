@@ -1,7 +1,6 @@
 syntax = "proto3";
 import "common.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
@@ -9,10 +8,12 @@ option csharp_namespace = "People.Grpc.Gateway";
 
 service Gateway {
   rpc GetProfile (people.AccountId) returns (ProfileReply);
+  rpc GetPrimaryEmail(people.AccountId) returns (Connection);
+  
   rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);
   rpc ConfirmingConnection(ConfirmingRequest) returns (people.Confirming);
   rpc ConfirmConnection(ConfirmRequest) returns (ProfileReply);
-  rpc ChangeEmailType(ChangeEmailTypeRequest) returns (ProfileReply);
+  rpc SetEmailAsPrimary(SetEmailAsPrimaryRequest) returns (ProfileReply);
   rpc DeleteConnection(DeleteConnectionRequest) returns (ProfileReply);
 
   rpc CreatingPassword(CreatingPasswordRequest) returns(people.Confirming);
@@ -20,25 +21,23 @@ service Gateway {
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
 
   rpc GetCountries(CountriesRequest) returns(CountriesReply);
-  rpc GetTimezones(google.protobuf.Empty) returns(TimezonesReply);
-
-  rpc SendEmail (SendEmailRequest) returns (google.protobuf.Empty);
 }
 
 message ProfileReply {
   people.AccountId id = 1;
   people.Name name = 2;
   people.Address address = 3;
-  people.TimeInfo time_info = 4;
-  string language = 5;
-  people.Gender gender = 6;
-  google.protobuf.Timestamp date_of_birth = 7;
-  google.protobuf.StringValue bio = 8;
-  string picture = 9;
-  people.Ban ban = 10;
-  bool is_password_available = 11;
-  google.protobuf.Timestamp created_at = 12;
-  repeated Connection connections = 13;
+  string time_zone = 4;
+  people.DayOfWeek first_day_of_week = 5;
+  string language = 6;
+  people.Gender gender = 7;
+  google.protobuf.Timestamp date_of_birth = 8;
+  google.protobuf.StringValue bio = 9;
+  string picture = 10;
+  people.Ban ban = 11;
+  bool is_password_available = 12;
+  google.protobuf.Timestamp created_at = 13;
+  repeated Connection connections = 14;
 }
 
 message Connection {
@@ -53,7 +52,7 @@ message Connection {
 }
 
 message EmailConnection {
-  people.EmailType type = 1;
+  bool is_primary = 1;
 }
 
 message SocialConnection {
@@ -74,15 +73,6 @@ message Country {
   string name = 2;
 }
 
-message TimezonesReply {
-  repeated Timezone timezones = 1;
-}
-
-message Timezone {
-  string name = 1;
-  google.protobuf.Duration offset = 2;
-}
-
 message UpdateProfileRequest {
   people.AccountId id = 1;
   google.protobuf.StringValue first_name = 2;
@@ -95,7 +85,7 @@ message UpdateProfileRequest {
   google.protobuf.StringValue bio = 9;
   string country_code = 10;
   google.protobuf.StringValue city_name = 11;
-  string timezone = 12;
+  string time_zone = 12;
   people.DayOfWeek first_day_of_week = 13;
 }
 
@@ -111,10 +101,9 @@ message ConfirmRequest {
   people.Confirm confirm = 3;
 }
 
-message ChangeEmailTypeRequest {
+message SetEmailAsPrimaryRequest {
   people.AccountId id = 1;
   string email = 2;
-  people.EmailType type = 3;
 }
 
 message DeleteConnectionRequest{
@@ -138,12 +127,3 @@ message UpdatePasswordRequest{
   string new_password = 3;
 }
 
-message SendEmailRequest {
-  oneof Identity {
-    string email = 1;
-    people.AccountId id = 2;
-  }
-
-  string subject = 3;
-  string body = 4;
-}

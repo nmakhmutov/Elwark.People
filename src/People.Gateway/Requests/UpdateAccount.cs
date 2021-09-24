@@ -7,7 +7,7 @@ namespace People.Gateway.Requests
 {
     public sealed record UpdateAccount(string? FirstName, string? LastName, string Nickname, bool PreferNickname,
         string Language, Gender Gender, DateTime DateOfBirth, string? Bio, string? CountryCode, string? CityName,
-        string Timezone, DayOfWeek FirstDayOfWeek)
+        string TimeZone, DayOfWeek FirstDayOfWeek)
     {
         public sealed class Validator : AbstractValidator<UpdateAccount>
         {
@@ -31,7 +31,7 @@ namespace People.Gateway.Requests
                     .NotEmpty()
                     .Length(2);
 
-                RuleFor(x => x.Timezone)
+                RuleFor(x => x.TimeZone)
                     .NotEmpty();
 
                 RuleFor(x => x.FirstDayOfWeek)

@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
+using People.Gateway.Features.Profile;
 using People.Gateway.Models;
 using People.Grpc.Gateway;
-using Connection = People.Gateway.Models.Connection;
-using EmailConnection = People.Gateway.Models.EmailConnection;
-using SocialConnection = People.Gateway.Models.SocialConnection;
-using Timezone = People.Gateway.Features.Timezone.Timezone;
+using Connection = People.Gateway.Features.Profile.Connection;
+using EmailConnection = People.Gateway.Features.Profile.EmailConnection;
+using SocialConnection = People.Gateway.Features.Profile.SocialConnection;
 
 namespace People.Gateway.Mappers
 {
@@ -26,14 +26,15 @@ namespace People.Gateway.Mappers
                 profile.Bio,
                 profile.Picture,
                 profile.Address.ToAddress(),
-                profile.TimeInfo.ToTimeInfo(),
+                profile.TimeZone,
+                profile.FirstDayOfWeek.ToDayOfWeek(),
                 profile.Ban.ToBan(),
                 profile.IsPasswordAvailable,
                 profile.CreatedAt.ToDateTime(),
                 profile.Connections.Select(x => (Connection) (x.ConnectionTypeCase switch
                 {
                     Grpc.Gateway.Connection.ConnectionTypeOneofCase.Email =>
-                        new EmailConnection(x.Type, x.Value, x.IsConfirmed, x.Email.Type),
+                        new EmailConnection(x.Type, x.Value, x.IsConfirmed, x.Email.IsPrimary),
 
                     Grpc.Gateway.Connection.ConnectionTypeOneofCase.Social =>
                         new SocialConnection(x.Type, x.Value, x.IsConfirmed, x.Social.FirstName, x.Social.LastName),
@@ -45,15 +46,9 @@ namespace People.Gateway.Mappers
         public static Address ToAddress(this Grpc.Common.Address address) =>
             new(
                 string.IsNullOrEmpty(address.CountryCode) ? null : address.CountryCode,
-                string.IsNullOrEmpty(address.CountryCode) ? null : address.CityName
+                string.IsNullOrEmpty(address.CityName) ? null : address.CityName
             );
 
-        public static Timezone ToTimezone(this Grpc.Common.Timezone timezone) =>
-            new(timezone.Name, timezone.Offset.ToTimeSpan());
-
-        public static TimeInfo ToTimeInfo(this Grpc.Common.TimeInfo timeInfo) =>
-            new(timeInfo.Timezone.ToTimezone(), timeInfo.FirstDayOfWeek.ToDayOfWeek());
-        
         public static Ban? ToBan(this Grpc.Common.Ban? ban) =>
             ban is null ? null : new Ban(ban.Reason, ban.ExpiresAt?.ToDateTime());
         

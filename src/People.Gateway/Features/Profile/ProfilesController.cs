@@ -10,7 +10,6 @@ using People.Gateway.Mappers;
 using People.Gateway.Requests;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
-using Confirming = People.Gateway.Models.Confirming;
 using Confirm = People.Gateway.Requests.ConfirmRequest;
 using ConfirmRequest = People.Grpc.Gateway.ConfirmRequest;
 using Identity = People.Grpc.Common.Identity;
@@ -52,7 +51,7 @@ namespace People.Gateway.Features.Profile
                     Language = request.Language,
                     Nickname = request.Nickname,
                     PreferNickname = request.PreferNickname,
-                    Timezone = request.Timezone,
+                    TimeZone = request.TimeZone,
                     FirstDayOfWeek = request.FirstDayOfWeek.ToDayOfWeek(),
                     CityName = string.IsNullOrEmpty(request.CityName) ? null : request.CityName,
                     CountryCode = request.CountryCode,
@@ -109,14 +108,13 @@ namespace People.Gateway.Features.Profile
             return Ok(profile.ToProfile());
         }
 
-        [HttpPut("connections/email/{value}/{email}")]
-        public async Task<ActionResult> UpdateIdentityAsync(string value, EmailType email, CancellationToken ct)
+        [HttpPut("connections/email/{value}/primary")]
+        public async Task<ActionResult> SetAsPrimaryAsync(string value, CancellationToken ct)
         {
-            var profile = await _client.ChangeEmailTypeAsync(new ChangeEmailTypeRequest
+            var profile = await _client.SetEmailAsPrimaryAsync(new SetEmailAsPrimaryRequest
                 {
                     Id = _identity.GetAccountId(),
-                    Email = value,
-                    Type = email
+                    Email = value
                 },
                 cancellationToken: ct
             );

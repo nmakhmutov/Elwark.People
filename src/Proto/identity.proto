@@ -11,12 +11,12 @@ service Identity {
   rpc GetStatus (people.AccountId) returns (StatusReply);
 
   rpc SignInByEmail (SignInByEmailRequest) returns (SignInReply);
-  rpc SignInByGoogle (SignInByProviderRequest) returns (SignInReply);
-  rpc SignInByMicrosoft (SignInByProviderRequest) returns (SignInReply);
+  rpc SignInByGoogle (SignInBySocialRequest) returns (SignInReply);
+  rpc SignInByMicrosoft (SignInBySocialRequest) returns (SignInReply);
 
   rpc SignUpByEmail (SignUpByEmailRequest) returns (SignUpReply);
-  rpc SignUpByGoogle (SignUpByProviderRequest) returns (SignUpReply);
-  rpc SignUpByMicrosoft (SignUpByProviderRequest) returns (SignUpReply);
+  rpc SignUpByGoogle (SignUpBySocialRequest) returns (SignUpReply);
+  rpc SignUpByMicrosoft (SignUpBySocialRequest) returns (SignUpReply);
   rpc IsConfirmationAvailable (people.Confirming) returns (people.AccountId);
   rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
   rpc ResendSignUpConfirmation (ResendSignUpConfirmationRequest) returns (people.Confirming);
@@ -36,7 +36,7 @@ message SignInByEmailRequest {
   string language = 4;
 }
 
-message SignInByProviderRequest {
+message SignInBySocialRequest {
   string access_token = 1;
   string ip = 2;
   string language = 3;
@@ -49,7 +49,7 @@ message SignUpByEmailRequest {
   string language = 4;
 }
 
-message SignUpByProviderRequest {
+message SignUpBySocialRequest {
   string access_token = 1;
   string ip = 2;
   string language = 3;
@@ -92,15 +92,16 @@ message AccountReply {
   people.Name name = 2;
   people.PrimaryEmail email = 3;
   people.Address address = 4;
-  people.TimeInfo time_info = 5;
-  string language = 6;
-  people.Gender gender = 7;
-  google.protobuf.Timestamp date_of_birth = 8;
-  google.protobuf.StringValue bio = 9;
-  string picture = 10;
-  people.Ban ban = 11;
-  google.protobuf.Timestamp updated_at = 12;
-  repeated string roles = 13;
+  string time_zone = 5;
+  people.DayOfWeek first_day_of_week = 6;
+  string language = 7;
+  people.Gender gender = 8;
+  google.protobuf.Timestamp date_of_birth = 9;
+  google.protobuf.StringValue bio = 10;
+  string picture = 11;
+  people.Ban ban = 12;
+  google.protobuf.Timestamp updated_at = 13;
+  repeated string roles = 14;
 }
 
 message StatusReply {

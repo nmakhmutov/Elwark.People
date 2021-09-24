@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
@@ -38,15 +37,6 @@ namespace People.Host
                     }
                 };
             });
-
-        public static IConfiguration CreateConfiguration(string environment, string[] args) =>
-            new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", false, true)
-                .AddJsonFile($"appsettings.{environment}.json", true)
-                .AddEnvironmentVariables()
-                .AddCommandLine(args)
-                .Build();
 
         public static ILogger CreateLogger(IConfiguration configuration, string app)
         {

@@ -1,0 +1,14 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "People.Grpc.Notification";
+
+service NotificationService {
+  rpc SendEmail (SendEmailRequest) returns (google.protobuf.Empty);
+}
+
+message SendEmailRequest {
+  string email = 1;
+  string subject = 3;
+  string body = 4;
+}

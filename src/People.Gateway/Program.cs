@@ -5,6 +5,8 @@ using CorrelationId;
 using CorrelationId.DependencyInjection;
 using CorrelationId.HttpClient;
 using FluentValidation.AspNetCore;
+using Grpc.Core;
+using Grpc.Net.Client.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -21,21 +23,17 @@ using Serilog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using People.Grpc.Notification;
 using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 const string appName = "People.Gateway";
 const string mainCors = "MainCORS";
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-var configuration = HostExtensions.CreateConfiguration(environment, args);
-
-AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
-AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
+// AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+// AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
-Log.Logger = HostExtensions.CreateLogger(configuration, appName);
-
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddConfiguration(configuration);
+Log.Logger = HostExtensions.CreateLogger(builder.Configuration, appName);
 
 builder.Services.AddCorrelationId(options =>
     {
@@ -46,7 +44,7 @@ builder.Services.AddCorrelationId(options =>
 
 builder.Services.AddCors(options =>
     options.AddPolicy(mainCors, policyBuilder => policyBuilder
-        .WithOrigins(configuration.GetSection("Urls:Cors").Get<string[]>())
+        .WithOrigins(builder.Configuration.GetSection("Urls:Cors").Get<string[]>())
         .WithMethods(HttpMethods.Get, HttpMethods.Post, HttpMethods.Put, HttpMethods.Delete)
         .AllowAnyHeader()
     ));
@@ -66,7 +64,7 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        options.Authority = configuration["Urls:Identity"];
+        options.Authority = builder.Configuration["Urls:Identity"];
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -80,12 +78,43 @@ builder.Services
 
 builder.Services
     .AddHttpContextAccessor()
-    .AddScoped<IIdentityService, IdentityService>()
-    .AddTransient<LocalizationMessageHandler>();
+    .AddScoped<IIdentityService, IdentityService>();
+
+var defaultMethodConfig = new MethodConfig
+{
+    Names = { MethodName.Default },
+    RetryPolicy = new RetryPolicy
+    {
+        MaxAttempts = 5,
+        InitialBackoff = TimeSpan.FromSeconds(1),
+        MaxBackoff = TimeSpan.FromSeconds(3),
+        BackoffMultiplier = 1,
+        RetryableStatusCodes = { StatusCode.Unavailable }
+    }
+};
 
 builder.Services
-    .AddGrpcClient<Gateway.GatewayClient>(options => options.Address = new Uri(configuration["Urls:People.Api"]))
-    .AddHttpMessageHandler<LocalizationMessageHandler>()
+    .AddGrpcClient<Gateway.GatewayClient>(options =>
+    {
+        options.Address = new Uri(builder.Configuration["Urls:People.Account.Api"]);
+        options.ChannelOptionsActions.Add(channel =>
+        {
+            channel.Credentials = ChannelCredentials.Insecure;
+            channel.ServiceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } };
+        });
+    })
+    .AddCorrelationIdForwarding();
+
+builder.Services
+    .AddGrpcClient<NotificationService.NotificationServiceClient>(options =>
+    {
+        options.Address = new Uri(builder.Configuration["Urls:People.Notification.Api"]);
+        options.ChannelOptionsActions.Add(channel =>
+        {
+            channel.Credentials = ChannelCredentials.Insecure;
+            channel.ServiceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } };
+        });
+    })
     .AddCorrelationIdForwarding();
 
 builder.Services.AddControllers(options =>
