@@ -1,6 +1,6 @@
 using System;
 
-namespace People.Domain
+namespace People.Account.Domain.Seed
 {
     public interface IHasHistory
     {

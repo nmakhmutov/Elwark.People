@@ -15,8 +15,8 @@ using People.Account.Api.Application.Commands.UpdateProfile;
 using People.Account.Api.Application.Queries.GetAccountById;
 using People.Account.Api.Mappers;
 using People.Account.Domain;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Countries;
-using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
 using Country = People.Grpc.Gateway.Country;
@@ -49,7 +49,7 @@ namespace People.Account.Api.Grpc
 
             return new Connection
             {
-                Type = email.Type.ToIdentityType(),
+                Type = email.Type.ToGrpc(),
                 Value = email.Value,
                 IsConfirmed = email.IsConfirmed,
                 Email = new EmailConnection
@@ -67,14 +67,10 @@ namespace People.Account.Api.Grpc
                 request.LastName,
                 request.Nickname,
                 request.PreferNickname,
-                request.Bio,
-                request.DateOfBirth.ToDateTime(),
-                request.Gender.FromGrpc(),
                 request.Language,
                 request.TimeZone,
-                request.FirstDayOfWeek.ToDayOfWeek(),
-                request.CountryCode,
-                request.CityName ?? string.Empty
+                request.FirstDayOfWeek.FromGrpc(),
+                request.CountryCode
             );
 
             await _mediator.Send(command, context.CancellationToken);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using People.Integration.Event;
 using People.Kafka;
 using People.Mongo;
@@ -21,11 +22,14 @@ namespace People.Notification.Api.IntegrationEventHandlers
         private readonly AsyncRetryPolicy<EmailProvider.Type?> _policy;
         private readonly IEmailProviderRepository _repository;
         private readonly IEnumerable<IEmailSender> _senders;
+        private readonly ILogger<EmailMessageCreatedHandler> _logger;
 
-        public EmailMessageCreatedHandler(IEmailProviderRepository repository, IEnumerable<IEmailSender> senders)
+        public EmailMessageCreatedHandler(IEmailProviderRepository repository, IEnumerable<IEmailSender> senders,
+            ILogger<EmailMessageCreatedHandler> logger)
         {
             _repository = repository;
             _senders = senders;
+            _logger = logger;
             _policy = Policy<EmailProvider.Type?>
                 .Handle<MongoUpdateException>()
                 .RetryForeverAsync();
@@ -47,6 +51,8 @@ namespace People.Notification.Api.IntegrationEventHandlers
                 return;
 
             await provider.SendEmailAsync(new MailAddress(message.Email), message.Subject, message.Body);
+
+            _logger.LogInformation("Message for '{C}' sent by the provider {P}", message.Email, type);
         }
 
         private async Task<EmailProvider.Type?> DequeueEmailProviderAsync()

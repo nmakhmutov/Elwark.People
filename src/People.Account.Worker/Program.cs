@@ -4,7 +4,6 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using People.Host;
 using People.Account.Infrastructure;
 using People.Account.Worker.IntegrationEventHandlers;
 using People.Account.Worker.Services.Gravatar;
@@ -13,6 +12,8 @@ using People.Integration.Event;
 using People.Kafka;
 using People.Mongo;
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Display;
 
 const string appName = "People.Account.Worker";
 var configuration = new ConfigurationBuilder()
@@ -22,7 +23,16 @@ var configuration = new ConfigurationBuilder()
     .AddCommandLine(args)
     .Build();
 
-Log.Logger = HostExtensions.CreateLogger(configuration, appName);
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("application", appName)
+    .WriteTo.Console(
+        "json".Equals(configuration["Serilog:Formatter"])
+            ? new CompactJsonFormatter()
+            : new MessageTemplateTextFormatter("[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message}{NewLine}{Exception}")
+    )
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureHostConfiguration(builder => builder.AddConfiguration(configuration))

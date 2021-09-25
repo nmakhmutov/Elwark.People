@@ -26,18 +26,15 @@ service Gateway {
 message ProfileReply {
   people.AccountId id = 1;
   people.Name name = 2;
-  people.Address address = 3;
+  google.protobuf.StringValue country_code = 3;
   string time_zone = 4;
   people.DayOfWeek first_day_of_week = 5;
   string language = 6;
-  people.Gender gender = 7;
-  google.protobuf.Timestamp date_of_birth = 8;
-  google.protobuf.StringValue bio = 9;
-  string picture = 10;
-  people.Ban ban = 11;
-  bool is_password_available = 12;
-  google.protobuf.Timestamp created_at = 13;
-  repeated Connection connections = 14;
+  string picture = 7;
+  people.Ban ban = 8;
+  bool is_password_available = 9;
+  google.protobuf.Timestamp created_at = 10;
+  repeated Connection connections = 11;
 }
 
 message Connection {
@@ -80,13 +77,9 @@ message UpdateProfileRequest {
   string nickname = 4;
   bool prefer_nickname = 5;
   string language = 6;
-  people.Gender gender = 7;
-  google.protobuf.Timestamp date_of_birth = 8;
-  google.protobuf.StringValue bio = 9;
-  string country_code = 10;
-  google.protobuf.StringValue city_name = 11;
-  string time_zone = 12;
-  people.DayOfWeek first_day_of_week = 13;
+  string country_code = 7;
+  string time_zone = 8;
+  people.DayOfWeek first_day_of_week = 9;
 }
 
 message ConfirmingRequest {

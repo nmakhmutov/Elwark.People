@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
 using People.Account.Domain.Events;
-using People.Domain;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
+using People.Account.Domain.Seed;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable FieldCanBeMadeReadOnly.Local
@@ -30,9 +30,8 @@ namespace People.Account.Domain.Aggregates.AccountAggregate
             Name = name;
             TimeZone = TimeZoneInfo.Utc.Id;
             FirstDayOfWeek = DayOfWeek.Monday;
-            Address = new Address(CountryCode.Empty, string.Empty);
+            CountryCode = CountryCode.Empty;
             Language = language;
-            Gender = Gender.Female;
             Picture = picture;
             _lastSignIn = DateTime.MinValue;
             _password = null;
@@ -47,7 +46,7 @@ namespace People.Account.Domain.Aggregates.AccountAggregate
 
         public Name Name { get; private set; }
 
-        public Address Address { get; private set; }
+        public CountryCode CountryCode { get; private set; }
 
         public string TimeZone { get; private set; }
 
@@ -55,13 +54,7 @@ namespace People.Account.Domain.Aggregates.AccountAggregate
 
         public Language Language { get; private set; }
 
-        public Gender Gender { get; private set; }
-
         public Uri Picture { get; private set; }
-
-        public string? Bio { get; private set; }
-
-        public DateTime? DateOfBirth { get; private set; }
 
         public Ban? Ban { get; private set; }
 
@@ -134,18 +127,15 @@ namespace People.Account.Domain.Aggregates.AccountAggregate
             }
         }
 
-        public void Update(Name name, Address address, string timeZone, DayOfWeek firstDayOfWeek, Language language,
-            Gender gender, Uri picture, string? bio = null, DateTime? dateOfBirth = null)
+        public void Update(Name name, CountryCode countryCode, string timeZone, DayOfWeek firstDayOfWeek,
+            Language language, Uri picture)
         {
             Name = name;
-            Address = address;
+            CountryCode = countryCode;
             TimeZone = GetTimeZone(timeZone);
             FirstDayOfWeek = firstDayOfWeek;
             Language = language;
-            Gender = gender;
             Picture = picture;
-            Bio = bio;
-            DateOfBirth = dateOfBirth;
 
             AddDomainEvent(new AccountUpdatedDomainEvent(Id, UpdatedAt));
         }

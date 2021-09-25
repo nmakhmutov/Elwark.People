@@ -14,15 +14,16 @@ namespace People.Account.Api.Infrastructure.EmailBuilder
             if (services is null)
                 throw new ArgumentNullException(nameof(services));
 
+            if (setupAction is not null)
+                services.Configure(setupAction);
+            
             services
                 .AddOptions()
                 .AddMemoryCache()
                 .AddSingleton<IEmailBuilder, EmailBuilder>()
                 .AddSingleton<IFluidRendering, FluidRendering>()
+                .AddSingleton<IFluidViewEngine, FluidViewEngine>()
                 .AddTransient<IConfigureOptions<FluidViewEngineOptions>, FluidViewEngineOptionsSetup>();
-
-            if (setupAction is not null)
-                services.Configure(setupAction);
 
             return services;
         }

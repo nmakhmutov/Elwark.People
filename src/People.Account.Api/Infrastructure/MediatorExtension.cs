@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using MediatR;
-using People.Domain;
+using People.Account.Domain.Seed;
 
 namespace People.Account.Api.Infrastructure
 {

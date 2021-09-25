@@ -21,20 +21,19 @@ namespace People.Account.Api.Application.Commands.SendConfirmation
     {
         private readonly IKafkaMessageBus _bus;
         private readonly IConfirmationService _confirmation;
-        private readonly IEmailBuilder _emailBuilder;
+        private readonly IEmailBuilder _builder;
 
-        public SendConfirmationCommandHandler(IConfirmationService confirmation, IKafkaMessageBus bus,
-            IEmailBuilder emailBuilder)
+        public SendConfirmationCommandHandler(IKafkaMessageBus bus, IConfirmationService confirmation, IEmailBuilder builder)
         {
-            _confirmation = confirmation;
             _bus = bus;
-            _emailBuilder = emailBuilder;
+            _confirmation = confirmation;
+            _builder = builder;
         }
 
         public async Task<ObjectId> Handle(SendConfirmationCommand request, CancellationToken ct)
         {
             var confirmation = await _confirmation.CreateAsync(request.Id, TimeSpan.FromMinutes(20), ct);
-            var email = await _emailBuilder.CreateEmailAsync(
+            var (subject, body) = await _builder.CreateEmailAsync(
                 $"Confirmation.{request.Language}.liquid",
                 new ConfirmationCodeModel(confirmation.Code)
             );
@@ -43,8 +42,8 @@ namespace People.Account.Api.Application.Commands.SendConfirmation
                 Guid.NewGuid(),
                 DateTime.UtcNow,
                 request.Email.Value,
-                email.Subject,
-                email.Body
+                subject,
+                body
             );
             await _bus.PublishAsync(evt, ct);
 

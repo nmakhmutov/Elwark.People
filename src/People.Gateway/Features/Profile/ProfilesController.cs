@@ -1,12 +1,11 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
-using People.Gateway.Mappers;
+using People.Gateway.Mappes;
 using People.Gateway.Requests;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
@@ -17,7 +16,7 @@ using Identity = People.Grpc.Common.Identity;
 namespace People.Gateway.Features.Profile
 {
     [ApiController, Route("profiles/me"), Authorize(Policy = Policy.RequireProfileAccess)]
-    public sealed class ProfilesController : ControllerBase
+    public sealed partial class ProfilesController : ControllerBase
     {
         private readonly Grpc.Gateway.Gateway.GatewayClient _client;
         private readonly IIdentityService _identity;
@@ -36,7 +35,7 @@ namespace People.Gateway.Features.Profile
             if (profile is null)
                 return NotFound();
 
-            return Ok(profile.ToProfile());
+            return Ok(ToProfile(profile));
         }
 
         [HttpPut]
@@ -45,15 +44,11 @@ namespace People.Gateway.Features.Profile
             var profile = await _client.UpdateProfileAsync(new UpdateProfileRequest
                 {
                     Id = _identity.GetAccountId(),
-                    Bio = string.IsNullOrEmpty(request.Bio) ? null : request.Bio,
-                    DateOfBirth = request.DateOfBirth.ToTimestamp(),
-                    Gender = request.Gender,
                     Language = request.Language,
                     Nickname = request.Nickname,
                     PreferNickname = request.PreferNickname,
                     TimeZone = request.TimeZone,
-                    FirstDayOfWeek = request.FirstDayOfWeek.ToDayOfWeek(),
-                    CityName = string.IsNullOrEmpty(request.CityName) ? null : request.CityName,
+                    FirstDayOfWeek = request.FirstDayOfWeek.ToGrpc(),
                     CountryCode = request.CountryCode,
                     FirstName = string.IsNullOrEmpty(request.FirstName) ? null : request.FirstName,
                     LastName = string.IsNullOrEmpty(request.LastName) ? null : request.LastName
@@ -61,7 +56,7 @@ namespace People.Gateway.Features.Profile
                 cancellationToken: ct
             );
 
-            return Ok(profile.ToProfile());
+            return Ok(ToProfile(profile));
         }
 
         [HttpPost("connections/{type}/{value}/confirm")]
@@ -105,7 +100,7 @@ namespace People.Gateway.Features.Profile
                 cancellationToken: ct
             );
 
-            return Ok(profile.ToProfile());
+            return Ok(ToProfile(profile));
         }
 
         [HttpPut("connections/email/{value}/primary")]
@@ -119,7 +114,7 @@ namespace People.Gateway.Features.Profile
                 cancellationToken: ct
             );
 
-            return Ok(profile.ToProfile());
+            return Ok(ToProfile(profile));
         }
 
         [HttpDelete("connections/{type}/{value}")]
@@ -137,7 +132,7 @@ namespace People.Gateway.Features.Profile
                 cancellationToken: ct
             );
 
-            return Ok(profile.ToProfile());
+            return Ok(ToProfile(profile));
         }
 
         [HttpPost("password/confirm")]
@@ -172,7 +167,7 @@ namespace People.Gateway.Features.Profile
                 cancellationToken: ct
             );
 
-            return Ok(profile.ToProfile());
+            return Ok(ToProfile(profile));
         }
 
         [HttpPut("password")]

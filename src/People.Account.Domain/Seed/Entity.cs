@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MediatR;
 
-namespace People.Domain
+namespace People.Account.Domain.Seed
 {
     public abstract class Entity
     {

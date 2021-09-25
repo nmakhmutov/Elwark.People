@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Configuration;
-using Serilog;
 
-namespace People.Host
+namespace People.Gateway.Infrastructure
 {
-    public static class HostExtensions
+    internal static class LocalizationExtensions
     {
         private const string LanguageParameterName = "Language";
 
@@ -37,21 +34,5 @@ namespace People.Host
                     }
                 };
             });
-
-        public static ILogger CreateLogger(IConfiguration configuration, string app)
-        {
-            var logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .Enrich.WithProperty("application", app);
-
-            if ("json".Equals(configuration["Serilog:Formatter"], StringComparison.InvariantCultureIgnoreCase))
-                logger.WriteTo.Console(new ElwarkSerilogFormatter());
-            else
-                logger.WriteTo.Console();
-
-            return logger
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
     }
 }

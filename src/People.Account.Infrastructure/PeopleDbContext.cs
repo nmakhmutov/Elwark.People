@@ -4,9 +4,9 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using People.Account.Domain.Aggregates.AccountAggregate;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
+using People.Account.Domain.Seed;
 using People.Account.Infrastructure.Sequences;
 using People.Account.Infrastructure.Serializers;
-using People.Domain;
 using People.Mongo;
 
 namespace People.Account.Infrastructure

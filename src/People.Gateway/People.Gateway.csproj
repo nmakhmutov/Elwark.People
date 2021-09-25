@@ -15,10 +15,7 @@
         <PackageReference Include="CorrelationId" Version="3.0.1" />
         <PackageReference Include="Google.Protobuf" Version="3.18.0" />
         <PackageReference Include="Grpc.AspNetCore" Version="2.39.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.40.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="Grpc.Tools" Version="2.40.0"/>
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
         <PackageReference Include="Serilog.AspNetCore" Version="4.1.1-dev-00229" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0-rc.1.21452.15" />
@@ -28,7 +25,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\People.Host\People.Host.csproj" />
+      <Compile Update="Features\Profile\ProfilesController.Mapper.cs">
+        <DependentUpon>ProfilesController.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

@@ -77,7 +77,7 @@ namespace People.Kafka
                     if (result.IsPartitionEOF)
                         continue;
 
-                    _logger.LogInformation("Consumer '{N}' received event '{E}' from topic '{T}'. {M}", consumer.Name,
+                    _logger.LogInformation("Consumer '{N}' received event '{E}' from topic '{T}'. {@M}", consumer.Name,
                         _config.MessageType.Name, _config.Topic, result.Message.Value);
 
                     await _policy.ExecuteAsync(async () =>

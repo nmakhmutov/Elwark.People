@@ -5,7 +5,7 @@ using MediatR;
 using People.Account.Api.Infrastructure;
 using People.Account.Domain;
 using People.Account.Domain.Aggregates.AccountAggregate;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.UpdateProfile
 {
@@ -15,14 +15,10 @@ namespace People.Account.Api.Application.Commands.UpdateProfile
         string? LastName,
         string Nickname,
         bool PreferNickname,
-        string? Bio,
-        DateTime DateOfBirth,
-        Gender Gender,
         string Language,
         string TimeZone,
         DayOfWeek FirstDayOfWeek,
-        string CountryCode,
-        string City
+        string CountryCode
     ) : IRequest;
 
     internal sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand>
@@ -44,14 +40,11 @@ namespace People.Account.Api.Application.Commands.UpdateProfile
 
             account.Update(
                 new Name(request.Nickname, request.FirstName, request.LastName, request.PreferNickname),
-                new Address(new CountryCode(request.CountryCode), request.City),
+                new CountryCode(request.CountryCode),
                 request.TimeZone,
                 request.FirstDayOfWeek,
                 new Language(request.Language),
-                request.Gender,
-                account.Picture,
-                request.Bio,
-                request.DateOfBirth
+                account.Picture
             );
 
             await _repository.UpdateAsync(account, ct);

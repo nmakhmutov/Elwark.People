@@ -1,6 +1,6 @@
 using FluentValidation;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Validators
 {

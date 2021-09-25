@@ -2,6 +2,7 @@ syntax = "proto3";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
+
 package people;
 option csharp_namespace = "People.Grpc.Common";
 
@@ -9,11 +10,6 @@ enum IdentityType {
   EMAIL = 0;
   GOOGLE = 1;
   MICROSOFT = 2;
-}
-
-enum Gender {
-  FEMALE = 0;
-  MALE = 1;
 }
 
 enum DayOfWeek
@@ -47,11 +43,6 @@ message Name {
   google.protobuf.StringValue last_name = 3;
   string full_name = 4;
   bool prefer_nickname = 5;
-}
-
-message Address {
-  string country_code = 1;
-  string city_name = 2;
 }
 
 message TimeZone {

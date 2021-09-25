@@ -1,7 +1,4 @@
 using System;
-using People.Grpc.Common;
-using Address = People.Gateway.Models.Address;
-using DayOfWeek = System.DayOfWeek;
 
 namespace People.Gateway.Features.Account
 {
@@ -12,11 +9,8 @@ namespace People.Gateway.Features.Account
         string? LastName,
         string FullName,
         string Language,
-        Gender Gender,
-        DateTime? DateOfBirth,
-        string? Bio,
         string Picture,
-        Address Address,
+        string? CountryCode,
         string TimeZone,
         DayOfWeek FirstDayOfWeek,
         bool IsBanned

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using People.Host;
 using People.Integration.Event;
 using People.Kafka;
 using People.Mongo;
@@ -21,13 +20,28 @@ using People.Notification.Api.IntegrationEventHandlers;
 using People.Notification.Api.Job;
 using Quartz;
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Display;
 
 const string appName = "People.Notification.Api";
 var builder = WebApplication.CreateBuilder(args);
 
+var logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("application", appName)
+    .WriteTo.Console(
+        "json".Equals(builder.Configuration["Serilog:Formatter"])
+            ? new CompactJsonFormatter()
+            : new MessageTemplateTextFormatter(
+                "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message}{NewLine}{Exception}")
+    )
+    .Destructure.ByTransforming<EmailMessageCreatedIntegrationEvent>(x => new { x.Email, x.Subject, x.CreatedAt })
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
 builder.Logging
     .ClearProviders()
-    .AddSerilog(HostExtensions.CreateLogger(builder.Configuration, appName));
+    .AddSerilog(logger);
 
 builder.Services
     .AddCorrelationId(options =>

@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
-using People.Domain;
+using People.Account.Domain.Seed;
 
 namespace People.Account.Domain.Aggregates.AccountAggregate
 {

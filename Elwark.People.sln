@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Gateway", "src\Peopl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Account.Worker", "src\People.Account.Worker\People.Account.Worker.csproj", "{B7709AC2-4B09-4A32-B80F-70E378ED1792}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Host", "src\People.Host\People.Host.csproj", "{9DD0077D-7ABC-4AFF-87CD-0F42783C3A0D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{4E1E34BD-54F1-400A-9C6A-C9C4EFD92221}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Infrastructure.UnitTest", "test\People.Infrastructure.UnitTest\People.Infrastructure.UnitTest.csproj", "{88FF57A2-D4E5-4A32-B462-57B4C45CBA39}"
@@ -36,8 +34,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Kafka", "src\People.Kafka\People.Kafka.csproj", "{B1578509-3930-46EA-94E3-09880AB04DCC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Integration.Event", "src\People.Integration.Event\People.Integration.Event.csproj", "{C8002B9C-C4F1-48F7-9543-C9A7FB1BB10D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Domain", "src\People.Domain\People.Domain.csproj", "{A1368CC0-9329-4D10-BD3C-F0B9B2523397}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,10 +61,6 @@ Global
 		{B7709AC2-4B09-4A32-B80F-70E378ED1792}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7709AC2-4B09-4A32-B80F-70E378ED1792}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7709AC2-4B09-4A32-B80F-70E378ED1792}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9DD0077D-7ABC-4AFF-87CD-0F42783C3A0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9DD0077D-7ABC-4AFF-87CD-0F42783C3A0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9DD0077D-7ABC-4AFF-87CD-0F42783C3A0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9DD0077D-7ABC-4AFF-87CD-0F42783C3A0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88FF57A2-D4E5-4A32-B462-57B4C45CBA39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{88FF57A2-D4E5-4A32-B462-57B4C45CBA39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88FF57A2-D4E5-4A32-B462-57B4C45CBA39}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,10 +81,6 @@ Global
 		{C8002B9C-C4F1-48F7-9543-C9A7FB1BB10D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8002B9C-C4F1-48F7-9543-C9A7FB1BB10D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8002B9C-C4F1-48F7-9543-C9A7FB1BB10D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1368CC0-9329-4D10-BD3C-F0B9B2523397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1368CC0-9329-4D10-BD3C-F0B9B2523397}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1368CC0-9329-4D10-BD3C-F0B9B2523397}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1368CC0-9329-4D10-BD3C-F0B9B2523397}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{88FF57A2-D4E5-4A32-B462-57B4C45CBA39} = {4E1E34BD-54F1-400A-9C6A-C9C4EFD92221}
@@ -109,7 +97,5 @@ Global
 		{BC5ADDD4-6B13-4372-A1E6-E62669E59FE5} = {252957EB-AD3F-4565-8648-9902DE5A58DC}
 		{B1578509-3930-46EA-94E3-09880AB04DCC} = {252957EB-AD3F-4565-8648-9902DE5A58DC}
 		{C8002B9C-C4F1-48F7-9543-C9A7FB1BB10D} = {252957EB-AD3F-4565-8648-9902DE5A58DC}
-		{A1368CC0-9329-4D10-BD3C-F0B9B2523397} = {252957EB-AD3F-4565-8648-9902DE5A58DC}
-		{9DD0077D-7ABC-4AFF-87CD-0F42783C3A0D} = {252957EB-AD3F-4565-8648-9902DE5A58DC}
 	EndGlobalSection
 EndGlobal

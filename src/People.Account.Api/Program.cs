@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Confluent.Kafka;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
@@ -19,18 +20,32 @@ using People.Account.Api.Infrastructure.Interceptors;
 using People.Account.Api.Infrastructure.Password;
 using People.Account.Api.Infrastructure.Provider.Social.Google;
 using People.Account.Api.Infrastructure.Provider.Social.Microsoft;
-using People.Host;
 using People.Account.Infrastructure;
 using People.Integration.Event;
 using People.Kafka;
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Display;
 
 const string appName = "People.Account.Api";
 var builder = WebApplication.CreateBuilder(args);
 
+var logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("application", appName)
+    .WriteTo.Console(
+        "json".Equals(builder.Configuration["Serilog:Formatter"])
+            ? new CompactJsonFormatter()
+            : new MessageTemplateTextFormatter(
+                "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message}{NewLine}{Exception}")
+    )
+    .Destructure.ByTransforming<EmailMessageCreatedIntegrationEvent>(x => new { x.Email, x.Subject, x.CreatedAt })
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
 builder.Logging
     .ClearProviders()
-    .AddSerilog(HostExtensions.CreateLogger(builder.Configuration, appName));
+    .AddSerilog(logger);
 
 builder.Services.AddOptions()
     .AddCorrelationId(options =>
@@ -78,8 +93,13 @@ var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 builder.Services
     .AddEmailBuilder(options =>
     {
+        var path = Path.Combine(builder.Environment.ContentRootPath, "Email", "Views");
+
+        options.ViewsPath = path;
+        options.IncludesFileProvider = builder.Environment.ContentRootFileProvider;
+        options.ViewsFileProvider = builder.Environment.ContentRootFileProvider;
         options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
-        options.ViewLocationFormats.Add("Email/Views/{0}" + FluidViewEngine.ViewExtension);
+        options.ViewLocationFormats.Add(Path.Combine(path, "{0}" + FluidViewEngine.ViewExtension));
     })
     .AddMediatR(assemblies)
     .AddValidatorsFromAssemblies(assemblies, ServiceLifetime.Scoped, null, true)
@@ -88,18 +108,16 @@ builder.Services
 
 builder.Services.AddGrpc(options => options.Interceptors.Add<GlobalExceptionInterceptor>());
 
-builder.Host.UseSerilog();
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var peopleContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
     var infrastructureContext = scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>();
-    
+
     await peopleContext.OnModelCreatingAsync();
     await infrastructureContext.OnModelCreatingAsync();
-    
+
     // await new InfrastructureContextSeed(
     //     scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>(),
     //     scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>()

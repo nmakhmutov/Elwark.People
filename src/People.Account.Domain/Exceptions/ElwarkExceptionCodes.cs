@@ -1,4 +1,4 @@
-namespace People.Domain.Exceptions
+namespace People.Account.Domain.Exceptions
 {
     public static class ElwarkExceptionCodes
     {

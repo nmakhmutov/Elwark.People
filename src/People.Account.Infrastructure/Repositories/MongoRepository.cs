@@ -5,9 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using People.Domain;
+using People.Account.Domain.Seed;
+using People.Mongo;
 
-namespace People.Mongo
+namespace People.Account.Infrastructure.Repositories
 {
     public abstract class MongoRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         where TEntity : Entity<TKey>, IAggregateRoot

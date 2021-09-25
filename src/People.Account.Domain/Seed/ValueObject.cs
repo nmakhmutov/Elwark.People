@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace People.Domain
+namespace People.Account.Domain.Seed
 {
     public abstract class ValueObject
     {

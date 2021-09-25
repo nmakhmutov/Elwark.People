@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using People.Account.Domain.Aggregates.AccountAggregate;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
-using People.Mongo;
 
 namespace People.Account.Infrastructure.Repositories
 {

@@ -1,4 +1,3 @@
-using Google.Protobuf.WellKnownTypes;
 using MongoDB.Bson;
 using People.Account.Api.Mappers;
 using People.Grpc.Common;
@@ -38,18 +37,14 @@ namespace People.Account.Api.Grpc
             new()
             {
                 Id = account.Id.ToGrpc(),
-                Address = account.Address.ToAddress(),
-                Ban = account.Ban.ToBan(),
-                Name = account.Name.ToName(),
-                Email = account.GetPrimaryEmail().ToPrimaryEmail(),
-                Bio = account.Bio,
-                DateOfBirth = account.DateOfBirth?.ToTimestamp(),
-                Gender = account.Gender.ToGender(),
+                CountryCode = account.CountryCode.IsEmpty() ? null : account.CountryCode.ToString(),
+                Ban = account.Ban.ToGrpc(),
+                Name = account.Name.ToGrpc(),
+                Email = account.GetPrimaryEmail().ToGrpc(),
                 Language = account.Language.ToString(),
                 Picture = account.Picture.ToString(),
                 TimeZone = account.TimeZone,
-                FirstDayOfWeek = account.FirstDayOfWeek.ToDayOfWeek(),
-                UpdatedAt = account.UpdatedAt.ToTimestamp(),
+                FirstDayOfWeek = account.FirstDayOfWeek.ToGrpc(),
                 Roles = { account.Roles }
             };
     }

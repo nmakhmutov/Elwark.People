@@ -1,4 +1,4 @@
-﻿namespace People.Domain
+﻿namespace People.Account.Domain.Seed
 {
     public interface IAggregateRoot
     {

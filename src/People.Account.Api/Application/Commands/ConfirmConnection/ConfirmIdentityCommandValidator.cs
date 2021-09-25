@@ -1,5 +1,5 @@
 using FluentValidation;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.ConfirmConnection
 {

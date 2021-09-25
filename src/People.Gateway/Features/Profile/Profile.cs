@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using People.Grpc.Common;
-using Address = People.Gateway.Models.Address;
-using DayOfWeek = System.DayOfWeek;
 
 namespace People.Gateway.Features.Profile
 {
@@ -14,11 +11,8 @@ namespace People.Gateway.Features.Profile
         string? LastName,
         string FullName,
         string Language,
-        Gender Gender,
-        DateTime? DateOfBirth,
-        string? Bio,
         string Picture,
-        Address Address,
+        string? CountryCode,
         string TimeZone,
         DayOfWeek FirstDayOfWeek,
         Ban? Ban,

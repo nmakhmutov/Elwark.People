@@ -25,7 +25,7 @@ using People.Account.Api.Infrastructure.Provider.Social.Google;
 using People.Account.Api.Infrastructure.Provider.Social.Microsoft;
 using People.Account.Api.Mappers;
 using People.Account.Domain;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Identity;
 using Identity = People.Grpc.Identity.Identity;

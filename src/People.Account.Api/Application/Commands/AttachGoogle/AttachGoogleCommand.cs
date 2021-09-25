@@ -6,8 +6,8 @@ using MediatR;
 using People.Account.Api.Infrastructure;
 using People.Account.Domain.Aggregates.AccountAggregate;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Forbidden;
-using People.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.AttachGoogle
 {

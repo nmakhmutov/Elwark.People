@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using People.Account.Domain.Aggregates.AccountAggregate;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Queries.GetAccountById
 {

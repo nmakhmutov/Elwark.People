@@ -1,6 +1,6 @@
 using System;
 
-namespace People.Domain
+namespace People.Account.Domain.Seed
 {
     public abstract class HistoricEntity<T> : Entity<T>, IHasHistory where T : struct
     {

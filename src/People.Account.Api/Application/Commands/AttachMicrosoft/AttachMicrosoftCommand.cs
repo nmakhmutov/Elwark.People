@@ -6,8 +6,8 @@ using MediatR;
 using People.Account.Api.Infrastructure;
 using People.Account.Domain.Aggregates.AccountAggregate;
 using People.Account.Domain.Aggregates.AccountAggregate.Identities;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Forbidden;
-using People.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.AttachMicrosoft
 {
@@ -48,14 +48,7 @@ namespace People.Account.Api.Application.Commands.AttachMicrosoft
                     FirstName = account.Name.FirstName ?? request.FirstName,
                     LastName = account.Name.LastName ?? request.LastName
                 },
-                account.Address,
-                account.TimeZone,
-                account.FirstDayOfWeek,
-                account.Language,
-                account.Gender,
-                account.Picture,
-                account.Bio,
-                account.DateOfBirth
+                account.Picture
             );
 
             await _repository.UpdateAsync(account, ct);

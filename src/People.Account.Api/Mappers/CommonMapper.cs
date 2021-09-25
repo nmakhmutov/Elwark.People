@@ -17,10 +17,10 @@ namespace People.Account.Api.Mappers
         public static AccountId FromGrpc(this People.Grpc.Common.AccountId id) =>
             new(id.Value);
 
-        public static People.Grpc.Common.Identity ToIdentityKey(this Identity identity) =>
+        public static People.Grpc.Common.Identity ToGrpc(this Identity identity) =>
             new()
             {
-                Type = identity.Type.ToIdentityType(),
+                Type = identity.Type.ToGrpc(),
                 Value = identity.Value
             };
 
@@ -33,7 +33,7 @@ namespace People.Account.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
             };
 
-        public static IdentityType ToIdentityType(this People.Grpc.Common.IdentityType type) =>
+        public static IdentityType FromGrpc(this People.Grpc.Common.IdentityType type) =>
             type switch
             {
                 People.Grpc.Common.IdentityType.Email => IdentityType.Email,
@@ -42,7 +42,7 @@ namespace People.Account.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
-        public static People.Grpc.Common.IdentityType ToIdentityType(this IdentityType type) =>
+        public static People.Grpc.Common.IdentityType ToGrpc(this IdentityType type) =>
             type switch
             {
                 IdentityType.Email => People.Grpc.Common.IdentityType.Email,
@@ -51,39 +51,14 @@ namespace People.Account.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
             };
 
-        public static People.Grpc.Common.Gender ToGender(this Gender gender) =>
-            gender switch
-            {
-                Gender.Female => People.Grpc.Common.Gender.Female,
-                Gender.Male => People.Grpc.Common.Gender.Male,
-                _ => throw new ArgumentOutOfRangeException(nameof(Gender), gender, "Unknown gender")
-            };
-
-        public static Gender FromGrpc(this People.Grpc.Common.Gender gender) =>
-            gender switch
-            {
-                People.Grpc.Common.Gender.Female => Gender.Female,
-                People.Grpc.Common.Gender.Male => Gender.Male,
-                _ => throw new ArgumentOutOfRangeException(nameof(gender), gender, "Unknown gender")
-            };
-
-        public static People.Grpc.Common.Address ToAddress(this Address address) =>
-            new()
-            {
-                CityName = address.City,
-                CountryCode = address.CountryCode.IsEmpty()
-                    ? string.Empty
-                    : address.CountryCode.ToString()
-            };
-
-        public static People.Grpc.Common.PrimaryEmail ToPrimaryEmail(this EmailConnection email) =>
+        public static People.Grpc.Common.PrimaryEmail ToGrpc(this EmailConnection email) =>
             new()
             {
                 Email = email.Value,
                 IsConfirmed = email.IsConfirmed
             };
 
-        public static People.Grpc.Common.Ban? ToBan(this Ban? ban) =>
+        public static People.Grpc.Common.Ban? ToGrpc(this Ban? ban) =>
             ban switch
             {
                 PermanentBan x => new People.Grpc.Common.Ban
@@ -103,7 +78,7 @@ namespace People.Account.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(ban), ban, "Unknown ban type")
             };
 
-        public static People.Grpc.Common.Name ToName(this Name name) =>
+        public static People.Grpc.Common.Name ToGrpc(this Name name) =>
             new()
             {
                 Nickname = name.Nickname,
@@ -113,7 +88,7 @@ namespace People.Account.Api.Mappers
                 PreferNickname = name.PreferNickname
             };
 
-        public static People.Grpc.Common.DayOfWeek ToDayOfWeek(this DayOfWeek dayOfWeek) =>
+        public static People.Grpc.Common.DayOfWeek ToGrpc(this DayOfWeek dayOfWeek) =>
             dayOfWeek switch
             {
                 DayOfWeek.Sunday => People.Grpc.Common.DayOfWeek.Sunday,
@@ -126,7 +101,7 @@ namespace People.Account.Api.Mappers
                 _ => throw new ArgumentOutOfRangeException(nameof(dayOfWeek), dayOfWeek, null)
             };
         
-        public static DayOfWeek ToDayOfWeek(this People.Grpc.Common.DayOfWeek dayOfWeek) =>
+        public static DayOfWeek FromGrpc(this People.Grpc.Common.DayOfWeek dayOfWeek) =>
             dayOfWeek switch
             {
                 People.Grpc.Common.DayOfWeek.Sunday => DayOfWeek.Sunday,

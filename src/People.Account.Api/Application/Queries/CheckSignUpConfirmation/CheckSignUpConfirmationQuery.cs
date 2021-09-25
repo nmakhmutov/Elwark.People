@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using MediatR;
 using MongoDB.Bson;
 using People.Account.Domain.Aggregates.AccountAggregate;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Confirmations;
-using People.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Queries.CheckSignUpConfirmation
 {

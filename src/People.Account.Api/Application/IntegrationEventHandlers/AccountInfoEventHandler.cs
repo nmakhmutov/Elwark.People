@@ -35,16 +35,13 @@ namespace People.Account.Api.Application.IntegrationEventHandlers
                     FirstName = account.Name.FirstName ?? message.FirstName?[..Name.FirstNameLength],
                     LastName = account.Name.LastName ?? message.FirstName?[..Name.LastNameLength]
                 },
-                new Address(countryCode, message.City ?? account.Address.City),
+                countryCode,
                 message.TimeZone ?? account.TimeZone,
                 account.FirstDayOfWeek,
                 account.Language,
-                account.Gender,
                 account.Picture == Domain.Aggregates.AccountAggregate.Account.DefaultPicture
                     ? message.Image ?? account.Picture
-                    : account.Picture,
-                account.Bio ?? message.AboutMe,
-                account.DateOfBirth
+                    : account.Picture
             );
 
             await _repository.UpdateAsync(account);

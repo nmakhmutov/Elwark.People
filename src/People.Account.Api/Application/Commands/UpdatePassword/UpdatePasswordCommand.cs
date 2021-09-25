@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using People.Account.Api.Infrastructure;
 using People.Account.Domain.Aggregates.AccountAggregate;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.UpdatePassword
 {

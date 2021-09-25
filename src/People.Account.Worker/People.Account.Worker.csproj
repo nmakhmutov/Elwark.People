@@ -13,7 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\People.Host\People.Host.csproj" />
         <ProjectReference Include="..\People.Account.Infrastructure\People.Account.Infrastructure.csproj" />
         <ProjectReference Include="..\People.Integration.Event\People.Integration.Event.csproj" />
         <ProjectReference Include="..\People.Kafka\People.Kafka.csproj" />

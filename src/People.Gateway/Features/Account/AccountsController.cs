@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
-using People.Gateway.Mappers;
+using People.Gateway.Mappes;
 using People.Grpc.Common;
+using People.Grpc.Gateway;
 using People.Grpc.Notification;
 
 namespace People.Gateway.Features.Account
@@ -32,24 +33,7 @@ namespace People.Gateway.Features.Account
         {
             var account = await _gateway.GetProfileAsync(_identity.GetAccountId(), cancellationToken: ct);
 
-            return Ok(
-                new Account(
-                    account.Id.Value,
-                    account.Name.Nickname,
-                    account.Name.FirstName,
-                    account.Name.LastName,
-                    account.Name.FullName,
-                    account.Language,
-                    account.Gender,
-                    account.DateOfBirth?.ToDateTime(),
-                    account.Bio,
-                    account.Picture,
-                    account.Address.ToAddress(),
-                    account.TimeZone,
-                    account.FirstDayOfWeek.ToDayOfWeek(),
-                    account.Ban is not null
-                )
-            );
+            return Ok(ToAccount(account));
         }
 
         [HttpGet("{id:long}"), Authorize(Policy = Policy.RequireCommonAccess)]
@@ -57,24 +41,7 @@ namespace People.Gateway.Features.Account
         {
             var account = await _gateway.GetProfileAsync(new AccountId { Value = id }, cancellationToken: ct);
 
-            return Ok(
-                new Account(
-                    account.Id.Value,
-                    account.Name.Nickname,
-                    account.Name.FirstName,
-                    account.Name.LastName,
-                    account.Name.FullName,
-                    account.Language,
-                    account.Gender,
-                    account.DateOfBirth?.ToDateTime(),
-                    account.Bio,
-                    account.Picture,
-                    account.Address.ToAddress(),
-                    account.TimeZone,
-                    account.FirstDayOfWeek.ToDayOfWeek(),
-                    account.Ban is not null
-                )
-            );
+            return Ok(ToAccount(account));
         }
 
         [HttpPost("{id:long}/email"), Authorize(Policy = Policy.RequireCommonAccess)]
@@ -97,6 +64,21 @@ namespace People.Gateway.Features.Account
             return Accepted();
         }
 
+        private static Account ToAccount(ProfileReply account) =>
+            new (
+                account.Id.Value,
+                account.Name.Nickname,
+                account.Name.FirstName,
+                account.Name.LastName,
+                account.Name.FullName,
+                account.Language,
+                account.Picture,
+                account.CountryCode,
+                account.TimeZone,
+                account.FirstDayOfWeek.FromGrpc(),
+                account.Ban is not null
+            );
+        
         public sealed record SendEmailRequest([Required] string Subject, [Required] string Body);
     }
 }

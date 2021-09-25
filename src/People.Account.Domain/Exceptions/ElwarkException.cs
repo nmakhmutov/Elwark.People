@@ -1,6 +1,6 @@
 using System;
 
-namespace People.Domain.Exceptions
+namespace People.Account.Domain.Exceptions
 {
     public class ElwarkException : Exception
     {

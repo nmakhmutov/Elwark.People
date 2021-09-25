@@ -1,8 +1,8 @@
 using System;
 using FluentValidation;
 using People.Account.Api.Application.Validators;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Confirmations;
-using People.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.SendConfirmation
 {

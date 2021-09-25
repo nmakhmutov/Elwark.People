@@ -13,17 +13,14 @@ namespace People.Account.Api.Mappers
         public static ProfileReply ToGatewayProfileReply(this Domain.Aggregates.AccountAggregate.Account account) =>
             new()
             {
-                Address = account.Address.ToAddress(),
                 Id = account.Id.ToGrpc(),
-                Name = account.Name.ToName(),
-                Bio = account.Bio,
-                DateOfBirth = account.DateOfBirth?.ToTimestamp(),
-                Gender = account.Gender.ToGender(),
+                Name = account.Name.ToGrpc(),
+                CountryCode = account.CountryCode.IsEmpty() ? null : account.CountryCode.ToString(),
                 Language = account.Language.ToString(),
                 Picture = account.Picture.ToString(),
                 TimeZone = account.TimeZone,
-                FirstDayOfWeek = account.FirstDayOfWeek.ToDayOfWeek(),
-                Ban = account.Ban.ToBan(),
+                FirstDayOfWeek = account.FirstDayOfWeek.ToGrpc(),
+                Ban = account.Ban.ToGrpc(),
                 IsPasswordAvailable = account.IsPasswordAvailable(),
                 CreatedAt = account.CreatedAt.ToTimestamp(),
                 Connections =
@@ -33,7 +30,7 @@ namespace People.Account.Api.Mappers
                         EmailConnection x =>
                             new Connection
                             {
-                                Type = x.Type.ToIdentityType(),
+                                Type = x.Type.ToGrpc(),
                                 Value = x.Value,
                                 IsConfirmed = x.IsConfirmed,
                                 Email = new People.Grpc.Gateway.EmailConnection
@@ -45,7 +42,7 @@ namespace People.Account.Api.Mappers
                         GoogleConnection x =>
                             new Connection
                             {
-                                Type = x.Type.ToIdentityType(),
+                                Type = x.Type.ToGrpc(),
                                 Value = x.Value,
                                 IsConfirmed = x.IsConfirmed,
                                 Social = new SocialConnection
@@ -58,7 +55,7 @@ namespace People.Account.Api.Mappers
                         MicrosoftConnection x =>
                             new Connection
                             {
-                                Type = x.Type.ToIdentityType(),
+                                Type = x.Type.ToGrpc(),
                                 Value = x.Value,
                                 IsConfirmed = x.IsConfirmed,
                                 Social = new SocialConnection

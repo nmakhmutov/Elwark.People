@@ -1,16 +1,5 @@
 
 namespace People.Account.Api.Infrastructure.EmailBuilder
 {
-    public class EmailTemplateResult
-    {
-        public EmailTemplateResult(string subject, string body)
-        {
-            Subject = subject;
-            Body = body;
-        }
-
-        public string Subject { get; }
-
-        public string Body { get; }
-    }
+    public sealed record EmailTemplateResult(string Subject, string Body);
 }

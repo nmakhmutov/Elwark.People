@@ -14,16 +14,18 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using People.Gateway.Infrastructure;
 using People.Gateway.Infrastructure.Identity;
 using People.Grpc.Gateway;
-using People.Host;
 using Serilog;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using People.Grpc.Notification;
+using Serilog.Formatting.Compact;
+using Serilog.Formatting.Display;
 using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 const string appName = "People.Gateway";
@@ -33,7 +35,21 @@ const string mainCors = "MainCORS";
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
 
 var builder = WebApplication.CreateBuilder(args);
-Log.Logger = HostExtensions.CreateLogger(builder.Configuration, appName);
+
+var logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("application", appName)
+    .WriteTo.Console(
+        "json".Equals(builder.Configuration["Serilog:Formatter"])
+            ? new CompactJsonFormatter()
+            : new MessageTemplateTextFormatter("[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message}{NewLine}{Exception}")
+    )
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Logging
+    .ClearProviders()
+    .AddSerilog(logger);
 
 builder.Services.AddCorrelationId(options =>
     {
@@ -144,8 +160,6 @@ builder.Services.AddControllers(options =>
         options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
     })
     .AddFluentValidation(x => x.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-
-builder.Host.UseSerilog();
 
 var app = builder.Build();
 

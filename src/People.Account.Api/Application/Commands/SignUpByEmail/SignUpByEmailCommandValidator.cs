@@ -4,8 +4,8 @@ using FluentValidation.Results;
 using People.Account.Api.Application.Validators;
 using People.Account.Api.Infrastructure.Password;
 using People.Account.Domain.Aggregates.AccountAggregate;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Forbidden;
-using People.Domain.Exceptions;
 
 namespace People.Account.Api.Application.Commands.SignUpByEmail
 {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Api.Infrastructure.Interceptors
 {

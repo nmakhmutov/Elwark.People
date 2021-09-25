@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace People.Domain
+namespace People.Account.Domain.Seed
 {
     public interface IRepository<TEntity, in TKey>
         where TEntity : Entity<TKey>, IAggregateRoot

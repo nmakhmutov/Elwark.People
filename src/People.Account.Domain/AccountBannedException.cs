@@ -1,5 +1,5 @@
 using People.Account.Domain.Aggregates.AccountAggregate;
-using People.Domain.Exceptions;
+using People.Account.Domain.Exceptions;
 
 namespace People.Account.Domain
 {

@@ -13,7 +13,7 @@ namespace People.Notification.Api.Infrastructure.Provider.SendGrid
         public SendgridProvider(HttpClient client) =>
             _client = client;
 
-        public Task SendEmailAsync(MailAddress email, string subject, string body, CancellationToken ct)
+        public async Task SendEmailAsync(MailAddress email, string subject, string body, CancellationToken ct)
         {
             var from = new EmailAddress("elwarkinc@gmail.com", "Elwark");
             var to = new Personalization[]
@@ -28,7 +28,8 @@ namespace People.Notification.Api.Infrastructure.Provider.SendGrid
                 new("text/html", body)
             };
 
-            return _client.PostAsJsonAsync("v3/mail/send", new Message(from, to, subject, content), ct);
+            var response = await _client.PostAsJsonAsync("v3/mail/send", new Message(from, to, subject, content), ct);
+            response.EnsureSuccessStatusCode();
         }
 
         private sealed record EmailAddress(string Email, string? Name);

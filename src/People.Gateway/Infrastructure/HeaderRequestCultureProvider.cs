@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 
-namespace People.Host
+namespace People.Gateway.Infrastructure
 {
     internal class HeaderRequestCultureProvider : IRequestCultureProvider
     {

@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using People.Account.Domain.Exceptions;
 using People.Account.Infrastructure.Forbidden;
-using People.Domain.Exceptions;
 
 namespace People.Account.Api.Infrastructure.Password
 {

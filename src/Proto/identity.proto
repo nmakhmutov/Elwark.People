@@ -91,17 +91,13 @@ message AccountReply {
   people.AccountId id = 1;
   people.Name name = 2;
   people.PrimaryEmail email = 3;
-  people.Address address = 4;
+  google.protobuf.StringValue country_code = 4;
   string time_zone = 5;
   people.DayOfWeek first_day_of_week = 6;
   string language = 7;
-  people.Gender gender = 8;
-  google.protobuf.Timestamp date_of_birth = 9;
-  google.protobuf.StringValue bio = 10;
-  string picture = 11;
-  people.Ban ban = 12;
-  google.protobuf.Timestamp updated_at = 13;
-  repeated string roles = 14;
+  string picture = 8;
+  people.Ban ban = 9;
+  repeated string roles = 10;
 }
 
 message StatusReply {
