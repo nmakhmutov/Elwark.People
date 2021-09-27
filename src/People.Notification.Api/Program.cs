@@ -117,7 +117,10 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    await new NotificationContextSeed(scope.ServiceProvider.GetRequiredService<NotificationDbContext>()).SeedAsync();
+    var context= scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+    
+    await context.OnModelCreatingAsync();
+    await new NotificationContextSeed(context).SeedAsync();
 }
 
 app.UseCorrelationId();

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Bson;
@@ -17,31 +14,17 @@ namespace People.Notification.Api.Infrastructure.Repositories
         public PostponedEmailRepository(NotificationDbContext dbContext) =>
             _dbContext = dbContext;
 
-        public async IAsyncEnumerable<PostponedEmail> GetAsync(DateTime sendAt,
-            [EnumeratorCancellation] CancellationToken ct)
-        {
-            var filter = Builders<PostponedEmail>.Filter.Lt(x => x.SendAt, sendAt);
-            using var cursor = await _dbContext.DelayedEmails
-                .FindAsync(
-                    filter,
-                    new FindOptions<PostponedEmail>
-                    {
-                        BatchSize = 100,
-                        Sort = Builders<PostponedEmail>.Sort.Descending(x => x.SendAt)
-                    },
-                    ct
-                );
-
-            while (await cursor.MoveNextAsync(ct))
-                foreach (var item in cursor.Current)
-                    yield return item;
-        }
+        public Task<PostponedEmail> GetAsync(ObjectId id, CancellationToken ct) =>
+            _dbContext.PostponedEmails
+                .Find(Builders<PostponedEmail>.Filter.Eq(x => x.Id, id))
+                .FirstOrDefaultAsync(ct);
 
         public async Task<PostponedEmail> CreateAsync(PostponedEmail entity, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
 
-            await _dbContext.DelayedEmails.InsertOneAsync(entity, new InsertOneOptions(), ct);
+            entity.Version++;
+            await _dbContext.PostponedEmails.InsertOneAsync(entity, new InsertOneOptions(), ct);
 
             return entity;
         }
@@ -51,8 +34,10 @@ namespace People.Notification.Api.Infrastructure.Repositories
             ct.ThrowIfCancellationRequested();
 
             var filter = Builders<PostponedEmail>.Filter.Eq(x => x.Id, entity.Id);
-
-            var result = await _dbContext.DelayedEmails.ReplaceOneAsync(filter, entity, new ReplaceOptions(), ct);
+            
+            entity.Version = (entity.Version == int.MaxValue ? int.MinValue : entity.Version) + 1;
+            
+            var result = await _dbContext.PostponedEmails.ReplaceOneAsync(filter, entity, new ReplaceOptions(), ct);
             if (result.ModifiedCount == 0)
                 throw new MongoUpdateException($"Entity with id '{entity.Id}' not updated");
         }
@@ -61,7 +46,7 @@ namespace People.Notification.Api.Infrastructure.Repositories
         {
             var filter = Builders<PostponedEmail>.Filter.Eq(x => x.Id, id);
 
-            return _dbContext.DelayedEmails.DeleteOneAsync(filter, new DeleteOptions(), ct);
+            return _dbContext.PostponedEmails.DeleteOneAsync(filter, new DeleteOptions(), ct);
         }
     }
 }

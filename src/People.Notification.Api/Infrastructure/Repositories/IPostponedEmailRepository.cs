@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Bson;
@@ -9,7 +7,7 @@ namespace People.Notification.Api.Infrastructure.Repositories
 {
     public interface IPostponedEmailRepository
     {
-        IAsyncEnumerable<PostponedEmail> GetAsync(DateTime sendAt, CancellationToken ct = default);
+        Task<PostponedEmail> GetAsync(ObjectId id, CancellationToken ct = default);
 
         Task<PostponedEmail> CreateAsync(PostponedEmail entity, CancellationToken ct = default);
 

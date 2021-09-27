@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace People.Infrastructure.UnitTest
 {
     public class ExperimentalSerializing
     {
-        private readonly ITestOutputHelper _output;
+        // private readonly ITestOutputHelper _output;
 
-        public ExperimentalSerializing(ITestOutputHelper output) =>
-            _output = output;
+        // public ExperimentalSerializing(ITestOutputHelper output) =>
+            // _output = output;
 
         [Fact]
         public void Timespan_SerializationTest()
@@ -49,22 +48,24 @@ namespace People.Infrastructure.UnitTest
         public void DateOnly_SerializationTest()
         {
             var date = DateOnly.FromDateTime(DateTime.UtcNow);
-        
-            var systemTextJson = System.Text.Json.JsonSerializer.Serialize(date);
 
-            _output.WriteLine(date.ToString("O") + " - " + systemTextJson);
-            Assert.NotEqual(date.ToString("O"), systemTextJson);
+            Assert.Throws<NotSupportedException>(() => System.Text.Json.JsonSerializer.Serialize(date));
+            // var systemTextJson = System.Text.Json.JsonSerializer.Serialize(date);
+
+            // _output.WriteLine(date.ToString("O") + " - " + systemTextJson);
+            // Assert.NotEqual(date.ToString("O"), systemTextJson);
         }
 
         [Fact]
         public void TimeOnly_SerializationTest()
         {
-            var date = TimeOnly.FromDateTime(DateTime.UtcNow);
+            var time = TimeOnly.FromDateTime(DateTime.UtcNow);
         
-            var systemTextJson = System.Text.Json.JsonSerializer.Serialize(date);
+            Assert.Throws<NotSupportedException>(() => System.Text.Json.JsonSerializer.Serialize(time));
+            // var systemTextJson = System.Text.Json.JsonSerializer.Serialize(time);
 
-            _output.WriteLine(date.ToString("O") + " - " + systemTextJson);
-            Assert.NotEqual(date.ToString("O"), systemTextJson);
+            // _output.WriteLine(time.ToString("O") + " - " + systemTextJson);
+            // Assert.NotEqual(time.ToString("O"), systemTextJson);
         }
     
         internal record A(TimeSpan TimeSpan);

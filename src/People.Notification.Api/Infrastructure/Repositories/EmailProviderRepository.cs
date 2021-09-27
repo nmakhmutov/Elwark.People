@@ -37,6 +37,7 @@ namespace People.Notification.Api.Infrastructure.Repositories
         {
             ct.ThrowIfCancellationRequested();
 
+            entity.Version++;
             await _dbContext.EmailProviders.InsertOneAsync(entity, new InsertOneOptions(), ct);
 
             return entity;

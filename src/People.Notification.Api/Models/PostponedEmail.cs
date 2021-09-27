@@ -13,9 +13,12 @@ namespace People.Notification.Api.Models
             Subject = subject;
             Body = body;
             SendAt = sendAt;
+            Version = int.MinValue;
         }
 
         public ObjectId Id { get; private set; }
+        
+        public int Version { get; set; }
         
         public string Email { get; private set; }
         

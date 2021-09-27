@@ -29,14 +29,14 @@ namespace People.Notification.Api.Infrastructure
         public IMongoCollection<EmailProvider> EmailProviders =>
             Database.GetCollection<EmailProvider>("email_providers");
 
-        public IMongoCollection<PostponedEmail> DelayedEmails =>
-            Database.GetCollection<PostponedEmail>("delayed_emails");
+        public IMongoCollection<PostponedEmail> PostponedEmails =>
+            Database.GetCollection<PostponedEmail>("postponed_emails");
 
         public override async Task OnModelCreatingAsync()
         {
             await CreateCollectionsAsync(
                 EmailProviders.CollectionNamespace.CollectionName,
-                DelayedEmails.CollectionNamespace.CollectionName
+                PostponedEmails.CollectionNamespace.CollectionName
             );
 
             await CreateIndexesAsync(EmailProviders,
@@ -46,7 +46,7 @@ namespace People.Notification.Api.Infrastructure
                 )
             );
 
-            await CreateIndexesAsync(DelayedEmails,
+            await CreateIndexesAsync(PostponedEmails,
                 new CreateIndexModel<PostponedEmail>(
                     Builders<PostponedEmail>.IndexKeys.Descending(x => x.SendAt),
                     new CreateIndexOptions { Name = "SendAt" }
