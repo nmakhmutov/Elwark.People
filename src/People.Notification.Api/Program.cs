@@ -54,7 +54,8 @@ builder.Services
 builder.Services
     .Configure<MongoDbOptions>(builder.Configuration.GetSection("MongoDb").Bind)
     .AddScoped<NotificationDbContext>()
-    .AddScoped<IEmailProviderRepository, EmailProviderRepository>();
+    .AddScoped<IEmailProviderRepository, EmailProviderRepository>()
+    .AddScoped<IPostponedEmailRepository, PostponedEmailRepository>();
 
 builder.Services
     .AddKafkaMessageBus()
@@ -100,6 +101,12 @@ builder.Services
             .WithIdentity("UpdateProviderJob")
             .StartAt(DateBuilder.EvenHourDate(DateTimeOffset.UtcNow))
             .WithSimpleSchedule(scheduleBuilder => scheduleBuilder.WithIntervalInHours(1).RepeatForever())
+        );
+
+        configurator.ScheduleJob<PostponedEmailJob>(trigger => trigger
+            .WithIdentity("PostponedEmailJob")
+            .StartAt(DateBuilder.EvenMinuteDate(DateTimeOffset.UtcNow))
+            .WithSimpleSchedule(scheduleBuilder => scheduleBuilder.WithIntervalInMinutes(1).RepeatForever())
         );
     })
     .AddQuartzHostedService(options => options.WaitForJobsToComplete = true);

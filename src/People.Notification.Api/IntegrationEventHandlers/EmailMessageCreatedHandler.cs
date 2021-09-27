@@ -19,17 +19,19 @@ namespace People.Notification.Api.IntegrationEventHandlers
 {
     internal sealed class EmailMessageCreatedHandler : IKafkaHandler<EmailMessageCreatedIntegrationEvent>
     {
+        private readonly ILogger<EmailMessageCreatedHandler> _logger;
         private readonly AsyncRetryPolicy<EmailProvider.Type?> _policy;
+        private readonly IPostponedEmailRepository _postponed;
         private readonly IEmailProviderRepository _repository;
         private readonly IEnumerable<IEmailSender> _senders;
-        private readonly ILogger<EmailMessageCreatedHandler> _logger;
 
         public EmailMessageCreatedHandler(IEmailProviderRepository repository, IEnumerable<IEmailSender> senders,
-            ILogger<EmailMessageCreatedHandler> logger)
+            ILogger<EmailMessageCreatedHandler> logger, IPostponedEmailRepository postponed)
         {
             _repository = repository;
             _senders = senders;
             _logger = logger;
+            _postponed = postponed;
             _policy = Policy<EmailProvider.Type?>
                 .Handle<MongoUpdateException>()
                 .RetryForeverAsync();
@@ -48,7 +50,19 @@ namespace People.Notification.Api.IntegrationEventHandlers
             });
 
             if (provider is null)
+            {
+                if (message.IsDurable)
+                    await _postponed.CreateAsync(
+                        new PostponedEmail(
+                            message.Email,
+                            message.Subject,
+                            message.Body,
+                            DateTime.UtcNow.Date.AddDays(1)
+                        )
+                    );
+
                 return;
+            }
 
             await provider.SendEmailAsync(new MailAddress(message.Email), message.Subject, message.Body);
 

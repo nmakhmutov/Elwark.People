@@ -23,7 +23,8 @@ namespace People.Account.Api.Application.Commands.SendConfirmation
         private readonly IConfirmationService _confirmation;
         private readonly IEmailBuilder _builder;
 
-        public SendConfirmationCommandHandler(IKafkaMessageBus bus, IConfirmationService confirmation, IEmailBuilder builder)
+        public SendConfirmationCommandHandler(IKafkaMessageBus bus, IConfirmationService confirmation,
+            IEmailBuilder builder)
         {
             _bus = bus;
             _confirmation = confirmation;
@@ -38,14 +39,10 @@ namespace People.Account.Api.Application.Commands.SendConfirmation
                 new ConfirmationCodeModel(confirmation.Code)
             );
 
-            var evt = new EmailMessageCreatedIntegrationEvent(
-                Guid.NewGuid(),
-                DateTime.UtcNow,
-                request.Email.Value,
-                subject,
-                body
+            await _bus.PublishAsync(
+                EmailMessageCreatedIntegrationEvent.CreateNotDurable(request.Email.Value, subject, body),
+                ct
             );
-            await _bus.PublishAsync(evt, ct);
 
             return confirmation.Id;
         }

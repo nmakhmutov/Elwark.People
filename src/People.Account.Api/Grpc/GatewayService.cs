@@ -42,20 +42,15 @@ namespace People.Account.Api.Grpc
             return account.ToGatewayProfileReply();
         }
 
-        public override async Task<Connection> GetPrimaryEmail(AccountId request, ServerCallContext context)
+        public override async Task<EmailNotificationInformation> GetEmailNotification(AccountId request, ServerCallContext context)
         {
             var data = await _mediator.Send(new GetAccountByIdQuery(request.FromGrpc()), context.CancellationToken);
             var email = data.GetPrimaryEmail();
 
-            return new Connection
+            return new EmailNotificationInformation
             {
-                Type = email.Type.ToGrpc(),
-                Value = email.Value,
-                IsConfirmed = email.IsConfirmed,
-                Email = new EmailConnection
-                {
-                    IsPrimary = email.IsPrimary
-                }
+                PrimaryEmail = email.Value,
+                TimeZone = data.TimeZone
             };
         }
 

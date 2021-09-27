@@ -101,8 +101,14 @@ namespace People.Infrastructure.UnitTest
         [Fact]
         public void EmailMessageCreatedIntegrationEvent_SerializationTest()
         {
-            var evt = new EmailMessageCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, "email", "subject",
-                "body");
+            var evt = new EmailMessageCreatedIntegrationEvent(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                "email",
+                "subject",
+                "body",
+                true
+            );
 
             var json = System.Text.Json.JsonSerializer.Serialize(evt);
             var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<EmailMessageCreatedIntegrationEvent>(json);
@@ -113,8 +119,14 @@ namespace People.Infrastructure.UnitTest
         [Fact]
         public void EmailMessageCreatedIntegrationEvent_DeserializationTest()
         {
-            var evt = new EmailMessageCreatedIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, "email", "subject",
-                "body");
+            var evt = new EmailMessageCreatedIntegrationEvent(
+                Guid.NewGuid(),
+                DateTime.UtcNow,
+                "email",
+                "subject",
+                "body",
+                true
+            );
 
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(evt);
             var obj = System.Text.Json.JsonSerializer.Deserialize<EmailMessageCreatedIntegrationEvent>(json);

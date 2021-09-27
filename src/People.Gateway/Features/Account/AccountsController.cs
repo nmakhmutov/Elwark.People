@@ -50,13 +50,15 @@ namespace People.Gateway.Features.Account
         {
             var options = new CallOptions(cancellationToken: ct);
 
-            var email = await _gateway.GetPrimaryEmailAsync(new AccountId { Value = id }, options);
-            
+            var information = await _gateway.GetEmailNotificationAsync(new AccountId { Value = id }, options);
+
             await _notification.SendEmailAsync(new Grpc.Notification.SendEmailRequest
                 {
-                    Email = email.Value,
+                    Email = information.PrimaryEmail,
                     Body = request.Body,
-                    Subject = request.Subject
+                    Subject = request.Subject,
+                    IsNow = request.IsNow,
+                    UserTimeZone = information.TimeZone
                 },
                 options
             );
@@ -65,7 +67,7 @@ namespace People.Gateway.Features.Account
         }
 
         private static Account ToAccount(ProfileReply account) =>
-            new (
+            new(
                 account.Id.Value,
                 account.Name.Nickname,
                 account.Name.FirstName,
@@ -78,7 +80,7 @@ namespace People.Gateway.Features.Account
                 account.FirstDayOfWeek.FromGrpc(),
                 account.Ban is not null
             );
-        
-        public sealed record SendEmailRequest([Required] string Subject, [Required] string Body);
+
+        public sealed record SendEmailRequest([Required] string Subject, [Required] string Body, bool IsNow);
     }
 }

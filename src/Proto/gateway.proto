@@ -8,8 +8,8 @@ option csharp_namespace = "People.Grpc.Gateway";
 
 service Gateway {
   rpc GetProfile (people.AccountId) returns (ProfileReply);
-  rpc GetPrimaryEmail(people.AccountId) returns (Connection);
-  
+  rpc GetEmailNotification(people.AccountId) returns (EmailNotificationInformation);
+
   rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);
   rpc ConfirmingConnection(ConfirmingRequest) returns (people.Confirming);
   rpc ConfirmConnection(ConfirmRequest) returns (ProfileReply);
@@ -55,6 +55,11 @@ message EmailConnection {
 message SocialConnection {
   google.protobuf.StringValue first_name = 1;
   google.protobuf.StringValue last_name = 2;
+}
+
+message EmailNotificationInformation {
+  string primary_email = 1;
+  string time_zone = 2;
 }
 
 message CountriesRequest {

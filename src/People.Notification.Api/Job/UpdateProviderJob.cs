@@ -13,7 +13,7 @@ using Quartz;
 namespace People.Notification.Api.Job
 {
     [DisallowConcurrentExecution]
-    public class UpdateProviderJob : IJob
+    public sealed class UpdateProviderJob : IJob
     {
         private readonly AsyncRetryPolicy _policy;
         private readonly NotificationDbContext _dbContext;
@@ -48,13 +48,13 @@ namespace People.Notification.Api.Job
                 await _policy.ExecuteAsync(async () =>
                 {
                     var provider = await _repository.GetAsync(id);
-                    if(provider is null)
+                    if (provider is null)
                         return;
-                    
+
                     provider.UpdateBalance();
                     await _repository.UpdateAsync(provider);
                 });
-                
+
                 _logger.LogInformation("Provider '{P}' expired event sent", id);
             }
         }
