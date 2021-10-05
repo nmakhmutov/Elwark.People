@@ -71,7 +71,7 @@ jobs:
         shell: bash
         env:
           TAG: latest
-          
+  
   people_notification:
     name: Docker Worker
     runs-on: ubuntu-latest

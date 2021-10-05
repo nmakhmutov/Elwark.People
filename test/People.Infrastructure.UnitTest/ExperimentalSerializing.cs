@@ -1,75 +1,75 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Xunit;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace People.Infrastructure.UnitTest
+namespace People.Infrastructure.UnitTest;
+
+public class ExperimentalSerializing
 {
-    public class ExperimentalSerializing
+    internal record A(TimeSpan TimeSpan);
+
+    internal record B(TimeSpan TimeSpan, Dictionary<string, int> Dictionary) : A(TimeSpan);
+
+    [Fact]
+    public void DateOnly_SerializationTest()
     {
-        // private readonly ITestOutputHelper _output;
+        var date = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        // public ExperimentalSerializing(ITestOutputHelper output) =>
-            // _output = output;
+        Assert.Throws<NotSupportedException>(() => JsonSerializer.Serialize(date));
+        // var systemTextJson = System.Text.Json.JsonSerializer.Serialize(date);
 
-        [Fact]
-        public void Timespan_SerializationTest()
-        {
-            var a = new A(TimeSpan.FromDays(1));
+        // _output.WriteLine(date.ToString("O") + " - " + systemTextJson);
+        // Assert.NotEqual(date.ToString("O"), systemTextJson);
+    }
 
-            var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(a);
-            var systemTextJson = System.Text.Json.JsonSerializer.Serialize(a);
+    [Fact]
+    public void Dictionary_SerializationTest()
+    {
+        var dictionary = new Dictionary<string, int> { ["key"] = 1, ["Value"] = 42 };
 
-            Assert.Equal(newtonsoftJson, systemTextJson);
-        }
+        var newtonsoftJson = JsonConvert.SerializeObject(dictionary);
+        var systemTextJson = JsonSerializer.Serialize(dictionary);
 
-        [Fact]
-        public void Inheritance_SerializationTest()
-        {
-            A b = new B(TimeSpan.FromHours(1), new Dictionary<string, int> { ["key"] = 1 });
+        Assert.Equal(newtonsoftJson, systemTextJson);
+    }
 
-            var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(b);
-            var systemTextJson = System.Text.Json.JsonSerializer.Serialize(b);
+    [Fact]
+    public void Inheritance_SerializationTest()
+    {
+        A b = new B(TimeSpan.FromHours(1), new Dictionary<string, int> { ["key"] = 1 });
 
-            Assert.NotEqual(newtonsoftJson, systemTextJson);
-        }
+        var newtonsoftJson = JsonConvert.SerializeObject(b);
+        var systemTextJson = JsonSerializer.Serialize(b);
 
-        [Fact]
-        public void Dictionary_SerializationTest()
-        {
-            var dictionary = new Dictionary<string, int> { ["key"] = 1, ["Value"] = 42 };
+        Assert.NotEqual(newtonsoftJson, systemTextJson);
+    }
 
-            var newtonsoftJson = Newtonsoft.Json.JsonConvert.SerializeObject(dictionary);
-            var systemTextJson = System.Text.Json.JsonSerializer.Serialize(dictionary);
+    [Fact]
+    public void TimeOnly_SerializationTest()
+    {
+        var time = TimeOnly.FromDateTime(DateTime.UtcNow);
 
-            Assert.Equal(newtonsoftJson, systemTextJson);
-        }
+        Assert.Throws<NotSupportedException>(() => JsonSerializer.Serialize(time));
+        // var systemTextJson = System.Text.Json.JsonSerializer.Serialize(time);
 
-        [Fact]
-        public void DateOnly_SerializationTest()
-        {
-            var date = DateOnly.FromDateTime(DateTime.UtcNow);
+        // _output.WriteLine(time.ToString("O") + " - " + systemTextJson);
+        // Assert.NotEqual(time.ToString("O"), systemTextJson);
+    }
+    // private readonly ITestOutputHelper _output;
 
-            Assert.Throws<NotSupportedException>(() => System.Text.Json.JsonSerializer.Serialize(date));
-            // var systemTextJson = System.Text.Json.JsonSerializer.Serialize(date);
+    // public ExperimentalSerializing(ITestOutputHelper output) =>
+    // _output = output;
 
-            // _output.WriteLine(date.ToString("O") + " - " + systemTextJson);
-            // Assert.NotEqual(date.ToString("O"), systemTextJson);
-        }
+    [Fact]
+    public void Timespan_SerializationTest()
+    {
+        var a = new A(TimeSpan.FromDays(1));
 
-        [Fact]
-        public void TimeOnly_SerializationTest()
-        {
-            var time = TimeOnly.FromDateTime(DateTime.UtcNow);
-        
-            Assert.Throws<NotSupportedException>(() => System.Text.Json.JsonSerializer.Serialize(time));
-            // var systemTextJson = System.Text.Json.JsonSerializer.Serialize(time);
+        var newtonsoftJson = JsonConvert.SerializeObject(a);
+        var systemTextJson = JsonSerializer.Serialize(a);
 
-            // _output.WriteLine(time.ToString("O") + " - " + systemTextJson);
-            // Assert.NotEqual(time.ToString("O"), systemTextJson);
-        }
-    
-        internal record A(TimeSpan TimeSpan);
-
-        internal record B(TimeSpan TimeSpan, Dictionary<string, int> Dictionary) : A(TimeSpan);
+        Assert.Equal(newtonsoftJson, systemTextJson);
     }
 }

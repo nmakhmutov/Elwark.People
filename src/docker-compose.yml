@@ -11,24 +11,24 @@ services:
     image: "elwark/people-gateway:${TAG:-latest}"
     build:
       context: .
-      dockerfile: People.Gateway/Dockerfile
+      dockerfile: Gateway.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - Urls__Identity=http://identity
-      - Urls__People.Account.Api=http://people_account_api
-      - Urls__People.Notification.Api=http://people_notification_api
+      - Urls__People.Api=http://people_api
+      - Urls__Notification.Api=http://notification_api
     ports:
       - "5001:80"
     networks:
       - elwarknetwork
 
-  people.account:
-    container_name: "people_account_api"
-    image: "elwark/people-account-api:${TAG:-latest}"
+  people.api:
+    container_name: "people_api"
+    image: "elwark/people-api:${TAG:-latest}"
     build:
       context: .
-      dockerfile: People.Account.Api/Dockerfile
+      dockerfile: People.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Kestrel__EndPoints__Grpc__Url=http://+:80
@@ -40,11 +40,11 @@ services:
       - elwarknetwork
 
   people.worker:
-    container_name: "people_account_worker"
+    container_name: "people_worker"
     image: "elwark/people-worker:${TAG:-latest}"
     build:
       context: .
-      dockerfile: People.Account.Worker/Dockerfile
+      dockerfile: People.Worker/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -56,11 +56,11 @@ services:
       - elwarknetwork
 
   people.notification:
-    container_name: "people_notification_api"
-    image: "elwark/people-notification-api:${TAG:-latest}"
+    container_name: "notification_api"
+    image: "elwark/notification-api:${TAG:-latest}"
     build:
       context: .
-      dockerfile: People.Notification.Api/Dockerfile
+      dockerfile: Notification.Api/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Kestrel__EndPoints__Grpc__Url=http://+:80

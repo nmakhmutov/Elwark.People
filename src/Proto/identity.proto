@@ -6,7 +6,7 @@ import "common.proto";
 
 option csharp_namespace = "People.Grpc.Identity";
 
-service Identity {
+service IdentityService {
   rpc GetAccountById (people.AccountId) returns (AccountReply);
   rpc GetStatus (people.AccountId) returns (StatusReply);
 
