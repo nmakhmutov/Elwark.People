@@ -1,7 +1,15 @@
 namespace Gateway.Api.Features.Management.Requests;
 
-public sealed class GetAccountsRequest
+public sealed record GetAccountsRequest
 {
-    public int Limit { get; init; }
-    public int Page { get; init; }
+    public int Page { get; init; } = 1;
+
+    public int Count { get; init; } = 10;
+
+    public int Limit => Count switch
+    {
+        0 => 10,
+        > 0 and < 100 => Count,
+        _ => 100
+    };
 }

@@ -40,7 +40,7 @@ internal sealed class GetAccountsQueryHandler : IRequestHandler<GetAccountsQuery
 }
 
 internal sealed record AccountModel(
-    AccountId Id,
+    AccountId AccountId,
     Name Name,
     CountryCode CountryCode,
     string TimeZone,

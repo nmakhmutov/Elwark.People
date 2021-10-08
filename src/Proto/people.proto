@@ -25,6 +25,7 @@ service PeopleService {
 
 service PeopleManagement {
   rpc GetAccounts(ManagementAccountsRequest) returns (ManagementPageAccountsReply);
+  rpc GetAccount(people.AccountId) returns (ManagementAccountReply);
 }
 
 message ProfileReply {
@@ -150,4 +151,32 @@ message ManagementPageAccountsReply {
   uint32 pages = 1;
   int64 count = 2;
   repeated Account topics = 3;
+}
+
+message ManagementAccountReply {
+  message Connection {
+    people.IdentityType type = 1;
+    string value = 2;
+    google.protobuf.Timestamp created_at = 3;
+    google.protobuf.Timestamp confirmed_at = 4;
+
+    oneof ConnectionType {
+      EmailConnection email = 5;
+      SocialConnection social = 6;
+    }
+  }
+  
+  people.AccountId id = 1;
+  people.Name name = 2;
+  google.protobuf.StringValue country_code = 3;
+  string time_zone = 4;
+  people.DayOfWeek first_day_of_week = 5;
+  string language = 6;
+  string picture = 7;
+  people.Ban ban = 8;
+  bool is_password_available = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp last_sign_in = 11;
+  repeated string roles = 12;
+  repeated Connection connections = 13;
 }

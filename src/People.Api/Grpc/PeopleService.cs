@@ -39,7 +39,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
     public override async Task<ProfileReply> GetProfile(AccountId request, ServerCallContext context)
     {
         var account = await _mediator.Send(new GetAccountByIdQuery(request.FromGrpc()), context.CancellationToken);
-        return account.ToGatewayProfileReply();
+        return account.ToProfileReply();
     }
 
     public override async Task<EmailNotificationInformation> GetEmailNotification(AccountId request,
@@ -72,7 +72,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         await _mediator.Send(command, context.CancellationToken);
 
         var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
-        return data.ToGatewayProfileReply();
+        return data.ToProfileReply();
     }
 
     public override async Task<Confirming> ConfirmingConnection(ConfirmingRequest request, ServerCallContext context)
@@ -110,7 +110,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         );
 
         var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
-        return data.ToGatewayProfileReply();
+        return data.ToProfileReply();
     }
 
     public override async Task<ProfileReply> SetEmailAsPrimary(SetEmailAsPrimaryRequest request,
@@ -121,7 +121,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         await _mediator.Send(command);
 
         var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
-        return data.ToGatewayProfileReply();
+        return data.ToProfileReply();
     }
 
     public override async Task<ProfileReply> DeleteConnection(DeleteConnectionRequest request,
@@ -131,7 +131,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         await _mediator.Send(command, context.CancellationToken);
 
         var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
-        return data.ToGatewayProfileReply();
+        return data.ToProfileReply();
     }
 
     public override async Task<Confirming> CreatingPassword(CreatingPasswordRequest request, ServerCallContext context)
@@ -166,7 +166,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         );
 
         var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
-        return data.ToGatewayProfileReply();
+        return data.ToProfileReply();
     }
 
     public override async Task<Empty> UpdatePassword(UpdatePasswordRequest request, ServerCallContext context)

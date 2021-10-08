@@ -26,6 +26,7 @@ public static class Policy
 
     public static AuthorizationPolicy ManagementAccessPolicy() =>
         new AuthorizationPolicyBuilder()
+            .RequireClaim("scope", "elwark.people.admin")
             .RequireRole("adm", "ppl.adm")
             .Build();
 }

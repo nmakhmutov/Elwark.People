@@ -86,9 +86,7 @@ builder.Services
         {
             ValidateIssuer = true,
             ValidateAudience = false,
-            ValidateLifetime = true,
-            NameClaimType = "name",
-            RoleClaimType = "role"
+            ValidateLifetime = true
         };
     });
 

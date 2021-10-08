@@ -17,7 +17,6 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         new("https://res.cloudinary.com/elwark/image/upload/v1610430646/People/default_j21xml.png");
 
     private List<Connection> _connections;
-    private DateTime _lastSignIn;
     private Password? _password;
     private Registration _registration;
     private HashSet<string> _roles;
@@ -33,7 +32,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         CountryCode = CountryCode.Empty;
         Language = language;
         Picture = picture;
-        _lastSignIn = DateTime.MinValue;
+        LastSignIn = DateTime.MinValue;
         _password = null;
         _roles = new HashSet<string>();
         _connections = new List<Connection>();
@@ -55,6 +54,8 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
     public Uri Picture { get; private set; }
 
     public Ban? Ban { get; private set; }
+
+    public DateTime LastSignIn { get; private set; }
 
     public IReadOnlyCollection<string> Roles => _roles;
 
@@ -161,7 +162,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         if (Ban is not null)
             return false;
 
-        return _password is null || _password.CreatedAt <= _lastSignIn;
+        return _password is null || _password.CreatedAt <= LastSignIn;
     }
 
     public bool IsPasswordAvailable() =>
@@ -217,10 +218,10 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
     private void SignInSuccess(DateTime dateTime, IPAddress ip)
     {
-        if (_lastSignIn > dateTime)
+        if (LastSignIn > dateTime)
             return;
 
-        _lastSignIn = dateTime;
+        LastSignIn = dateTime;
 
         AddDomainEvent(new AccountSignInSuccess(this, ip));
     }

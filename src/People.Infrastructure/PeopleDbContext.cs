@@ -32,7 +32,6 @@ public sealed class PeopleDbContext : MongoDbContext
             map.AutoMap();
             map.MapField("_password");
             map.MapField("_registration");
-            map.MapField("_lastSignIn");
             map.MapField("_roles")
                 .SetElementName(nameof(Account.Roles));
             map.MapField("_connections")
