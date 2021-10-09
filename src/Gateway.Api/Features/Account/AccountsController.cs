@@ -32,7 +32,7 @@ public sealed partial class AccountsController : ControllerBase
     [HttpGet("{id:long}"), Authorize(Policy = Policy.RequireCommonAccess)]
     public async Task<ActionResult> GetAsync(long id, CancellationToken ct)
     {
-        var account = await _people.GetProfileAsync(new AccountId { Value = id }, cancellationToken: ct);
+        var account = await _people.GetProfileAsync(new AccountIdValue { Value = id }, cancellationToken: ct);
 
         return Ok(ToAccount(account));
     }

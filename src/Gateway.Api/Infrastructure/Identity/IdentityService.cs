@@ -20,6 +20,6 @@ public class IdentityService : IIdentityService
         throw new ArgumentException("Account id cannot be null in identity service");
     }
 
-    public AccountId GetAccountId() =>
+    public AccountIdValue GetAccountId() =>
         new() { Value = GetId() };
 }

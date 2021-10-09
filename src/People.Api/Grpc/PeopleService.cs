@@ -36,16 +36,16 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         _country = country;
     }
 
-    public override async Task<ProfileReply> GetProfile(AccountId request, ServerCallContext context)
+    public override async Task<ProfileReply> GetProfile(AccountIdValue request, ServerCallContext context)
     {
-        var account = await _mediator.Send(new GetAccountByIdQuery(request.FromGrpc()), context.CancellationToken);
+        var account = await _mediator.Send(new GetAccountByIdQuery(request), context.CancellationToken);
         return account.ToProfileReply();
     }
 
-    public override async Task<EmailNotificationInformation> GetEmailNotification(AccountId request,
+    public override async Task<EmailNotificationInformation> GetEmailNotification(AccountIdValue request,
         ServerCallContext context)
     {
-        var data = await _mediator.Send(new GetAccountByIdQuery(request.FromGrpc()), context.CancellationToken);
+        var data = await _mediator.Send(new GetAccountByIdQuery(request), context.CancellationToken);
         var email = data.GetPrimaryEmail();
 
         return new EmailNotificationInformation
@@ -58,7 +58,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
     public override async Task<ProfileReply> UpdateProfile(UpdateProfileRequest request, ServerCallContext context)
     {
         var command = new UpdateProfileCommand(
-            request.Id.FromGrpc(),
+            request.Id,
             request.FirstName,
             request.LastName,
             request.Nickname,
@@ -71,13 +71,13 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
 
         await _mediator.Send(command, context.CancellationToken);
 
-        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
+        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id));
         return data.ToProfileReply();
     }
 
     public override async Task<Confirming> ConfirmingConnection(ConfirmingRequest request, ServerCallContext context)
     {
-        var query = new GetAccountByIdQuery(request.Id.FromGrpc());
+        var query = new GetAccountByIdQuery(request.Id);
         var account = await _mediator.Send(query, context.CancellationToken);
 
         if (account.GetIdentity(request.Identity.FromGrpc()) is EmailConnection connection)
@@ -105,38 +105,38 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         );
 
         await _mediator.Send(
-            new ConfirmConnectionCommand(request.Id.FromGrpc(), request.Identity.FromGrpc()),
+            new ConfirmConnectionCommand(request.Id, request.Identity.FromGrpc()),
             context.CancellationToken
         );
 
-        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
+        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id));
         return data.ToProfileReply();
     }
 
     public override async Task<ProfileReply> SetEmailAsPrimary(SetEmailAsPrimaryRequest request,
         ServerCallContext context)
     {
-        var command = new SetAsPrimaryEmailCommand(request.Id.FromGrpc(), new Identity.Email(request.Email));
+        var command = new SetAsPrimaryEmailCommand(request.Id, new Identity.Email(request.Email));
 
         await _mediator.Send(command);
 
-        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
+        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id));
         return data.ToProfileReply();
     }
 
     public override async Task<ProfileReply> DeleteConnection(DeleteConnectionRequest request,
         ServerCallContext context)
     {
-        var command = new DeleteConnectionCommand(request.Id.FromGrpc(), request.Identity.FromGrpc());
+        var command = new DeleteConnectionCommand(request.Id, request.Identity.FromGrpc());
         await _mediator.Send(command, context.CancellationToken);
 
-        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
+        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id));
         return data.ToProfileReply();
     }
 
     public override async Task<Confirming> CreatingPassword(CreatingPasswordRequest request, ServerCallContext context)
     {
-        var query = new GetAccountByIdQuery(request.Id.FromGrpc());
+        var query = new GetAccountByIdQuery(request.Id);
         var account = await _mediator.Send(query, context.CancellationToken);
 
         if (account.IsPasswordAvailable())
@@ -161,17 +161,17 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
         await _mediator.Send(command, context.CancellationToken);
 
         await _mediator.Send(
-            new CreatePasswordCommand(request.Id.FromGrpc(), request.Password),
+            new CreatePasswordCommand(request.Id, request.Password),
             context.CancellationToken
         );
 
-        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id.FromGrpc()));
+        var data = await _mediator.Send(new GetAccountByIdQuery(request.Id));
         return data.ToProfileReply();
     }
 
     public override async Task<Empty> UpdatePassword(UpdatePasswordRequest request, ServerCallContext context)
     {
-        var command = new UpdatePasswordCommand(request.Id.FromGrpc(), request.OldPassword, request.NewPassword);
+        var command = new UpdatePasswordCommand(request.Id, request.OldPassword, request.NewPassword);
         await _mediator.Send(command, context.CancellationToken);
 
         return new Empty();

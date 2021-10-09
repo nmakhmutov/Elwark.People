@@ -13,8 +13,8 @@ public static class AccountMapper
     public static ProfileReply ToProfileReply(this Domain.Aggregates.AccountAggregate.Account account) =>
         new()
         {
-            Id = account.Id.ToGrpc(),
-            Name = account.Name.ToGrpc(),
+            Id = account.Id,
+            Name = account.Name,
             CountryCode = account.CountryCode.IsEmpty() ? null : account.CountryCode.ToString(),
             Language = account.Language.ToString(),
             Picture = account.Picture.ToString(),

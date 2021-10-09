@@ -23,7 +23,7 @@ enum DayOfWeek
   SATURDAY = 6;
 }
 
-message AccountId {
+message AccountIdValue {
   int64 value = 1;
 }
 

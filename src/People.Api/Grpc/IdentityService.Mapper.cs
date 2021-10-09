@@ -11,21 +11,21 @@ internal sealed partial class IdentityService
     private static SignInReply ToSignInReply(AccountId id, string fullName) =>
         new()
         {
-            Id = id.ToGrpc(),
+            Id = id,
             DisplayName = fullName
         };
 
     private static SignUpReply ToSignUpReply(AccountId id, string fullName) =>
         new()
         {
-            Id = id.ToGrpc(),
+            Id = id,
             DisplayName = fullName
         };
 
     private static SignUpReply ToSignUpReply(AccountId id, string fullName, ObjectId confirmationId) =>
         new()
         {
-            Id = id.ToGrpc(),
+            Id = id,
             DisplayName = fullName,
             Confirmation = new Confirming
             {
@@ -36,10 +36,10 @@ internal sealed partial class IdentityService
     private static AccountReply ToAccountReply(Domain.Aggregates.AccountAggregate.Account account) =>
         new()
         {
-            Id = account.Id.ToGrpc(),
+            Id = account.Id,
             CountryCode = account.CountryCode.IsEmpty() ? null : account.CountryCode.ToString(),
             Ban = account.Ban.ToGrpc(),
-            Name = account.Name.ToGrpc(),
+            Name = account.Name,
             Email = account.GetPrimaryEmail().ToGrpc(),
             Language = account.Language.ToString(),
             Picture = account.Picture.ToString(),

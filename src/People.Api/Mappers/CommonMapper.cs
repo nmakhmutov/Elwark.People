@@ -3,26 +3,15 @@ using Google.Protobuf.WellKnownTypes;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Common;
-using AccountId = People.Grpc.Common.AccountId;
 using Ban = People.Grpc.Common.Ban;
 using DayOfWeek = People.Grpc.Common.DayOfWeek;
 using Identity = People.Grpc.Common.Identity;
 using IdentityType = People.Grpc.Common.IdentityType;
-using Name = People.Grpc.Common.Name;
 
 namespace People.Api.Mappers;
 
 public static class CommonMapper
 {
-    public static AccountId ToGrpc(this Domain.Aggregates.AccountAggregate.AccountId id) =>
-        new()
-        {
-            Value = (long)id
-        };
-
-    public static Domain.Aggregates.AccountAggregate.AccountId FromGrpc(this AccountId id) =>
-        new(id.Value);
-
     public static Identity ToGrpc(this Domain.Aggregates.AccountAggregate.Identities.Identity identity) =>
         new()
         {
@@ -33,10 +22,15 @@ public static class CommonMapper
     public static Domain.Aggregates.AccountAggregate.Identities.Identity FromGrpc(this Identity identity) =>
         identity.Type switch
         {
-            IdentityType.Email => new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(identity.Value),
-            IdentityType.Google => new Domain.Aggregates.AccountAggregate.Identities.Identity.Google(identity.Value),
-            IdentityType.Microsoft => new Domain.Aggregates.AccountAggregate.Identities.Identity.Microsoft(
-                identity.Value),
+            IdentityType.Email =>
+                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(identity.Value),
+            
+            IdentityType.Google =>
+                new Domain.Aggregates.AccountAggregate.Identities.Identity.Google(identity.Value),
+            
+            IdentityType.Microsoft => 
+                new Domain.Aggregates.AccountAggregate.Identities.Identity.Microsoft(identity.Value),
+            
             _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
         };
 
@@ -83,16 +77,6 @@ public static class CommonMapper
             null => null,
 
             _ => throw new ArgumentOutOfRangeException(nameof(ban), ban, "Unknown ban type")
-        };
-
-    public static Name ToGrpc(this Domain.Aggregates.AccountAggregate.Name name) =>
-        new()
-        {
-            Nickname = name.Nickname,
-            FirstName = name.FirstName,
-            LastName = name.LastName,
-            FullName = name.FullName(),
-            PreferNickname = name.PreferNickname
         };
 
     public static DayOfWeek ToGrpc(this System.DayOfWeek dayOfWeek) =>

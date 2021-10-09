@@ -7,8 +7,8 @@ import "google/protobuf/wrappers.proto";
 option csharp_namespace = "People.Grpc.Gateway";
 
 service PeopleService {
-  rpc GetProfile (people.AccountId) returns (ProfileReply);
-  rpc GetEmailNotification(people.AccountId) returns (EmailNotificationInformation);
+  rpc GetProfile (people.AccountIdValue) returns (ProfileReply);
+  rpc GetEmailNotification(people.AccountIdValue) returns (EmailNotificationInformation);
 
   rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);
   rpc ConfirmingConnection(ConfirmingRequest) returns (people.Confirming);
@@ -25,11 +25,12 @@ service PeopleService {
 
 service PeopleManagement {
   rpc GetAccounts(ManagementAccountsRequest) returns (ManagementPageAccountsReply);
-  rpc GetAccount(people.AccountId) returns (ManagementAccountReply);
+  rpc GetAccount(people.AccountIdValue) returns (ManagementAccountReply);
+  rpc UpdateAccount(UpdateAccountRequest) returns(ManagementAccountReply);
 }
 
 message ProfileReply {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Name name = 2;
   google.protobuf.StringValue country_code = 3;
   string time_zone = 4;
@@ -81,7 +82,7 @@ message Country {
 }
 
 message UpdateProfileRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   google.protobuf.StringValue first_name = 2;
   google.protobuf.StringValue last_name = 3;
   string nickname = 4;
@@ -93,39 +94,39 @@ message UpdateProfileRequest {
 }
 
 message ConfirmingRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Identity identity = 2;
   string language = 3;
 }
 
 message ConfirmRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Identity identity = 2;
   people.Confirm confirm = 3;
 }
 
 message SetEmailAsPrimaryRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string email = 2;
 }
 
 message DeleteConnectionRequest{
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Identity identity = 2;
 }
 
 message CreatingPasswordRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string language = 2;
 }
 message CreatePasswordRequest{
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Confirm confirm = 2;
   string password = 3;
 }
 
 message UpdatePasswordRequest{
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string old_password = 2;
   string new_password = 3;
 }
@@ -139,7 +140,7 @@ message ManagementAccountsRequest {
 
 message ManagementPageAccountsReply {
   message Account {
-    people.AccountId id = 1;
+    people.AccountIdValue id = 1;
     people.Name name = 2;
     google.protobuf.StringValue country_code = 3;
     string time_zone = 4;
@@ -166,7 +167,7 @@ message ManagementAccountReply {
     }
   }
   
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Name name = 2;
   google.protobuf.StringValue country_code = 3;
   string time_zone = 4;
@@ -179,4 +180,17 @@ message ManagementAccountReply {
   google.protobuf.Timestamp last_sign_in = 11;
   repeated string roles = 12;
   repeated Connection connections = 13;
+}
+
+message UpdateAccountRequest {
+  people.AccountIdValue id = 1;
+  google.protobuf.StringValue first_name = 2;
+  google.protobuf.StringValue last_name = 3;
+  string nickname = 4;
+  bool prefer_nickname = 5;
+  google.protobuf.StringValue country_code = 6;
+  string time_zone = 7;
+  people.DayOfWeek first_day_of_week = 8;
+  string language = 9;
+  string picture = 10;
 }

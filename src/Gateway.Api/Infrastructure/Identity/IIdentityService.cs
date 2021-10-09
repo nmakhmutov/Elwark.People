@@ -6,5 +6,5 @@ public interface IIdentityService
 {
     long GetId();
 
-    AccountId GetAccountId();
+    AccountIdValue GetAccountId();
 }

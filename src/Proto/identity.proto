@@ -7,8 +7,8 @@ import "common.proto";
 option csharp_namespace = "People.Grpc.Identity";
 
 service IdentityService {
-  rpc GetAccountById (people.AccountId) returns (AccountReply);
-  rpc GetStatus (people.AccountId) returns (StatusReply);
+  rpc GetAccountById (people.AccountIdValue) returns (AccountReply);
+  rpc GetStatus (people.AccountIdValue) returns (StatusReply);
 
   rpc SignInByEmail (SignInByEmailRequest) returns (SignInReply);
   rpc SignInByGoogle (SignInBySocialRequest) returns (SignInReply);
@@ -17,7 +17,7 @@ service IdentityService {
   rpc SignUpByEmail (SignUpByEmailRequest) returns (SignUpReply);
   rpc SignUpByGoogle (SignUpBySocialRequest) returns (SignUpReply);
   rpc SignUpByMicrosoft (SignUpBySocialRequest) returns (SignUpReply);
-  rpc IsConfirmationAvailable (people.Confirming) returns (people.AccountId);
+  rpc IsConfirmationAvailable (people.Confirming) returns (people.AccountIdValue);
   rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
   rpc ResendSignUpConfirmation (ResendSignUpConfirmationRequest) returns (people.Confirming);
 
@@ -25,7 +25,7 @@ service IdentityService {
   rpc AttachGoogle(AttachRequest) returns (google.protobuf.Empty);
   rpc AttachMicrosoft(AttachRequest) returns (google.protobuf.Empty);
 
-  rpc ResetPassword (ResetPasswordRequest) returns (people.AccountId);
+  rpc ResetPassword (ResetPasswordRequest) returns (people.AccountIdValue);
   rpc RestorePassword (RestorePasswordRequest) returns (google.protobuf.Empty);
 }
 
@@ -61,34 +61,34 @@ message ResetPasswordRequest {
 }
 
 message RestorePasswordRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Confirm confirm = 2;
   string password = 3;
 }
 
 message SignInReply {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string display_name = 2;
 }
 
 message SignUpReply {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string display_name = 2;
   people.Confirming confirmation = 3;
 }
 
 message ConfirmSignUpRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Confirm confirm = 2;
 }
 
 message ResendSignUpConfirmationRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string language = 2;
 }
 
 message AccountReply {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   people.Name name = 2;
   people.PrimaryEmail email = 3;
   google.protobuf.StringValue country_code = 4;
@@ -105,6 +105,6 @@ message StatusReply {
 }
 
 message AttachRequest {
-  people.AccountId id = 1;
+  people.AccountIdValue id = 1;
   string value = 2;
 }

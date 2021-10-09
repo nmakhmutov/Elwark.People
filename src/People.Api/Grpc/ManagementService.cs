@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using People.Api.Application.Commands.UpdateProfile;
 using People.Api.Application.Queries.GetAccountById;
 using People.Api.Application.Queries.GetAccounts;
 using People.Api.Mappers;
+using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
@@ -36,9 +38,9 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
             {
                 items.Select(x => new ManagementPageAccountsReply.Types.Account
                 {
-                    Id = x.AccountId.ToGrpc(),
+                    Id = x.AccountId,
                     Language = x.Language.ToString(),
-                    Name = x.Name.ToGrpc(),
+                    Name = x.Name,
                     Picture = x.Picture.ToString(),
                     CountryCode = x.CountryCode.ToString(),
                     CreatedAt = x.CreatedAt.ToTimestamp(),
@@ -48,17 +50,43 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
         };
     }
 
-    public override async Task<ManagementAccountReply> GetAccount(AccountId request, ServerCallContext context)
+    public override async Task<ManagementAccountReply> GetAccount(AccountIdValue request, ServerCallContext context)
     {
-        var account = await _mediator.Send(new GetAccountByIdQuery(request.Value), context.CancellationToken);
+        var account = await _mediator.Send(new GetAccountByIdQuery(request), context.CancellationToken);
 
-        return new ManagementAccountReply
+        return ToGrpc(account);
+    }
+
+    public override async Task<ManagementAccountReply> UpdateAccount(UpdateAccountRequest request,
+        ServerCallContext context)
+    {
+        var command = new UpdateProfileCommand(
+            request.Id,
+            request.FirstName,
+            request.LastName,
+            request.Nickname,
+            request.PreferNickname,
+            request.Language,
+            request.TimeZone,
+            request.FirstDayOfWeek.FromGrpc(),
+            request.CountryCode
+        );
+
+        await _mediator.Send(command, context.CancellationToken);
+
+        var account = await _mediator.Send(new GetAccountByIdQuery(request.Id), context.CancellationToken);
+
+        return ToGrpc(account);
+    }
+
+    private static ManagementAccountReply ToGrpc(Account account) =>
+        new()
         {
             Ban = account.Ban.ToGrpc(),
             Connections = { account.Connections.Select(ToGrpc) },
-            Id = account.Id.ToGrpc(),
+            Id = account.Id,
             Language = account.Language.ToString(),
-            Name = account.Name.ToGrpc(),
+            Name = account.Name,
             Picture = account.Picture.ToString(),
             Roles = { account.Roles },
             CountryCode = account.CountryCode.ToString(),
@@ -68,7 +96,6 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
             LastSignIn = account.LastSignIn.ToTimestamp(),
             FirstDayOfWeek = account.FirstDayOfWeek.ToGrpc()
         };
-    }
 
     private static global::People.Grpc.Gateway.ManagementAccountReply.Types.Connection ToGrpc(Connection connection) =>
         connection switch

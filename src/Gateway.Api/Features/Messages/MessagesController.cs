@@ -49,7 +49,7 @@ public class MessagesController : ControllerBase
     {
         var options = new CallOptions(cancellationToken: ct);
 
-        var information = await _people.GetEmailNotificationAsync(new AccountId { Value = id }, options);
+        var information = await _people.GetEmailNotificationAsync(new AccountIdValue { Value = id }, options);
 
         await _notification.SendEmailAsync(
             new SendEmailRequest

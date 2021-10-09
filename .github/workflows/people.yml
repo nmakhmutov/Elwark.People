@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Compose build people.api
-        run: sudo -E docker-compose build people.account
+        run: sudo -E docker-compose build people.api
         working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         env:
