@@ -108,7 +108,16 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         if (identity.IsConfirmed)
             return;
 
-        identity.SetAsConfirmed(confirmedAt);
+        identity.Confirm(confirmedAt);
+    }
+    
+    public void ConfuteConnection(Identity key)
+    {
+        var identity = _connections.First(x => x.Identity == key);
+        if (!identity.IsConfirmed)
+            return;
+
+        identity.Confute();
     }
 
     public void DeleteIdentity(Identity key)
@@ -138,7 +147,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         Language = language;
         Picture = picture;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id, UpdatedAt));
+        AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
     public void Update(Name name, Uri picture)
@@ -146,7 +155,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         Name = name;
         Picture = picture;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id, UpdatedAt));
+        AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
     public EmailConnection GetPrimaryEmail() =>
@@ -198,8 +207,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         SignInSuccess(dateTime, ip);
     }
 
-    public void SignIn(Identity.Email email, DateTime dateTime, IPAddress ip, string password,
-        IPasswordHasher hasher)
+    public void SignIn(Identity.Email email, DateTime dateTime, IPAddress ip, string password, IPasswordHasher hasher)
     {
         if (Ban is not null)
             throw new AccountBannedException(Ban);
@@ -228,6 +236,9 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
     public void AddRole(string role) =>
         _roles.Add(role);
+
+    public void DeleteRole(string role) =>
+        _roles.Remove(role);
 
     public void SetRegistration(IPAddress ip, CountryCode code, IIpAddressHasher ipHasher)
     {
@@ -260,6 +271,27 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
                 : item.RemovePrimary();
 
         return result;
+    }
+
+    public void SetPermanentBan(string reason, DateTime date)
+    {
+        Ban = new PermanentBan(reason, date);
+        
+        AddDomainEvent(new AccountBannedDomainEvent(this));
+    }
+
+    public void SetTemporaryBan(string reason, DateTime expiredAt, DateTime date)
+    {
+        Ban = new TemporaryBan(reason, date, expiredAt);
+        
+        AddDomainEvent(new AccountBannedDomainEvent(this));
+    }
+
+    public void Unban()
+    {
+        Ban = null;
+        
+        AddDomainEvent(new AccountUnbannedDomainEvent(this));
     }
 
     private static string GetTimeZone(string timeZone)

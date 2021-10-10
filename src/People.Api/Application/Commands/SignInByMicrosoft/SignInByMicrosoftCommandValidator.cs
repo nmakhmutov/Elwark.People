@@ -4,7 +4,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.SignInByMicrosoft;
 
-public sealed class SignInByMicrosoftCommandValidator : AbstractValidator<SignInByMicrosoftCommand>
+internal sealed class SignInByMicrosoftCommandValidator : AbstractValidator<SignInByMicrosoftCommand>
 {
     public SignInByMicrosoftCommandValidator() =>
         RuleFor(x => x.Identity)

@@ -6,7 +6,7 @@ using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SendConfirmation;
 
-public sealed class SendConfirmationCommandValidator : AbstractValidator<SendConfirmationCommand>
+internal sealed class SendConfirmationCommandValidator : AbstractValidator<SendConfirmationCommand>
 {
     public SendConfirmationCommandValidator(IConfirmationService confirmation)
     {

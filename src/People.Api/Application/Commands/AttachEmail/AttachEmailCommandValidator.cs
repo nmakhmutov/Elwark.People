@@ -8,7 +8,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.AttachEmail;
 
-public sealed class AttachEmailCommandValidator : AbstractValidator<AttachEmailCommand>
+internal sealed class AttachEmailCommandValidator : AbstractValidator<AttachEmailCommand>
 {
     public AttachEmailCommandValidator(IAccountRepository repository)
     {

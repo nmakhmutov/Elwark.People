@@ -82,6 +82,7 @@ builder.Services.AddKafkaMessageBus()
     })
     .AddProducer<AccountCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.CreatedAccounts)
     .AddProducer<AccountUpdatedIntegrationEvent>(config => config.Topic = IntegrationEvent.UpdatedAccounts)
+    .AddProducer<AccountDeletedIntegrationEvent>(config => config.Topic = IntegrationEvent.DeletedAccounts)
     .AddProducer<EmailMessageCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.EmailMessages)
     .AddConsumer<AccountInfoReceivedIntegrationEvent, AccountInfoEventHandler>(config =>
     {

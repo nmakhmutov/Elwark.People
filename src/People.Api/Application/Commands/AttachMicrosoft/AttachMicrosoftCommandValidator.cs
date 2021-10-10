@@ -9,7 +9,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.AttachMicrosoft;
 
-public sealed class AttachMicrosoftCommandValidator : AbstractValidator<AttachMicrosoftCommand>
+internal sealed class AttachMicrosoftCommandValidator : AbstractValidator<AttachMicrosoftCommand>
 {
     public AttachMicrosoftCommandValidator(IAccountRepository repository)
     {

@@ -24,7 +24,7 @@ public class MessagesController : ControllerBase
         _notification = notification;
         _people = people;
     }
-    
+
     [HttpPost, Authorize(Policy = Policy.RequireCommonAccess)]
     public async Task<ActionResult> SendEmailAsync([FromBody] EmailMessage request, CancellationToken ct)
     {
@@ -42,7 +42,7 @@ public class MessagesController : ControllerBase
 
         return Accepted();
     }
-    
+
     [HttpPost("accounts/{id:long}"), Authorize(Policy = Policy.RequireCommonAccess)]
     public async Task<ActionResult> SendEmailAsync([FromRoute] long id, [FromBody] AccountEmailMessage request,
         CancellationToken ct)

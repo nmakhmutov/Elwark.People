@@ -27,6 +27,18 @@ service PeopleManagement {
   rpc GetAccounts(ManagementAccountsRequest) returns (ManagementPageAccountsReply);
   rpc GetAccount(people.AccountIdValue) returns (ManagementAccountReply);
   rpc UpdateAccount(UpdateAccountRequest) returns(ManagementAccountReply);
+
+  rpc ConfirmConnection(ConfirmManagementRequest) returns (ManagementAccountReply);
+  rpc ConfuteConnection(ConfirmManagementRequest) returns (ManagementAccountReply);
+  rpc DeleteConnection(ConfirmManagementRequest) returns (ManagementAccountReply);
+
+  rpc CreateRole(RoleRequest) returns (ManagementAccountReply);
+  rpc DeleteRole(RoleRequest) returns (ManagementAccountReply);
+
+  rpc Ban(BanRequest) returns (ManagementAccountReply);
+  rpc Unban(people.AccountIdValue) returns (ManagementAccountReply);
+
+  rpc Delete(people.AccountIdValue) returns (google.protobuf.Empty);
 }
 
 message ProfileReply {
@@ -166,7 +178,7 @@ message ManagementAccountReply {
       SocialConnection social = 6;
     }
   }
-  
+
   people.AccountIdValue id = 1;
   people.Name name = 2;
   google.protobuf.StringValue country_code = 3;
@@ -193,4 +205,20 @@ message UpdateAccountRequest {
   people.DayOfWeek first_day_of_week = 8;
   string language = 9;
   string picture = 10;
+}
+
+message ConfirmManagementRequest {
+  people.AccountIdValue id = 1;
+  people.Identity identity = 2;
+}
+
+message RoleRequest {
+  people.AccountIdValue id = 1;
+  string role = 2;
+}
+
+message BanRequest{
+  people.AccountIdValue id = 1;
+  string reason = 2;
+  google.protobuf.Timestamp expiredAt = 3;
 }

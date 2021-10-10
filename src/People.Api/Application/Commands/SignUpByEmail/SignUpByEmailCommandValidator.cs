@@ -9,7 +9,7 @@ using People.Infrastructure.Forbidden;
 
 namespace People.Api.Application.Commands.SignUpByEmail;
 
-public sealed class SignUpByEmailCommandValidator : AbstractValidator<SignUpByEmailCommand>
+internal sealed class SignUpByEmailCommandValidator : AbstractValidator<SignUpByEmailCommand>
 {
     public SignUpByEmailCommandValidator(IAccountRepository repository, IPasswordValidator validator,
         IForbiddenService forbiddenService)

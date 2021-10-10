@@ -5,7 +5,7 @@ using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Api.Application.Commands.CreatePassword;
 
-public sealed class CreatePasswordCommandValidator : AbstractValidator<CreatePasswordCommand>
+internal sealed class CreatePasswordCommandValidator : AbstractValidator<CreatePasswordCommand>
 {
     public CreatePasswordCommandValidator(IPasswordValidator validator) =>
         RuleFor(x => x.Password)

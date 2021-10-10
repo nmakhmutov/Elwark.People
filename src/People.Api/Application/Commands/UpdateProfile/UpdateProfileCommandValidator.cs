@@ -9,7 +9,7 @@ using People.Infrastructure.Countries;
 
 namespace People.Api.Application.Commands.UpdateProfile;
 
-public sealed class UpdateProfileCommandValidator : AbstractValidator<UpdateProfileCommand>
+internal sealed class UpdateProfileCommandValidator : AbstractValidator<UpdateProfileCommand>
 {
     public UpdateProfileCommandValidator(ICountryService country)
     {

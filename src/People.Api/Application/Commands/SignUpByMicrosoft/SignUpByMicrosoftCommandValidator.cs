@@ -10,7 +10,7 @@ using People.Infrastructure.Forbidden;
 
 namespace People.Api.Application.Commands.SignUpByMicrosoft;
 
-public sealed class SignUpByMicrosoftCommandValidator : AbstractValidator<SignUpByMicrosoftCommand>
+internal sealed class SignUpByMicrosoftCommandValidator : AbstractValidator<SignUpByMicrosoftCommand>
 {
     public SignUpByMicrosoftCommandValidator(IAccountRepository repository, IForbiddenService forbiddenService)
     {

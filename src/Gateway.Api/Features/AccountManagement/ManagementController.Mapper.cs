@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
-using Gateway.Api.Features.Management.Models;
+using Gateway.Api.Features.AccountManagement.Models;
 using Gateway.Api.Mappes;
 using People.Grpc.Gateway;
-using Connection = Gateway.Api.Features.Management.Models.Connection;
+using Connection = Gateway.Api.Features.AccountManagement.Models.Connection;
 
-namespace Gateway.Api.Features.Management;
+namespace Gateway.Api.Features.AccountManagement;
 
 public sealed partial class ManagementController
 {
-    private static AccountModel ToAccount(ManagementAccountReply account) =>
+    private static Models.Account ToAccount(ManagementAccountReply account) =>
         new (
             account.Id.Value,
             account.Name.Nickname,
@@ -22,7 +22,7 @@ public sealed partial class ManagementController
             account.CountryCode,
             account.TimeZone,
             account.FirstDayOfWeek.FromGrpc(),
-            account.Ban is null ? null : new Ban(account.Ban.Reason, account.Ban.ExpiresAt.ToDateTime()),
+            account.Ban is null ? null : new Ban(account.Ban.Reason, account.Ban.ExpiresAt?.ToDateTime()),
             account.IsPasswordAvailable,
             account.CreatedAt.ToDateTime(),
             account.LastSignIn.ToDateTime(),

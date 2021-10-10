@@ -4,7 +4,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Validators;
 
-public sealed class IdentityMicrosoftValidator : AbstractValidator<Identity.Microsoft>
+internal sealed class IdentityMicrosoftValidator : AbstractValidator<Identity.Microsoft>
 {
     public IdentityMicrosoftValidator()
     {

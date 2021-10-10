@@ -1,6 +1,6 @@
-using People.Grpc.Common;
+using DayOfWeek = People.Grpc.Common.DayOfWeek;
 
-namespace Gateway.Api.Features.Management.Requests;
+namespace Gateway.Api.Features.AccountManagement.Requests;
 
 public sealed record UpdateAccountRequest(
     string Nickname,

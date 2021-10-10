@@ -4,7 +4,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.SignInByEmail;
 
-public sealed class SignInByEmailCommandValidator : AbstractValidator<SignInByEmailCommand>
+internal sealed class SignInByEmailCommandValidator : AbstractValidator<SignInByEmailCommand>
 {
     public SignInByEmailCommandValidator()
     {

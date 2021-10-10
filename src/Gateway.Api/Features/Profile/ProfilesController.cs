@@ -38,7 +38,7 @@ public sealed partial class ProfilesController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateAsync(UpdateAccount request, CancellationToken ct)
+    public async Task<ActionResult> UpdateAsync([FromBody] UpdateAccount request, CancellationToken ct)
     {
         var profile = await _client.UpdateProfileAsync(
             new UpdateProfileRequest

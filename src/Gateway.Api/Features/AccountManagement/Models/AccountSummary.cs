@@ -1,6 +1,6 @@
 using System;
 
-namespace Gateway.Api.Features.Management.Models;
+namespace Gateway.Api.Features.AccountManagement.Models;
 
 internal sealed record AccountSummary(
     long Id,

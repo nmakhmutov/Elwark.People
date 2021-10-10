@@ -1,9 +1,18 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
+using People.Api.Application.Commands.BanAccount;
+using People.Api.Application.Commands.ConfirmConnection;
+using People.Api.Application.Commands.ConfuteConnection;
+using People.Api.Application.Commands.CreateRole;
+using People.Api.Application.Commands.DeleteAccount;
+using People.Api.Application.Commands.DeleteConnection;
+using People.Api.Application.Commands.DeleteRole;
+using People.Api.Application.Commands.UnbanAccount;
 using People.Api.Application.Commands.UpdateProfile;
 using People.Api.Application.Queries.GetAccountById;
 using People.Api.Application.Queries.GetAccounts;
@@ -50,12 +59,8 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
         };
     }
 
-    public override async Task<ManagementAccountReply> GetAccount(AccountIdValue request, ServerCallContext context)
-    {
-        var account = await _mediator.Send(new GetAccountByIdQuery(request), context.CancellationToken);
-
-        return ToGrpc(account);
-    }
+    public override Task<ManagementAccountReply> GetAccount(AccountIdValue request, ServerCallContext context) =>
+        GetAccountAsync(request, context.CancellationToken);
 
     public override async Task<ManagementAccountReply> UpdateAccount(UpdateAccountRequest request,
         ServerCallContext context)
@@ -74,9 +79,74 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
 
         await _mediator.Send(command, context.CancellationToken);
 
-        var account = await _mediator.Send(new GetAccountByIdQuery(request.Id), context.CancellationToken);
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
 
-        return ToGrpc(account);
+    public override async Task<ManagementAccountReply> ConfirmConnection(ConfirmManagementRequest request,
+        ServerCallContext context)
+    {
+        var command = new ConfirmConnectionCommand(request.Id, request.Identity.FromGrpc());
+        await _mediator.Send(command, context.CancellationToken);
+        
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
+
+    public override async Task<ManagementAccountReply> ConfuteConnection(ConfirmManagementRequest request,
+        ServerCallContext context)
+    {
+        var command = new ConfuteConnectionCommand(request.Id, request.Identity.FromGrpc());
+        await _mediator.Send(command, context.CancellationToken);
+
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
+
+    public override async Task<ManagementAccountReply> DeleteConnection(ConfirmManagementRequest request,
+        ServerCallContext context)
+    {
+        var command = new DeleteConnectionCommand(request.Id, request.Identity.FromGrpc());
+        await _mediator.Send(command, context.CancellationToken);
+        
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
+
+    public override async Task<ManagementAccountReply> CreateRole(RoleRequest request, ServerCallContext context)
+    {
+        var command = new CreateRoleCommand(request.Id, request.Role);
+        await _mediator.Send(command, context.CancellationToken);
+        
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
+
+    public override async Task<ManagementAccountReply> DeleteRole(RoleRequest request, ServerCallContext context)
+    {
+        var command = new DeleteRoleCommand(request.Id, request.Role);
+        await _mediator.Send(command, context.CancellationToken);
+        
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
+
+    public override async Task<ManagementAccountReply> Ban(BanRequest request, ServerCallContext context)
+    {
+        var command = new BanAccountCommand(request.Id, request.Reason, request.ExpiredAt?.ToDateTime());
+        await _mediator.Send(command, context.CancellationToken);
+        
+        return await GetAccountAsync(request.Id, context.CancellationToken);
+    }
+
+    public override async Task<ManagementAccountReply> Unban(AccountIdValue request, ServerCallContext context)
+    {
+        var command = new UnbanAccountCommand(request);
+        await _mediator.Send(command, context.CancellationToken);
+        
+        return await GetAccountAsync(request, context.CancellationToken);
+    }
+
+    public override async Task<Empty> Delete(AccountIdValue request, ServerCallContext context)
+    {
+        var command = new DeleteAccountCommand(request);
+        await _mediator.Send(command, context.CancellationToken);
+
+        return new Empty();
     }
 
     private static ManagementAccountReply ToGrpc(Account account) =>
@@ -97,6 +167,9 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
             FirstDayOfWeek = account.FirstDayOfWeek.ToGrpc()
         };
 
+    private async Task<ManagementAccountReply> GetAccountAsync(AccountId id, CancellationToken ct) =>
+        ToGrpc(await _mediator.Send(new GetAccountByIdQuery(id), ct));
+    
     private static global::People.Grpc.Gateway.ManagementAccountReply.Types.Connection ToGrpc(Connection connection) =>
         connection switch
         {

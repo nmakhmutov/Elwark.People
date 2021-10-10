@@ -1,4 +1,4 @@
-namespace Gateway.Api.Features.Management.Requests;
+namespace Gateway.Api.Features.AccountManagement.Requests;
 
 public sealed record GetAccountsRequest
 {

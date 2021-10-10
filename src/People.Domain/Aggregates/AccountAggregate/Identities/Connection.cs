@@ -22,6 +22,9 @@ public abstract record Connection : Identity
 
     public abstract Identity Identity { get; }
 
-    public void SetAsConfirmed(DateTime confirmedAt) =>
+    internal void Confirm(DateTime confirmedAt) =>
         ConfirmedAt = confirmedAt;
+
+    internal void Confute() =>
+        ConfirmedAt = null;
 }

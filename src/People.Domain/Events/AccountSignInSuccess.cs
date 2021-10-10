@@ -1,7 +1,7 @@
 using System.Net;
 using MediatR;
+using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Domain.Events;
 
-public sealed record AccountSignInSuccess
-    (Aggregates.AccountAggregate.Account Account, IPAddress IpAddress) : INotification;
+public sealed record AccountSignInSuccess(Account Account, IPAddress IpAddress) : INotification;

@@ -12,3 +12,5 @@ public class TimeZonesController : ControllerBase
     public IActionResult Get() =>
         Ok(TimeZoneInfo.GetSystemTimeZones().Select(x => new TimeZone(x.Id, x.BaseUtcOffset)));
 }
+
+internal sealed record TimeZone(string Name, TimeSpan Offset);

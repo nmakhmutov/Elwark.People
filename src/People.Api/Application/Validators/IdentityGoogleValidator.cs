@@ -4,7 +4,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Validators;
 
-public sealed class IdentityGoogleValidator : AbstractValidator<Identity.Google>
+internal sealed class IdentityGoogleValidator : AbstractValidator<Identity.Google>
 {
     public IdentityGoogleValidator()
     {

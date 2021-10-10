@@ -10,7 +10,7 @@ using People.Infrastructure.Forbidden;
 
 namespace People.Api.Application.Commands.SignUpByGoogle;
 
-public sealed class SignUpByGoogleCommandValidator : AbstractValidator<SignUpByGoogleCommand>
+internal sealed class SignUpByGoogleCommandValidator : AbstractValidator<SignUpByGoogleCommand>
 {
     public SignUpByGoogleCommandValidator(IAccountRepository repository, IForbiddenService forbiddenService)
     {

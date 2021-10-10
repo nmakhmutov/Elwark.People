@@ -9,7 +9,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.AttachGoogle;
 
-public sealed class AttachGoogleCommandValidator : AbstractValidator<AttachGoogleCommand>
+internal sealed class AttachGoogleCommandValidator : AbstractValidator<AttachGoogleCommand>
 {
     public AttachGoogleCommandValidator(IAccountRepository repository)
     {

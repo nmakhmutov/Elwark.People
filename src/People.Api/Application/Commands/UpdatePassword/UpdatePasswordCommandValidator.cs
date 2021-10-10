@@ -5,7 +5,7 @@ using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Api.Application.Commands.UpdatePassword;
 
-public sealed class UpdatePasswordCommandValidator : AbstractValidator<UpdatePasswordCommand>
+internal sealed class UpdatePasswordCommandValidator : AbstractValidator<UpdatePasswordCommand>
 {
     public UpdatePasswordCommandValidator(IPasswordValidator validator)
     {
