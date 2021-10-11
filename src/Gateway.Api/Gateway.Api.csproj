@@ -9,6 +9,7 @@
         <Protobuf Include="..\Proto\common.proto" Link="Protos\common.proto" GrpcServices="Both" />
         <Protobuf Include="..\Proto\people.proto" Link="Protos\people.proto" GrpcServices="Client" />
         <Protobuf Include="..\Proto\notification.proto" Link="Protos\notification.proto" GrpcServices="Client" />
+        <Protobuf Include="..\Proto\infrastructure.proto" Link="Protos\infrastructure.proto" GrpcServices="Client" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,9 +34,6 @@
         </Compile>
         <Compile Update="Features\Account\AccountsController.Mapper.cs">
             <DependentUpon>AccountsController.cs</DependentUpon>
-        </Compile>
-        <Compile Update="Features\Management\ManagementController.Mapper.cs">
-          <DependentUpon>ManagementController.cs</DependentUpon>
         </Compile>
     </ItemGroup>
 

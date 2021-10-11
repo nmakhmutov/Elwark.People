@@ -1,24 +1,23 @@
 using System.Net;
 using System.Threading.Tasks;
+using Common.Kafka;
+using Integration.Event;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Infrastructure.Countries;
-using Integration.Event;
-using Common.Kafka;
 
 namespace People.Api.Application.IntegrationEventHandlers;
 
 public sealed class AccountInfoEventHandler : IKafkaHandler<AccountInfoReceivedIntegrationEvent>
 {
     private readonly ICountryService _country;
-    private readonly IIpAddressHasher _ipAddressHasher;
+    private readonly IIpAddressHasher _ipHasher;
     private readonly IAccountRepository _repository;
 
-    public AccountInfoEventHandler(IAccountRepository repository, ICountryService country,
-        IIpAddressHasher ipAddressHasher)
+    public AccountInfoEventHandler(IAccountRepository repository, ICountryService country, IIpAddressHasher ipHasher)
     {
         _repository = repository;
         _country = country;
-        _ipAddressHasher = ipAddressHasher;
+        _ipHasher = ipHasher;
     }
 
     public async Task HandleAsync(AccountInfoReceivedIntegrationEvent message)
@@ -27,8 +26,8 @@ public sealed class AccountInfoEventHandler : IKafkaHandler<AccountInfoReceivedI
         if (account is null)
             return;
 
-        var countryCode = await GetCountryCode(message.CountryCode);
-        account.SetRegistration(IPAddress.Parse(message.Ip), countryCode, _ipAddressHasher);
+        var countryCode = await GetCountryCodeAsync(message.CountryCode);
+        account.SetRegistration(IPAddress.Parse(message.Ip), countryCode, _ipHasher);
 
         account.Update(account.Name with
             {
@@ -47,12 +46,12 @@ public sealed class AccountInfoEventHandler : IKafkaHandler<AccountInfoReceivedI
         await _repository.UpdateAsync(account);
     }
 
-    private async Task<CountryCode> GetCountryCode(string? countryCode)
+    private async Task<CountryCode> GetCountryCodeAsync(string? code)
     {
-        if (countryCode is null)
+        if (string.IsNullOrEmpty(code))
             return CountryCode.Empty;
 
-        var country = await _country.GetAsync(countryCode);
+        var country = await _country.GetAsync(code);
         return country is null
             ? CountryCode.Empty
             : new CountryCode(country.Alpha2Code);

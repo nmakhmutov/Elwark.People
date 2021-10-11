@@ -1,7 +1,7 @@
 using System;
 using People.Grpc.Common;
 
-namespace Gateway.Api.Features.AccountManagement.Models;
+namespace Gateway.Api.Features.Account.Models;
 
 internal abstract record Connection(IdentityType Type, string Value, DateTime CreatedAt, DateTime? ConfirmedAt);
 

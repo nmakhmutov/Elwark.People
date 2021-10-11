@@ -22,6 +22,7 @@ using Newtonsoft.Json.Serialization;
 using Gateway.Api.Infrastructure;
 using Gateway.Api.Infrastructure.Identity;
 using People.Grpc.Gateway;
+using People.Grpc.Infrastructure;
 using People.Grpc.Notification;
 using Serilog;
 using Serilog.Formatting.Compact;
@@ -135,6 +136,18 @@ builder.Services
     .AddGrpcClient<NotificationService.NotificationServiceClient>(options =>
     {
         options.Address = new Uri(builder.Configuration["Urls:Notification.Api"]);
+        options.ChannelOptionsActions.Add(channel =>
+        {
+            channel.Credentials = ChannelCredentials.Insecure;
+            channel.ServiceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } };
+        });
+    })
+    .AddCorrelationIdForwarding();
+
+builder.Services
+    .AddGrpcClient<InfrastructureService.InfrastructureServiceClient>(options =>
+    {
+        options.Address = new Uri(builder.Configuration["Urls:People.Api"]);
         options.ChannelOptionsActions.Add(channel =>
         {
             channel.Credentials = ChannelCredentials.Insecure;

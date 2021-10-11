@@ -9,6 +9,7 @@
         <Protobuf Include="..\Proto\common.proto" Link="Protos\common.proto" GrpcServices="Both" />
         <Protobuf Include="..\Proto\identity.proto" Link="Protos\identity.proto" GrpcServices="Server" />
         <Protobuf Include="..\Proto\people.proto" Link="Protos\people.proto" GrpcServices="Server" />
+        <Protobuf Include="..\Proto\infrastructure.proto" Link="Protos\infrastructure.proto" GrpcServices="Server" />
     </ItemGroup>
 
     <ItemGroup>

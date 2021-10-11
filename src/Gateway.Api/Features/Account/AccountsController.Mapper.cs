@@ -5,7 +5,7 @@ namespace Gateway.Api.Features.Account;
 
 public sealed partial class AccountsController
 {
-    private static Account ToAccount(ProfileReply account) =>
+    private static Models.Account ToAccount(ProfileReply account) =>
         new(
             account.Id.Value,
             account.Name.Nickname,

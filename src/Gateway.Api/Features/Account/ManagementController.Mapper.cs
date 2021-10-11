@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
-using Gateway.Api.Features.AccountManagement.Models;
+using Gateway.Api.Features.Account.Models;
 using Gateway.Api.Mappes;
 using People.Grpc.Gateway;
-using Connection = Gateway.Api.Features.AccountManagement.Models.Connection;
+using Connection = Gateway.Api.Features.Account.Models.Connection;
 
-namespace Gateway.Api.Features.AccountManagement;
+namespace Gateway.Api.Features.Account;
 
 public sealed partial class ManagementController
 {
-    private static Models.Account ToAccount(ManagementAccountReply account) =>
+    private static ManagementAccount ToAccount(ManagementAccountReply account) =>
         new (
             account.Id.Value,
             account.Name.Nickname,

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace People.Infrastructure.Countries;
+namespace Gateway.Api.Features.Country.Models;
 
 public sealed record Country(
     string Alpha2Code,

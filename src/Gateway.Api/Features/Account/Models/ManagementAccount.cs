@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gateway.Api.Features.AccountManagement.Models;
+namespace Gateway.Api.Features.Account.Models;
 
-internal sealed record Account(
+internal sealed record ManagementAccount(
     long Id,
     string Nickname,
     bool PreferNickname,

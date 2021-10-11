@@ -1,0 +1,43 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "common.proto";
+
+option csharp_namespace = "People.Grpc.Infrastructure";
+
+service InfrastructureService {
+  rpc GetCountries(CountriesManagementRequest) returns (CountiesManagementReply);
+  rpc GetCountry(google.protobuf.StringValue) returns (Country);
+  rpc CreateCountry (Country) returns (Country);
+  rpc UpdateCountry (Country) returns (Country);
+  rpc DeleteCountry (google.protobuf.StringValue) returns (google.protobuf.Empty);
+}
+
+message CountriesManagementRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  google.protobuf.StringValue country_code = 3;
+}
+
+message CountiesManagementReply{
+  message Country {
+    string alpha_2_code = 1;
+    string alpha_3_code = 2;
+    google.protobuf.StringValue capital = 3;
+    string name = 4;
+  }
+  
+  uint32 pages = 1;
+  int64 count = 2;
+  repeated Country countries = 3;
+}
+
+message Country {
+  string alpha_2_code = 1;
+  string alpha_3_code = 2;
+  google.protobuf.StringValue capital = 3;
+  repeated string languages = 4;
+  string region = 5;
+  google.protobuf.StringValue subregion = 6;
+  map<string, string> translations = 7;
+}

@@ -1,10 +1,12 @@
-namespace Gateway.Api.Features.AccountManagement.Requests;
+namespace Gateway.Api.Features.Country.Requests;
 
-public sealed record GetAccountsRequest
+public sealed record GetCountriesRequest
 {
     public int Page { get; init; } = 1;
 
     public int Count { get; init; } = 10;
+
+    public string? Code { get; init; }
 
     public int Limit => Count switch
     {

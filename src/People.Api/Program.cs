@@ -134,5 +134,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 app.MapGrpcService<PeopleService>();
 app.MapGrpcService<IdentityService>();
 app.MapGrpcService<ManagementService>();
+app.MapGrpcService<InfrastructureService>();
 
 app.Run();

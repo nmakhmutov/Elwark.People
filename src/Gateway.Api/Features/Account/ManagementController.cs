@@ -1,18 +1,18 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Gateway.Api.Features.AccountManagement.Models;
-using Gateway.Api.Features.AccountManagement.Requests;
+using Gateway.Api.Features.Account.Models;
+using Gateway.Api.Features.Account.Requests;
 using Gateway.Api.Infrastructure;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
-using BanRequest = Gateway.Api.Features.AccountManagement.Requests.BanRequest;
-using UpdateAccountRequest = Gateway.Api.Features.AccountManagement.Requests.UpdateAccountRequest;
+using BanRequest = Gateway.Api.Features.Account.Requests.BanRequest;
+using UpdateAccountRequest = Gateway.Api.Features.Account.Requests.UpdateAccountRequest;
 
-namespace Gateway.Api.Features.AccountManagement;
+namespace Gateway.Api.Features.Account;
 
 [ApiController, Route("management/accounts"), Authorize(Policy = Policy.ManagementAccess)]
 public sealed partial class ManagementController : ControllerBase

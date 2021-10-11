@@ -1,5 +1,5 @@
 using System;
 
-namespace Gateway.Api.Features.AccountManagement.Requests;
+namespace Gateway.Api.Features.Account.Requests;
 
 public sealed record BanRequest(string Reason, DateTime? ExpiredAt);

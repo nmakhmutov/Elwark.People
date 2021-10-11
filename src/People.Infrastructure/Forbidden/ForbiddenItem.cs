@@ -2,7 +2,6 @@ using System;
 using MongoDB.Bson;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 namespace People.Infrastructure.Forbidden;
 
 public sealed record ForbiddenItem

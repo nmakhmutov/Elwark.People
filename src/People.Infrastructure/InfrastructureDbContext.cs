@@ -6,11 +6,20 @@ using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
 using People.Infrastructure.Forbidden;
 using Common.Mongo;
+using MongoDB.Bson.Serialization;
 
 namespace People.Infrastructure;
 
 public sealed class InfrastructureDbContext : MongoDbContext
 {
+    static InfrastructureDbContext()
+    {
+        BsonClassMap.RegisterClassMap<Country>(map =>
+        {
+            map.AutoMap();
+            map.MapIdProperty(x => x.Alpha2Code);
+        });
+    }
     public InfrastructureDbContext(IOptions<MongoDbOptions> settings)
         : base(settings.Value)
     {
@@ -35,8 +44,8 @@ public sealed class InfrastructureDbContext : MongoDbContext
 
         await CreateIndexesAsync(Countries,
             new CreateIndexModel<Country>(
-                Builders<Country>.IndexKeys.Ascending(x => x.Alpha2Code),
-                new CreateIndexOptions { Name = "Alpha2Code", Unique = true }
+                Builders<Country>.IndexKeys.Ascending(x => x.Alpha3Code),
+                new CreateIndexOptions { Name = "Alpha3Code", Unique = true }
             )
         );
 
