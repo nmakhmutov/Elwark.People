@@ -1,6 +1,9 @@
 using System;
 using System.IO;
+using Common.Kafka;
+using Common.Mongo;
 using Confluent.Kafka;
+using Integration.Event;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,14 +11,11 @@ using People.Infrastructure;
 using People.Worker.IntegrationEventHandlers;
 using People.Worker.Services.Gravatar;
 using People.Worker.Services.IpInformation;
-using Integration.Event;
-using Common.Kafka;
-using Common.Mongo;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Display;
 
-const string appName = "Elwark.People.Worker";
+const string appName = "People.Worker";
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", false, true)

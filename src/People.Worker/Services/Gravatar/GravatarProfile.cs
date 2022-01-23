@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace People.Worker.Services.Gravatar;
 
-public class GravatarProfile
+public sealed class GravatarProfile
 {
     public GravatarProfile(Uri profileUrl, string? preferredUsername, Uri thumbnailUrl, NameData? name,
         string? aboutMe)
@@ -30,7 +30,7 @@ public class GravatarProfile
     [JsonProperty("aboutMe")]
     public string? AboutMe { get; set; }
 
-    public class NameData
+    public sealed class NameData
     {
         [JsonProperty("givenName")]
         public string? FirstName { get; set; }

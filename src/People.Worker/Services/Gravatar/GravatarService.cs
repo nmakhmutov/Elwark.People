@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace People.Worker.Services.Gravatar;
 
-public class GravatarService : IGravatarService
+public sealed class GravatarService : IGravatarService
 {
     private readonly HttpClient _client;
     private readonly ILogger<GravatarService> _logger;

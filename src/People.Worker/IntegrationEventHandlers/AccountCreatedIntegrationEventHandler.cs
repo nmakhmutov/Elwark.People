@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Integration.Event;
 using Common.Kafka;
+using Integration.Event;
 using People.Worker.Services.Gravatar;
 using People.Worker.Services.IpInformation;
 

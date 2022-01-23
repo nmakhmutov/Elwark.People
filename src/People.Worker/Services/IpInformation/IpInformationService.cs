@@ -9,7 +9,7 @@ public interface IIpInformationService
     Task<IpInformationDto?> GetAsync(string ip, string lang);
 }
 
-public class IpInformationService : IIpInformationService
+public sealed class IpInformationService : IIpInformationService
 {
     private readonly HttpClient _httpClient;
 

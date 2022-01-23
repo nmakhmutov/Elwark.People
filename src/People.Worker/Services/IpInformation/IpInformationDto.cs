@@ -1,6 +1,6 @@
 ﻿namespace People.Worker.Services.IpInformation;
 
-public class IpInformationDto
+public sealed class IpInformationDto
 {
     public IpInformationDto(IpInformationStatus status, string timeZone, string? city, string? country,
         string countryCode, string? isp, double? lat, double? lon, string? org, string? query, string? region,
