@@ -2,7 +2,7 @@ using People.Domain.Aggregates.AccountAggregate.Identities;
 
 namespace People.Api.Infrastructure.Provider.Social.Microsoft;
 
-public class MicrosoftAccount
+public sealed class MicrosoftAccount
 {
     public MicrosoftAccount(Identity.Microsoft identity, Identity.Email email, string? firstName, string? lastName)
     {

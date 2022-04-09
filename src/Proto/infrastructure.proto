@@ -19,14 +19,14 @@ message CountriesManagementRequest {
   google.protobuf.StringValue country_code = 3;
 }
 
-message CountiesManagementReply{
+message CountiesManagementReply {
   message Country {
     string alpha_2_code = 1;
     string alpha_3_code = 2;
     google.protobuf.StringValue capital = 3;
     string name = 4;
   }
-  
+
   uint32 pages = 1;
   int64 count = 2;
   repeated Country countries = 3;

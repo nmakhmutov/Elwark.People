@@ -1,6 +1,6 @@
 namespace People.Domain.Exceptions;
 
-public static class ElwarkExceptionCodes
+public static class ExceptionCodes
 {
     public const string Internal = nameof(Internal);
 

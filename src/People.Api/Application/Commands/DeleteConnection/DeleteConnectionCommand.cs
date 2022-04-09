@@ -25,7 +25,7 @@ internal sealed class DeleteConnectionCommandHandler : IRequestHandler<DeleteCon
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.DeleteIdentity(request.Identity);
 

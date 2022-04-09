@@ -3,8 +3,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using People.Api.Infrastructure;
 using People.Api.Application.Models;
+using People.Api.Infrastructure;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
@@ -31,7 +31,7 @@ public sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailC
     {
         var account = await _repository.GetAsync(request.Email, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.SignIn(request.Email, DateTime.UtcNow, request.Ip, request.Password, _hasher);
 

@@ -25,12 +25,12 @@ public sealed partial class ProfilesController
             profile.CreatedAt.ToDateTime(),
             profile.Connections.Select(x => (Connection)(x.ConnectionTypeCase switch
             {
-                People.Grpc.Gateway.Connection.ConnectionTypeOneofCase.Email => 
+                People.Grpc.Gateway.Connection.ConnectionTypeOneofCase.Email =>
                     new EmailConnection(x.Type, x.Value, x.IsConfirmed, x.Email.IsPrimary),
-                
-                People.Grpc.Gateway.Connection.ConnectionTypeOneofCase.Social => 
+
+                People.Grpc.Gateway.Connection.ConnectionTypeOneofCase.Social =>
                     new SocialConnection(x.Type, x.Value, x.IsConfirmed, x.Social.FirstName, x.Social.LastName),
-                
+
                 _ => throw new ArgumentOutOfRangeException()
             }))
         );

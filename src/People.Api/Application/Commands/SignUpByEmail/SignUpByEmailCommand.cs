@@ -4,8 +4,8 @@ using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using People.Api.Infrastructure;
 using People.Api.Application.Models;
+using People.Api.Infrastructure;
 using People.Domain;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
@@ -39,7 +39,7 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
                       ?? await CreateAsync(request, ct);
 
         if (account.IsConfirmed())
-            throw new ElwarkException(ElwarkExceptionCodes.EmailAlreadyExists);
+            throw new PeopleException(ExceptionCodes.EmailAlreadyExists);
 
         return new SignUpResult(account.Id, account.Name.FullName(), account.GetPrimaryEmail());
     }

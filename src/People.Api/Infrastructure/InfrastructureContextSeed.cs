@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using People.Infrastructure;
+using People.Infrastructure.Blacklist;
 using People.Infrastructure.Countries;
-using People.Infrastructure.Forbidden;
 
 namespace People.Api.Infrastructure;
 
@@ -49,10 +49,10 @@ internal sealed class InfrastructureContextSeed
         if (File.Exists(path))
         {
             var passwords = (await File.ReadAllLinesAsync(path, Encoding.UTF8))
-                .Select(x => new ForbiddenItem(ForbiddenType.Password, x))
+                .Select(x => new BlacklistItem(ForbiddenType.Password, x))
                 .ToArray();
 
-            await _dbContext.ForbiddenItems.InsertManyAsync(passwords, new InsertManyOptions { IsOrdered = false });
+            await _dbContext.Blacklist.InsertManyAsync(passwords, new InsertManyOptions { IsOrdered = false });
         }
     }
 
@@ -63,10 +63,10 @@ internal sealed class InfrastructureContextSeed
         if (File.Exists(path))
         {
             var emails = (await File.ReadAllLinesAsync(path, Encoding.UTF8))
-                .Select(x => new ForbiddenItem(ForbiddenType.EmailHost, x))
+                .Select(x => new BlacklistItem(ForbiddenType.EmailHost, x))
                 .ToArray();
 
-            await _dbContext.ForbiddenItems.InsertManyAsync(emails, new InsertManyOptions { IsOrdered = false });
+            await _dbContext.Blacklist.InsertManyAsync(emails, new InsertManyOptions { IsOrdered = false });
         }
     }
 }

@@ -9,10 +9,10 @@ internal sealed class SignInByEmailCommandValidator : AbstractValidator<SignInBy
     public SignInByEmailCommandValidator()
     {
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(SignInByEmailCommand.Email));
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required);
     }
 }

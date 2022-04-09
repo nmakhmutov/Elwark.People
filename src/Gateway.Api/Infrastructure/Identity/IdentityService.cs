@@ -4,7 +4,7 @@ using People.Grpc.Common;
 
 namespace Gateway.Api.Infrastructure.Identity;
 
-public class IdentityService : IIdentityService
+public sealed class IdentityService : IIdentityService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 

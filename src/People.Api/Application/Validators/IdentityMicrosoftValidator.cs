@@ -12,6 +12,6 @@ internal sealed class IdentityMicrosoftValidator : AbstractValidator<Identity.Mi
             .Equal(IdentityType.Microsoft);
 
         RuleFor(x => x.Value)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required);
     }
 }

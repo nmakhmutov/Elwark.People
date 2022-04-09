@@ -18,5 +18,5 @@ internal sealed record GetAccountByIdentityQueryHandler : IRequestHandler<GetAcc
 
     public async Task<Account> Handle(GetAccountByIdentityQuery request, CancellationToken ct) =>
         await _repository.GetAsync(request.Identity, ct) ??
-        throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+        throw new PeopleException(ExceptionCodes.AccountNotFound);
 }

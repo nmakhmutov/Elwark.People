@@ -7,5 +7,5 @@ internal sealed class ConfirmConnectionCommandValidator : AbstractValidator<Conf
 {
     public ConfirmConnectionCommandValidator() =>
         RuleFor(x => x.Id)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required);
 }

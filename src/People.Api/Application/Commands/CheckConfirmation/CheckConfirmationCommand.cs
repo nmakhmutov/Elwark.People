@@ -20,10 +20,10 @@ internal sealed class CheckConfirmationCommandHandler : IRequestHandler<CheckCon
     {
         var data = await _confirmation.GetAsync(request.Id, ct);
         if (data is null)
-            throw new ElwarkException(ElwarkExceptionCodes.ConfirmationNotFound);
+            throw new PeopleException(ExceptionCodes.ConfirmationNotFound);
 
         if (data.Code != request.Code)
-            throw new ElwarkException(ElwarkExceptionCodes.ConfirmationNotMatch);
+            throw new PeopleException(ExceptionCodes.ConfirmationNotMatch);
 
         return Unit.Value;
     }

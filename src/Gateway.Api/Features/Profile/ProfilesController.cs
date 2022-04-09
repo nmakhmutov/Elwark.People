@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Gateway.Api.Infrastructure;
 using Gateway.Api.Infrastructure.Identity;
+using Gateway.Api.Mappes;
 using Gateway.Api.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Gateway.Api.Mappes;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
 using Confirm = Gateway.Api.Requests.ConfirmRequest;
@@ -81,7 +81,7 @@ public sealed partial class ProfilesController : ControllerBase
 
     [HttpPut("connections/{type}/{value}/confirm")]
     public async Task<ActionResult> ConfirmIdentityAsync(IdentityType type, string value,
-        [FromBody] Requests.ConfirmRequest request, CancellationToken ct)
+        [FromBody] Confirm request, CancellationToken ct)
     {
         var profile = await _client.ConfirmConnectionAsync(
             new ConfirmRequest

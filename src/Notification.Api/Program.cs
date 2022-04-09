@@ -1,10 +1,10 @@
 using System.Net.Http.Headers;
+using Common.Kafka;
+using Common.Mongo;
 using Confluent.Kafka;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using Integration.Event;
-using Common.Kafka;
-using Common.Mongo;
 using Notification.Api.Grpc;
 using Notification.Api.Infrastructure;
 using Notification.Api.Infrastructure.Provider;
@@ -18,7 +18,7 @@ using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Display;
 
-const string appName = "Elwark.Notification.Api";
+const string appName = "Notification.Api";
 var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()

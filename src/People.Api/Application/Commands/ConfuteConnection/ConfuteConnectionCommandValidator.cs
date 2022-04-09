@@ -8,7 +8,7 @@ internal sealed class ConfuteConnectionCommandValidator : AbstractValidator<Conf
     public ConfuteConnectionCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required);
 
         RuleFor(x => x.Identity)
             .NotNull();

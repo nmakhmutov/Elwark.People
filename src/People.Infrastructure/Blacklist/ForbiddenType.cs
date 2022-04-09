@@ -1,4 +1,4 @@
-namespace People.Infrastructure.Forbidden;
+namespace People.Infrastructure.Blacklist;
 
 public enum ForbiddenType
 {

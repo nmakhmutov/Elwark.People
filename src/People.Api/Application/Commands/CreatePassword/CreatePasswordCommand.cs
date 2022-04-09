@@ -27,7 +27,7 @@ public sealed class CreatePasswordCommandHandler : IRequestHandler<CreatePasswor
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.SetPassword(request.Password, _hasher, DateTime.UtcNow);
 

@@ -6,13 +6,13 @@ using People.Api.Application.Validators;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
-using People.Infrastructure.Forbidden;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Application.Commands.SignUpByGoogle;
 
 internal sealed class SignUpByGoogleCommandValidator : AbstractValidator<SignUpByGoogleCommand>
 {
-    public SignUpByGoogleCommandValidator(IAccountRepository repository, IForbiddenService forbiddenService)
+    public SignUpByGoogleCommandValidator(IAccountRepository repository, IBlacklistService blacklist)
     {
         CascadeMode = CascadeMode.Stop;
 
@@ -20,16 +20,16 @@ internal sealed class SignUpByGoogleCommandValidator : AbstractValidator<SignUpB
             !await repository.IsExists(identity, ct);
 
         async Task<bool> BeAllowed(Identity.Email email, CancellationToken ct) =>
-            !await forbiddenService.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
+            !await blacklist.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
 
         RuleFor(x => x.Google)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
-            .MustAsync(BeUnique).WithErrorCode(ElwarkExceptionCodes.ConnectionAlreadyExists);
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
+            .MustAsync(BeUnique).WithErrorCode(ExceptionCodes.ConnectionAlreadyExists);
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(SignUpByGoogleCommand.Email))
-            .MustAsync(BeAllowed).WithErrorCode(ElwarkExceptionCodes.EmailHostDenied)
-            .MustAsync(BeUnique).WithErrorCode(ElwarkExceptionCodes.EmailAlreadyExists);
+            .MustAsync(BeAllowed).WithErrorCode(ExceptionCodes.EmailHostDenied)
+            .MustAsync(BeUnique).WithErrorCode(ExceptionCodes.EmailAlreadyExists);
     }
 }

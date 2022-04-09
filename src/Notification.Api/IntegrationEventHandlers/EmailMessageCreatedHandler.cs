@@ -1,12 +1,12 @@
 using System.Net.Mail;
+using Common.Kafka;
+using Common.Mongo;
+using Integration.Event;
 using Notification.Api.Infrastructure.Provider;
 using Notification.Api.Infrastructure.Provider.Gmail;
 using Notification.Api.Infrastructure.Provider.SendGrid;
 using Notification.Api.Infrastructure.Repositories;
 using Notification.Api.Models;
-using Integration.Event;
-using Common.Kafka;
-using Common.Mongo;
 using Polly;
 using Polly.Retry;
 

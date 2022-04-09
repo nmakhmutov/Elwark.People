@@ -26,7 +26,7 @@ internal sealed class AttachEmailCommandHandler : IRequestHandler<AttachEmailCom
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.AddEmail(request.Email, false, DateTime.UtcNow);
 

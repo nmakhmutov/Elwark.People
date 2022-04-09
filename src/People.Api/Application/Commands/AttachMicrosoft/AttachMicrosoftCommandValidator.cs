@@ -20,13 +20,13 @@ internal sealed class AttachMicrosoftCommandValidator : AbstractValidator<Attach
             !await repository.IsExists(google, ct);
 
         RuleFor(x => x.Microsoft)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityMicrosoftValidator()).OverridePropertyName(nameof(AttachMicrosoftCommand.Email))
             .MustAsync(BeUnique).OverridePropertyName(nameof(AttachMicrosoftCommand.Email))
-            .WithErrorCode(ElwarkExceptionCodes.ConnectionAlreadyExists);
+            .WithErrorCode(ExceptionCodes.ConnectionAlreadyExists);
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(AttachEmailCommand.Email));
     }
 }

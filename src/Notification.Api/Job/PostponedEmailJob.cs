@@ -1,9 +1,9 @@
 using System.Runtime.CompilerServices;
+using Common.Kafka;
+using Integration.Event;
 using MongoDB.Driver;
 using Notification.Api.Infrastructure;
 using Notification.Api.Models;
-using Integration.Event;
-using Common.Kafka;
 using Quartz;
 
 namespace Notification.Api.Job;
@@ -25,8 +25,7 @@ public sealed class PostponedEmailJob : IJob
         var update = Builders<PostponedEmail>.Update.Inc(x => x.Version, 1);
         var options = new FindOneAndUpdateOptions<PostponedEmail>();
 
-        await foreach (var (find, delete) in GetFiltersAsync(context.FireTimeUtc.UtcDateTime,
-            context.CancellationToken))
+        await foreach (var (find, delete) in GetFiltersAsync(context.FireTimeUtc.UtcDateTime, context.CancellationToken))
         {
             var result = await _dbContext.PostponedEmails
                 .FindOneAndUpdateAsync(find, update, options, context.CancellationToken);
@@ -41,8 +40,7 @@ public sealed class PostponedEmailJob : IJob
         }
     }
 
-    private async IAsyncEnumerable<Filters> GetFiltersAsync(DateTime sendAt,
-        [EnumeratorCancellation] CancellationToken ct = default)
+    private async IAsyncEnumerable<Filters> GetFiltersAsync(DateTime sendAt, [EnumeratorCancellation] CancellationToken ct)
     {
         using var cursor = await _dbContext.PostponedEmails
             .Find(Builders<PostponedEmail>.Filter.Lt(x => x.SendAt, sendAt))

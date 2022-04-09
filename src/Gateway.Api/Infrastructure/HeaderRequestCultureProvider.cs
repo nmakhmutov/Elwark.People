@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Localization;
 
 namespace Gateway.Api.Infrastructure;
 
-internal class HeaderRequestCultureProvider : IRequestCultureProvider
+internal sealed class HeaderRequestCultureProvider : IRequestCultureProvider
 {
     private readonly IReadOnlyDictionary<string, ProviderCultureResult> _cultures;
     private readonly string _headerName;

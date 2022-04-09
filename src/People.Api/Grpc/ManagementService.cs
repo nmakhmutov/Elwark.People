@@ -22,7 +22,7 @@ using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
 using Connection = People.Domain.Aggregates.AccountAggregate.Identities.Connection;
-using EmailConnection = People.Grpc.Gateway.EmailConnection;
+using EmailConnection = People.Domain.Aggregates.AccountAggregate.Identities.EmailConnection;
 
 namespace People.Api.Grpc;
 
@@ -87,7 +87,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
     {
         var command = new ConfirmConnectionCommand(request.Id, request.Identity.FromGrpc());
         await _mediator.Send(command, context.CancellationToken);
-        
+
         return await GetAccountAsync(request.Id, context.CancellationToken);
     }
 
@@ -105,7 +105,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
     {
         var command = new DeleteConnectionCommand(request.Id, request.Identity.FromGrpc());
         await _mediator.Send(command, context.CancellationToken);
-        
+
         return await GetAccountAsync(request.Id, context.CancellationToken);
     }
 
@@ -113,7 +113,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
     {
         var command = new CreateRoleCommand(request.Id, request.Role);
         await _mediator.Send(command, context.CancellationToken);
-        
+
         return await GetAccountAsync(request.Id, context.CancellationToken);
     }
 
@@ -121,7 +121,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
     {
         var command = new DeleteRoleCommand(request.Id, request.Role);
         await _mediator.Send(command, context.CancellationToken);
-        
+
         return await GetAccountAsync(request.Id, context.CancellationToken);
     }
 
@@ -129,7 +129,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
     {
         var command = new BanAccountCommand(request.Id, request.Reason, request.ExpiredAt?.ToDateTime());
         await _mediator.Send(command, context.CancellationToken);
-        
+
         return await GetAccountAsync(request.Id, context.CancellationToken);
     }
 
@@ -137,7 +137,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
     {
         var command = new UnbanAccountCommand(request);
         await _mediator.Send(command, context.CancellationToken);
-        
+
         return await GetAccountAsync(request, context.CancellationToken);
     }
 
@@ -169,18 +169,18 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
 
     private async Task<ManagementAccountReply> GetAccountAsync(AccountId id, CancellationToken ct) =>
         ToGrpc(await _mediator.Send(new GetAccountByIdQuery(id), ct));
-    
-    private static global::People.Grpc.Gateway.ManagementAccountReply.Types.Connection ToGrpc(Connection connection) =>
+
+    private static ManagementAccountReply.Types.Connection ToGrpc(Connection connection) =>
         connection switch
         {
-            Domain.Aggregates.AccountAggregate.Identities.EmailConnection x =>
+            EmailConnection x =>
                 new ManagementAccountReply.Types.Connection
                 {
                     Type = x.Type.ToGrpc(),
                     Value = x.Value,
                     CreatedAt = x.CreatedAt.ToTimestamp(),
                     ConfirmedAt = x.ConfirmedAt?.ToTimestamp(),
-                    Email = new EmailConnection
+                    Email = new People.Grpc.Gateway.EmailConnection
                     {
                         IsPrimary = x.IsPrimary
                     }

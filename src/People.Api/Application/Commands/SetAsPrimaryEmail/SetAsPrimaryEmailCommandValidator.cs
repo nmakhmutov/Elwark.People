@@ -12,7 +12,7 @@ internal sealed class SetAsPrimaryEmailCommandValidator : AbstractValidator<SetA
             .NotEmpty();
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(SetAsPrimaryEmailCommand.Email));
     }
 }

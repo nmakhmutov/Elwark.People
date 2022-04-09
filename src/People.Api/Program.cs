@@ -1,11 +1,11 @@
 using System;
-using System.IO;
+using Common.Kafka;
 using Confluent.Kafka;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using FluentValidation;
 using Fluid;
-using Fluid.MvcViewEngine;
+using Integration.Event;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -21,13 +21,11 @@ using People.Api.Infrastructure.Password;
 using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
 using People.Infrastructure;
-using Integration.Event;
-using Common.Kafka;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Display;
 
-const string appName = "Elwark.People.Api";
+const string appName = "People.Api";
 var builder = WebApplication.CreateBuilder(args);
 
 var logger = new LoggerConfiguration()
@@ -94,13 +92,8 @@ var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 builder.Services
     .AddEmailBuilder(options =>
     {
-        var path = Path.Combine(builder.Environment.ContentRootPath, "Email", "Views");
-
-        options.ViewsPath = path;
-        options.IncludesFileProvider = builder.Environment.ContentRootFileProvider;
         options.ViewsFileProvider = builder.Environment.ContentRootFileProvider;
         options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
-        options.ViewLocationFormats.Add(Path.Combine(path, "{0}" + FluidViewEngine.ViewExtension));
     })
     .AddMediatR(assemblies)
     .AddValidatorsFromAssemblies(assemblies, ServiceLifetime.Scoped, null, true)
@@ -118,7 +111,6 @@ using (var scope = app.Services.CreateScope())
 
     await peopleContext.OnModelCreatingAsync();
     await infrastructureContext.OnModelCreatingAsync();
-
     // await new InfrastructureContextSeed(
     //     scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>(),
     //     scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>()

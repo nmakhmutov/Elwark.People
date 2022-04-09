@@ -1,14 +1,14 @@
 using System;
+using Common.Mongo;
 using Microsoft.Extensions.DependencyInjection;
 using People.Domain.Aggregates.AccountAggregate;
+using People.Infrastructure.Blacklist;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
-using People.Infrastructure.Forbidden;
 using People.Infrastructure.IpAddress;
 using People.Infrastructure.Password;
 using People.Infrastructure.Repositories;
 using People.Infrastructure.Sequences;
-using Common.Mongo;
 
 namespace People.Infrastructure;
 
@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<PeopleDbContext>()
             .AddScoped<InfrastructureDbContext>()
             .AddScoped<ICountryService, CountryService>()
-            .AddScoped<IForbiddenService, ForbiddenService>()
+            .AddScoped<IBlacklistService, BlacklistService>()
             .AddScoped<ISequenceGenerator, SequenceGenerator>()
             .AddScoped<IAccountRepository, AccountRepository>()
             .AddSingleton<IPasswordHasher>(_ => new PasswordHasher(appKey))

@@ -93,7 +93,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
             };
         }
 
-        context.Status = new Status(StatusCode.NotFound, ElwarkExceptionCodes.AccountNotFound);
+        context.Status = new Status(StatusCode.NotFound, ExceptionCodes.AccountNotFound);
         return new Confirming();
     }
 
@@ -141,7 +141,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
 
         if (account.IsPasswordAvailable())
         {
-            context.Status = new Status(StatusCode.InvalidArgument, ElwarkExceptionCodes.PasswordAlreadyCreated);
+            context.Status = new Status(StatusCode.InvalidArgument, ExceptionCodes.PasswordAlreadyCreated);
             return new Confirming();
         }
 

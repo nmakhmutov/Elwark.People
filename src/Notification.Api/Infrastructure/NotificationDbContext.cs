@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Common.Mongo;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Notification.Api.Models;
-using Common.Mongo;
 
 namespace Notification.Api.Infrastructure;
 

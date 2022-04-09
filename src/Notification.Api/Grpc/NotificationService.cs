@@ -1,18 +1,18 @@
+using Common.Kafka;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Integration.Event;
 using Notification.Api.Infrastructure.Repositories;
 using Notification.Api.Models;
 using People.Grpc.Notification;
-using Integration.Event;
-using Common.Kafka;
 
 namespace Notification.Api.Grpc;
 
-public class NotificationService : People.Grpc.Notification.NotificationService.NotificationServiceBase
+public sealed class NotificationService : People.Grpc.Notification.NotificationService.NotificationServiceBase
 {
+    private static readonly Empty EmptyCache = new();
     private readonly IKafkaMessageBus _bus;
     private readonly IPostponedEmailRepository _postponed;
-    private static readonly Empty EmptyCache = new();
 
     public NotificationService(IKafkaMessageBus bus, IPostponedEmailRepository postponed)
     {

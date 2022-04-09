@@ -26,14 +26,14 @@ public sealed record CheckSignUpConfirmationQueryHandler
     {
         var confirmation = await _confirmation.GetAsync(request.ConfirmationId, ct);
         if (confirmation is null)
-            throw new ElwarkException(ElwarkExceptionCodes.ConfirmationNotFound);
+            throw new PeopleException(ExceptionCodes.ConfirmationNotFound);
 
         var account = await _repository.GetAsync(confirmation.AccountId, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         if (account.IsConfirmed())
-            throw new ElwarkException(ElwarkExceptionCodes.IdentityAlreadyConfirmed);
+            throw new PeopleException(ExceptionCodes.IdentityAlreadyConfirmed);
 
         return confirmation;
     }

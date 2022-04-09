@@ -4,46 +4,46 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using People.Domain.Exceptions;
-using People.Infrastructure.Forbidden;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Infrastructure.Password;
 
-public class PasswordValidator : IPasswordValidator
+public sealed class PasswordValidator : IPasswordValidator
 {
-    private readonly IForbiddenService _forbidden;
+    private readonly IBlacklistService _blacklist;
     private readonly PasswordValidationOptions _options;
 
-    public PasswordValidator(IOptions<PasswordValidationOptions> settings, IForbiddenService forbidden)
+    public PasswordValidator(IOptions<PasswordValidationOptions> settings, IBlacklistService blacklist)
     {
-        _forbidden = forbidden;
+        _blacklist = blacklist;
         _options = settings.Value ?? throw new ArgumentNullException(nameof(settings));
     }
 
     public async Task<PasswordResult> ValidateAsync(string password, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(password))
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordEmpty);
+            return PasswordResult.Fail(ExceptionCodes.PasswordEmpty);
 
         if (password.Length < _options.RequiredLength)
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordTooShort);
+            return PasswordResult.Fail(ExceptionCodes.PasswordTooShort);
 
         if (_options.RequireNonAlphanumeric && password.All(IsLetterOrDigit))
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresNonAlphanumeric);
+            return PasswordResult.Fail(ExceptionCodes.PasswordRequiresNonAlphanumeric);
 
         if (_options.RequireDigit && !password.Any(IsDigit))
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresDigit);
+            return PasswordResult.Fail(ExceptionCodes.PasswordRequiresDigit);
 
         if (_options.RequireLowercase && !password.Any(IsLower))
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresLower);
+            return PasswordResult.Fail(ExceptionCodes.PasswordRequiresLower);
 
         if (_options.RequireUppercase && !password.Any(IsUpper))
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresUpper);
+            return PasswordResult.Fail(ExceptionCodes.PasswordRequiresUpper);
 
         if (_options.RequiredUniqueChars > 1 && password.Distinct().Count() <= _options.RequiredUniqueChars)
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordRequiresUniqueChars);
+            return PasswordResult.Fail(ExceptionCodes.PasswordRequiresUniqueChars);
 
-        if (await _forbidden.IsPasswordForbidden(password, ct))
-            return PasswordResult.Fail(ElwarkExceptionCodes.PasswordForbidden);
+        if (await _blacklist.IsPasswordForbidden(password, ct))
+            return PasswordResult.Fail(ExceptionCodes.PasswordForbidden);
 
         return PasswordResult.Success();
     }

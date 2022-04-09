@@ -24,7 +24,7 @@ internal sealed class UnbanAccountCommandHandler : IRequestHandler<UnbanAccountC
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.Unban();
 

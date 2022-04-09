@@ -94,12 +94,12 @@ internal sealed class InfrastructureService : People.Grpc.Infrastructure.Infrast
     private static Country ToGrpc(People.Infrastructure.Countries.Country country) =>
         new()
         {
+            Alpha2Code = country.Alpha2Code,
+            Alpha3Code = country.Alpha3Code,
             Capital = country.Capital,
-            Languages = { country.Languages },
             Region = country.Region,
             Subregion = country.Subregion,
-            Translations = { country.Translations },
-            Alpha2Code = country.Alpha2Code,
-            Alpha3Code = country.Alpha3Code
+            Languages = { country.Languages },
+            Translations = { country.Translations }
         };
 }

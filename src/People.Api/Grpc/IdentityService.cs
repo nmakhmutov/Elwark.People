@@ -4,7 +4,6 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
 using MongoDB.Bson;
-using People.Api.Mappers;
 using People.Api.Application.Commands.AttachEmail;
 using People.Api.Application.Commands.AttachGoogle;
 using People.Api.Application.Commands.AttachMicrosoft;
@@ -24,10 +23,12 @@ using People.Api.Application.Queries.GetAccountByIdentity;
 using People.Api.Application.Queries.GetAccountStatus;
 using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
+using People.Api.Mappers;
 using People.Domain;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Identity;
+using Identity = People.Domain.Aggregates.AccountAggregate.Identities.Identity;
 
 namespace People.Api.Grpc;
 
@@ -65,7 +66,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
     public override async Task<SignInReply> SignInByEmail(SignInByEmailRequest request, ServerCallContext context)
     {
         var command = new SignInByEmailCommand(
-            new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(request.Email),
+            new Identity.Email(request.Email),
             request.Password,
             ParseIpAddress(request.Ip)
         );
@@ -99,7 +100,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
         var language = new Language(request.Language);
         var (id, fullName, emailConnection) = await _mediator.Send(
             new SignUpByEmailCommand(
-                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(request.Email),
+                new Identity.Email(request.Email),
                 request.Password,
                 language,
                 ParseIpAddress(request.Ip)
@@ -183,7 +184,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
             await _mediator.Send(new GetAccountByIdQuery(request.Id), context.CancellationToken);
 
         if (account.IsConfirmed())
-            throw new ElwarkException(ElwarkExceptionCodes.IdentityAlreadyConfirmed);
+            throw new PeopleException(ExceptionCodes.IdentityAlreadyConfirmed);
 
         var confirmationId = await _mediator.Send(
             new SendConfirmationCommand(
@@ -205,7 +206,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
         await _mediator.Send(
             new AttachEmailCommand(
                 request.Id,
-                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(request.Value)
+                new Identity.Email(request.Value)
             ),
             context.CancellationToken
         );
@@ -254,7 +255,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
                 context.CancellationToken);
 
         if (!account.IsPasswordAvailable())
-            throw new ElwarkException(ElwarkExceptionCodes.PasswordNotCreated);
+            throw new PeopleException(ExceptionCodes.PasswordNotCreated);
 
         await _mediator.Send(
             new SendConfirmationCommand(

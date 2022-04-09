@@ -1,6 +1,5 @@
-
-
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+
 namespace Notification.Api.Models;
 
 public abstract class EmailProvider

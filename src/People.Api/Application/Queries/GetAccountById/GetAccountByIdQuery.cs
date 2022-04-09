@@ -16,5 +16,5 @@ internal sealed class GetAccountByIdQueryHandler : IRequestHandler<GetAccountByI
         _repository = repository;
 
     public async Task<Account> Handle(GetAccountByIdQuery request, CancellationToken ct) =>
-        await _repository.GetAsync(request.Id, ct) ?? throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+        await _repository.GetAsync(request.Id, ct) ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 }

@@ -24,13 +24,13 @@ public static class CommonMapper
         {
             IdentityType.Email =>
                 new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(identity.Value),
-            
+
             IdentityType.Google =>
                 new Domain.Aggregates.AccountAggregate.Identities.Identity.Google(identity.Value),
-            
-            IdentityType.Microsoft => 
+
+            IdentityType.Microsoft =>
                 new Domain.Aggregates.AccountAggregate.Identities.Identity.Microsoft(identity.Value),
-            
+
             _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
         };
 

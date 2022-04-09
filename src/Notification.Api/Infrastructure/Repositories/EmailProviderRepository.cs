@@ -1,6 +1,6 @@
+using Common.Mongo;
 using MongoDB.Driver;
 using Notification.Api.Models;
-using Common.Mongo;
 
 namespace Notification.Api.Infrastructure.Repositories;
 

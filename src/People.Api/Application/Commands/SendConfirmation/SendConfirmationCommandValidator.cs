@@ -11,7 +11,7 @@ internal sealed class SendConfirmationCommandValidator : AbstractValidator<SendC
     public SendConfirmationCommandValidator(IConfirmationService confirmation)
     {
         RuleFor(x => x.Id)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .MustAsync(async (id, ct) =>
             {
                 var data = await confirmation.GetAsync(id, ct);
@@ -20,10 +20,10 @@ internal sealed class SendConfirmationCommandValidator : AbstractValidator<SendC
 
                 return (DateTime.UtcNow - data.CreatedAt).TotalMinutes > 2;
             })
-            .WithErrorCode(ElwarkExceptionCodes.ConfirmationAlreadySent);
+            .WithErrorCode(ExceptionCodes.ConfirmationAlreadySent);
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(SendConfirmationCommand.Email));
     }
 }

@@ -8,7 +8,7 @@ internal sealed class SignInByMicrosoftCommandValidator : AbstractValidator<Sign
 {
     public SignInByMicrosoftCommandValidator() =>
         RuleFor(x => x.Identity)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityMicrosoftValidator())
             .OverridePropertyName(nameof(SignInByMicrosoftCommand.Identity));
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Kafka;
+using Integration.Event;
 using MediatR;
 using MongoDB.Bson;
 using People.Api.Email.Models;
@@ -9,8 +11,6 @@ using People.Domain;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Infrastructure.Confirmations;
-using Integration.Event;
-using Common.Kafka;
 
 namespace People.Api.Application.Commands.SendConfirmation;
 

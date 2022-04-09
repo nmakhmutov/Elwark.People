@@ -4,7 +4,7 @@ using People.Domain.Aggregates.AccountAggregate.Identities;
 
 namespace People.Api.Infrastructure.Provider.Social.Google;
 
-public class GoogleAccount
+public sealed class GoogleAccount
 {
     public GoogleAccount(Identity.Google identity, Identity.Email email, bool isEmailVerified, string? firstName,
         string? lastName, Uri? picture, CultureInfo? locale)

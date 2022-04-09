@@ -3,7 +3,7 @@ using System.Net.Mail;
 namespace Notification.Api.Infrastructure.Provider.SendGrid;
 
 // ReSharper disable NotAccessedPositionalProperty.Local
-internal class SendgridProvider : IEmailSender
+internal sealed class SendgridProvider : IEmailSender
 {
     private readonly HttpClient _client;
 

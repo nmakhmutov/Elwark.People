@@ -1,8 +1,8 @@
 using MongoDB.Bson;
 using People.Api.Mappers;
+using People.Domain.Aggregates.AccountAggregate;
 using People.Grpc.Common;
 using People.Grpc.Identity;
-using AccountId = People.Domain.Aggregates.AccountAggregate.AccountId;
 
 namespace People.Api.Grpc;
 
@@ -33,7 +33,7 @@ internal sealed partial class IdentityService
             }
         };
 
-    private static AccountReply ToAccountReply(Domain.Aggregates.AccountAggregate.Account account) =>
+    private static AccountReply ToAccountReply(Account account) =>
         new()
         {
             Id = account.Id,

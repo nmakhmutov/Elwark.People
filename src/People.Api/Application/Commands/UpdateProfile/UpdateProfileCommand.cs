@@ -36,7 +36,7 @@ internal sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfil
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.Update(
             new Name(request.Nickname, request.FirstName, request.LastName, request.PreferNickname),

@@ -32,7 +32,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         CountryCode = CountryCode.Empty;
         Language = language;
         Picture = picture;
-        LastSignIn = DateTime.MinValue;
+        LastSignIn = DateTime.UnixEpoch;
         _password = null;
         _roles = new HashSet<string>();
         _connections = new List<Connection>();
@@ -84,8 +84,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         return connection;
     }
 
-    public MicrosoftConnection AddMicrosoft(Identity.Microsoft identity, string? firstName, string? lastName,
-        DateTime now)
+    public MicrosoftConnection AddMicrosoft(Identity.Microsoft identity, string? firstName, string? lastName, DateTime now)
     {
         var connection = new MicrosoftConnection(identity.Value, firstName, lastName, now, now);
         _connections.Add(connection);
@@ -110,7 +109,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
         identity.Confirm(confirmedAt);
     }
-    
+
     public void ConfuteConnection(Identity key)
     {
         var identity = _connections.First(x => x.Identity == key);
@@ -129,7 +128,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
                 return;
 
             case EmailConnection { IsPrimary: true }:
-                throw new ElwarkException(ElwarkExceptionCodes.PrimaryEmailCannotBeRemoved);
+                throw new PeopleException(ExceptionCodes.PrimaryEmailCannotBeRemoved);
 
             default:
                 _connections.Remove(identity);
@@ -190,7 +189,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
     public bool IsPasswordEqual(string password, IPasswordHasher hasher)
     {
         if (_password is null)
-            throw new ElwarkException(ElwarkExceptionCodes.Internal, "Password not created");
+            throw new PeopleException(ExceptionCodes.Internal, "Password not created");
 
         var hash = hasher.CreateHash(password, _password.Salt);
         return hash.SequenceEqual(_password.Hash);
@@ -202,7 +201,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
             throw new AccountBannedException(Ban);
 
         if (!IsConfirmed(identity))
-            throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+            throw new PeopleException(ExceptionCodes.IdentityNotConfirmed);
 
         SignInSuccess(dateTime, ip);
     }
@@ -213,13 +212,13 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
             throw new AccountBannedException(Ban);
 
         if (!IsConfirmed(email))
-            throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+            throw new PeopleException(ExceptionCodes.IdentityNotConfirmed);
 
         if (!IsPasswordAvailable())
-            throw new ElwarkException(ElwarkExceptionCodes.PasswordNotCreated);
+            throw new PeopleException(ExceptionCodes.PasswordNotCreated);
 
         if (!IsPasswordEqual(password, hasher))
-            throw new ElwarkException(ElwarkExceptionCodes.PasswordMismatch);
+            throw new PeopleException(ExceptionCodes.PasswordMismatch);
 
         SignInSuccess(dateTime, ip);
     }
@@ -260,10 +259,10 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
         var result = emails.FirstOrDefault(x => x.Value == email.Value);
         if (result is null)
-            throw new ElwarkException(ElwarkExceptionCodes.IdentityNotFound);
+            throw new PeopleException(ExceptionCodes.IdentityNotFound);
 
         if (!result.IsConfirmed)
-            throw new ElwarkException(ElwarkExceptionCodes.IdentityNotConfirmed);
+            throw new PeopleException(ExceptionCodes.IdentityNotConfirmed);
 
         foreach (var item in emails)
             _ = item.Value == email.Value
@@ -276,21 +275,21 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
     public void SetPermanentBan(string reason, DateTime date)
     {
         Ban = new PermanentBan(reason, date);
-        
+
         AddDomainEvent(new AccountBannedDomainEvent(this));
     }
 
     public void SetTemporaryBan(string reason, DateTime expiredAt, DateTime date)
     {
         Ban = new TemporaryBan(reason, date, expiredAt);
-        
+
         AddDomainEvent(new AccountBannedDomainEvent(this));
     }
 
     public void Unban()
     {
         Ban = null;
-        
+
         AddDomainEvent(new AccountUnbannedDomainEvent(this));
     }
 

@@ -1,4 +1,5 @@
 // ReSharper disable once CheckNamespace
+
 namespace People.Grpc.Common;
 
 public sealed partial class Name

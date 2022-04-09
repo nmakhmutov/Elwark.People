@@ -5,19 +5,19 @@ using People.Api.Application.Validators;
 using People.Api.Infrastructure.Password;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Exceptions;
-using People.Infrastructure.Forbidden;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Application.Commands.SignUpByEmail;
 
 internal sealed class SignUpByEmailCommandValidator : AbstractValidator<SignUpByEmailCommand>
 {
     public SignUpByEmailCommandValidator(IAccountRepository repository, IPasswordValidator validator,
-        IForbiddenService forbiddenService)
+        IBlacklistService blacklist)
     {
         CascadeMode = CascadeMode.Stop;
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
             .MaximumLength(Password.MaxLength)
             .CustomAsync(async (password, context, token) =>
             {
@@ -32,15 +32,15 @@ internal sealed class SignUpByEmailCommandValidator : AbstractValidator<SignUpBy
             });
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(SignUpByEmailCommand.Email))
             .MustAsync(async (email, ct) => !await repository.IsExists(email, ct))
-            .WithErrorCode(ElwarkExceptionCodes.EmailAlreadyExists)
+            .WithErrorCode(ExceptionCodes.EmailAlreadyExists)
             .MustAsync(async (email, ct) =>
             {
                 var host = new MailAddress(email.Value).Host;
-                return !await forbiddenService.IsEmailHostDenied(host, ct);
+                return !await blacklist.IsEmailHostDenied(host, ct);
             })
-            .WithErrorCode(ElwarkExceptionCodes.EmailHostDenied);
+            .WithErrorCode(ExceptionCodes.EmailHostDenied);
     }
 }

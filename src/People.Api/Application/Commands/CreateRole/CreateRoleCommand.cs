@@ -24,7 +24,7 @@ internal sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleComma
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.AddRole(request.Role);
 

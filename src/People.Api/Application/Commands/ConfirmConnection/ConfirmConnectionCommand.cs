@@ -26,7 +26,7 @@ internal sealed class ConfirmConnectionCommandHandler : IRequestHandler<ConfirmC
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         var identity = request.Identity ?? account.GetPrimaryEmail().Identity;
 

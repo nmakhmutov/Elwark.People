@@ -2,9 +2,9 @@ using System;
 
 namespace People.Domain.Exceptions;
 
-public class ElwarkException : Exception
+public class PeopleException : Exception
 {
-    public ElwarkException(string code, string? message = null, Exception? innerException = null)
+    public PeopleException(string code, string? message = null, Exception? innerException = null)
         : base(message ?? code, innerException) =>
         Code = code;
 

@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Common.Mongo;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -7,7 +8,6 @@ using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Seed;
 using People.Infrastructure.Sequences;
 using People.Infrastructure.Serializers;
-using Common.Mongo;
 
 namespace People.Infrastructure;
 

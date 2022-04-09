@@ -13,7 +13,7 @@ internal sealed class UpdateProfileCommandValidator : AbstractValidator<UpdatePr
 {
     public UpdateProfileCommandValidator(ICountryService country)
     {
-        bool BeAvailableTimeZone(string value)
+        static bool BeAvailableTimeZone(string value)
         {
             try
             {
@@ -30,11 +30,11 @@ internal sealed class UpdateProfileCommandValidator : AbstractValidator<UpdatePr
             await country.GetAsync(value, ct) is not null;
 
         RuleFor(x => x.Language)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
             .Must(x => Language.TryParse(x, out _));
 
         RuleFor(x => x.Nickname)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
             .MinimumLength(3)
             .MaximumLength(Name.NicknameLength);
 
@@ -45,11 +45,11 @@ internal sealed class UpdateProfileCommandValidator : AbstractValidator<UpdatePr
             .MaximumLength(Name.LastNameLength);
 
         RuleFor(x => x.TimeZone)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required)
-            .Must(BeAvailableTimeZone).WithErrorCode(ElwarkExceptionCodes.TimeZoneNotFound);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
+            .Must(BeAvailableTimeZone).WithErrorCode(ExceptionCodes.TimeZoneNotFound);
 
         RuleFor(x => x.CountryCode)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required)
-            .MustAsync(BeAvailableCountry).WithErrorCode(ElwarkExceptionCodes.CountryCodeNotFound);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
+            .MustAsync(BeAvailableCountry).WithErrorCode(ExceptionCodes.CountryCodeNotFound);
     }
 }

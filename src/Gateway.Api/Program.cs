@@ -5,6 +5,8 @@ using CorrelationId;
 using CorrelationId.DependencyInjection;
 using CorrelationId.HttpClient;
 using FluentValidation.AspNetCore;
+using Gateway.Api.Infrastructure;
+using Gateway.Api.Infrastructure.Identity;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,8 +21,6 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Gateway.Api.Infrastructure;
-using Gateway.Api.Infrastructure.Identity;
 using People.Grpc.Gateway;
 using People.Grpc.Infrastructure;
 using People.Grpc.Notification;
@@ -28,7 +28,7 @@ using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Display;
 
-const string appName = "Elwark.People.Gateway";
+const string appName = "People.Gateway";
 const string mainCors = "MainCORS";
 // AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 // AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2Support", true);
@@ -42,7 +42,8 @@ var logger = new LoggerConfiguration()
     .WriteTo.Console(
         "json".Equals(builder.Configuration["Serilog:Formatter"])
             ? new CompactJsonFormatter()
-            : new MessageTemplateTextFormatter("[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message}{NewLine}{Exception}")
+            : new MessageTemplateTextFormatter(
+                "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message}{NewLine}{Exception}")
     )
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();

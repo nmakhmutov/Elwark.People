@@ -25,7 +25,7 @@ internal sealed class BanAccountCommandHandler : IRequestHandler<BanAccountComma
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         if (request.ExpiredAt.HasValue)
             account.SetTemporaryBan(request.Reason, request.ExpiredAt.Value, DateTime.UtcNow);

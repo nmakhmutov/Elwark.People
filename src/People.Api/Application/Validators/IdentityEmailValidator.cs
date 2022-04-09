@@ -14,6 +14,6 @@ internal sealed class IdentityEmailValidator : AbstractValidator<Identity.Email>
         RuleFor(x => x.Value)
             .NotEmpty()
             .EmailAddress()
-            .WithErrorCode(ElwarkExceptionCodes.EmailIncorrectFormat);
+            .WithErrorCode(ExceptionCodes.EmailIncorrectFormat);
     }
 }

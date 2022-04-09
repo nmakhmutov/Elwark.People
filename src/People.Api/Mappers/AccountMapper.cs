@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Google.Protobuf.WellKnownTypes;
+using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Gateway;
 using Connection = People.Grpc.Gateway.Connection;
@@ -10,7 +11,7 @@ namespace People.Api.Mappers;
 
 public static class AccountMapper
 {
-    public static ProfileReply ToProfileReply(this Domain.Aggregates.AccountAggregate.Account account) =>
+    public static ProfileReply ToProfileReply(this Account account) =>
         new()
         {
             Id = account.Id,

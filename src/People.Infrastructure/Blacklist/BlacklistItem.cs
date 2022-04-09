@@ -2,11 +2,11 @@ using System;
 using MongoDB.Bson;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-namespace People.Infrastructure.Forbidden;
+namespace People.Infrastructure.Blacklist;
 
-public sealed record ForbiddenItem
+public sealed record BlacklistItem
 {
-    public ForbiddenItem(ForbiddenType type, string value)
+    public BlacklistItem(ForbiddenType type, string value)
     {
         if (string.IsNullOrEmpty(value))
             throw new ArgumentException("Value cannot be null or empty.", nameof(value));

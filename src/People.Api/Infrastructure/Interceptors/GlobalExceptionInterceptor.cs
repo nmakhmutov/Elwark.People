@@ -8,7 +8,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Interceptors;
 
-public class GlobalExceptionInterceptor : Interceptor
+public sealed class GlobalExceptionInterceptor : Interceptor
 {
     public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
         ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
@@ -17,7 +17,7 @@ public class GlobalExceptionInterceptor : Interceptor
         {
             return await continuation(request, context);
         }
-        catch (ElwarkException ex)
+        catch (PeopleException ex)
         {
             throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Code));
         }

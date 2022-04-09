@@ -6,13 +6,13 @@ using People.Api.Application.Validators;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
-using People.Infrastructure.Forbidden;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Application.Commands.SignUpByMicrosoft;
 
 internal sealed class SignUpByMicrosoftCommandValidator : AbstractValidator<SignUpByMicrosoftCommand>
 {
-    public SignUpByMicrosoftCommandValidator(IAccountRepository repository, IForbiddenService forbiddenService)
+    public SignUpByMicrosoftCommandValidator(IAccountRepository repository, IBlacklistService blacklist)
     {
         CascadeMode = CascadeMode.Stop;
 
@@ -20,16 +20,16 @@ internal sealed class SignUpByMicrosoftCommandValidator : AbstractValidator<Sign
             !await repository.IsExists(identity, ct);
 
         async Task<bool> BeAllowed(Identity.Email email, CancellationToken ct) =>
-            !await forbiddenService.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
+            !await blacklist.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
 
         RuleFor(x => x.Identity)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required)
-            .MustAsync(BeUnique).WithErrorCode(ElwarkExceptionCodes.ConnectionAlreadyExists);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
+            .MustAsync(BeUnique).WithErrorCode(ExceptionCodes.ConnectionAlreadyExists);
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(SignUpByMicrosoftCommand.Email))
-            .MustAsync(BeAllowed).WithErrorCode(ElwarkExceptionCodes.EmailHostDenied)
-            .MustAsync(BeUnique).WithErrorCode(ElwarkExceptionCodes.EmailAlreadyExists);
+            .MustAsync(BeAllowed).WithErrorCode(ExceptionCodes.EmailHostDenied)
+            .MustAsync(BeUnique).WithErrorCode(ExceptionCodes.EmailAlreadyExists);
     }
 }

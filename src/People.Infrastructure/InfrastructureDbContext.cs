@@ -1,25 +1,24 @@
 using System;
 using System.Threading.Tasks;
+using Common.Mongo;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using People.Infrastructure.Blacklist;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
-using People.Infrastructure.Forbidden;
-using Common.Mongo;
-using MongoDB.Bson.Serialization;
 
 namespace People.Infrastructure;
 
 public sealed class InfrastructureDbContext : MongoDbContext
 {
-    static InfrastructureDbContext()
-    {
+    static InfrastructureDbContext() =>
         BsonClassMap.RegisterClassMap<Country>(map =>
         {
             map.AutoMap();
             map.MapIdProperty(x => x.Alpha2Code);
         });
-    }
+
     public InfrastructureDbContext(IOptions<MongoDbOptions> settings)
         : base(settings.Value)
     {
@@ -28,8 +27,8 @@ public sealed class InfrastructureDbContext : MongoDbContext
     public IMongoCollection<Country> Countries =>
         Database.GetCollection<Country>("countries");
 
-    public IMongoCollection<ForbiddenItem> ForbiddenItems =>
-        Database.GetCollection<ForbiddenItem>("forbidden_items");
+    public IMongoCollection<BlacklistItem> Blacklist =>
+        Database.GetCollection<BlacklistItem>("blacklist");
 
     public IMongoCollection<Confirmation> Confirmations =>
         Database.GetCollection<Confirmation>("confirmations");
@@ -38,7 +37,7 @@ public sealed class InfrastructureDbContext : MongoDbContext
     {
         await CreateCollectionsAsync(
             Countries.CollectionNamespace.CollectionName,
-            ForbiddenItems.CollectionNamespace.CollectionName,
+            Blacklist.CollectionNamespace.CollectionName,
             Confirmations.CollectionNamespace.CollectionName
         );
 
@@ -49,11 +48,11 @@ public sealed class InfrastructureDbContext : MongoDbContext
             )
         );
 
-        await CreateIndexesAsync(ForbiddenItems,
-            new CreateIndexModel<ForbiddenItem>(
-                Builders<ForbiddenItem>.IndexKeys.Combine(
-                    Builders<ForbiddenItem>.IndexKeys.Ascending(x => x.Type),
-                    Builders<ForbiddenItem>.IndexKeys.Ascending(x => x.Value)
+        await CreateIndexesAsync(Blacklist,
+            new CreateIndexModel<BlacklistItem>(
+                Builders<BlacklistItem>.IndexKeys.Combine(
+                    Builders<BlacklistItem>.IndexKeys.Ascending(x => x.Type),
+                    Builders<BlacklistItem>.IndexKeys.Ascending(x => x.Value)
                 ),
                 new CreateIndexOptions { Name = "Type_Value", Unique = true }
             )

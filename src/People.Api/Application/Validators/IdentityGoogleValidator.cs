@@ -12,6 +12,6 @@ internal sealed class IdentityGoogleValidator : AbstractValidator<Identity.Googl
             .Equal(IdentityType.Google);
 
         RuleFor(x => x.Value)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required);
     }
 }

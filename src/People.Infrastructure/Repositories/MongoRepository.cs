@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Mongo;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using People.Domain.Seed;
-using Common.Mongo;
 
 namespace People.Infrastructure.Repositories;
 

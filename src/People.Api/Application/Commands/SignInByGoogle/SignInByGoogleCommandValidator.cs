@@ -8,7 +8,7 @@ internal sealed class SignInByGoogleCommandValidator : AbstractValidator<SignInB
 {
     public SignInByGoogleCommandValidator() =>
         RuleFor(x => x.Identity)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityGoogleValidator())
             .OverridePropertyName(nameof(SignInByGoogleCommand.Identity));
 }

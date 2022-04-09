@@ -20,13 +20,13 @@ internal sealed class AttachGoogleCommandValidator : AbstractValidator<AttachGoo
             !await repository.IsExists(google, ct);
 
         RuleFor(x => x.Google)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityGoogleValidator()).OverridePropertyName(nameof(AttachGoogleCommand.Email))
-            .MustAsync(BeUnique).WithErrorCode(ElwarkExceptionCodes.ConnectionAlreadyExists)
+            .MustAsync(BeUnique).WithErrorCode(ExceptionCodes.ConnectionAlreadyExists)
             .OverridePropertyName(nameof(AttachGoogleCommand.Email));
 
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(AttachEmailCommand.Email));
     }
 }

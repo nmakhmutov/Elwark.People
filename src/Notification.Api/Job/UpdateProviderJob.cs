@@ -1,8 +1,8 @@
+using Common.Mongo;
 using MongoDB.Driver;
 using Notification.Api.Infrastructure;
 using Notification.Api.Infrastructure.Repositories;
 using Notification.Api.Models;
-using Common.Mongo;
 using Polly;
 using Polly.Retry;
 using Quartz;

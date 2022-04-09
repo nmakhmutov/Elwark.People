@@ -4,7 +4,7 @@ using MongoDB.Bson;
 
 namespace Notification.Api.Models;
 
-public class PostponedEmail
+public sealed class PostponedEmail
 {
     public PostponedEmail(string email, string subject, string body, DateTime sendAt)
     {

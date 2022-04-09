@@ -1,10 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Common.Kafka;
+using Integration.Event;
 using MediatR;
 using People.Domain.Events;
-using Integration.Event;
-using Common.Kafka;
 
 namespace People.Api.Application.DomainEventHandlers;
 

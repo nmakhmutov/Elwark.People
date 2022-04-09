@@ -27,10 +27,10 @@ internal sealed class UpdatePasswordCommandHandler : IRequestHandler<UpdatePassw
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         if (!account.IsPasswordEqual(request.OldPassword, _hasher))
-            throw new ElwarkException(ElwarkExceptionCodes.PasswordMismatch);
+            throw new PeopleException(ExceptionCodes.PasswordMismatch);
 
         account.SetPassword(request.NewPassword, _hasher, DateTime.UtcNow);
 

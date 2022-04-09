@@ -3,10 +3,10 @@ using People.Domain.Exceptions;
 
 namespace People.Domain;
 
-public class AccountBannedException : ElwarkException
+public sealed class AccountBannedException : PeopleException
 {
     public AccountBannedException(Ban ban)
-        : base(ElwarkExceptionCodes.AccountBanned, ban.Reason) =>
+        : base(ExceptionCodes.AccountBanned, ban.Reason) =>
         Ban = ban;
 
     public Ban Ban { get; }

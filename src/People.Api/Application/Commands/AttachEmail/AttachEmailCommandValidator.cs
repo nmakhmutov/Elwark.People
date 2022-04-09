@@ -1,3 +1,4 @@
+using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -5,22 +6,27 @@ using People.Api.Application.Validators;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Application.Commands.AttachEmail;
 
 internal sealed class AttachEmailCommandValidator : AbstractValidator<AttachEmailCommand>
 {
-    public AttachEmailCommandValidator(IAccountRepository repository)
+    public AttachEmailCommandValidator(IAccountRepository repository, IBlacklistService blacklist)
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithErrorCode(ElwarkExceptionCodes.Required);
+            .NotEmpty().WithErrorCode(ExceptionCodes.Required);
 
         async Task<bool> BeUniqueEmail(Identity.Email email, CancellationToken ct) =>
             !await repository.IsExists(email, ct);
 
+        async Task<bool> BeAllowed(Identity.Email email, CancellationToken ct) =>
+            !await blacklist.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
+
         RuleFor(x => x.Email)
-            .NotNull().WithErrorCode(ElwarkExceptionCodes.Required)
+            .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityEmailValidator()).OverridePropertyName(nameof(AttachEmailCommand.Email))
-            .MustAsync(BeUniqueEmail).WithErrorCode(ElwarkExceptionCodes.EmailAlreadyExists);
+            .MustAsync(BeAllowed).WithErrorCode(ExceptionCodes.EmailHostDenied)
+            .MustAsync(BeUniqueEmail).WithErrorCode(ExceptionCodes.EmailAlreadyExists);
     }
 }

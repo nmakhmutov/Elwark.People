@@ -11,7 +11,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Provider.Social.Google;
 
-public class GoogleApiService : IGoogleApiService
+public sealed class GoogleApiService : IGoogleApiService
 {
     private readonly HttpClient _httpClient;
 
@@ -32,9 +32,9 @@ public class GoogleApiService : IGoogleApiService
                 ParseSuccessResponse(json),
 
             HttpStatusCode.Unauthorized =>
-                throw new ElwarkException(ElwarkExceptionCodes.ProviderUnauthorized),
+                throw new PeopleException(ExceptionCodes.ProviderUnauthorized),
 
-            _ => throw new ElwarkException(ElwarkExceptionCodes.ProviderUnknown,
+            _ => throw new PeopleException(ExceptionCodes.ProviderUnknown,
                 json.SelectToken("error.message")?.Value<string?>())
         };
     }

@@ -7,7 +7,7 @@ using People.Api.Infrastructure;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
-using People.Infrastructure.Forbidden;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Application.Commands.AttachGoogle;
 
@@ -23,14 +23,14 @@ public sealed record AttachGoogleCommand(
 
 internal sealed class AttachGoogleCommandHandler : IRequestHandler<AttachGoogleCommand>
 {
-    private readonly IForbiddenService _forbidden;
+    private readonly IBlacklistService _blacklist;
     private readonly IMediator _mediator;
     private readonly IAccountRepository _repository;
 
-    public AttachGoogleCommandHandler(IAccountRepository repository, IForbiddenService forbidden, IMediator mediator)
+    public AttachGoogleCommandHandler(IAccountRepository repository, IBlacklistService blacklist, IMediator mediator)
     {
         _repository = repository;
-        _forbidden = forbidden;
+        _blacklist = blacklist;
         _mediator = mediator;
     }
 
@@ -38,14 +38,15 @@ internal sealed class AttachGoogleCommandHandler : IRequestHandler<AttachGoogleC
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         var now = DateTime.UtcNow;
         account.AddGoogle(request.Google, request.FirstName, request.LastName, now);
         if (await IsAvailableToAttach(request.Email, ct))
             account.AddEmail(request.Email, request.IsEmailVerified, now);
 
-        account.Update(account.Name with
+        account.Update(
+            account.Name with
             {
                 FirstName = account.Name.FirstName ?? request.FirstName?[..Name.FirstNameLength],
                 LastName = account.Name.LastName ?? request.LastName?[..Name.LastNameLength]
@@ -68,9 +69,6 @@ internal sealed class AttachGoogleCommandHandler : IRequestHandler<AttachGoogleC
             return false;
 
         var host = new MailAddress(email.Value).Host;
-        if (await _forbidden.IsEmailHostDenied(host, ct))
-            return false;
-
-        return true;
+        return !await _blacklist.IsEmailHostDenied(host, ct);
     }
 }

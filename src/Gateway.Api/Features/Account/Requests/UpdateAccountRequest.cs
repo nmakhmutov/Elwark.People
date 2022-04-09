@@ -1,4 +1,4 @@
-using DayOfWeek = People.Grpc.Common.DayOfWeek;
+using People.Grpc.Common;
 
 namespace Gateway.Api.Features.Account.Requests;
 

@@ -10,7 +10,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure.Provider.Social.Microsoft;
 
-public class MicrosoftApiService : IMicrosoftApiService
+public sealed class MicrosoftApiService : IMicrosoftApiService
 {
     private readonly HttpClient _httpClient;
 
@@ -30,9 +30,9 @@ public class MicrosoftApiService : IMicrosoftApiService
                 ParseSuccessResponse(json),
 
             HttpStatusCode.Unauthorized =>
-                throw new ElwarkException(ElwarkExceptionCodes.ProviderUnauthorized),
+                throw new PeopleException(ExceptionCodes.ProviderUnauthorized),
 
-            _ => throw new ElwarkException(ElwarkExceptionCodes.ProviderUnknown,
+            _ => throw new PeopleException(ExceptionCodes.ProviderUnknown,
                 json.SelectToken("error.message")?.Value<string?>())
         };
     }

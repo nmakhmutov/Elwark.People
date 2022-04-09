@@ -1,6 +1,6 @@
 namespace People.Api.Infrastructure.Password;
 
-public class PasswordValidationOptions
+public sealed class PasswordValidationOptions
 {
     public bool RequireDigit { get; set; } = false;
 

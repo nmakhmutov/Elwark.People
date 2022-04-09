@@ -7,7 +7,7 @@ using People.Api.Infrastructure;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
-using People.Infrastructure.Forbidden;
+using People.Infrastructure.Blacklist;
 
 namespace People.Api.Application.Commands.AttachMicrosoft;
 
@@ -21,14 +21,14 @@ public sealed record AttachMicrosoftCommand(
 
 internal sealed class AttachMicrosoftCommandHandler : IRequestHandler<AttachMicrosoftCommand>
 {
-    private readonly IForbiddenService _forbidden;
+    private readonly IBlacklistService _blacklist;
     private readonly IMediator _mediator;
     private readonly IAccountRepository _repository;
 
-    public AttachMicrosoftCommandHandler(IAccountRepository repository, IForbiddenService forbidden, IMediator mediator)
+    public AttachMicrosoftCommandHandler(IAccountRepository repository, IBlacklistService blacklist, IMediator mediator)
     {
         _repository = repository;
-        _forbidden = forbidden;
+        _blacklist = blacklist;
         _mediator = mediator;
     }
 
@@ -36,14 +36,15 @@ internal sealed class AttachMicrosoftCommandHandler : IRequestHandler<AttachMicr
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            throw new ElwarkException(ElwarkExceptionCodes.AccountNotFound);
+            throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         var now = DateTime.UtcNow;
         account.AddMicrosoft(request.Microsoft, request.FirstName, request.LastName, now);
         if (await IsAvailableToAttach(request.Email, ct))
             account.AddEmail(request.Email, false, now);
 
-        account.Update(account.Name with
+        account.Update(
+            account.Name with
             {
                 FirstName = account.Name.FirstName ?? request.FirstName,
                 LastName = account.Name.LastName ?? request.LastName
@@ -63,9 +64,6 @@ internal sealed class AttachMicrosoftCommandHandler : IRequestHandler<AttachMicr
             return false;
 
         var host = new MailAddress(email.Value).Host;
-        if (await _forbidden.IsEmailHostDenied(host, ct))
-            return false;
-
-        return true;
+        return !await _blacklist.IsEmailHostDenied(host, ct);
     }
 }

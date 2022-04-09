@@ -4,8 +4,8 @@ using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using People.Api.Infrastructure;
 using People.Api.Application.Models;
+using People.Api.Infrastructure;
 using People.Domain;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Identities;
@@ -49,6 +49,8 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
         var account = new Account(id, name, request.Language, picture, request.Ip);
         var email = account.AddEmail(request.Email, request.IsEmailVerified, now);
         account.AddGoogle(request.Google, request.FirstName, request.LastName, now);
+        if (account.IsConfirmed())
+            account.SignIn(new Identity.Google(request.Google.Value), now, request.Ip);
 
         await _repository.CreateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

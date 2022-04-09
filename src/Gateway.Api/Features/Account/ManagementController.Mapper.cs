@@ -4,13 +4,15 @@ using Gateway.Api.Features.Account.Models;
 using Gateway.Api.Mappes;
 using People.Grpc.Gateway;
 using Connection = Gateway.Api.Features.Account.Models.Connection;
+using EmailConnection = Gateway.Api.Features.Account.Models.EmailConnection;
+using SocialConnection = Gateway.Api.Features.Account.Models.SocialConnection;
 
 namespace Gateway.Api.Features.Account;
 
 public sealed partial class ManagementController
 {
     private static ManagementAccount ToAccount(ManagementAccountReply account) =>
-        new (
+        new(
             account.Id.Value,
             account.Name.Nickname,
             account.Name.PreferNickname,
@@ -35,7 +37,7 @@ public sealed partial class ManagementController
         connection.ConnectionTypeCase switch
         {
             ManagementAccountReply.Types.Connection.ConnectionTypeOneofCase.Email =>
-                new Models.EmailConnection(
+                new EmailConnection(
                     connection.Type,
                     connection.Value,
                     connection.CreatedAt.ToDateTime(),
@@ -44,7 +46,7 @@ public sealed partial class ManagementController
                 ),
 
             ManagementAccountReply.Types.Connection.ConnectionTypeOneofCase.Social =>
-                new Models.SocialConnection(
+                new SocialConnection(
                     connection.Type,
                     connection.Value,
                     connection.CreatedAt.ToDateTime(),
