@@ -30,14 +30,14 @@ public sealed class NotificationService : People.Grpc.Notification.NotificationS
         }
 
         var delay = CalcDelay(TimeZoneInfo.FindSystemTimeZoneById(request.UserTimeZone));
-        if (!delay.HasValue)
+        if (delay.HasValue)
         {
-            await SendEmailAsync(request.Email, request.Subject, request.Body, context.CancellationToken);
+            await _postponed.CreateAsync(new PostponedEmail(request.Email, request.Subject, request.Body, delay.Value));
 
             return EmptyCache;
         }
 
-        await _postponed.CreateAsync(new PostponedEmail(request.Email, request.Subject, request.Body, delay.Value));
+        await SendEmailAsync(request.Email, request.Subject, request.Body, context.CancellationToken);
 
         return EmptyCache;
     }
@@ -47,8 +47,7 @@ public sealed class NotificationService : People.Grpc.Notification.NotificationS
 
     private static DateTime? CalcDelay(TimeZoneInfo timezone)
     {
-        var now = DateTime.UtcNow;
-        var local = TimeZoneInfo.ConvertTimeFromUtc(now, timezone);
+        var local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timezone);
         if (local.Hour is >= 9 and < 21)
             return null;
 
@@ -56,9 +55,6 @@ public sealed class NotificationService : People.Grpc.Notification.NotificationS
             ? local
             : local.AddDays(1);
 
-        return TimeZoneInfo.ConvertTimeToUtc(
-            new DateTime(date.Year, date.Month, date.Day, 9, 0, 0, DateTimeKind.Unspecified),
-            timezone
-        );
+        return TimeZoneInfo.ConvertTimeToUtc(new DateTime(date.Year, date.Month, date.Day, 9, 0, 0), timezone);
     }
 }

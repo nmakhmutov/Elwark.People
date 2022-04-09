@@ -5,13 +5,12 @@ networks:
     name: elwark_network
 
 services:
-
   people.gateway:
     container_name: "people_gateway"
     image: "elwark/people-gateway:${TAG:-latest}"
     build:
       context: .
-      dockerfile: Gateway.Api/Dockerfile
+      dockerfile: People.Gateway/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80

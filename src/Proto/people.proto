@@ -7,7 +7,7 @@ import "google/protobuf/wrappers.proto";
 option csharp_namespace = "People.Grpc.Gateway";
 
 service PeopleService {
-  rpc GetProfile (people.AccountIdValue) returns (ProfileReply);
+  rpc GetProfile(people.AccountIdValue) returns (ProfileReply);
   rpc GetEmailNotification(people.AccountIdValue) returns (EmailNotificationInformation);
 
   rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);

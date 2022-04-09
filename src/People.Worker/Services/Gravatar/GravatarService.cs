@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -33,12 +34,20 @@ public sealed class GravatarService : IGravatarService
             return null;
         }
 
-        var content = await response.Content.ReadAsStringAsync();
-        return JObject.Parse(content)
-            .Property("entry")
-            ?.ToArray()
-            .FirstOrDefault()
-            ?.First
-            ?.ToObject<GravatarProfile>();
+        try
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            return JObject.Parse(content)
+                .Property("entry")
+                ?.ToArray()
+                .FirstOrDefault()
+                ?.First
+                ?.ToObject<GravatarProfile>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Cannot deserialize gravatar object for {id}", id);
+            return null;
+        }
     }
 }

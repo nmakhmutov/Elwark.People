@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace People.Worker.Services.IpInformation;
@@ -12,8 +14,13 @@ public interface IIpInformationService
 public sealed class IpInformationService : IIpInformationService
 {
     private readonly HttpClient _httpClient;
+    private readonly ILogger<IpInformationService> _logger;
 
-    public IpInformationService(HttpClient httpClient) => _httpClient = httpClient;
+    public IpInformationService(HttpClient httpClient, ILogger<IpInformationService> logger)
+    {
+        _httpClient = httpClient;
+        _logger = logger;
+    }
 
     public async Task<IpInformationDto?> GetAsync(string ip, string lang)
     {
@@ -26,8 +33,16 @@ public sealed class IpInformationService : IIpInformationService
         if (string.IsNullOrEmpty(json))
             return null;
 
-        var data = JsonConvert.DeserializeObject<IpInformationDto>(json);
+        try
+        {
+            var data = JsonConvert.DeserializeObject<IpInformationDto>(json);
 
-        return data is not null && data.Status == IpInformationStatus.Success ? data : null;
+            return data is not null && data.Status == IpInformationStatus.Success ? data : null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Cannot deserialize ip information object");
+            return null;
+        }
     }
 }
