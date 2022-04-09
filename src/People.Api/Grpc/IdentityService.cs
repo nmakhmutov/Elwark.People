@@ -25,10 +25,10 @@ using People.Api.Infrastructure.Provider.Social.Google;
 using People.Api.Infrastructure.Provider.Social.Microsoft;
 using People.Api.Mappers;
 using People.Domain;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Identity;
-using Identity = People.Domain.Aggregates.AccountAggregate.Identities.Identity;
 
 namespace People.Api.Grpc;
 
@@ -47,26 +47,27 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
 
     public override async Task<AccountReply> GetAccountById(AccountIdValue request, ServerCallContext context)
     {
-        var data = await _mediator.Send(new GetAccountByIdQuery(request), context.CancellationToken);
+        var query = new GetAccountByIdQuery(request);
+        var result = await _mediator.Send(query, context.CancellationToken);
 
-        return ToAccountReply(data);
+        return ToAccountReply(result);
     }
 
     public override async Task<StatusReply> GetStatus(AccountIdValue request, ServerCallContext context)
     {
         var query = new GetAccountStatusQuery(request);
-        var data = await _mediator.Send(query);
+        var result = await _mediator.Send(query);
 
         return new StatusReply
         {
-            IsActive = data.IsActive
+            IsActive = result.IsActive
         };
     }
 
     public override async Task<SignInReply> SignInByEmail(SignInByEmailRequest request, ServerCallContext context)
     {
         var command = new SignInByEmailCommand(
-            new Identity.Email(request.Email),
+            new EmailIdentity(request.Email),
             request.Password,
             ParseIpAddress(request.Ip)
         );
@@ -85,8 +86,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
         return ToSignInReply(accountId, fullName);
     }
 
-    public override async Task<SignInReply> SignInByMicrosoft(SignInBySocialRequest request,
-        ServerCallContext context)
+    public override async Task<SignInReply> SignInByMicrosoft(SignInBySocialRequest request, ServerCallContext context)
     {
         var microsoft = await _microsoft.GetAsync(request.AccessToken, context.CancellationToken);
         var command = new SignInByMicrosoftCommand(microsoft.Identity, ParseIpAddress(request.Ip));
@@ -98,16 +98,14 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
     public override async Task<SignUpReply> SignUpByEmail(SignUpByEmailRequest request, ServerCallContext context)
     {
         var language = new Language(request.Language);
-        var (id, fullName, emailConnection) = await _mediator.Send(
-            new SignUpByEmailCommand(
-                new Identity.Email(request.Email),
-                request.Password,
-                language,
-                ParseIpAddress(request.Ip)
-            ),
-            context.CancellationToken
+        var command = new SignUpByEmailCommand(
+            new EmailIdentity(request.Email),
+            request.Password,
+            language,
+            ParseIpAddress(request.Ip)
         );
-
+        
+        var (id, fullName, emailConnection) = await _mediator.Send(command, context.CancellationToken);
         if (emailConnection.IsConfirmed)
             return ToSignUpReply(id, fullName);
 
@@ -138,8 +136,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
         return ToSignUpReply(accountId, fullName);
     }
 
-    public override async Task<SignUpReply> SignUpByMicrosoft(SignUpBySocialRequest request,
-        ServerCallContext context)
+    public override async Task<SignUpReply> SignUpByMicrosoft(SignUpBySocialRequest request, ServerCallContext context)
     {
         var microsoft = await _microsoft.GetAsync(request.AccessToken, context.CancellationToken);
         var command = new SignUpByMicrosoftCommand(
@@ -166,13 +163,10 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
 
     public override async Task<Empty> ConfirmSignUp(ConfirmSignUpRequest request, ServerCallContext context)
     {
-        await _mediator.Send(
-            new CheckConfirmationCommand(new ObjectId(request.Confirm.Id), request.Confirm.Code),
-            context.CancellationToken
-        );
-
-        var command = new ConfirmConnectionCommand(request.Id);
-        await _mediator.Send(command);
+        var command = new CheckConfirmationCommand(new ObjectId(request.Confirm.Id), request.Confirm.Code);
+        await _mediator.Send(command, context.CancellationToken);
+        
+        await _mediator.Send(new ConfirmConnectionCommand(request.Id), context.CancellationToken);
 
         return new Empty();
     }
@@ -180,10 +174,9 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
     public override async Task<Confirming> ResendSignUpConfirmation(ResendSignUpConfirmationRequest request,
         ServerCallContext context)
     {
-        var account =
-            await _mediator.Send(new GetAccountByIdQuery(request.Id), context.CancellationToken);
+        var account = await _mediator.Send(new GetAccountByIdQuery(request.Id), context.CancellationToken);
 
-        if (account.IsConfirmed())
+        if (account.IsActivated)
             throw new PeopleException(ExceptionCodes.IdentityAlreadyConfirmed);
 
         var confirmationId = await _mediator.Send(
@@ -206,7 +199,7 @@ internal sealed partial class IdentityService : People.Grpc.Identity.IdentitySer
         await _mediator.Send(
             new AttachEmailCommand(
                 request.Id,
-                new Identity.Email(request.Value)
+                new EmailIdentity(request.Value)
             ),
             context.CancellationToken
         );

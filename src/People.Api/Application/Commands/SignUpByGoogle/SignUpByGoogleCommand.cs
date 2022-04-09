@@ -14,8 +14,8 @@ using People.Infrastructure.Sequences;
 namespace People.Api.Application.Commands.SignUpByGoogle;
 
 public sealed record SignUpByGoogleCommand(
-    Identity.Google Google,
-    Identity.Email Email,
+    GoogleIdentity Google,
+    EmailIdentity Email,
     string? FirstName,
     string? LastName,
     Uri? Picture,
@@ -41,16 +41,16 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
     {
         var now = DateTime.UtcNow;
         var nickname = new MailAddress(request.Email.Value).User;
-
         var name = new Name(nickname, request.FirstName, request.LastName);
         var picture = request.Picture ?? Account.DefaultPicture;
-
         var id = await _generator.NextAccountIdAsync(ct);
+        
         var account = new Account(id, name, request.Language, picture, request.Ip);
-        var email = account.AddEmail(request.Email, request.IsEmailVerified, now);
-        account.AddGoogle(request.Google, request.FirstName, request.LastName, now);
-        if (account.IsConfirmed())
-            account.SignIn(new Identity.Google(request.Google.Value), now, request.Ip);
+        var email = account.AddIdentity(request.Email, request.IsEmailVerified, now);
+        account.AddIdentity(request.Google, request.FirstName, request.LastName, now);
+        
+        if (account.IsActivated)
+            account.SignIn(request.Google, now, request.Ip);
 
         await _repository.CreateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

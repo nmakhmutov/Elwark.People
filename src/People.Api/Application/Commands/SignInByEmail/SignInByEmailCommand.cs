@@ -11,7 +11,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.SignInByEmail;
 
-public sealed record SignInByEmailCommand(Identity.Email Email, string Password, IPAddress Ip)
+public sealed record SignInByEmailCommand(EmailIdentity Email, string Password, IPAddress Ip)
     : IRequest<SignInResult>;
 
 public sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailCommand, SignInResult>

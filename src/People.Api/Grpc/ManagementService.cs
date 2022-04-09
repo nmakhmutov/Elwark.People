@@ -18,11 +18,11 @@ using People.Api.Application.Queries.GetAccountById;
 using People.Api.Application.Queries.GetAccounts;
 using People.Api.Mappers;
 using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.Aggregates.AccountAggregate.Connections;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
-using Connection = People.Domain.Aggregates.AccountAggregate.Identities.Connection;
-using EmailConnection = People.Domain.Aggregates.AccountAggregate.Identities.EmailConnection;
+using Connection = People.Domain.Aggregates.AccountAggregate.Connections.Connection;
+using EmailConnection = People.Domain.Aggregates.AccountAggregate.Connections.EmailConnection;
 
 namespace People.Api.Grpc;
 
@@ -176,7 +176,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
             EmailConnection x =>
                 new ManagementAccountReply.Types.Connection
                 {
-                    Type = x.Type.ToGrpc(),
+                    Type = IdentityType.Email,
                     Value = x.Value,
                     CreatedAt = x.CreatedAt.ToTimestamp(),
                     ConfirmedAt = x.ConfirmedAt?.ToTimestamp(),
@@ -189,7 +189,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
             GoogleConnection x =>
                 new ManagementAccountReply.Types.Connection
                 {
-                    Type = x.Type.ToGrpc(),
+                    Type = IdentityType.Google,
                     Value = x.Value,
                     CreatedAt = x.CreatedAt.ToTimestamp(),
                     ConfirmedAt = x.ConfirmedAt?.ToTimestamp(),
@@ -203,7 +203,7 @@ internal sealed class ManagementService : PeopleManagement.PeopleManagementBase
             MicrosoftConnection x =>
                 new ManagementAccountReply.Types.Connection
                 {
-                    Type = x.Type.ToGrpc(),
+                    Type = IdentityType.Microsoft,
                     Value = x.Value,
                     CreatedAt = x.CreatedAt.ToTimestamp(),
                     ConfirmedAt = x.ConfirmedAt?.ToTimestamp(),

@@ -1,17 +1,19 @@
 using System;
+using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.Seed;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-namespace People.Domain.Aggregates.AccountAggregate.Identities;
+namespace People.Domain.Aggregates.AccountAggregate.Connections;
 
-public abstract record Connection : Identity
+public abstract class Connection : ValueObject
 {
-    protected Connection(IdentityType type, string value, DateTime createdAt, DateTime? confirmedAt)
-        : base(type, value)
+    protected Connection(string value, DateTime createdAt)
     {
         Value = value;
-        ConfirmedAt = confirmedAt;
         CreatedAt = createdAt;
     }
+
+    public string Value { get; private set; }
 
     public DateTime? ConfirmedAt { get; private set; }
 

@@ -16,7 +16,7 @@ internal sealed class AttachGoogleCommandValidator : AbstractValidator<AttachGoo
         RuleFor(x => x.Id)
             .NotEmpty();
 
-        async Task<bool> BeUnique(Identity.Google google, CancellationToken ct) =>
+        async Task<bool> BeUnique(GoogleIdentity google, CancellationToken ct) =>
             !await repository.IsExists(google, ct);
 
         RuleFor(x => x.Google)

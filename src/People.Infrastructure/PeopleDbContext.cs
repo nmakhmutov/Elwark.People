@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.Aggregates.AccountAggregate.Connections;
 using People.Domain.Seed;
 using People.Infrastructure.Sequences;
 using People.Infrastructure.Serializers;
@@ -64,12 +64,8 @@ public sealed class PeopleDbContext : MongoDbContext
         await CreateIndexesAsync(Accounts,
             new CreateIndexModel<Account>(
                 Builders<Account>.IndexKeys.Combine(
-                    Builders<Account>.IndexKeys.Ascending(
-                        $"{nameof(Account.Connections)}.{nameof(Connection.Type)}"
-                    ),
-                    Builders<Account>.IndexKeys.Ascending(
-                        $"{nameof(Account.Connections)}.{nameof(Connection.Value)}"
-                    )
+                    Builders<Account>.IndexKeys.Ascending($"{nameof(Account.Connections)}._t"),
+                    Builders<Account>.IndexKeys.Ascending($"{nameof(Account.Connections)}.{nameof(Connection.Value)}")
                 ),
                 new CreateIndexOptions
                 {

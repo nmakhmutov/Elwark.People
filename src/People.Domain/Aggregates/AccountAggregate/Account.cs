@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using People.Domain.Aggregates.AccountAggregate.Connections;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Events;
 using People.Domain.Exceptions;
@@ -24,9 +25,9 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
     public Account(AccountId id, Name name, Language language, Uri picture, IPAddress ip)
     {
         Id = id;
-        Version = int.MinValue;
         Ban = null;
         Name = name;
+        Version = int.MinValue;
         TimeZone = TimeZoneInfo.Utc.Id;
         FirstDayOfWeek = DayOfWeek.Monday;
         CountryCode = CountryCode.Empty;
@@ -57,72 +58,88 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
     public DateTime LastSignIn { get; private set; }
 
-    public IReadOnlyCollection<string> Roles => _roles;
+    public bool IsActivated { get; private set; }
 
-    public IReadOnlyCollection<Connection> Connections => _connections.AsReadOnly();
+    public IReadOnlyCollection<string> Roles =>
+        _roles;
+
+    public IReadOnlyCollection<Connection> Connections =>
+        _connections.AsReadOnly();
 
     public int Version { get; set; }
 
-    public EmailConnection AddEmail(Identity.Email email, bool isConfirmed, DateTime now)
+    public EmailConnection AddIdentity(EmailIdentity email, bool isConfirmed, DateTime now)
     {
         var isPrimaryAvailable = _connections
             .OfType<EmailConnection>()
             .Any(x => x.IsPrimary);
 
-        var connection = new EmailConnection(email.Value, now, !isPrimaryAvailable, isConfirmed ? now : null);
+        var connection = new EmailConnection(email, now);
+
+        if (isConfirmed)
+            connection.Confirm(now);
+
+        if (!isPrimaryAvailable)
+            connection.SetPrimary();
 
         _connections.Add(connection);
-
+        IsActivated = _connections.Any(x => x.IsConfirmed);
+        
         return connection;
     }
 
-    public GoogleConnection AddGoogle(Identity.Google identity, string? firstName, string? lastName, DateTime now)
+    public GoogleConnection AddIdentity(GoogleIdentity google, string? firstName, string? lastName, DateTime now)
     {
-        var connection = new GoogleConnection(identity.Value, firstName, lastName, now, now);
-        _connections.Add(connection);
+        var connection = new GoogleConnection(google, firstName, lastName, now);
+        connection.Confirm(now);
 
+        _connections.Add(connection);
+        IsActivated = _connections.Any(x => x.IsConfirmed);
+        
         return connection;
     }
 
-    public MicrosoftConnection AddMicrosoft(Identity.Microsoft identity, string? firstName, string? lastName, DateTime now)
+    public MicrosoftConnection AddIdentity(MicrosoftIdentity microsoft, string? firstName, string? lastName, DateTime now)
     {
-        var connection = new MicrosoftConnection(identity.Value, firstName, lastName, now, now);
-        _connections.Add(connection);
+        var connection = new MicrosoftConnection(microsoft, firstName, lastName, now);
+        connection.Confirm(now);
 
+        _connections.Add(connection);
+        IsActivated = _connections.Any(x => x.IsConfirmed);
+        
         return connection;
     }
 
-    public bool IsConfirmed() =>
-        _connections.Any(x => x.ConfirmedAt.HasValue);
+    private bool IsConfirmed(Identity identity) =>
+        GetIdentity(identity)?.IsConfirmed ?? false;
 
-    private bool IsConfirmed(Identity key) =>
-        _connections.Any(x => x.Type == key.Type && x.Value == key.Value && x.IsConfirmed);
+    public Connection? GetIdentity(Identity identity) =>
+        _connections.FirstOrDefault(x => Equals(x.Identity, identity));
 
-    public Connection? GetIdentity(Identity key) =>
-        _connections.FirstOrDefault(x => x.Identity == key);
-
-    public void ConfirmConnection(Identity key, DateTime confirmedAt)
+    public void ConfirmConnection(Identity identity, DateTime confirmedAt)
     {
-        var identity = _connections.First(x => x.Identity == key);
-        if (identity.IsConfirmed)
+        var connection = GetIdentity(identity) ?? throw new PeopleException(ExceptionCodes.IdentityNotFound);
+        if (connection.IsConfirmed)
             return;
 
-        identity.Confirm(confirmedAt);
+        connection.Confirm(confirmedAt);
+        IsActivated = _connections.Any(x => x.IsConfirmed);
     }
 
-    public void ConfuteConnection(Identity key)
+    public void ConfuteConnection(Identity identity)
     {
-        var identity = _connections.First(x => x.Identity == key);
-        if (!identity.IsConfirmed)
+        var connection = GetIdentity(identity) ?? throw new PeopleException(ExceptionCodes.IdentityNotFound);
+        if (!connection.IsConfirmed)
             return;
 
-        identity.Confute();
+        connection.Confute();
+        IsActivated = _connections.Any(x => x.IsConfirmed);
     }
 
-    public void DeleteIdentity(Identity key)
+    public void DeleteIdentity(Identity identity)
     {
-        var identity = _connections.FirstOrDefault(x => x.Identity == key);
-        switch (identity)
+        var connection = GetIdentity(identity);
+        switch (connection)
         {
             case null:
                 return;
@@ -131,16 +148,16 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
                 throw new PeopleException(ExceptionCodes.PrimaryEmailCannotBeRemoved);
 
             default:
-                _connections.Remove(identity);
+                _connections.Remove(connection);
                 break;
         }
     }
 
-    public void Update(Name name, CountryCode countryCode, string timeZone, DayOfWeek firstDayOfWeek,
-        Language language, Uri picture)
+    public void Update(Name name, CountryCode country, string timeZone, DayOfWeek firstDayOfWeek, Language language,
+        Uri picture)
     {
         Name = name;
-        CountryCode = countryCode;
+        CountryCode = country;
         TimeZone = GetTimeZone(timeZone);
         FirstDayOfWeek = firstDayOfWeek;
         Language = language;
@@ -164,13 +181,13 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
     public bool IsActive()
     {
-        if (!IsConfirmed())
+        if (!IsActivated)
             return false;
 
         if (Ban is not null)
             return false;
 
-        return _password is null || _password.CreatedAt <= LastSignIn;
+        return _password is null || _password.CreatedAt < LastSignIn;
     }
 
     public bool IsPasswordAvailable() =>
@@ -206,7 +223,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         SignInSuccess(dateTime, ip);
     }
 
-    public void SignIn(Identity.Email email, DateTime dateTime, IPAddress ip, string password, IPasswordHasher hasher)
+    public void SignIn(EmailIdentity email, DateTime dateTime, IPAddress ip, string password, IPasswordHasher hasher)
     {
         if (Ban is not null)
             throw new AccountBannedException(Ban);
@@ -251,15 +268,14 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         };
     }
 
-    public EmailConnection SetAsPrimaryEmail(Identity.Email email)
+    public EmailConnection SetAsPrimaryEmail(EmailIdentity email)
     {
         var emails = _connections
             .OfType<EmailConnection>()
-            .ToList();
+            .ToArray();
 
-        var result = emails.FirstOrDefault(x => x.Value == email.Value);
-        if (result is null)
-            throw new PeopleException(ExceptionCodes.IdentityNotFound);
+        var result = emails.FirstOrDefault(x => x.Value == email.Value)
+                     ?? throw new PeopleException(ExceptionCodes.IdentityNotFound);
 
         if (!result.IsConfirmed)
             throw new PeopleException(ExceptionCodes.IdentityNotConfirmed);

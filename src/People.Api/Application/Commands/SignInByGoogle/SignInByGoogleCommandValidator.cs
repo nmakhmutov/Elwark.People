@@ -7,8 +7,8 @@ namespace People.Api.Application.Commands.SignInByGoogle;
 internal sealed class SignInByGoogleCommandValidator : AbstractValidator<SignInByGoogleCommand>
 {
     public SignInByGoogleCommandValidator() =>
-        RuleFor(x => x.Identity)
+        RuleFor(x => x.Google)
             .NotNull().WithErrorCode(ExceptionCodes.Required)
             .SetValidator(new IdentityGoogleValidator())
-            .OverridePropertyName(nameof(SignInByGoogleCommand.Identity));
+            .OverridePropertyName(nameof(SignInByGoogleCommand.Google));
 }

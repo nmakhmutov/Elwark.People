@@ -44,8 +44,8 @@ public sealed class MicrosoftApiService : IMicrosoftApiService
                     throw new InvalidOperationException("Microsoft email not found");
 
         return new MicrosoftAccount(
-            new Identity.Microsoft(id),
-            new Identity.Email(email),
+            new MicrosoftIdentity(id),
+            new EmailIdentity(email),
             json.Value<string>("givenName"),
             json.Value<string>("surname")
         );

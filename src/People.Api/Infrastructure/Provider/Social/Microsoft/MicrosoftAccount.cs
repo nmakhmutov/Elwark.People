@@ -4,7 +4,7 @@ namespace People.Api.Infrastructure.Provider.Social.Microsoft;
 
 public sealed class MicrosoftAccount
 {
-    public MicrosoftAccount(Identity.Microsoft identity, Identity.Email email, string? firstName, string? lastName)
+    public MicrosoftAccount(MicrosoftIdentity identity, EmailIdentity email, string? firstName, string? lastName)
     {
         Identity = identity;
         Email = email;
@@ -12,9 +12,9 @@ public sealed class MicrosoftAccount
         LastName = lastName;
     }
 
-    public Identity.Microsoft Identity { get; }
+    public MicrosoftIdentity Identity { get; }
 
-    public Identity.Email Email { get; }
+    public EmailIdentity Email { get; }
 
     public string? FirstName { get; }
 

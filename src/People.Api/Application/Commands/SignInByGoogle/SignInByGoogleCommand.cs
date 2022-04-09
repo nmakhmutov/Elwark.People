@@ -11,7 +11,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.SignInByGoogle;
 
-public sealed record SignInByGoogleCommand(Identity.Google Identity, IPAddress Ip) : IRequest<SignInResult>;
+public sealed record SignInByGoogleCommand(GoogleIdentity Google, IPAddress Ip) : IRequest<SignInResult>;
 
 public sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoogleCommand, SignInResult>
 {
@@ -26,11 +26,11 @@ public sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoogl
 
     public async Task<SignInResult> Handle(SignInByGoogleCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Identity, ct);
+        var account = await _repository.GetAsync(request.Google, ct);
         if (account is null)
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
-        account.SignIn(request.Identity, DateTime.UtcNow, request.Ip);
+        account.SignIn(request.Google, DateTime.UtcNow, request.Ip);
 
         await _repository.UpdateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

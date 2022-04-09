@@ -4,13 +4,10 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Validators;
 
-internal sealed class IdentityGoogleValidator : AbstractValidator<Identity.Google>
+internal sealed class IdentityGoogleValidator : AbstractValidator<GoogleIdentity>
 {
     public IdentityGoogleValidator()
     {
-        RuleFor(x => x.Type)
-            .Equal(IdentityType.Google);
-
         RuleFor(x => x.Value)
             .NotEmpty().WithErrorCode(ExceptionCodes.Required);
     }

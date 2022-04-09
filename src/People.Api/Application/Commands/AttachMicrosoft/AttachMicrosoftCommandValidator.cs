@@ -16,8 +16,8 @@ internal sealed class AttachMicrosoftCommandValidator : AbstractValidator<Attach
         RuleFor(x => x.Id)
             .NotEmpty();
 
-        async Task<bool> BeUnique(Identity.Microsoft google, CancellationToken ct) =>
-            !await repository.IsExists(google, ct);
+        async Task<bool> BeUnique(MicrosoftIdentity microsoft, CancellationToken ct) =>
+            !await repository.IsExists(microsoft, ct);
 
         RuleFor(x => x.Microsoft)
             .NotNull().WithErrorCode(ExceptionCodes.Required)

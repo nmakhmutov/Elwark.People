@@ -8,6 +8,7 @@ using Fluid;
 using Integration.Event;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using People.Api.Application.Behaviors;
 using People.Api.Application.IntegrationEventHandlers;
 using People.Api.Grpc;
+using People.Api.Infrastructure;
 using People.Api.Infrastructure.EmailBuilder;
 using People.Api.Infrastructure.Interceptors;
 using People.Api.Infrastructure.Password;
@@ -108,13 +110,13 @@ using (var scope = app.Services.CreateScope())
 {
     var peopleContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
     var infrastructureContext = scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>();
-
+    var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+    
     await peopleContext.OnModelCreatingAsync();
     await infrastructureContext.OnModelCreatingAsync();
-    // await new InfrastructureContextSeed(
-    //     scope.ServiceProvider.GetRequiredService<InfrastructureDbContext>(),
-    //     scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>()
-    // ).SeedAsync();
+    
+    await new InfrastructureContextSeed(infrastructureContext, env)
+        .SeedAsync();
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

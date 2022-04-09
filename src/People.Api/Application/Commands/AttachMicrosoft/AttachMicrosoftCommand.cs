@@ -13,8 +13,8 @@ namespace People.Api.Application.Commands.AttachMicrosoft;
 
 public sealed record AttachMicrosoftCommand(
     AccountId Id,
-    Identity.Microsoft Microsoft,
-    Identity.Email Email,
+    MicrosoftIdentity Microsoft,
+    EmailIdentity Email,
     string? FirstName,
     string? LastName
 ) : IRequest;
@@ -39,9 +39,9 @@ internal sealed class AttachMicrosoftCommandHandler : IRequestHandler<AttachMicr
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         var now = DateTime.UtcNow;
-        account.AddMicrosoft(request.Microsoft, request.FirstName, request.LastName, now);
+        account.AddIdentity(request.Microsoft, request.FirstName, request.LastName, now);
         if (await IsAvailableToAttach(request.Email, ct))
-            account.AddEmail(request.Email, false, now);
+            account.AddIdentity(request.Email, false, now);
 
         account.Update(
             account.Name with
@@ -58,7 +58,7 @@ internal sealed class AttachMicrosoftCommandHandler : IRequestHandler<AttachMicr
         return Unit.Value;
     }
 
-    private async Task<bool> IsAvailableToAttach(Identity.Email email, CancellationToken ct)
+    private async Task<bool> IsAvailableToAttach(EmailIdentity email, CancellationToken ct)
     {
         if (await _repository.IsExists(email, ct))
             return false;

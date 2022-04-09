@@ -14,8 +14,8 @@ using People.Infrastructure.Sequences;
 namespace People.Api.Application.Commands.SignUpByMicrosoft;
 
 public sealed record SignUpByMicrosoftCommand(
-    Identity.Microsoft Identity,
-    Identity.Email Email,
+    MicrosoftIdentity Microsoft,
+    EmailIdentity Email,
     string? FirstName,
     string? LastName,
     Language Language,
@@ -28,8 +28,7 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
     private readonly IMediator _mediator;
     private readonly IAccountRepository _repository;
 
-    public SignUpByMicrosoftCommandHandler(IAccountRepository repository, ISequenceGenerator generator,
-        IMediator mediator)
+    public SignUpByMicrosoftCommandHandler(IAccountRepository repository, ISequenceGenerator generator, IMediator mediator)
     {
         _repository = repository;
         _generator = generator;
@@ -41,11 +40,14 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
         var now = DateTime.UtcNow;
         var nickname = new MailAddress(request.Email.Value).User;
         var name = new Name(nickname, request.FirstName, request.LastName);
-
         var id = await _generator.NextAccountIdAsync(ct);
+        
         var account = new Account(id, name, request.Language, Account.DefaultPicture, request.Ip);
-        var email = account.AddEmail(request.Email, true, now);
-        account.AddMicrosoft(request.Identity, request.FirstName, request.LastName, now);
+        var email = account.AddIdentity(request.Email, true, now);
+        account.AddIdentity(request.Microsoft, request.FirstName, request.LastName, now);
+        
+        if (account.IsActivated)
+            account.SignIn(request.Microsoft, now, request.Ip);
 
         await _repository.CreateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

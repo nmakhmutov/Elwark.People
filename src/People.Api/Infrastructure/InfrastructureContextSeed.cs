@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,58 +16,63 @@ internal sealed class InfrastructureContextSeed
 {
     private readonly InfrastructureDbContext _dbContext;
     private readonly IWebHostEnvironment _env;
+    private readonly CountOptions _countOptions;
 
     public InfrastructureContextSeed(InfrastructureDbContext dbContext, IWebHostEnvironment env)
     {
         _dbContext = dbContext;
         _env = env;
+        _countOptions = new CountOptions { Limit = 1,  };
     }
 
     public async Task SeedAsync()
     {
         await SeedCountriesAsync();
-        await SeedPasswordsAsync();
-        await SeedEmailHostsAsync();
+        await SeedBlacklistAsync();
     }
 
     private async Task SeedCountriesAsync()
     {
         var path = Path.Combine(_env.ContentRootPath, "Setup", "countries.json");
 
-        if (File.Exists(path))
-        {
-            var json = await File.ReadAllTextAsync(path, Encoding.UTF8);
-            var countries = JsonConvert.DeserializeObject<Country[]>(json);
+        if (!File.Exists(path))
+            return;
 
-            await _dbContext.Countries.InsertManyAsync(countries, new InsertManyOptions { IsOrdered = false });
-        }
+        var count = await _dbContext.Countries
+            .CountDocumentsAsync(FilterDefinition<Country>.Empty, _countOptions);
+
+        if (count > 0)
+            return;
+
+        var json = await File.ReadAllTextAsync(path, Encoding.UTF8);
+        var countries = JsonConvert.DeserializeObject<Country[]>(json);
+
+        await _dbContext.Countries.InsertManyAsync(countries, new InsertManyOptions { IsOrdered = false });
     }
 
-    private async Task SeedPasswordsAsync()
+    private async Task SeedBlacklistAsync()
     {
-        var path = Path.Combine(_env.ContentRootPath, "Setup", "forbidden_passwords.csv");
+        var count = await _dbContext.Blacklist
+            .CountDocumentsAsync(FilterDefinition<BlacklistItem>.Empty, _countOptions);
 
-        if (File.Exists(path))
-        {
-            var passwords = (await File.ReadAllLinesAsync(path, Encoding.UTF8))
-                .Select(x => new BlacklistItem(ForbiddenType.Password, x))
-                .ToArray();
+        if (count > 0)
+            return;
 
-            await _dbContext.Blacklist.InsertManyAsync(passwords, new InsertManyOptions { IsOrdered = false });
-        }
-    }
+        var list = new List<BlacklistItem>();
 
-    private async Task SeedEmailHostsAsync()
-    {
-        var path = Path.Combine(_env.ContentRootPath, "Setup", "forbidden_email_hosts.csv");
+        var passwordsPath = Path.Combine(_env.ContentRootPath, "Setup", "forbidden_passwords.csv");
+        if (File.Exists(passwordsPath))
+            list.AddRange((await File.ReadAllLinesAsync(passwordsPath))
+                .Select(x => new BlacklistItem(ForbiddenType.Password, x)));
 
-        if (File.Exists(path))
-        {
-            var emails = (await File.ReadAllLinesAsync(path, Encoding.UTF8))
-                .Select(x => new BlacklistItem(ForbiddenType.EmailHost, x))
-                .ToArray();
+        var emailsPath = Path.Combine(_env.ContentRootPath, "Setup", "forbidden_email_hosts.csv");
+        if (File.Exists(emailsPath))
+            list.AddRange((await File.ReadAllLinesAsync(emailsPath))
+                .Select(x => new BlacklistItem(ForbiddenType.EmailHost, x)));
 
-            await _dbContext.Blacklist.InsertManyAsync(emails, new InsertManyOptions { IsOrdered = false });
-        }
+        if (list.Count == 0)
+            return;
+
+        await _dbContext.Blacklist.InsertManyAsync(list, new InsertManyOptions { IsOrdered = false });
     }
 }

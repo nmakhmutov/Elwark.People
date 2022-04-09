@@ -14,8 +14,7 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
             throw new ArgumentNullException(nameof(value), $"{nameof(Language)} cannot be empty");
 
         if (value.Length != 2)
-            throw new ArgumentOutOfRangeException(nameof(value), value,
-                $"{nameof(Language)} value must be two chars");
+            throw new ArgumentOutOfRangeException(nameof(value), value, $"{nameof(Language)} value must be two chars");
 
         if ("iv".Equals(value, StringComparison.InvariantCultureIgnoreCase))
             throw new ArgumentException("Language cannot be invariant", nameof(value));
@@ -54,7 +53,9 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
 
     public int CompareTo(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return 1;
+        if (ReferenceEquals(null, obj)) 
+            return 1;
+        
         return obj is Language other
             ? CompareTo(other)
             : throw new ArgumentException($"Object must be of type {nameof(Language)}");

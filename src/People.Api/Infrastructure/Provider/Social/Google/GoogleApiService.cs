@@ -48,8 +48,8 @@ public sealed class GoogleApiService : IGoogleApiService
         var picture = json.Value<string?>("picture");
 
         return new GoogleAccount(
-            new Identity.Google(id),
-            new Identity.Email(email),
+            new GoogleIdentity(id),
+            new EmailIdentity(email),
             json.Value<bool>("verified_email"),
             json.Value<string?>("given_name"),
             json.Value<string?>("family_name"),

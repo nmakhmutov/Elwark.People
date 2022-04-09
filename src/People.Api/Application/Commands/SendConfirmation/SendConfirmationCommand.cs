@@ -14,7 +14,7 @@ using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SendConfirmation;
 
-public sealed record SendConfirmationCommand(AccountId Id, Identity.Email Email, Language Language)
+public sealed record SendConfirmationCommand(AccountId Id, EmailIdentity Email, Language Language)
     : IRequest<ObjectId>;
 
 internal sealed class SendConfirmationCommandHandler : IRequestHandler<SendConfirmationCommand, ObjectId>

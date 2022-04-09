@@ -19,10 +19,10 @@ internal sealed class SignUpByMicrosoftCommandValidator : AbstractValidator<Sign
         async Task<bool> BeUnique(Identity identity, CancellationToken ct) =>
             !await repository.IsExists(identity, ct);
 
-        async Task<bool> BeAllowed(Identity.Email email, CancellationToken ct) =>
+        async Task<bool> BeAllowed(EmailIdentity email, CancellationToken ct) =>
             !await blacklist.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
 
-        RuleFor(x => x.Identity)
+        RuleFor(x => x.Microsoft)
             .NotEmpty().WithErrorCode(ExceptionCodes.Required)
             .MustAsync(BeUnique).WithErrorCode(ExceptionCodes.ConnectionAlreadyExists);
 

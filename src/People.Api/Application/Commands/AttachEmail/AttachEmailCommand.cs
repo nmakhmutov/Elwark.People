@@ -9,7 +9,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.AttachEmail;
 
-public sealed record AttachEmailCommand(AccountId Id, Identity.Email Email) : IRequest;
+public sealed record AttachEmailCommand(AccountId Id, EmailIdentity Email) : IRequest;
 
 internal sealed class AttachEmailCommandHandler : IRequestHandler<AttachEmailCommand>
 {
@@ -28,7 +28,7 @@ internal sealed class AttachEmailCommandHandler : IRequestHandler<AttachEmailCom
         if (account is null)
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
-        account.AddEmail(request.Email, false, DateTime.UtcNow);
+        account.AddIdentity(request.Email, false, DateTime.UtcNow);
 
         await _repository.UpdateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

@@ -15,13 +15,13 @@ using People.Api.Application.Commands.UpdateProfile;
 using People.Api.Application.Queries.GetAccountById;
 using People.Api.Mappers;
 using People.Domain;
+using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
 using People.Grpc.Common;
 using People.Grpc.Gateway;
 using People.Infrastructure.Countries;
 using Country = People.Grpc.Gateway.Country;
-using EmailConnection = People.Domain.Aggregates.AccountAggregate.Identities.EmailConnection;
-using Identity = People.Domain.Aggregates.AccountAggregate.Identities.Identity;
+using EmailConnection = People.Domain.Aggregates.AccountAggregate.Connections.EmailConnection;
 
 namespace People.Api.Grpc;
 
@@ -116,7 +116,7 @@ internal sealed class PeopleService : People.Grpc.Gateway.PeopleService.PeopleSe
     public override async Task<ProfileReply> SetEmailAsPrimary(SetEmailAsPrimaryRequest request,
         ServerCallContext context)
     {
-        var command = new SetAsPrimaryEmailCommand(request.Id, new Identity.Email(request.Email));
+        var command = new SetAsPrimaryEmailCommand(request.Id, new EmailIdentity(request.Email));
 
         await _mediator.Send(command);
 

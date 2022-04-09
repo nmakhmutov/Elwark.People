@@ -17,10 +17,10 @@ internal sealed class AttachEmailCommandValidator : AbstractValidator<AttachEmai
         RuleFor(x => x.Id)
             .NotEmpty().WithErrorCode(ExceptionCodes.Required);
 
-        async Task<bool> BeUniqueEmail(Identity.Email email, CancellationToken ct) =>
+        async Task<bool> BeUniqueEmail(EmailIdentity email, CancellationToken ct) =>
             !await repository.IsExists(email, ct);
 
-        async Task<bool> BeAllowed(Identity.Email email, CancellationToken ct) =>
+        async Task<bool> BeAllowed(EmailIdentity email, CancellationToken ct) =>
             !await blacklist.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
 
         RuleFor(x => x.Email)

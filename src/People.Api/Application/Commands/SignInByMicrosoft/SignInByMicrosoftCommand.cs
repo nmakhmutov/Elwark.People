@@ -11,7 +11,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.SignInByMicrosoft;
 
-public sealed record SignInByMicrosoftCommand(Identity.Microsoft Identity, IPAddress Ip) : IRequest<SignInResult>;
+public sealed record SignInByMicrosoftCommand(MicrosoftIdentity Microsoft, IPAddress Ip) : IRequest<SignInResult>;
 
 public sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInByMicrosoftCommand, SignInResult>
 {
@@ -26,11 +26,11 @@ public sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInByMi
 
     public async Task<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Identity, ct);
+        var account = await _repository.GetAsync(request.Microsoft, ct);
         if (account is null)
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
-        account.SignIn(request.Identity, DateTime.UtcNow, request.Ip);
+        account.SignIn(request.Microsoft, DateTime.UtcNow, request.Ip);
 
         await _repository.UpdateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

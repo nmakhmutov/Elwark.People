@@ -13,8 +13,8 @@ namespace People.Api.Application.Commands.AttachGoogle;
 
 public sealed record AttachGoogleCommand(
     AccountId Id,
-    Identity.Google Google,
-    Identity.Email Email,
+    GoogleIdentity Google,
+    EmailIdentity Email,
     string? FirstName,
     string? LastName,
     Uri? Picture,
@@ -41,9 +41,9 @@ internal sealed class AttachGoogleCommandHandler : IRequestHandler<AttachGoogleC
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         var now = DateTime.UtcNow;
-        account.AddGoogle(request.Google, request.FirstName, request.LastName, now);
+        account.AddIdentity(request.Google, request.FirstName, request.LastName, now);
         if (await IsAvailableToAttach(request.Email, ct))
-            account.AddEmail(request.Email, request.IsEmailVerified, now);
+            account.AddIdentity(request.Email, request.IsEmailVerified, now);
 
         account.Update(
             account.Name with
@@ -63,7 +63,7 @@ internal sealed class AttachGoogleCommandHandler : IRequestHandler<AttachGoogleC
         return Unit.Value;
     }
 
-    private async Task<bool> IsAvailableToAttach(Identity.Email email, CancellationToken ct)
+    private async Task<bool> IsAvailableToAttach(EmailIdentity email, CancellationToken ct)
     {
         if (await _repository.IsExists(email, ct))
             return false;

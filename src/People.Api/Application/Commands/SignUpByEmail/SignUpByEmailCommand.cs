@@ -14,7 +14,7 @@ using People.Infrastructure.Sequences;
 
 namespace People.Api.Application.Commands.SignUpByEmail;
 
-public sealed record SignUpByEmailCommand(Identity.Email Email, string Password, Language Language, IPAddress Ip)
+public sealed record SignUpByEmailCommand(EmailIdentity Email, string Password, Language Language, IPAddress Ip)
     : IRequest<SignUpResult>;
 
 internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmailCommand, SignUpResult>
@@ -38,7 +38,7 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
         var account = await _repository.GetAsync(request.Email, ct)
                       ?? await CreateAsync(request, ct);
 
-        if (account.IsConfirmed())
+        if (account.IsActivated)
             throw new PeopleException(ExceptionCodes.EmailAlreadyExists);
 
         return new SignUpResult(account.Id, account.Name.FullName(), account.GetPrimaryEmail());
@@ -46,18 +46,12 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
 
     private async Task<Account> CreateAsync(SignUpByEmailCommand request, CancellationToken ct)
     {
-        var nickname = new MailAddress(request.Email.Value).User;
+        var now = DateTime.UtcNow;
+        var name = new Name(new MailAddress(request.Email.Value).User);
         var id = await _generator.NextAccountIdAsync(ct);
 
-        var now = DateTime.UtcNow;
-        var account = new Account(
-            id,
-            new Name(nickname),
-            request.Language,
-            Account.DefaultPicture,
-            request.Ip
-        );
-        account.AddEmail(request.Email, false, now);
+        var account = new Account(id, name, request.Language, Account.DefaultPicture, request.Ip);
+        account.AddIdentity(request.Email, false, now);
         account.SetPassword(request.Password, _passwordHasher, now);
 
         await _repository.CreateAsync(account, ct);

@@ -1,5 +1,5 @@
 using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.Aggregates.AccountAggregate.Connections;
 
 namespace People.Api.Application.Models;
 

@@ -1,6 +1,7 @@
 using System;
 using Google.Protobuf.WellKnownTypes;
 using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.Aggregates.AccountAggregate.Connections;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Common;
 using Ban = People.Grpc.Common.Ban;
@@ -15,41 +16,23 @@ public static class CommonMapper
     public static Identity ToGrpc(this Domain.Aggregates.AccountAggregate.Identities.Identity identity) =>
         new()
         {
-            Type = identity.Type.ToGrpc(),
+            Type = identity switch
+            {
+                EmailIdentity => IdentityType.Email,
+                GoogleIdentity => IdentityType.Google,
+                MicrosoftIdentity => IdentityType.Microsoft,
+                _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
+            },
             Value = identity.Value
         };
 
     public static Domain.Aggregates.AccountAggregate.Identities.Identity FromGrpc(this Identity identity) =>
         identity.Type switch
         {
-            IdentityType.Email =>
-                new Domain.Aggregates.AccountAggregate.Identities.Identity.Email(identity.Value),
-
-            IdentityType.Google =>
-                new Domain.Aggregates.AccountAggregate.Identities.Identity.Google(identity.Value),
-
-            IdentityType.Microsoft =>
-                new Domain.Aggregates.AccountAggregate.Identities.Identity.Microsoft(identity.Value),
-
+            IdentityType.Email => new EmailIdentity(identity.Value),
+            IdentityType.Google => new GoogleIdentity(identity.Value),
+            IdentityType.Microsoft => new MicrosoftIdentity(identity.Value),
             _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
-        };
-
-    public static Domain.Aggregates.AccountAggregate.Identities.IdentityType FromGrpc(this IdentityType type) =>
-        type switch
-        {
-            IdentityType.Email => Domain.Aggregates.AccountAggregate.Identities.IdentityType.Email,
-            IdentityType.Google => Domain.Aggregates.AccountAggregate.Identities.IdentityType.Google,
-            IdentityType.Microsoft => Domain.Aggregates.AccountAggregate.Identities.IdentityType.Microsoft,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-
-    public static IdentityType ToGrpc(this Domain.Aggregates.AccountAggregate.Identities.IdentityType type) =>
-        type switch
-        {
-            Domain.Aggregates.AccountAggregate.Identities.IdentityType.Email => IdentityType.Email,
-            Domain.Aggregates.AccountAggregate.Identities.IdentityType.Google => IdentityType.Google,
-            Domain.Aggregates.AccountAggregate.Identities.IdentityType.Microsoft => IdentityType.Microsoft,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
     public static PrimaryEmail ToGrpc(this EmailConnection email) =>

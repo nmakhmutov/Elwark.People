@@ -6,7 +6,7 @@ namespace People.Api.Infrastructure.Provider.Social.Google;
 
 public sealed class GoogleAccount
 {
-    public GoogleAccount(Identity.Google identity, Identity.Email email, bool isEmailVerified, string? firstName,
+    public GoogleAccount(GoogleIdentity identity, EmailIdentity email, bool isEmailVerified, string? firstName,
         string? lastName, Uri? picture, CultureInfo? locale)
     {
         Identity = identity;
@@ -18,9 +18,9 @@ public sealed class GoogleAccount
         Locale = locale;
     }
 
-    public Identity.Google Identity { get; }
+    public GoogleIdentity Identity { get; }
 
-    public Identity.Email Email { get; }
+    public EmailIdentity Email { get; }
 
     public bool IsEmailVerified { get; }
 

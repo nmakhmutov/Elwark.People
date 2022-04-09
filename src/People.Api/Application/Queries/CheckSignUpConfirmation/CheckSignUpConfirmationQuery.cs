@@ -10,8 +10,7 @@ namespace People.Api.Application.Queries.CheckSignUpConfirmation;
 
 public sealed record CheckSignUpConfirmationQuery(ObjectId ConfirmationId) : IRequest<Confirmation>;
 
-public sealed record CheckSignUpConfirmationQueryHandler
-    : IRequestHandler<CheckSignUpConfirmationQuery, Confirmation>
+public sealed class CheckSignUpConfirmationQueryHandler : IRequestHandler<CheckSignUpConfirmationQuery, Confirmation>
 {
     private readonly IConfirmationService _confirmation;
     private readonly IAccountRepository _repository;
@@ -32,7 +31,7 @@ public sealed record CheckSignUpConfirmationQueryHandler
         if (account is null)
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
-        if (account.IsConfirmed())
+        if (account.IsActivated)
             throw new PeopleException(ExceptionCodes.IdentityAlreadyConfirmed);
 
         return confirmation;

@@ -19,7 +19,7 @@ internal sealed class SignUpByGoogleCommandValidator : AbstractValidator<SignUpB
         async Task<bool> BeUnique(Identity identity, CancellationToken ct) =>
             !await repository.IsExists(identity, ct);
 
-        async Task<bool> BeAllowed(Identity.Email email, CancellationToken ct) =>
+        async Task<bool> BeAllowed(EmailIdentity email, CancellationToken ct) =>
             !await blacklist.IsEmailHostDenied(new MailAddress(email.Value).Host, ct);
 
         RuleFor(x => x.Google)

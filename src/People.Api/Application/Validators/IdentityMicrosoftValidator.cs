@@ -4,13 +4,10 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Validators;
 
-internal sealed class IdentityMicrosoftValidator : AbstractValidator<Identity.Microsoft>
+internal sealed class IdentityMicrosoftValidator : AbstractValidator<MicrosoftIdentity>
 {
     public IdentityMicrosoftValidator()
     {
-        RuleFor(x => x.Type)
-            .Equal(IdentityType.Microsoft);
-
         RuleFor(x => x.Value)
             .NotEmpty().WithErrorCode(ExceptionCodes.Required);
     }

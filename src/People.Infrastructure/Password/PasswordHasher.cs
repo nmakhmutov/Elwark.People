@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,7 +33,7 @@ internal sealed class PasswordHasher : IPasswordHasher
         return bytes;
     }
 
-    public byte[] CreateHash(string password, byte[] salt)
+    public byte[] CreateHash(string password, IEnumerable<byte> salt)
     {
         if (string.IsNullOrEmpty(password))
             throw new ArgumentNullException(nameof(password));

@@ -8,7 +8,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Commands.SetAsPrimaryEmail;
 
-internal sealed record SetAsPrimaryEmailCommand(AccountId Id, Identity.Email Email) : IRequest;
+internal sealed record SetAsPrimaryEmailCommand(AccountId Id, EmailIdentity Email) : IRequest;
 
 internal sealed class SetAsPrimaryEmailCommandHandler : IRequestHandler<SetAsPrimaryEmailCommand>
 {

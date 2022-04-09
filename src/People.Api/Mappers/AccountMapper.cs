@@ -2,10 +2,11 @@ using System;
 using System.Linq;
 using Google.Protobuf.WellKnownTypes;
 using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.Aggregates.AccountAggregate.Connections;
+using People.Grpc.Common;
 using People.Grpc.Gateway;
 using Connection = People.Grpc.Gateway.Connection;
-using EmailConnection = People.Domain.Aggregates.AccountAggregate.Identities.EmailConnection;
+using EmailConnection = People.Domain.Aggregates.AccountAggregate.Connections.EmailConnection;
 
 namespace People.Api.Mappers;
 
@@ -30,24 +31,30 @@ public static class AccountMapper
             }
         };
 
-    private static Connection ToGrpc(Domain.Aggregates.AccountAggregate.Identities.Connection connection) =>
+    private static Connection ToGrpc(Domain.Aggregates.AccountAggregate.Connections.Connection connection) =>
         connection switch
         {
             EmailConnection x => new Connection
             {
-                Type = x.Type.ToGrpc(), Value = x.Value, IsConfirmed = x.IsConfirmed,
+                Type = IdentityType.Email,
+                Value = x.Value,
+                IsConfirmed = x.IsConfirmed,
                 Email = new People.Grpc.Gateway.EmailConnection { IsPrimary = x.IsPrimary }
             },
 
             GoogleConnection x => new Connection
             {
-                Type = x.Type.ToGrpc(), Value = x.Value, IsConfirmed = x.IsConfirmed,
+                Type = IdentityType.Google,
+                Value = x.Value,
+                IsConfirmed = x.IsConfirmed,
                 Social = new SocialConnection { FirstName = x.FirstName, LastName = x.LastName }
             },
 
             MicrosoftConnection x => new Connection
             {
-                Type = x.Type.ToGrpc(), Value = x.Value, IsConfirmed = x.IsConfirmed,
+                Type = IdentityType.Microsoft, 
+                Value = x.Value, 
+                IsConfirmed = x.IsConfirmed,
                 Social = new SocialConnection { FirstName = x.FirstName, LastName = x.LastName }
             },
 
