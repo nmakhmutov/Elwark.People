@@ -27,10 +27,7 @@ internal sealed class BanAccountCommandHandler : IRequestHandler<BanAccountComma
         if (account is null)
             throw new PeopleException(ExceptionCodes.AccountNotFound);
 
-        if (request.ExpiredAt.HasValue)
-            account.SetTemporaryBan(request.Reason, request.ExpiredAt.Value, DateTime.UtcNow);
-        else
-            account.SetPermanentBan(request.Reason, DateTime.UtcNow);
+        account.SetBan(request.Reason, request.ExpiredAt ?? new DateTime(3000, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
         await _repository.UpdateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

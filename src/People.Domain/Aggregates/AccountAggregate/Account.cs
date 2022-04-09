@@ -288,17 +288,9 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         return result;
     }
 
-    public void SetPermanentBan(string reason, DateTime date)
+    public void SetBan(string reason, DateTime expiredAt)
     {
-        Ban = new PermanentBan(reason, date);
-
-        AddDomainEvent(new AccountBannedDomainEvent(this));
-    }
-
-    public void SetTemporaryBan(string reason, DateTime expiredAt, DateTime date)
-    {
-        Ban = new TemporaryBan(reason, date, expiredAt);
-
+        Ban = new Ban(reason, DateTime.UtcNow, expiredAt);
         AddDomainEvent(new AccountBannedDomainEvent(this));
     }
 

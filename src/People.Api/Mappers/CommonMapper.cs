@@ -1,6 +1,5 @@
 using System;
 using Google.Protobuf.WellKnownTypes;
-using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Connections;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Common;
@@ -45,21 +44,12 @@ public static class CommonMapper
     public static Ban? ToGrpc(this Domain.Aggregates.AccountAggregate.Ban? ban) =>
         ban switch
         {
-            PermanentBan x => new Ban
-            {
-                Reason = x.Reason,
-                ExpiresAt = null
-            },
-
-            TemporaryBan x => new Ban
+            { } x => new Ban
             {
                 Reason = x.Reason,
                 ExpiresAt = x.ExpiredAt.ToTimestamp()
             },
-
-            null => null,
-
-            _ => throw new ArgumentOutOfRangeException(nameof(ban), ban, "Unknown ban type")
+            _ => null
         };
 
     public static DayOfWeek ToGrpc(this System.DayOfWeek dayOfWeek) =>
