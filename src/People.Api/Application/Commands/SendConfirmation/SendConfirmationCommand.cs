@@ -23,7 +23,8 @@ internal sealed class SendConfirmationCommandHandler : IRequestHandler<SendConfi
     private readonly IIntegrationEventBus _bus;
     private readonly IConfirmationService _confirmation;
 
-    public SendConfirmationCommandHandler(IIntegrationEventBus bus, IConfirmationService confirmation, IEmailBuilder builder)
+    public SendConfirmationCommandHandler(IIntegrationEventBus bus, IConfirmationService confirmation,
+        IEmailBuilder builder)
     {
         _bus = bus;
         _confirmation = confirmation;
@@ -52,9 +53,10 @@ internal sealed class SendConfirmationCommandHandler : IRequestHandler<SendConfi
         if ((now - confirmation.CreatedAt).TotalMinutes < 1)
             throw new PeopleException(ExceptionCodes.ConfirmationAlreadySent);
 
-        if ((confirmation.ExpireAt - now).TotalMinutes < 3)
-            await _confirmation.DeleteAsync(id, ct);
+        if ((confirmation.ExpireAt - now).TotalMinutes > 3)
+            return confirmation;
 
+        await _confirmation.DeleteAsync(id, ct);
         return await _confirmation.CreateAsync(id, TimeSpan.FromMinutes(20), ct);
     }
 }
