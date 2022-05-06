@@ -7,6 +7,7 @@ namespace People.Domain.Aggregates.AccountAggregate;
 public readonly struct TimeFormat : IEquatable<TimeFormat>
 {
     public static readonly TimeFormat Default = new("HH:mm");
+
     public static readonly IReadOnlyCollection<string> List = new[]
     {
         "H:mm",
@@ -17,7 +18,10 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
 
     private readonly string _value;
 
-    private TimeFormat(string value)
+    private TimeFormat(string value) =>
+        _value = value;
+
+    public static TimeFormat Parse(string? value)
     {
         if (string.IsNullOrEmpty(value))
             throw new ArgumentException("Time format cannot be null or empty.", nameof(value));
@@ -25,11 +29,22 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
         if (!List.Contains(value))
             throw new ArgumentException("Time format have incorrect format.", nameof(value));
 
-        _value = value;
+        return new TimeFormat(value);
     }
 
-    public static TimeFormat Parse(string? value) =>
-        string.IsNullOrEmpty(value) ? Default : new TimeFormat(value.Trim());
+    public static bool TryParse(string? value, out TimeFormat timeFormat)
+    {
+        timeFormat = Default;
+
+        if (string.IsNullOrEmpty(value))
+            return false;
+
+        if (!List.Contains(value))
+            return false;
+
+        timeFormat = new TimeFormat(value);
+        return true;
+    }
 
     public override string ToString() =>
         _value;

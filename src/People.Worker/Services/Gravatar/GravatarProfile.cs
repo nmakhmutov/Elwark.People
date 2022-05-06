@@ -1,41 +1,27 @@
-using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace People.Worker.Services.Gravatar;
 
 public sealed class GravatarProfile
 {
-    public GravatarProfile(Uri profileUrl, string? preferredUsername, Uri thumbnailUrl, NameData? name,
-        string? aboutMe)
-    {
-        ProfileUrl = profileUrl;
-        PreferredUsername = preferredUsername;
-        ThumbnailUrl = thumbnailUrl;
-        Name = name;
-        AboutMe = aboutMe;
-    }
+    [JsonPropertyName("preferredUsername")]
+    public string? PreferredUsername { get; init; }
 
-    [JsonProperty("profileUrl")]
-    public Uri ProfileUrl { get; set; }
+    [JsonPropertyName("thumbnailUrl")]
+    public string? ThumbnailUrl { get; init; }
 
-    [JsonProperty("preferredUsername")]
-    public string? PreferredUsername { get; set; }
+    [JsonPropertyName("name")]
+    public NameData[]? Name { get; init; }
 
-    [JsonProperty("thumbnailUrl")]
-    public Uri ThumbnailUrl { get; set; }
-
-    [JsonProperty("name")]
-    public NameData? Name { get; set; }
-
-    [JsonProperty("aboutMe")]
-    public string? AboutMe { get; set; }
+    [JsonPropertyName("aboutMe")]
+    public string? AboutMe { get; init; }
 
     public sealed class NameData
     {
-        [JsonProperty("givenName")]
-        public string? FirstName { get; set; }
+        [JsonPropertyName("givenName")]
+        public string? FirstName { get; init; }
 
-        [JsonProperty("familyName")]
-        public string? LastName { get; set; }
+        [JsonPropertyName("familyName")]
+        public string? LastName { get; init; }
     }
 }

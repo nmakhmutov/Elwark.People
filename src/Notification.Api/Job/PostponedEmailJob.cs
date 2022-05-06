@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 using Common.Kafka;
-using Integration.Event;
 using MongoDB.Driver;
 using Notification.Api.Infrastructure;
+using Notification.Api.IntegrationEvents.Events;
 using Notification.Api.Models;
 using Quartz;
 
@@ -11,10 +11,10 @@ namespace Notification.Api.Job;
 [DisallowConcurrentExecution]
 public sealed class PostponedEmailJob : IJob
 {
-    private readonly IKafkaMessageBus _bus;
+    private readonly IIntegrationEventBus _bus;
     private readonly NotificationDbContext _dbContext;
 
-    public PostponedEmailJob(IKafkaMessageBus bus, NotificationDbContext dbContext)
+    public PostponedEmailJob(IIntegrationEventBus bus, NotificationDbContext dbContext)
     {
         _bus = bus;
         _dbContext = dbContext;

@@ -18,7 +18,7 @@ internal sealed class PasswordHasher : IPasswordHasher
     public PasswordHasher(string hash)
     {
         if (string.IsNullOrEmpty(hash))
-            throw new ArgumentException("Value cannot be null or empty.", nameof(hash));
+            throw new ArgumentException("Hash cannot be null or empty.", nameof(hash));
 
         _appHash = Encoding.UTF8.GetBytes(hash);
     }
@@ -33,10 +33,13 @@ internal sealed class PasswordHasher : IPasswordHasher
         return bytes;
     }
 
-    public byte[] CreateHash(string password, IEnumerable<byte> salt)
+    public byte[] CreateHash(string password, ICollection<byte> salt)
     {
         if (string.IsNullOrEmpty(password))
             throw new ArgumentNullException(nameof(password));
+        
+        if (salt.Count == 0)
+            throw new ArgumentException("Salt cannot be an empty collection.", nameof(salt));
 
         return KeyDerivation.Pbkdf2(
             prf: KeyDerivationPrf.HMACSHA256,

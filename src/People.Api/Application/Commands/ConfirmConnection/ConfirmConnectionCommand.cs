@@ -24,13 +24,10 @@ internal sealed class ConfirmConnectionCommandHandler : IRequestHandler<ConfirmC
 
     public async Task<Unit> Handle(ConfirmConnectionCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct)
+                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 
-        var identity = request.Identity ?? account.GetPrimaryEmail().Identity;
-
-        account.ConfirmConnection(identity, DateTime.UtcNow);
+        account.ConfirmConnection(request.Identity ?? account.GetPrimaryEmail().Identity, DateTime.UtcNow);
 
         await _repository.UpdateAsync(account, ct);
         await _mediator.DispatchDomainEventsAsync(account);

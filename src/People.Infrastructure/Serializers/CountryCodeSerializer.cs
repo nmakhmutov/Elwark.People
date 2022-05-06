@@ -13,7 +13,7 @@ internal sealed class CountryCodeSerializer : IBsonSerializer<CountryCode>
         context.Writer.WriteString(value.ToString());
 
     public CountryCode Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args) =>
-        new(context.Reader.ReadString());
+        CountryCode.Parse(context.Reader.ReadString());
 
     public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
     {

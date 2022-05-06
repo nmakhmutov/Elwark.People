@@ -1,18 +1,24 @@
 using System;
 using Google.Protobuf.WellKnownTypes;
+using People.Domain.Aggregates.AccountAggregate;
 using People.Domain.Aggregates.AccountAggregate.Connections;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Grpc.Common;
 using Ban = People.Grpc.Common.Ban;
 using DayOfWeek = People.Grpc.Common.DayOfWeek;
 using Identity = People.Grpc.Common.Identity;
-using IdentityType = People.Grpc.Common.IdentityType;
 
 namespace People.Api.Mappers;
 
-public static class CommonMapper
+internal static class CommonMapper
 {
-    public static Identity ToGrpc(this Domain.Aggregates.AccountAggregate.Identities.Identity identity) =>
+    internal static AccountId FromGrpc(this AccountIdValue value) =>
+        new(value.Value);
+
+    internal static AccountIdValue ToGrpc(this AccountId value) =>
+        new() { Value = (long)value };
+
+    internal static Identity ToGrpc(this Domain.Aggregates.AccountAggregate.Identities.Identity identity) =>
         new()
         {
             Type = identity switch
@@ -25,7 +31,7 @@ public static class CommonMapper
             Value = identity.Value
         };
 
-    public static Domain.Aggregates.AccountAggregate.Identities.Identity FromGrpc(this Identity identity) =>
+    internal static Domain.Aggregates.AccountAggregate.Identities.Identity FromGrpc(this Identity identity) =>
         identity.Type switch
         {
             IdentityType.Email => new EmailIdentity(identity.Value),
@@ -34,14 +40,14 @@ public static class CommonMapper
             _ => throw new ArgumentOutOfRangeException(nameof(identity), identity, "Unknown identity")
         };
 
-    public static PrimaryEmail ToGrpc(this EmailConnection email) =>
+    internal static PrimaryEmail ToGrpc(this EmailConnection email) =>
         new()
         {
             Email = email.Value,
             IsConfirmed = email.IsConfirmed
         };
 
-    public static Ban? ToGrpc(this Domain.Aggregates.AccountAggregate.Ban? ban) =>
+    internal static Ban? ToGrpc(this Domain.Aggregates.AccountAggregate.Ban? ban) =>
         ban switch
         {
             { } x => new Ban
@@ -52,7 +58,7 @@ public static class CommonMapper
             _ => null
         };
 
-    public static DayOfWeek ToGrpc(this System.DayOfWeek dayOfWeek) =>
+    internal static DayOfWeek ToGrpc(this System.DayOfWeek dayOfWeek) =>
         dayOfWeek switch
         {
             System.DayOfWeek.Sunday => DayOfWeek.Sunday,
@@ -65,7 +71,7 @@ public static class CommonMapper
             _ => throw new ArgumentOutOfRangeException(nameof(dayOfWeek), dayOfWeek, null)
         };
 
-    public static System.DayOfWeek FromGrpc(this DayOfWeek dayOfWeek) =>
+    internal static System.DayOfWeek FromGrpc(this DayOfWeek dayOfWeek) =>
         dayOfWeek switch
         {
             DayOfWeek.Sunday => System.DayOfWeek.Sunday,

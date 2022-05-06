@@ -9,13 +9,14 @@ namespace People.Infrastructure.Confirmations;
 
 internal sealed class ConfirmationService : IConfirmationService
 {
-    private readonly InfrastructureDbContext _dbContext;
+    private readonly PeopleDbContext _dbContext;
 
-    public ConfirmationService(InfrastructureDbContext dbContext) =>
+    public ConfirmationService(PeopleDbContext dbContext) =>
         _dbContext = dbContext;
 
-    public async Task<Confirmation?> GetAsync(ObjectId id, CancellationToken ct)
+    public async Task<Confirmation?> GetAsync(string token, CancellationToken ct)
     {
+        var id = new ObjectId(token);
         var filter = Builders<Confirmation>.Filter.Eq(x => x.Id, id);
 
         return await _dbContext.Confirmations

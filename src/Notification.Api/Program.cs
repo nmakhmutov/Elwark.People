@@ -1,17 +1,16 @@
 using System.Net.Http.Headers;
 using Common.Kafka;
 using Common.Mongo;
-using Confluent.Kafka;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
-using Integration.Event;
 using Notification.Api.Grpc;
 using Notification.Api.Infrastructure;
 using Notification.Api.Infrastructure.Provider;
 using Notification.Api.Infrastructure.Provider.Gmail;
 using Notification.Api.Infrastructure.Provider.SendGrid;
 using Notification.Api.Infrastructure.Repositories;
-using Notification.Api.IntegrationEventHandlers;
+using Notification.Api.IntegrationEvents.EventHandling;
+using Notification.Api.IntegrationEvents.Events;
 using Notification.Api.Job;
 using Quartz;
 using Serilog;
@@ -53,22 +52,11 @@ builder.Services
     .AddScoped<IPostponedEmailRepository, PostponedEmailRepository>();
 
 builder.Services
-    .AddKafkaMessageBus()
-    .ConfigureProducers(config => config.BootstrapServers = builder.Configuration["Kafka:Servers"])
-    .ConfigureConsumers(config =>
-    {
-        config.BootstrapServers = builder.Configuration["Kafka:Servers"];
-
-        config.GroupId = appName;
-        config.AutoOffsetReset = AutoOffsetReset.Earliest;
-        config.EnableAutoCommit = false;
-        config.EnablePartitionEof = true;
-        config.AllowAutoCreateTopics = true;
-    })
-    .AddProducer<EmailMessageCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.EmailMessages)
+    .AddKafkaMessageBus(appName, builder.Configuration["Kafka:Servers"])
+    .AddProducer<EmailMessageCreatedIntegrationEvent>(config => config.Topic = KafkaTopics.EmailMessages)
     .AddConsumer<EmailMessageCreatedIntegrationEvent, EmailMessageCreatedHandler>(config =>
     {
-        config.Topic = IntegrationEvent.EmailMessages;
+        config.Topic = KafkaTopics.EmailMessages;
         config.Threads = 2;
     });
 

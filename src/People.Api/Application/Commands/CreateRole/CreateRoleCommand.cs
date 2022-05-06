@@ -22,9 +22,8 @@ internal sealed class CreateRoleCommandHandler : IRequestHandler<CreateRoleComma
 
     public async Task<Unit> Handle(CreateRoleCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct)
+                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.AddRole(request.Role);
 

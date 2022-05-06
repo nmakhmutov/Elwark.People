@@ -13,7 +13,7 @@ internal sealed class LanguageSerializer : IBsonSerializer<Language>
         context.Writer.WriteString(value.ToString());
 
     public Language Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args) =>
-        new(context.Reader.ReadString());
+        Language.Parse(context.Reader.ReadString());
 
     public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
     {

@@ -8,6 +8,7 @@ using People.Api.Application.Models;
 using People.Domain;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Infrastructure;
+using TimeZone = People.Domain.Aggregates.AccountAggregate.TimeZone;
 
 namespace People.Api.Application.Queries.GetAccounts;
 
@@ -43,7 +44,7 @@ internal sealed record AccountModel(
     AccountId AccountId,
     Name Name,
     CountryCode CountryCode,
-    string TimeZone,
+    TimeZone TimeZone,
     Language Language,
     Uri Picture,
     DateTime CreatedAt

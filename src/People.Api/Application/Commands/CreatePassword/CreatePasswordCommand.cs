@@ -25,9 +25,8 @@ public sealed class CreatePasswordCommandHandler : IRequestHandler<CreatePasswor
 
     public async Task<Unit> Handle(CreatePasswordCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct)
+                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.SetPassword(request.Password, _hasher, DateTime.UtcNow);
 

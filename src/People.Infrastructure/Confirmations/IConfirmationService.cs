@@ -1,14 +1,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MongoDB.Bson;
 using People.Domain.Aggregates.AccountAggregate;
 
 namespace People.Infrastructure.Confirmations;
 
 public interface IConfirmationService
 {
-    Task<Confirmation?> GetAsync(ObjectId id, CancellationToken ct = default);
+    Task<Confirmation?> GetAsync(string token, CancellationToken ct = default);
 
     Task<Confirmation?> GetAsync(AccountId id, CancellationToken ct = default);
 

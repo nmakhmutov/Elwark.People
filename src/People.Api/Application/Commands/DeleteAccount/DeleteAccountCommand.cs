@@ -2,8 +2,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Kafka;
-using Integration.Event;
 using MediatR;
+using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.Aggregates.AccountAggregate;
 using People.Infrastructure;
 
@@ -13,11 +13,12 @@ internal sealed record DeleteAccountCommand(AccountId Id) : IRequest;
 
 internal sealed class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand>
 {
-    private readonly IKafkaMessageBus _bus;
+    private readonly IIntegrationEventBus _bus;
     private readonly PeopleDbContext _dbContext;
     private readonly IAccountRepository _repository;
 
-    public DeleteAccountCommandHandler(IKafkaMessageBus bus, IAccountRepository repository, PeopleDbContext dbContext)
+    public DeleteAccountCommandHandler(IIntegrationEventBus bus, IAccountRepository repository,
+        PeopleDbContext dbContext)
     {
         _bus = bus;
         _repository = repository;

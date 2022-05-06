@@ -23,9 +23,8 @@ internal sealed class DeleteConnectionCommandHandler : IRequestHandler<DeleteCon
 
     public async Task<Unit> Handle(DeleteConnectionCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct)
+                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.DeleteIdentity(request.Identity);
 

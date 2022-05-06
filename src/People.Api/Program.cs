@@ -1,11 +1,9 @@
 using System;
 using Common.Kafka;
-using Confluent.Kafka;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
 using FluentValidation;
 using Fluid;
-using Integration.Event;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using People.Api.Application.Behaviors;
-using People.Api.Application.IntegrationEventHandlers;
+using People.Api.Application.IntegrationEvents.EventHandling;
+using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Grpc;
 using People.Api.Infrastructure;
 using People.Api.Infrastructure.EmailBuilder;
@@ -26,6 +25,7 @@ using People.Infrastructure;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Formatting.Display;
+using AccountInfoReceivedIntegrationEvent = People.Api.Application.IntegrationEvents.Events.AccountInfoReceivedIntegrationEvent;
 
 const string appName = "People.Api";
 var builder = WebApplication.CreateBuilder(args);
@@ -68,25 +68,14 @@ builder.Services.AddHttpClient<IMicrosoftApiService, MicrosoftApiService>(client
     client.BaseAddress = new Uri(builder.Configuration["Urls:MicrosoftApi"])
 );
 
-builder.Services.AddKafkaMessageBus()
-    .ConfigureProducers(config => config.BootstrapServers = builder.Configuration["Kafka:Servers"])
-    .ConfigureConsumers(config =>
-    {
-        config.BootstrapServers = builder.Configuration["Kafka:Servers"];
-
-        config.GroupId = appName;
-        config.AutoOffsetReset = AutoOffsetReset.Earliest;
-        config.EnableAutoCommit = false;
-        config.EnablePartitionEof = true;
-        config.AllowAutoCreateTopics = true;
-    })
-    .AddProducer<AccountCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.CreatedAccounts)
-    .AddProducer<AccountUpdatedIntegrationEvent>(config => config.Topic = IntegrationEvent.UpdatedAccounts)
-    .AddProducer<AccountDeletedIntegrationEvent>(config => config.Topic = IntegrationEvent.DeletedAccounts)
-    .AddProducer<EmailMessageCreatedIntegrationEvent>(config => config.Topic = IntegrationEvent.EmailMessages)
+builder.Services.AddKafkaMessageBus(appName, builder.Configuration["Kafka:Servers"])
+    .AddProducer<AccountCreatedIntegrationEvent>(config => config.Topic = KafkaTopics.CreatedAccounts)
+    .AddProducer<AccountUpdatedIntegrationEvent>(config => config.Topic = KafkaTopics.UpdatedAccounts)
+    .AddProducer<AccountDeletedIntegrationEvent>(config => config.Topic = KafkaTopics.DeletedAccounts)
+    .AddProducer<EmailMessageCreatedIntegrationEvent>(config => config.Topic = KafkaTopics.EmailMessages)
     .AddConsumer<AccountInfoReceivedIntegrationEvent, AccountInfoEventHandler>(config =>
     {
-        config.Topic = IntegrationEvent.CollectedInformation;
+        config.Topic = KafkaTopics.CollectedInformation;
         config.Threads = 2;
     });
 
@@ -127,7 +116,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 app.MapGrpcService<PeopleService>();
 app.MapGrpcService<IdentityService>();
-app.MapGrpcService<ManagementService>();
 app.MapGrpcService<InfrastructureService>();
 
 app.Run();

@@ -3,12 +3,22 @@ using Microsoft.Extensions.Options;
 
 namespace Common.Kafka;
 
-internal sealed class KafkaProducer<T> : IDisposable where T : IKafkaMessage
+internal interface IKafkaProducer : IDisposable
 {
-    private readonly IProducer<Null, T> _producer;
+    Task ProduceAsync(object message, CancellationToken ct = default);
+}
+
+internal interface IKafkaProducer<in T> : IKafkaProducer where T : IIntegrationEvent
+{
+    Task ProduceAsync(T message, CancellationToken ct = default);
+}
+
+internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegrationEvent
+{
+    private readonly IProducer<string, T> _producer;
     private readonly string _topic;
 
-    public KafkaProducer(IProducer<Null, T> producer, IOptions<KafkaProducerConfig<T>> options)
+    public KafkaProducer(IProducer<string, T> producer, IOptions<KafkaProducerConfig<T>> options)
     {
         _producer = producer;
         _topic = options.Value.Topic;
@@ -17,14 +27,18 @@ internal sealed class KafkaProducer<T> : IDisposable where T : IKafkaMessage
     public void Dispose() =>
         _producer.Dispose();
 
-    public Task ProduceAsync(T value, CancellationToken ct)
+    public Task ProduceAsync(object message, CancellationToken ct) =>
+        ProduceAsync((T)message, ct);
+
+    public Task ProduceAsync(T message, CancellationToken ct)
     {
-        var message = new Message<Null, T>
+        var kafkaMessage = new Message<string, T>
         {
-            Value = value,
-            Timestamp = new Timestamp(value.CreatedAt)
+            Key = message.MessageId.ToString("D"),
+            Timestamp = new Timestamp(message.CreatedAt),
+            Value = message
         };
 
-        return _producer.ProduceAsync(_topic, message, ct);
+        return _producer.ProduceAsync(_topic, kafkaMessage, ct);
     }
 }

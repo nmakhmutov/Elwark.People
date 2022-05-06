@@ -21,6 +21,8 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using People.Gateway.Infrastructure.Extensions;
+using People.Gateway.Infrastructure.Filters;
 using People.Grpc.Gateway;
 using People.Grpc.Infrastructure;
 using People.Grpc.Notification;
@@ -122,18 +124,6 @@ builder.Services
     .AddCorrelationIdForwarding();
 
 builder.Services
-    .AddGrpcClient<PeopleManagement.PeopleManagementClient>(options =>
-    {
-        options.Address = new Uri(builder.Configuration["Urls:People.Api"]);
-        options.ChannelOptionsActions.Add(channel =>
-        {
-            channel.Credentials = ChannelCredentials.Insecure;
-            channel.ServiceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } };
-        });
-    })
-    .AddCorrelationIdForwarding();
-
-builder.Services
     .AddGrpcClient<NotificationService.NotificationServiceClient>(options =>
     {
         options.Address = new Uri(builder.Configuration["Urls:Notification.Api"]);
@@ -189,7 +179,8 @@ var app = builder.Build();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
-        ForwardedHeaders = ForwardedHeaders.All
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        ForwardLimit = 10
     })
     .UseCors(mainCors)
     .UseCorrelationId()

@@ -8,7 +8,12 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
 
     private readonly string _value;
 
-    public Language(string value)
+    private Language(string value)
+    {
+        _value = value.ToLowerInvariant();
+    }
+
+    public static Language Parse(string? value)
     {
         if (string.IsNullOrEmpty(value))
             throw new ArgumentNullException(nameof(value), $"{nameof(Language)} cannot be empty");
@@ -18,8 +23,25 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
 
         if ("iv".Equals(value, StringComparison.InvariantCultureIgnoreCase))
             throw new ArgumentException("Language cannot be invariant", nameof(value));
+        
+        return new Language(value);
+    }
+    
+    public static bool TryParse(string? value, out Language language)
+    {
+        language = Default;
+        
+        if (string.IsNullOrEmpty(value))
+            return false;
 
-        _value = value.ToLowerInvariant();
+        if (value.Length != 2)
+            return false;
+
+        if ("iv".Equals(value, StringComparison.InvariantCultureIgnoreCase))
+            return false;
+
+        language = new Language(value);
+        return true;
     }
 
     public bool Equals(Language other) =>
@@ -33,20 +55,6 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
 
     public override string ToString() =>
         _value;
-
-    public static bool TryParse(string? value, out Language language)
-    {
-        try
-        {
-            language = new Language(value ?? string.Empty);
-            return true;
-        }
-        catch
-        {
-            language = Default;
-            return false;
-        }
-    }
 
     public int CompareTo(Language other) =>
         string.Compare(_value, other._value, StringComparison.Ordinal);

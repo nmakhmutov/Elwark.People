@@ -4,21 +4,41 @@ namespace People.Domain.Aggregates.AccountAggregate;
 
 public readonly struct CountryCode : IComparable, IComparable<CountryCode>, IEquatable<CountryCode>
 {
-    public static CountryCode Empty => new("--");
+    public static CountryCode Empty =>
+        new("--");
 
     private readonly string _value;
 
-    public CountryCode(string value)
+    private CountryCode(string value) =>
+        _value = value.ToUpperInvariant();
+
+    public static CountryCode Parse(string? value)
     {
         if (string.IsNullOrEmpty(value))
             throw new ArgumentNullException(nameof(value), $"{nameof(CountryCode)} cannot be empty");
 
         if (value.Length != 2)
-            throw new ArgumentOutOfRangeException(nameof(value), value,
-                $"{nameof(CountryCode)} value must be two chars");
+            throw new ArgumentException($"{nameof(CountryCode)} value must be two chars", nameof(value));
 
-        _value = value.ToUpperInvariant();
+        return new CountryCode(value);
     }
+
+    public static bool TryParse(string? value, out CountryCode countryCode)
+    {
+        countryCode = Empty;
+
+        if (string.IsNullOrEmpty(value))
+            return false;
+
+        if (value.Length != 2)
+            return false;
+
+        countryCode = new CountryCode(value);
+        return true;
+    }
+
+    public bool IsEmpty() =>
+        this == Empty;
 
     public bool Equals(CountryCode other) =>
         _value == other._value;
@@ -37,13 +57,13 @@ public readonly struct CountryCode : IComparable, IComparable<CountryCode>, IEqu
 
     public int CompareTo(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return 1;
+        if (ReferenceEquals(null, obj))
+            return 1;
+
         return obj is CountryCode other
             ? CompareTo(other)
             : throw new ArgumentException($"Object must be of type {nameof(CountryCode)}");
     }
-
-    public bool IsEmpty() => this == Empty;
 
     public static bool operator <(CountryCode left, CountryCode right) =>
         left.CompareTo(right) < 0;

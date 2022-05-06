@@ -2,17 +2,17 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Kafka;
-using Integration.Event;
 using MediatR;
+using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.Events;
 
 namespace People.Api.Application.DomainEventHandlers;
 
 internal sealed class AccountCreatedDomainEventHandler : INotificationHandler<AccountCreatedDomainEvent>
 {
-    private readonly IKafkaMessageBus _bus;
+    private readonly IIntegrationEventBus _bus;
 
-    public AccountCreatedDomainEventHandler(IKafkaMessageBus bus) =>
+    public AccountCreatedDomainEventHandler(IIntegrationEventBus bus) =>
         _bus = bus;
 
     public Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct)

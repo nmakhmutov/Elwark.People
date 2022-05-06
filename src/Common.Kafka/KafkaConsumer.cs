@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -8,62 +9,67 @@ using Polly.Retry;
 
 namespace Common.Kafka;
 
-public sealed class KafkaConsumer<TMessage, THandler> : BackgroundService
-    where TMessage : IKafkaMessage
-    where THandler : class, IKafkaHandler<TMessage>
+internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
+    where Event : IIntegrationEvent
+    where Handler : class, IKafkaHandler<Event>
 {
     private readonly IHostApplicationLifetime _application;
-    private readonly ConsumerBuilder<Null, TMessage> _builder;
-    private readonly KafkaConsumerConfig<TMessage> _config;
-    private readonly ILogger<KafkaConsumer<TMessage, THandler>> _logger;
+    private readonly ConsumerConfig _consumerConfig;
+    private readonly KafkaConsumerConfig<Event> _handlerOptions;
+    private readonly ILogger<KafkaConsumer<Event, Handler>> _logger;
     private readonly AsyncRetryPolicy _policy;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IServiceScopeFactory _serviceFactory;
 
-    public KafkaConsumer(IServiceScopeFactory serviceScopeFactory, IHostApplicationLifetime application,
-        ILogger<KafkaConsumer<TMessage, THandler>> logger, IOptions<ConsumerConfig> config,
-        IOptions<KafkaConsumerConfig<TMessage>> consumerConfig)
+    public KafkaConsumer(IServiceScopeFactory serviceFactory, IHostApplicationLifetime application,
+        ILogger<KafkaConsumer<Event, Handler>> logger, IOptions<ConsumerConfig> consumerOptions,
+        IOptions<KafkaConsumerConfig<Event>> handlerOptions)
     {
         _logger = logger;
         _application = application;
-        _serviceScopeFactory = serviceScopeFactory;
-        _config = consumerConfig.Value;
-        _builder = new ConsumerBuilder<Null, TMessage>(config.Value)
-            .SetValueDeserializer(KafkaDataConverter<TMessage>.Instance);
+        _serviceFactory = serviceFactory;
+        _consumerConfig = consumerOptions.Value;
+        _handlerOptions = handlerOptions.Value;
 
         _policy = Policy
             .Handle<Exception>()
-            .WaitAndRetryAsync(_config.RetryCount, _ => _config.RetryInterval, (ex, time, retry, _) =>
+            .WaitAndRetryAsync(_handlerOptions.RetryCount, _ => _handlerOptions.RetryInterval, (ex, time, retry, _) =>
             {
-                var level = retry > _config.RetryCount * 0.5
+                var level = retry > _handlerOptions.RetryCount * 0.5
                     ? LogLevel.Critical
                     : LogLevel.Warning;
 
-                _logger.Log(level, ex, "Error occured in kafka handler for '{N}'. Retry {retry}. Time {time}",
-                    _config.MessageType.Name, retry, time);
+                _logger.Log(level, ex, "Error occured in kafka handler for {N}. Retry {R}. Time {T}",
+                    _handlerOptions.MessageType.Name, retry, time);
             });
     }
 
-    protected override Task ExecuteAsync(CancellationToken ct)
+    protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        _logger.LogInformation("Consumer for '{N}' starting...", _config.MessageType.Name);
-        ct.Register(() => _logger.LogInformation("Consumer for '{N}' shutting down...", _config.MessageType.Name));
+        _logger.LogInformation("Consumer for {N} starting...", _handlerOptions.MessageType.Name);
+        ct.Register(() =>
+            _logger.LogInformation("Consumer for {N} shutting down...", _handlerOptions.MessageType.Name));
 
-        var consumers = Enumerable.Range(0, _config.Threads)
-            .Select(_ => Task.Run(() => CreateConsumer(_builder, ct).ConfigureAwait(false), ct))
+        await CreateTopicIfNotExistsAsync();
+
+        var consumers = Enumerable.Range(0, _handlerOptions.Threads)
+            .Select(_ => Task.Run(() => CreateConsumer(ct).ConfigureAwait(false), ct))
             .ToArray();
 
-        return Task.WhenAll(consumers);
+        await Task.WhenAll(consumers);
     }
 
-    private async Task CreateConsumer(ConsumerBuilder<Null, TMessage> builder, CancellationToken ct)
+    private async Task CreateConsumer(CancellationToken ct)
     {
-        using var consumer = builder.Build();
-        consumer.Subscribe(_config.Topic);
+        var builder = new ConsumerBuilder<string, Event>(_consumerConfig)
+            .SetValueDeserializer(KafkaDataConverter<Event>.Instance);
 
-        _logger.LogInformation("Consumer for '{N}' handling by '{C}' from topic '{T}'",
-            _config.MessageType.Name,
+        using var consumer = builder.Build();
+        consumer.Subscribe(_handlerOptions.Topic);
+
+        _logger.LogInformation("Consumer for {N} handling by {C} from topic {T}",
+            _handlerOptions.MessageType.Name,
             consumer.Name,
-            _config.Topic
+            _handlerOptions.Topic
         );
 
         while (!ct.IsCancellationRequested)
@@ -73,35 +79,31 @@ public sealed class KafkaConsumer<TMessage, THandler> : BackgroundService
                 if (result.IsPartitionEOF)
                     continue;
 
-                _logger.LogInformation("Consumer '{N}' received event '{E}' from topic '{T}'. {@M}", consumer.Name,
-                    _config.MessageType.Name, _config.Topic, result.Message.Value);
+                _logger.LogInformation("Consumer {N} received event {E} from topic {T}. {M}", consumer.Name,
+                    _handlerOptions.MessageType.Name, _handlerOptions.Topic, result.Message.Value);
 
-                await _policy.ExecuteAsync(async () =>
-                    {
-                        await using var scope = _serviceScopeFactory.CreateAsyncScope();
-                        var handler = scope.ServiceProvider.GetRequiredService<IKafkaHandler<TMessage>>();
+                await using var scope = _serviceFactory.CreateAsyncScope();
+                var handler = scope.ServiceProvider.GetRequiredService<IKafkaHandler<Event>>();
 
-                        await handler.HandleAsync(result.Message.Value)
-                            .ConfigureAwait(false);
-                    })
+                await _policy.ExecuteAsync(() => handler.HandleAsync(result.Message.Value))
                     .ConfigureAwait(false);
 
-                _logger.LogInformation("Consumer '{N}' handled event '{E}' from topic '{T}'", consumer.Name,
-                    _config.MessageType.Name, _config.Topic);
+                _logger.LogInformation("Consumer {N} handled event {E} from topic {T}", consumer.Name,
+                    _handlerOptions.MessageType.Name, _handlerOptions.Topic);
 
                 consumer.Commit(result);
             }
             catch (OperationCanceledException ex)
             {
-                _logger.LogWarning(ex, "Consumer '{N}' for message '{M}' canceled", consumer.Name,
-                    _config.MessageType.Name);
+                _logger.LogWarning(ex, "Consumer {N} for message {M} canceled", consumer.Name,
+                    _handlerOptions.MessageType.Name);
 
                 break;
             }
             catch (ConsumeException ex)
             {
-                _logger.LogWarning(ex, "Consumer exception in '{N}' for message '{M}'", consumer.Name,
-                    _config.MessageType.Name);
+                _logger.LogWarning(ex, "Consumer exception in {N} for message {M}", consumer.Name,
+                    _handlerOptions.MessageType.Name);
 
                 if (!ex.Error.IsFatal)
                     continue;
@@ -117,5 +119,34 @@ public sealed class KafkaConsumer<TMessage, THandler> : BackgroundService
 
         consumer.Close();
         consumer.Dispose();
+    }
+
+    private async Task CreateTopicIfNotExistsAsync()
+    {
+        var config = new AdminClientConfig { BootstrapServers = _consumerConfig.BootstrapServers };
+        var builder = new AdminClientBuilder(config);
+        var topic = new TopicSpecification
+        {
+            Name = _handlerOptions.Topic,
+            NumPartitions = _handlerOptions.Threads,
+            ReplicationFactor = -1
+        };
+
+        using var client = builder.Build();
+
+        try
+        {
+            await client.CreateTopicsAsync(new[] { topic });
+
+            _logger.LogInformation("Topic {T} created with {P} partitions", topic.Name, topic.NumPartitions);
+        }
+        catch (CreateTopicsException ex) when (ex.Results.All(x => x.Error.Code == ErrorCode.TopicAlreadyExists))
+        {
+            // everything is fine!
+        }
+        catch
+        {
+            _application.StopApplication();
+        }
     }
 }

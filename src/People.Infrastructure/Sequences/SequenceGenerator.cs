@@ -13,8 +13,17 @@ internal sealed class SequenceGenerator : ISequenceGenerator
     private static readonly FilterDefinition<Sequence> Filter =
         Builders<Sequence>.Filter.Eq(x => x.Name, SequenceName);
 
-    private static readonly UpdateDefinition<Sequence>? Update =
+    private static readonly UpdateDefinition<Sequence> Update =
         Builders<Sequence>.Update.Inc(x => x.Value, 1);
+
+    private static readonly FindOneAndUpdateOptions<Sequence, long> Options =
+        new()
+        {
+            IsUpsert = true,
+            ReturnDocument = ReturnDocument.After,
+            Projection = Builders<Sequence>.Projection.Expression(x => x.Value)
+        };
+
 
     private readonly PeopleDbContext _dbContext;
 
@@ -24,9 +33,9 @@ internal sealed class SequenceGenerator : ISequenceGenerator
     public async Task<AccountId> NextAccountIdAsync(CancellationToken ct)
     {
         var result = await _dbContext.Sequences
-            .FindOneAndUpdateAsync(Filter, Update, new FindOneAndUpdateOptions<Sequence> { IsUpsert = false }, ct);
+            .FindOneAndUpdateAsync(Filter, Update, Options, ct);
 
-        return result.Value;
+        return result;
     }
 
     public static IEnumerable<Sequence> InitValues()

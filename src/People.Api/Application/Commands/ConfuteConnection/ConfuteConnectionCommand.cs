@@ -23,9 +23,8 @@ internal sealed class ConfuteConnectionCommandHandler : IRequestHandler<ConfuteC
 
     public async Task<Unit> Handle(ConfuteConnectionCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct)
+                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.ConfuteConnection(request.Identity);
 

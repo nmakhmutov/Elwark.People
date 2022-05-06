@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace People.Worker.Services.IpInformation;
 
@@ -13,6 +15,12 @@ public interface IIpInformationService
 
 public sealed class IpInformationService : IIpInformationService
 {
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+    };
+
     private readonly HttpClient _httpClient;
     private readonly ILogger<IpInformationService> _logger;
 
@@ -29,15 +37,11 @@ public sealed class IpInformationService : IIpInformationService
         if (!response.IsSuccessStatusCode)
             return null;
 
-        var json = await response.Content.ReadAsStringAsync();
-        if (string.IsNullOrEmpty(json))
-            return null;
-
         try
         {
-            var data = JsonConvert.DeserializeObject<IpInformationDto>(json);
+            var data = await response.Content.ReadFromJsonAsync<IpInformationDto>(Options);
 
-            return data is not null && data.Status == IpInformationStatus.Success ? data : null;
+            return data?.Status == IpInformationStatus.Success ? data : null;
         }
         catch (Exception ex)
         {

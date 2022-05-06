@@ -6,5 +6,5 @@ public interface IPasswordHasher
 {
     byte[] CreateSalt();
 
-    byte[] CreateHash(string password, IEnumerable<byte> salt);
+    byte[] CreateHash(string password, ICollection<byte> salt);
 }

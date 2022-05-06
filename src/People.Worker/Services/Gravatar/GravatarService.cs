@@ -1,16 +1,22 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 
 namespace People.Worker.Services.Gravatar;
 
 public sealed class GravatarService : IGravatarService
 {
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+    
     private readonly HttpClient _client;
     private readonly ILogger<GravatarService> _logger;
 
@@ -36,13 +42,8 @@ public sealed class GravatarService : IGravatarService
 
         try
         {
-            var content = await response.Content.ReadAsStringAsync();
-            return JObject.Parse(content)
-                .Property("entry")
-                ?.ToArray()
-                .FirstOrDefault()
-                ?.First
-                ?.ToObject<GravatarProfile>();
+            var content = await response.Content.ReadFromJsonAsync<Wrapper>(Options);
+            return content?.Entry.FirstOrDefault();
         }
         catch (Exception ex)
         {
@@ -50,4 +51,6 @@ public sealed class GravatarService : IGravatarService
             return null;
         }
     }
+
+    private sealed record Wrapper(GravatarProfile[] Entry);
 }

@@ -2,9 +2,10 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
 
@@ -12,6 +13,11 @@ namespace People.Api.Infrastructure.Provider.Social.Microsoft;
 
 public sealed class MicrosoftApiService : IMicrosoftApiService
 {
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
     private readonly HttpClient _httpClient;
 
     public MicrosoftApiService(HttpClient httpClient) =>
@@ -21,33 +27,31 @@ public sealed class MicrosoftApiService : IMicrosoftApiService
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         var response = await _httpClient.GetAsync("/v1.0/users/me", ct);
-        var content = await response.Content.ReadAsStringAsync(ct);
-        var json = JObject.Parse(content);
 
         return response.StatusCode switch
         {
             HttpStatusCode.OK =>
-                ParseSuccessResponse(json),
+                Success(await response.Content.ReadFromJsonAsync<Dto>(Options, ct)),
 
             HttpStatusCode.Unauthorized =>
                 throw new PeopleException(ExceptionCodes.ProviderUnauthorized),
 
-            _ => throw new PeopleException(ExceptionCodes.ProviderUnknown,
-                json.SelectToken("error.message")?.Value<string?>())
+            _ => throw new PeopleException(ExceptionCodes.ProviderUnknown, await response.Content.ReadAsStringAsync(ct))
         };
     }
 
-    private static MicrosoftAccount ParseSuccessResponse(JToken json)
+    private static MicrosoftAccount Success(Dto? account)
     {
-        var id = json.Value<string>("id") ?? throw new InvalidOperationException("Microsoft id not found");
-        var email = json.Value<string>("userPrincipalName") ??
-                    throw new InvalidOperationException("Microsoft email not found");
+        if (account is null)
+            throw new ArgumentNullException(nameof(account), "Microsoft account cannot be null");
 
         return new MicrosoftAccount(
-            new MicrosoftIdentity(id),
-            new EmailIdentity(email),
-            json.Value<string>("givenName"),
-            json.Value<string>("surname")
+            new MicrosoftIdentity(account.Id),
+            new EmailIdentity(account.UserPrincipalName),
+            account.GivenName,
+            account.Surname
         );
     }
+
+    private sealed record Dto(string Id, string UserPrincipalName, string? GivenName, string? Surname);
 }

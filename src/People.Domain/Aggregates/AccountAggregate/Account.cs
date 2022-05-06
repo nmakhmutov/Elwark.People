@@ -28,8 +28,10 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         Ban = null;
         Name = name;
         Version = int.MinValue;
-        TimeZone = TimeZoneInfo.Utc.Id;
-        FirstDayOfWeek = DayOfWeek.Monday;
+        TimeZone = TimeZone.Utc;
+        DateFormat = DateFormat.Default;
+        TimeFormat = TimeFormat.Default;
+        WeekStart = DayOfWeek.Monday;
         CountryCode = CountryCode.Empty;
         Language = language;
         Picture = picture;
@@ -44,15 +46,19 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
     public Name Name { get; private set; }
 
-    public CountryCode CountryCode { get; private set; }
-
-    public string TimeZone { get; private set; }
-
-    public DayOfWeek FirstDayOfWeek { get; private set; }
+    public Uri Picture { get; private set; }
 
     public Language Language { get; private set; }
 
-    public Uri Picture { get; private set; }
+    public CountryCode CountryCode { get; private set; }
+
+    public TimeZone TimeZone { get; private set; }
+
+    public TimeFormat TimeFormat { get; private set; }
+
+    public DateFormat DateFormat { get; private set; }
+
+    public DayOfWeek WeekStart { get; private set; }
 
     public Ban? Ban { get; private set; }
 
@@ -84,7 +90,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
         _connections.Add(connection);
         IsActivated = _connections.Any(x => x.IsConfirmed);
-        
+
         return connection;
     }
 
@@ -95,7 +101,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
         _connections.Add(connection);
         IsActivated = _connections.Any(x => x.IsConfirmed);
-        
+
         return connection;
     }
 
@@ -106,7 +112,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
 
         _connections.Add(connection);
         IsActivated = _connections.Any(x => x.IsConfirmed);
-        
+
         return connection;
     }
 
@@ -153,19 +159,31 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         }
     }
 
-    public void Update(Name name, CountryCode country, string timeZone, DayOfWeek firstDayOfWeek, Language language,
-        Uri picture)
+    public void Update(Name name, CountryCode country, TimeZone timeZone, DateFormat dateFormat, TimeFormat timeFormat,
+        DayOfWeek weekStart, Language language, Uri picture)
     {
         Name = name;
         CountryCode = country;
-        TimeZone = GetTimeZone(timeZone);
-        FirstDayOfWeek = firstDayOfWeek;
+        TimeZone = timeZone;
+        DateFormat = dateFormat;
+        TimeFormat = timeFormat;
+        WeekStart = weekStart;
         Language = language;
         Picture = picture;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
-
+    
+    public void Update(Name name, CountryCode countryCode, TimeZone timeZone, Uri picture)
+    {
+        Name = name;
+        CountryCode = countryCode;
+        TimeZone = timeZone;
+        Picture = picture;
+        
+        AddDomainEvent(new AccountUnbannedDomainEvent(this));
+    }
+    
     public void Update(Name name, Uri picture)
     {
         Name = name;
@@ -175,9 +193,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
     }
 
     public EmailConnection GetPrimaryEmail() =>
-        _connections
-            .OfType<EmailConnection>()
-            .First(x => x.IsPrimary);
+        _connections.OfType<EmailConnection>().First(x => x.IsPrimary);
 
     public bool IsActive()
     {
@@ -261,11 +277,7 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         if (!_registration.IsEmpty)
             return;
 
-        _registration = _registration with
-        {
-            Ip = ipHasher.CreateHash(ip),
-            CountryCode = code
-        };
+        _registration = new Registration(ipHasher.CreateHash(ip), code);
     }
 
     public EmailConnection SetAsPrimaryEmail(EmailIdentity email)
@@ -299,17 +311,5 @@ public sealed class Account : HistoricEntity<AccountId>, IAggregateRoot
         Ban = null;
 
         AddDomainEvent(new AccountUnbannedDomainEvent(this));
-    }
-
-    private static string GetTimeZone(string timeZone)
-    {
-        try
-        {
-            return TimeZoneInfo.FindSystemTimeZoneById(timeZone).Id;
-        }
-        catch
-        {
-            return TimeZoneInfo.Utc.Id;
-        }
     }
 }

@@ -21,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Integration.Event\Integration.Event.csproj" />
         <ProjectReference Include="..\Common.Kafka\Common.Kafka.csproj" />
         <ProjectReference Include="..\Common.Mongo\Common.Mongo.csproj" />
     </ItemGroup>

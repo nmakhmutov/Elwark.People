@@ -24,9 +24,8 @@ internal sealed class AttachEmailCommandHandler : IRequestHandler<AttachEmailCom
 
     public async Task<Unit> Handle(AttachEmailCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct)
+                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
 
         account.AddIdentity(request.Email, false, DateTime.UtcNow);
 

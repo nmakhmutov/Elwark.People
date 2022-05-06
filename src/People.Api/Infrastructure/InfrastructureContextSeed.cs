@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using People.Infrastructure;
 using People.Infrastructure.Blacklist;
 using People.Infrastructure.Countries;
@@ -45,7 +45,7 @@ internal sealed class InfrastructureContextSeed
             return;
 
         var json = await File.ReadAllTextAsync(path, Encoding.UTF8);
-        var countries = JsonConvert.DeserializeObject<Country[]>(json);
+        var countries = JsonSerializer.Deserialize<Country[]>(json);
 
         await _dbContext.Countries.InsertManyAsync(countries, new InsertManyOptions { IsOrdered = false });
     }

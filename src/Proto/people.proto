@@ -7,150 +7,36 @@ import "google/protobuf/wrappers.proto";
 option csharp_namespace = "People.Grpc.Gateway";
 
 service PeopleService {
-  rpc GetProfile(people.AccountIdValue) returns (ProfileReply);
-  rpc GetEmailNotification(people.AccountIdValue) returns (EmailNotificationInformation);
+  rpc GetAccounts (AccountsRequest) returns (AccountsReply);
+  rpc GetAccount (people.AccountIdValue) returns (AccountReply);
 
-  rpc UpdateProfile(UpdateProfileRequest) returns (ProfileReply);
-  rpc ConfirmingConnection(ConfirmingRequest) returns (people.Confirming);
-  rpc ConfirmConnection(ConfirmRequest) returns (ProfileReply);
-  rpc SetEmailAsPrimary(SetEmailAsPrimaryRequest) returns (ProfileReply);
-  rpc DeleteConnection(DeleteConnectionRequest) returns (ProfileReply);
+  rpc UpdateAccount (UpdateAccountRequest) returns (AccountReply);
+  rpc ConfirmConnection (ConfirmRequest) returns (AccountReply);
+  rpc ConfuteConnection (ConfuteRequest) returns (AccountReply);
+  rpc DeleteConnection (DeleteConnectionRequest) returns (AccountReply);
+  rpc ChangePrimaryEmail (ChangePrimaryEmailRequest) returns (AccountReply);
 
-  rpc CreatingPassword(CreatingPasswordRequest) returns(people.Confirming);
-  rpc CreatePassword(CreatePasswordRequest) returns (ProfileReply);
-  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
+  rpc CreatePassword (CreatePasswordRequest) returns (AccountReply);
+  rpc UpdatePassword (UpdatePasswordRequest) returns (google.protobuf.Empty);
 
-  rpc GetCountries(CountriesRequest) returns(CountriesReply);
+  rpc CreateRole (RoleRequest) returns (AccountReply);
+  rpc DeleteRole (RoleRequest) returns (AccountReply);
+
+  rpc Ban (BanRequest) returns (AccountReply);
+  rpc Unban (people.AccountIdValue) returns (AccountReply);
+
+  rpc Delete (people.AccountIdValue) returns (google.protobuf.Empty);
+  rpc SendConfirmationCode (ConfirmationCodeRequest) returns (ConfirmationCodeReply);
+
+  rpc GetCountries (CountriesRequest) returns(CountriesReply);
 }
 
-service PeopleManagement {
-  rpc GetAccounts(ManagementAccountsRequest) returns (ManagementPageAccountsReply);
-  rpc GetAccount(people.AccountIdValue) returns (ManagementAccountReply);
-  rpc UpdateAccount(UpdateAccountRequest) returns(ManagementAccountReply);
-
-  rpc ConfirmConnection(ConfirmManagementRequest) returns (ManagementAccountReply);
-  rpc ConfuteConnection(ConfirmManagementRequest) returns (ManagementAccountReply);
-  rpc DeleteConnection(ConfirmManagementRequest) returns (ManagementAccountReply);
-
-  rpc CreateRole(RoleRequest) returns (ManagementAccountReply);
-  rpc DeleteRole(RoleRequest) returns (ManagementAccountReply);
-
-  rpc Ban(BanRequest) returns (ManagementAccountReply);
-  rpc Unban(people.AccountIdValue) returns (ManagementAccountReply);
-
-  rpc Delete(people.AccountIdValue) returns (google.protobuf.Empty);
-}
-
-message ProfileReply {
-  people.AccountIdValue id = 1;
-  people.Name name = 2;
-  google.protobuf.StringValue country_code = 3;
-  string time_zone = 4;
-  people.DayOfWeek first_day_of_week = 5;
-  string language = 6;
-  string picture = 7;
-  people.Ban ban = 8;
-  bool is_password_available = 9;
-  google.protobuf.Timestamp created_at = 10;
-  repeated Connection connections = 11;
-}
-
-message Connection {
-  people.IdentityType type = 1;
-  string value = 2;
-  bool is_confirmed = 3;
-
-  oneof ConnectionType {
-    EmailConnection email = 4;
-    SocialConnection social = 5;
-  }
-}
-
-message EmailConnection {
-  bool is_primary = 1;
-}
-
-message SocialConnection {
-  google.protobuf.StringValue first_name = 1;
-  google.protobuf.StringValue last_name = 2;
-}
-
-message EmailNotificationInformation {
-  string primary_email = 1;
-  string time_zone = 2;
-}
-
-message CountriesRequest {
-  string language = 1;
-}
-
-message CountriesReply {
-  repeated Country countries = 1;
-}
-
-message Country {
-  string code = 1;
-  string name = 2;
-}
-
-message UpdateProfileRequest {
-  people.AccountIdValue id = 1;
-  google.protobuf.StringValue first_name = 2;
-  google.protobuf.StringValue last_name = 3;
-  string nickname = 4;
-  bool prefer_nickname = 5;
-  string language = 6;
-  string country_code = 7;
-  string time_zone = 8;
-  people.DayOfWeek first_day_of_week = 9;
-}
-
-message ConfirmingRequest {
-  people.AccountIdValue id = 1;
-  people.Identity identity = 2;
-  string language = 3;
-}
-
-message ConfirmRequest {
-  people.AccountIdValue id = 1;
-  people.Identity identity = 2;
-  people.Confirm confirm = 3;
-}
-
-message SetEmailAsPrimaryRequest {
-  people.AccountIdValue id = 1;
-  string email = 2;
-}
-
-message DeleteConnectionRequest{
-  people.AccountIdValue id = 1;
-  people.Identity identity = 2;
-}
-
-message CreatingPasswordRequest {
-  people.AccountIdValue id = 1;
-  string language = 2;
-}
-message CreatePasswordRequest{
-  people.AccountIdValue id = 1;
-  people.Confirm confirm = 2;
-  string password = 3;
-}
-
-message UpdatePasswordRequest{
-  people.AccountIdValue id = 1;
-  string old_password = 2;
-  string new_password = 3;
-}
-
-// --------------------------------
-
-message ManagementAccountsRequest {
+message AccountsRequest {
   int32 page = 1;
   int32 limit = 2;
 }
 
-message ManagementPageAccountsReply {
+message AccountsReply {
   message Account {
     people.AccountIdValue id = 1;
     people.Name name = 2;
@@ -166,7 +52,7 @@ message ManagementPageAccountsReply {
   repeated Account topics = 3;
 }
 
-message ManagementAccountReply {
+message AccountReply {
   message Connection {
     people.IdentityType type = 1;
     string value = 2;
@@ -183,15 +69,28 @@ message ManagementAccountReply {
   people.Name name = 2;
   google.protobuf.StringValue country_code = 3;
   string time_zone = 4;
-  people.DayOfWeek first_day_of_week = 5;
-  string language = 6;
-  string picture = 7;
-  people.Ban ban = 8;
-  bool is_password_available = 9;
-  google.protobuf.Timestamp created_at = 10;
-  google.protobuf.Timestamp last_sign_in = 11;
-  repeated string roles = 12;
-  repeated Connection connections = 13;
+  string date_format = 5;
+  string time_format = 6;
+  people.DayOfWeek week_start = 7;
+  string language = 8;
+  string picture = 9;
+  people.Ban ban = 10;
+  bool is_password_available = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp last_sign_in = 13;
+  repeated string roles = 14;
+  repeated Connection connections = 15;
+}
+
+message RoleRequest {
+  people.AccountIdValue id = 1;
+  string role = 2;
+}
+
+message BanRequest {
+  people.AccountIdValue id = 1;
+  string reason = 2;
+  google.protobuf.Timestamp expiredAt = 3;
 }
 
 message UpdateAccountRequest {
@@ -202,23 +101,73 @@ message UpdateAccountRequest {
   bool prefer_nickname = 5;
   google.protobuf.StringValue country_code = 6;
   string time_zone = 7;
-  people.DayOfWeek first_day_of_week = 8;
-  string language = 9;
-  string picture = 10;
+  string date_format = 8;
+  string time_format = 9;
+  people.DayOfWeek week_start = 10;
+  string language = 11;
 }
 
-message ConfirmManagementRequest {
+message EmailConnection {
+  bool is_primary = 1;
+}
+
+message SocialConnection {
+  google.protobuf.StringValue first_name = 1;
+  google.protobuf.StringValue last_name = 2;
+}
+
+message ConfirmRequest {
+  people.AccountIdValue id = 1;
+  people.Identity identity = 2;
+  optional people.Confirm confirm = 3;
+}
+
+message ConfuteRequest {
   people.AccountIdValue id = 1;
   people.Identity identity = 2;
 }
 
-message RoleRequest {
+message ChangePrimaryEmailRequest {
   people.AccountIdValue id = 1;
-  string role = 2;
+  string email = 2;
 }
 
-message BanRequest{
+message DeleteConnectionRequest {
   people.AccountIdValue id = 1;
-  string reason = 2;
-  google.protobuf.Timestamp expiredAt = 3;
+  people.Identity identity = 2;
+}
+
+message CreatePasswordRequest {
+  people.AccountIdValue id = 1;
+  string password = 2;
+  people.Confirm confirm = 3;
+}
+
+message UpdatePasswordRequest {
+  people.AccountIdValue id = 1;
+  string old_password = 2;
+  string new_password = 3;
+}
+
+message ConfirmationCodeRequest {
+  people.AccountIdValue id = 1;
+  optional people.Identity identity = 2;
+  string language = 3;
+}
+
+message ConfirmationCodeReply {
+  string token = 1;
+}
+
+message CountriesRequest {
+  string language = 1;
+}
+
+message CountriesReply {
+  message Country {
+    string code = 1;
+    string name = 2;
+  }
+
+  repeated Country countries = 1;
 }

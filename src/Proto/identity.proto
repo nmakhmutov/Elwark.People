@@ -6,7 +6,7 @@ import "common.proto";
 option csharp_namespace = "People.Grpc.Identity";
 
 service IdentityService {
-  rpc GetAccountById (people.AccountIdValue) returns (AccountReply);
+  rpc GetAccount (people.AccountIdValue) returns (AccountReply);
   rpc GetStatus (people.AccountIdValue) returns (StatusReply);
 
   rpc SignInByEmail (SignInByEmailRequest) returns (SignInReply);
@@ -16,9 +16,7 @@ service IdentityService {
   rpc SignUpByEmail (SignUpByEmailRequest) returns (SignUpReply);
   rpc SignUpByGoogle (SignUpBySocialRequest) returns (SignUpReply);
   rpc SignUpByMicrosoft (SignUpBySocialRequest) returns (SignUpReply);
-  rpc IsConfirmationAvailable (people.Confirming) returns (people.AccountIdValue);
   rpc ConfirmSignUp (ConfirmSignUpRequest) returns (google.protobuf.Empty);
-  rpc ResendSignUpConfirmation (ResendSignUpConfirmationRequest) returns (people.Confirming);
 
   rpc AttachEmail(AttachRequest) returns (google.protobuf.Empty);
   rpc AttachGoogle(AttachRequest) returns (google.protobuf.Empty);
@@ -26,6 +24,8 @@ service IdentityService {
 
   rpc ResetPassword (ResetPasswordRequest) returns (people.AccountIdValue);
   rpc RestorePassword (RestorePasswordRequest) returns (google.protobuf.Empty);
+
+  rpc SendConfirmationCode(ConfirmationCodeRequest) returns (ConfirmationCodeReply);
 }
 
 message SignInByEmailRequest {
@@ -67,23 +67,18 @@ message RestorePasswordRequest {
 
 message SignInReply {
   people.AccountIdValue id = 1;
-  string display_name = 2;
+  string full_name = 2;
 }
 
 message SignUpReply {
   people.AccountIdValue id = 1;
-  string display_name = 2;
-  people.Confirming confirmation = 3;
+  string full_name = 2;
+  google.protobuf.StringValue confirmation_token = 3;
 }
 
 message ConfirmSignUpRequest {
   people.AccountIdValue id = 1;
   people.Confirm confirm = 2;
-}
-
-message ResendSignUpConfirmationRequest {
-  people.AccountIdValue id = 1;
-  string language = 2;
 }
 
 message AccountReply {
@@ -92,7 +87,7 @@ message AccountReply {
   people.PrimaryEmail email = 3;
   google.protobuf.StringValue country_code = 4;
   string time_zone = 5;
-  people.DayOfWeek first_day_of_week = 6;
+  people.DayOfWeek week_start = 6;
   string language = 7;
   string picture = 8;
   people.Ban ban = 9;
@@ -106,4 +101,13 @@ message StatusReply {
 message AttachRequest {
   people.AccountIdValue id = 1;
   string value = 2;
+}
+
+message ConfirmationCodeRequest {
+  people.AccountIdValue id = 1;
+  string language = 2;
+}
+
+message ConfirmationCodeReply {
+  string token = 1;
 }

@@ -46,10 +46,12 @@ internal sealed class CountryService : ICountryService
     public async Task<Country?> GetAsync(string code, CancellationToken ct) =>
         code.Length switch
         {
-            2 => await _dbContext.Countries.Find(Builders<Country>.Filter.Eq(x => x.Alpha2Code, code))
+            2 => await _dbContext.Countries
+                .Find(Builders<Country>.Filter.Eq(x => x.Alpha2Code, code.ToUpperInvariant()))
                 .FirstOrDefaultAsync(ct),
 
-            3 => await _dbContext.Countries.Find(Builders<Country>.Filter.Eq(x => x.Alpha3Code, code))
+            3 => await _dbContext.Countries
+                .Find(Builders<Country>.Filter.Eq(x => x.Alpha3Code, code.ToUpperInvariant()))
                 .FirstOrDefaultAsync(ct),
 
             _ => null

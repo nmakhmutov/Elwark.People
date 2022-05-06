@@ -14,7 +14,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
-        <ProjectReference Include="..\Integration.Event\Integration.Event.csproj" />
         <ProjectReference Include="..\Common.Kafka\Common.Kafka.csproj" />
     </ItemGroup>
 </Project>

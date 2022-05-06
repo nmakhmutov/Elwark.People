@@ -55,11 +55,7 @@ message Ban {
   google.protobuf.Timestamp expires_at = 2;
 }
 
-message Confirming {
-  string id = 1;
-}
-
 message Confirm {
-  string id = 1;
+  string token = 1;
   uint32 code = 2;
 }

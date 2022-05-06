@@ -1,11 +1,9 @@
-using System;
 using System.Threading.Tasks;
 using Common.Mongo;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using People.Infrastructure.Blacklist;
-using People.Infrastructure.Confirmations;
 using People.Infrastructure.Countries;
 
 namespace People.Infrastructure;
@@ -30,15 +28,11 @@ public sealed class InfrastructureDbContext : MongoDbContext
     public IMongoCollection<BlacklistItem> Blacklist =>
         Database.GetCollection<BlacklistItem>("blacklist");
 
-    public IMongoCollection<Confirmation> Confirmations =>
-        Database.GetCollection<Confirmation>("confirmations");
-
     public override async Task OnModelCreatingAsync()
     {
         await CreateCollectionsAsync(
             Countries.CollectionNamespace.CollectionName,
-            Blacklist.CollectionNamespace.CollectionName,
-            Confirmations.CollectionNamespace.CollectionName
+            Blacklist.CollectionNamespace.CollectionName
         );
 
         await CreateIndexesAsync(Countries,
@@ -55,20 +49,6 @@ public sealed class InfrastructureDbContext : MongoDbContext
                     Builders<BlacklistItem>.IndexKeys.Ascending(x => x.Value)
                 ),
                 new CreateIndexOptions { Name = "Type_Value", Unique = true }
-            )
-        );
-
-        await CreateIndexesAsync(Confirmations,
-            new CreateIndexModel<Confirmation>(
-                Builders<Confirmation>.IndexKeys.Descending(x => x.ExpireAt),
-                new CreateIndexOptions { Name = "ExpireAt", ExpireAfter = TimeSpan.Zero }
-            ),
-            new CreateIndexModel<Confirmation>(
-                Builders<Confirmation>.IndexKeys.Combine(
-                    Builders<Confirmation>.IndexKeys.Ascending(x => x.AccountId),
-                    Builders<Confirmation>.IndexKeys.Descending(x => x.ExpireAt)
-                ),
-                new CreateIndexOptions { Name = "AccountId_ExpireAt" }
             )
         );
     }

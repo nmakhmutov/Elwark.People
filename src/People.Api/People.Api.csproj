@@ -26,7 +26,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
-        <ProjectReference Include="..\Integration.Event\Integration.Event.csproj" />
         <ProjectReference Include="..\Common.Kafka\Common.Kafka.csproj" />
     </ItemGroup>
 
@@ -37,12 +36,6 @@
         <None Update="Email\Views\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="Grpc\IdentityService.Mapper.cs">
-            <DependentUpon>IdentityService.cs</DependentUpon>
-        </Compile>
     </ItemGroup>
 
 </Project>
