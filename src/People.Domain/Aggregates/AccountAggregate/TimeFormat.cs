@@ -11,8 +11,9 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
     public static readonly IReadOnlyCollection<string> List = new[]
     {
         "H:mm",
-        "h:mm tt",
         "HH:mm",
+        "HH:mm:ss",
+        "h:mm tt",
         "hh:mm tt"
     };
 
