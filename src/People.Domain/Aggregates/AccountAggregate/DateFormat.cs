@@ -11,16 +11,12 @@ public readonly struct DateFormat : IEquatable<DateFormat>
     public static readonly IReadOnlyCollection<string> List = new[]
     {
         "MM/dd/yyyy",
-        "MM/dd/yy",
-        "dd/MM/yyyy",
-        "dd/MM/yy",
-        "dd-MM-yyyy",
-        "dd-MM-yy",
+        "MM.dd.yyyy",
         "MM-dd-yyyy",
-        "MM-dd-yy",
-        "yyyy-MM-dd",
-        "M/d/yyyy",
-        "M/d/yy"
+        "dd/MM/yyyy",
+        "dd.MM.yyyy",
+        "dd-MM-yyyy",
+        "yyyy-MM-dd"
     };
 
     private readonly string _value;
