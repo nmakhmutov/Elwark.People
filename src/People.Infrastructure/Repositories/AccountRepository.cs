@@ -1,51 +1,34 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MongoDB.Driver;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Connections;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using Microsoft.EntityFrameworkCore;
+using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.SeedWork;
 
 namespace People.Infrastructure.Repositories;
 
-internal sealed class AccountRepository
-    : MongoRepository<Account, AccountId>, IAccountRepository
+internal sealed class AccountRepository : IAccountRepository
 {
-    public AccountRepository(PeopleDbContext dbContext)
-        : base(dbContext.Accounts, dbContext.Session)
+    private readonly PeopleDbContext _dbContext;
+
+    public AccountRepository(PeopleDbContext dbContext) =>
+        _dbContext = dbContext;
+
+    public IUnitOfWork UnitOfWork =>
+        _dbContext;
+
+    public async Task<Account?> GetAsync(long id, CancellationToken ct)
     {
+        var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Id == id, ct);
+        if (account is null)
+            return null;
+        
+        await _dbContext.Entry(account).Collection(x => x.Emails).LoadAsync(ct);
+        await _dbContext.Entry(account).Collection(x => x.Externals).LoadAsync(ct);
+
+        return account;
     }
 
-    public async Task<Account?> GetAsync(Identity identity, CancellationToken ct)
-    {
-        var filter = Builders<Account>.Filter
-            .ElemMatch(nameof(Account.Connections), GetConnectionFilter(identity));
+    public async Task<Account> AddAsync(Account account, CancellationToken ct) =>
+        (await _dbContext.AddAsync(account, ct)).Entity;
 
-        return await Collection.Find(filter)
-            .FirstOrDefaultAsync(ct);
-    }
-
-    public async Task<bool> IsExists(Identity identity, CancellationToken ct)
-    {
-        var filter = Builders<Account>.Filter
-            .ElemMatch(nameof(Account.Connections), GetConnectionFilter(identity));
-
-        return await Collection
-            .CountDocumentsAsync(filter, new CountOptions { Limit = 1 }, ct) > 0;
-    }
-
-    private static FilterDefinition<Connection> GetConnectionFilter(Identity identity) =>
-        identity switch
-        {
-            EmailIdentity =>
-                Builders<Connection>.Filter.OfType<EmailConnection>(x => x.Value == identity.Value),
-
-            GoogleIdentity =>
-                Builders<Connection>.Filter.OfType<GoogleConnection>(x => x.Value == identity.Value),
-
-            MicrosoftIdentity =>
-                Builders<Connection>.Filter.OfType<MicrosoftConnection>(x => x.Value == identity.Value),
-
-            _ => throw new ArgumentOutOfRangeException(nameof(identity))
-        };
+    public void Update(Account account) =>
+        _dbContext.Entry(account).State = EntityState.Modified;
 }

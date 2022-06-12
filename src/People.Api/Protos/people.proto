@@ -1,0 +1,113 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+package people;
+option csharp_namespace = "People.Grpc.People";
+
+service PeopleService {
+  rpc GetAccount (AccountRequest) returns (AccountReply);
+  rpc IsAccountActive (AccountRequest) returns (google.protobuf.BoolValue);
+
+  rpc SigningUpByEmail (EmailSigningUpRequest) returns (EmailSigningUpReply);
+  rpc SignUpByEmail (EmailSignUpRequest) returns (SignUpReply);
+  rpc SigningInByEmail (EmailSigningInRequest) returns (EmailSigningInReply);
+  rpc SignInByEmail (EmailSignInRequest) returns (SignInReply);
+
+  rpc SignUpByGoogle (ExternalSignUpRequest) returns (SignUpReply);
+  rpc SignInByGoogle (ExternalSignInRequest) returns (SignInReply);
+  rpc AppendGoogle (ExternalAppendRequest) returns (google.protobuf.Empty);
+
+  rpc SignUpByMicrosoft (ExternalSignUpRequest) returns (SignUpReply);
+  rpc SignInByMicrosoft (ExternalSignInRequest) returns (SignInReply);
+  rpc AppendMicrosoft (ExternalAppendRequest) returns (google.protobuf.Empty);
+}
+
+message AccountRequest {
+  int64 id = 1;
+}
+
+message AccountReply {
+  enum DayOfWeek
+  {
+    MONDAY = 0;
+    TUESDAY = 1;
+    WEDNESDAY = 2;
+    THURSDAY = 3;
+    FRIDAY = 4;
+    SATURDAY = 5;
+    SUNDAY = 6;
+  }
+
+  message Ban {
+    string reason = 1;
+    google.protobuf.Timestamp expires_at = 2;
+  }
+
+  int64 id = 1;
+  string nickname = 2;
+  google.protobuf.StringValue first_name = 3;
+  google.protobuf.StringValue last_name = 4;
+  string picture = 5;
+  string country_code = 6;
+  string time_zone = 7;
+  string language = 8;
+  Ban ban = 9;
+  repeated string roles = 10;
+}
+
+message EmailSigningUpRequest {
+  string email = 1;
+  string language = 2;
+  string ip = 3;
+}
+
+message EmailSigningUpReply {
+  string token = 1;
+}
+
+message EmailSignUpRequest {
+    string token = 1;
+    int32 code = 2;
+}
+
+message EmailSigningInRequest {
+  string email = 1;
+  string language = 2;
+}
+
+message EmailSigningInReply {
+  string token = 1;
+}
+
+message EmailSignInRequest {
+  string token = 1;
+  int32 code = 2;
+}
+
+message ExternalSignInRequest {
+  string access_token = 1;
+  string ip = 2;
+}
+
+message ExternalSignUpRequest {
+  string access_token = 1;
+  string language = 2;
+  string ip = 3;
+}
+
+message ExternalAppendRequest {
+  int64 id = 1;
+  string access_token = 2;
+}
+
+message SignInReply {
+  int64 id = 1;
+  string full_name = 2;
+}
+
+message SignUpReply {
+  int64 id = 1;
+  string full_name = 2;
+}

@@ -1,10 +1,11 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /
 COPY . ./
-RUN dotnet publish People.Api -c Release -o /app
+WORKDIR People.Api
+RUN dotnet publish People.Api.csproj -c Release -o /app
 
 FROM build AS publish
 

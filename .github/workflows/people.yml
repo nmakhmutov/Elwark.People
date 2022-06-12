@@ -1,4 +1,4 @@
-name: People
+name: People api
 
 on:
   push:
@@ -8,80 +8,15 @@ env:
   WORKING_DIRECTORY: ./src
 
 jobs:
-  build:
-    name: Build and test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Github Action
-        uses: actions/checkout@master
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-
-      - name: Build
-        run: dotnet build --configuration Release
-
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
-
   people_api:
     name: Docker API
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Checkout Github Action
         uses: actions/checkout@master
 
       - name: Compose build people.api
         run: sudo -E docker-compose build people.api
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        shell: bash
-        env:
-          TAG: latest
-
-  people_gateway:
-    name: Docker Gateway
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout Github Action
-        uses: actions/checkout@master
-
-      - name: Compose build people.gateway
-        run: sudo -E docker-compose build people.gateway
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        shell: bash
-        env:
-          TAG: latest
-
-  people_worker:
-    name: Docker Worker
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout Github Action
-        uses: actions/checkout@master
-
-      - name: Compose build people.worker
-        run: sudo -E docker-compose build people.worker
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        shell: bash
-        env:
-          TAG: latest
-  
-  people_notification:
-    name: Docker Worker
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout Github Action
-        uses: actions/checkout@master
-
-      - name: Compose build people.notification
-        run: sudo -E docker-compose build people.notification
         working-directory: ${{ env.WORKING_DIRECTORY }}
         shell: bash
         env:

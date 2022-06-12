@@ -1,60 +1,52 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
-using People.Api.Infrastructure;
-using People.Domain;
-using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.Exceptions;
-using TimeZone = People.Domain.Aggregates.AccountAggregate.TimeZone;
+using People.Domain.SeedWork;
+using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
 
 namespace People.Api.Application.Commands.UpdateAccount;
 
-public sealed record UpdateAccountCommand(
-    AccountId Id,
+internal sealed record UpdateAccountCommand(
+    long Id,
     string? FirstName,
     string? LastName,
     string Nickname,
     bool PreferNickname,
-    string Language,
-    string TimeZone,
-    string DateFormat,
-    string TimeFormat,
+    Language Language,
+    TimeZone TimeZone,
+    DateFormat DateFormat,
+    TimeFormat TimeFormat,
     DayOfWeek WeekStart,
-    string CountryCode
-) : IRequest;
+    CountryCode Country
+) : IRequest<Account>;
 
-internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand>
+internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, Account>
 {
-    private readonly IMediator _mediator;
     private readonly IAccountRepository _repository;
+    private readonly ITimeProvider _time;
 
-    public UpdateAccountCommandHandler(IAccountRepository repository, IMediator mediator)
+    public UpdateAccountCommandHandler(IAccountRepository repository, ITimeProvider time)
     {
         _repository = repository;
-        _mediator = mediator;
+        _time = time;
     }
 
-    public async Task<Unit> Handle(UpdateAccountCommand request, CancellationToken ct)
+    public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct)
-                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
+                      ?? throw AccountException.NotFound(request.Id);
 
-        var name = new Name(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);
-        account.Update(
-            name,
-            CountryCode.TryParse(request.CountryCode, out var countryCode) ? countryCode : CountryCode.Empty,
-            TimeZone.TryParse(request.TimeZone, out var timeZone) ? timeZone : TimeZone.Utc,
-            DateFormat.TryParse(request.DateFormat, out var dateFormat) ? dateFormat : DateFormat.Default,
-            TimeFormat.TryParse(request.TimeFormat, out var timeFormat) ? timeFormat : TimeFormat.Default,
-            request.WeekStart,
-            Language.TryParse(request.Language, out var language) ? language : Language.Default,
-            account.Picture
-        );
+        account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname, _time);
+        account.Update(request.Country, _time);
+        account.Update(request.TimeZone, _time);
+        account.Update(request.DateFormat, _time);
+        account.Update(request.TimeFormat, _time);
+        account.Update(request.Language, _time);
+        account.Update(request.WeekStart, _time);
 
-        await _repository.UpdateAsync(account, ct);
-        await _mediator.DispatchDomainEventsAsync(account);
+        _repository.Update(account);
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
 
-        return Unit.Value;
+        return account;
     }
 }

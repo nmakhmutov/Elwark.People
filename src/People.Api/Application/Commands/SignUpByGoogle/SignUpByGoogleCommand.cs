@@ -1,60 +1,55 @@
-using System;
 using System.Net;
-using System.Net.Mail;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using People.Api.Application.Models;
-using People.Api.Infrastructure;
-using People.Domain;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
-using People.Infrastructure.Sequences;
+using People.Api.Infrastructure.Providers.Google;
+using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Exceptions;
+using People.Domain.SeedWork;
+using People.Infrastructure;
 
 namespace People.Api.Application.Commands.SignUpByGoogle;
 
-public sealed record SignUpByGoogleCommand(
-    GoogleIdentity Google,
-    EmailIdentity Email,
-    string? FirstName,
-    string? LastName,
-    Uri? Picture,
-    bool IsEmailVerified,
-    Language Language,
-    IPAddress Ip
-) : IRequest<SignUpResult>;
+internal sealed record SignUpByGoogleCommand(string Token, Language Language, IPAddress Ip) : IRequest<SignUpResult>;
 
 internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoogleCommand, SignUpResult>
 {
-    private readonly ISequenceGenerator _generator;
-    private readonly IMediator _mediator;
+    private readonly PeopleDbContext _dbContext;
+    private readonly IGoogleApiService _google;
+    private readonly IIpHasher _hasher;
     private readonly IAccountRepository _repository;
+    private readonly ITimeProvider _time;
 
-    public SignUpByGoogleCommandHandler(IAccountRepository repository, ISequenceGenerator generator, IMediator mediator)
+    public SignUpByGoogleCommandHandler(PeopleDbContext dbContext, IGoogleApiService google, IIpHasher hasher,
+        IAccountRepository repository, ITimeProvider time)
     {
+        _dbContext = dbContext;
+        _google = google;
+        _hasher = hasher;
         _repository = repository;
-        _generator = generator;
-        _mediator = mediator;
+        _time = time;
     }
 
     public async Task<SignUpResult> Handle(SignUpByGoogleCommand request, CancellationToken ct)
     {
-        var now = DateTime.UtcNow;
-        var nickname = new MailAddress(request.Email.Value).User;
-        var name = new Name(nickname, request.FirstName, request.LastName);
-        var picture = request.Picture ?? Account.DefaultPicture;
-        var id = await _generator.NextAccountIdAsync(ct);
-        
-        var account = new Account(id, name, request.Language, picture, request.Ip);
-        var email = account.AddIdentity(request.Email, request.IsEmailVerified, now);
-        account.AddIdentity(request.Google, request.FirstName, request.LastName, now);
-        
-        if (account.IsActivated)
-            account.SignIn(request.Google, now, request.Ip);
+        var google = await _google.GetAsync(request.Token, ct);
 
-        await _repository.CreateAsync(account, ct);
-        await _mediator.DispatchDomainEventsAsync(account);
+        if (await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct))
+            throw EmailException.AlreadyCreated(google.Email);
 
-        return new SignUpResult(account.Id, account.Name.FullName(), email);
+        if (await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct))
+            throw ExternalAccountException.AlreadyCreated(ExternalService.Google, google.Identity);
+
+        var language = google.Locale is null
+            ? request.Language
+            : Language.Parse(google.Locale.TwoLetterISOLanguageName);
+
+        var account = new Account(google.Email.User, language, google.Picture, request.Ip, _time, _hasher);
+        account.AddGoogle(google.Identity, google.FirstName, google.LastName, _time);
+        account.AddEmail(google.Email, google.IsEmailVerified, _time);
+
+        await _repository.AddAsync(account, ct);
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+
+        return new SignUpResult(account.Id, account.Name.FullName());
     }
 }

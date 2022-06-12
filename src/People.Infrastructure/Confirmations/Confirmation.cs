@@ -1,28 +1,32 @@
-using System;
-using MongoDB.Bson;
-using People.Domain.Aggregates.AccountAggregate;
-
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+// ReSharper disable UnusedMember.Local
+
 namespace People.Infrastructure.Confirmations;
 
 public sealed class Confirmation
 {
-    public Confirmation(AccountId accountId, uint code, DateTime expireAt)
+    private Confirmation() =>
+        Type = string.Empty;
+
+    public Confirmation(Guid id, long accountId, int code, string type, DateTime createdAt, TimeSpan ttl)
     {
-        Id = ObjectId.Empty;
+        Id = id;
         AccountId = accountId;
         Code = code;
-        CreatedAt = DateTime.UtcNow;
-        ExpireAt = expireAt;
+        Type = type;
+        CreatedAt = createdAt;
+        ExpiresAt = createdAt + ttl;
     }
 
-    public ObjectId Id { get; private set; }
+    public Guid Id { get; private set; }
 
-    public AccountId AccountId { get; private set; }
+    public long AccountId { get; private set; }
 
-    public uint Code { get; private set; }
+    public int Code { get; private set; }
+
+    public string Type { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
 
-    public DateTime ExpireAt { get; private set; }
+    public DateTime ExpiresAt { get; private set; }
 }

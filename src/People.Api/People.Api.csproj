@@ -1,41 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="..\Proto\common.proto" Link="Protos\common.proto" GrpcServices="Both" />
-        <Protobuf Include="..\Proto\identity.proto" Link="Protos\identity.proto" GrpcServices="Server" />
-        <Protobuf Include="..\Proto\people.proto" Link="Protos\people.proto" GrpcServices="Server" />
-        <Protobuf Include="..\Proto\infrastructure.proto" Link="Protos\infrastructure.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\people.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0-preview.4.22251.1" />
+        <PackageReference Include="Fluid.Core" Version="2.2.15" />
+        <PackageReference Include="MinimalApis.LiquidViews" Version="2.2.15" />
         <PackageReference Include="CorrelationId" Version="3.0.1" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
-        <PackageReference Include="Fluid.Core" Version="2.2.14" />
-        <PackageReference Include="Google.Protobuf" Version="3.20.0" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.44.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.45.0" PrivateAssets="all" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.0.3" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.46.3" PrivateAssets="all" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-        <PackageReference Include="MinimalApis.LiquidViews" Version="2.2.14" />
         <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
-        <ProjectReference Include="..\Common.Kafka\Common.Kafka.csproj" />
+      <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Setup\*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="Email\Views\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-
 </Project>

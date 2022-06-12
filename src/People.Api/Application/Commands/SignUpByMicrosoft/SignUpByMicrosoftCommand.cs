@@ -1,57 +1,50 @@
-using System;
 using System.Net;
-using System.Net.Mail;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using People.Api.Application.Models;
-using People.Api.Infrastructure;
-using People.Domain;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
-using People.Infrastructure.Sequences;
+using People.Api.Infrastructure.Providers.Microsoft;
+using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Exceptions;
+using People.Domain.SeedWork;
+using People.Infrastructure;
 
 namespace People.Api.Application.Commands.SignUpByMicrosoft;
 
-public sealed record SignUpByMicrosoftCommand(
-    MicrosoftIdentity Microsoft,
-    EmailIdentity Email,
-    string? FirstName,
-    string? LastName,
-    Language Language,
-    IPAddress Ip
-) : IRequest<SignUpResult>;
+internal sealed record SignUpByMicrosoftCommand(string Token, Language Language, IPAddress Ip) : IRequest<SignUpResult>;
 
 internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMicrosoftCommand, SignUpResult>
 {
-    private readonly ISequenceGenerator _generator;
-    private readonly IMediator _mediator;
+    private readonly PeopleDbContext _dbContext;
+    private readonly IIpHasher _hasher;
+    private readonly IMicrosoftApiService _microsoft;
     private readonly IAccountRepository _repository;
+    private readonly ITimeProvider _time;
 
-    public SignUpByMicrosoftCommandHandler(IAccountRepository repository, ISequenceGenerator generator, IMediator mediator)
+    public SignUpByMicrosoftCommandHandler(PeopleDbContext dbContext, IMicrosoftApiService microsoft, IIpHasher hasher,
+        IAccountRepository repository, ITimeProvider time)
     {
+        _dbContext = dbContext;
+        _microsoft = microsoft;
+        _hasher = hasher;
         _repository = repository;
-        _generator = generator;
-        _mediator = mediator;
+        _time = time;
     }
 
     public async Task<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
     {
-        var now = DateTime.UtcNow;
-        var nickname = new MailAddress(request.Email.Value).User;
-        var name = new Name(nickname, request.FirstName, request.LastName);
-        var id = await _generator.NextAccountIdAsync(ct);
-        
-        var account = new Account(id, name, request.Language, Account.DefaultPicture, request.Ip);
-        var email = account.AddIdentity(request.Email, true, now);
-        account.AddIdentity(request.Microsoft, request.FirstName, request.LastName, now);
-        
-        if (account.IsActivated)
-            account.SignIn(request.Microsoft, now, request.Ip);
+        var microsoft = await _microsoft.GetAsync(request.Token, ct);
+        if (await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct))
+            throw EmailException.AlreadyCreated(microsoft.Email);
 
-        await _repository.CreateAsync(account, ct);
-        await _mediator.DispatchDomainEventsAsync(account);
+        if (await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct))
+            throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
-        return new SignUpResult(account.Id, account.Name.FullName(), email);
+        var account = new Account(microsoft.Email.User, request.Language, null, request.Ip, _time, _hasher);
+        account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _time);
+        account.AddEmail(microsoft.Email, true, _time);
+
+        await _repository.AddAsync(account, ct);
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+
+        return new SignUpResult(account.Id, account.Name.FullName());
     }
 }

@@ -1,17 +1,19 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using People.Domain.Aggregates.AccountAggregate;
+using System.Net.Mail;
+using People.Domain.SeedWork;
 
 namespace People.Infrastructure.Confirmations;
 
 public interface IConfirmationService
 {
-    Task<Confirmation?> GetAsync(string token, CancellationToken ct = default);
+    Task<Result<AccountConfirmation>> CheckSignInAsync(string token, int code);
 
-    Task<Confirmation?> GetAsync(AccountId id, CancellationToken ct = default);
+    Task<ConfirmationResult> CreateSignInAsync(long id, ITimeProvider time);
 
-    Task<Confirmation> CreateAsync(AccountId id, TimeSpan lifetime, CancellationToken ct = default);
+    Task<Result<AccountConfirmation>> CheckSignUpAsync(string token, int code);
 
-    Task DeleteAsync(AccountId id, CancellationToken ct = default);
+    Task<ConfirmationResult> CreateSignUpAsync(long id, ITimeProvider time);
+
+    Task<Result<EmailConfirmation>> CheckEmailVerifyAsync(string token, int code);
+
+    Task<ConfirmationResult> CreateEmailVerifyAsync(long id, MailAddress email, ITimeProvider time);
 }

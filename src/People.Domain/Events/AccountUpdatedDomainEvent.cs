@@ -1,5 +1,5 @@
 using MediatR;
-using People.Domain.Aggregates.AccountAggregate;
+using People.Domain.AggregatesModel.AccountAggregate;
 
 namespace People.Domain.Events;
 

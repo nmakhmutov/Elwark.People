@@ -1,29 +1,17 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentValidation;
-using People.Domain;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Exceptions;
-using People.Infrastructure.Countries;
+using People.Domain.AggregatesModel.AccountAggregate;
 
 namespace People.Api.Application.Commands.UpdateAccount;
 
 internal sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountCommand>
 {
-    private readonly ICountryService _country;
-
-    public UpdateAccountCommandValidator(ICountryService country)
+    public UpdateAccountCommandValidator()
     {
-        _country = country;
-
         RuleFor(x => x.Language)
-            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
-            .Must(x => Language.TryParse(x, out _));
+            .NotNull();
 
         RuleFor(x => x.Nickname)
-            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
+            .NotEmpty()
             .MinimumLength(3)
             .MaximumLength(Name.NicknameLength);
 
@@ -34,38 +22,18 @@ internal sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAc
             .MaximumLength(Name.LastNameLength);
 
         RuleFor(x => x.TimeZone)
-            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
-            .Must(BeAvailableTimeZone).WithErrorCode(ExceptionCodes.TimeZoneNotFound);
+            .NotNull();
 
         RuleFor(x => x.DateFormat)
-            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
-            .Must(x => DateFormat.List.Contains(x));
+            .NotNull();
 
         RuleFor(x => x.TimeFormat)
-            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
-            .Must(x => TimeFormat.List.Contains(x));
-        
+            .NotNull();
+
         RuleFor(x => x.WeekStart)
             .IsInEnum();
         
-        RuleFor(x => x.CountryCode)
-            .NotEmpty().WithErrorCode(ExceptionCodes.Required)
-            .MustAsync(BeAvailableCountry).WithErrorCode(ExceptionCodes.CountryCodeNotFound);
+        RuleFor(x => x.Country)
+            .NotNull();
     }
-
-    private static bool BeAvailableTimeZone(string value)
-    {
-        try
-        {
-            TimeZoneInfo.FindSystemTimeZoneById(value);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private async Task<bool> BeAvailableCountry(string value, CancellationToken ct) =>
-        await _country.GetAsync(value, ct) is not null;
 }

@@ -1,7 +1,5 @@
-using System;
-using Common.Kafka;
+using People.Infrastructure.Integration;
 
 namespace People.Api.Application.IntegrationEvents.Events;
 
-public sealed record AccountUpdatedIntegrationEvent(Guid MessageId, DateTime CreatedAt, long Id)
-    : IIntegrationEvent;
+public sealed record AccountUpdatedIntegrationEvent(Guid MessageId, DateTime CreatedAt, long Id) : IIntegrationEvent;

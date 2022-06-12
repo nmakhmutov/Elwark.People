@@ -1,12 +1,15 @@
-using System;
-
 namespace People.Domain.Exceptions;
 
-public class PeopleException : Exception
+public abstract class PeopleException : Exception
 {
-    public PeopleException(string code, string? message = null, Exception? innerException = null)
-        : base(message ?? code, innerException) =>
+    protected PeopleException(string name, string code, string? message = null)
+        : base(message)
+    {
+        Name = name;
         Code = code;
+    }
 
+    public string Name { get; }
+    
     public string Code { get; }
 }

@@ -1,43 +1,37 @@
-using System;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using People.Api.Application.Models;
-using People.Api.Infrastructure;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
 using People.Domain.Exceptions;
+using People.Infrastructure;
+using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SignInByEmail;
 
-public sealed record SignInByEmailCommand(EmailIdentity Email, string Password, IPAddress Ip)
-    : IRequest<SignInResult>;
+internal sealed record SignInByEmailCommand(string Token, int Code) : IRequest<SignInResult>;
 
-public sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailCommand, SignInResult>
+internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailCommand, SignInResult>
 {
-    private readonly IPasswordHasher _hasher;
-    private readonly IMediator _mediator;
-    private readonly IAccountRepository _repository;
+    private readonly IConfirmationService _confirmation;
+    private readonly PeopleDbContext _dbContext;
 
-    public SignInByEmailCommandHandler(IAccountRepository repository, IPasswordHasher hasher, IMediator mediator)
+    public SignInByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext)
     {
-        _repository = repository;
-        _hasher = hasher;
-        _mediator = mediator;
+        _confirmation = confirmation;
+        _dbContext = dbContext;
     }
 
     public async Task<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Email, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var confirmation = (await _confirmation.CheckSignInAsync(request.Token, request.Code))
+            .GetOrThrow();
 
-        account.SignIn(request.Email, DateTime.UtcNow, request.Ip, request.Password, _hasher);
+        var account =
+            await _dbContext.Accounts
+                .AsNoTracking()
+                .Where(x => x.Id == confirmation.AccountId)
+                .Select(x => new SignInResult(x.Id, x.Name.FullName()))
+                .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(confirmation.AccountId);
 
-        await _repository.UpdateAsync(account, ct);
-        await _mediator.DispatchDomainEventsAsync(account);
-
-        return new SignInResult(account.Id, account.Name.FullName());
+        return account;
     }
 }

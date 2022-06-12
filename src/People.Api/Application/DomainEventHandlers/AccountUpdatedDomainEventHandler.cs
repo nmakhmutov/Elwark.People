@@ -1,10 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Common.Kafka;
 using MediatR;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.Events;
+using People.Infrastructure.Integration;
 
 namespace People.Api.Application.DomainEventHandlers;
 
@@ -15,13 +12,14 @@ internal sealed class AccountUpdatedDomainEventHandler : INotificationHandler<Ac
     public AccountUpdatedDomainEventHandler(IIntegrationEventBus bus) =>
         _bus = bus;
 
-    public Task Handle(AccountUpdatedDomainEvent notification, CancellationToken ct) =>
-        _bus.PublishAsync(
-            new AccountUpdatedIntegrationEvent(
-                Guid.NewGuid(),
-                notification.Account.UpdatedAt,
-                (long)notification.Account.Id
-            ),
-            ct
-        );
+    public Task Handle(AccountUpdatedDomainEvent notification, CancellationToken ct)
+    {
+        var evt = new AccountUpdatedIntegrationEvent(
+            Guid.NewGuid(),
+            notification.Account.GetUpdatedDateTime(),
+            notification.Account.Id
+        ); 
+        
+        return _bus.PublishAsync(evt, ct);
+    }
 }

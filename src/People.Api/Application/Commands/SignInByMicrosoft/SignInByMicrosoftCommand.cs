@@ -1,40 +1,38 @@
-using System;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using People.Api.Application.Models;
-using People.Api.Infrastructure;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Api.Infrastructure.Providers.Microsoft;
+using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.Exceptions;
+using People.Infrastructure;
 
 namespace People.Api.Application.Commands.SignInByMicrosoft;
 
-public sealed record SignInByMicrosoftCommand(MicrosoftIdentity Microsoft, IPAddress Ip) : IRequest<SignInResult>;
+internal sealed record SignInByMicrosoftCommand(string Token, IPAddress Ip) : IRequest<SignInResult>;
 
-public sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInByMicrosoftCommand, SignInResult>
+internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInByMicrosoftCommand, SignInResult>
 {
-    private readonly IMediator _mediator;
-    private readonly IAccountRepository _repository;
+    private readonly PeopleDbContext _dbContext;
+    private readonly IMicrosoftApiService _microsoft;
 
-    public SignInByMicrosoftCommandHandler(IAccountRepository repository, IMediator mediator)
+    public SignInByMicrosoftCommandHandler(PeopleDbContext dbContext, IMicrosoftApiService microsoft)
     {
-        _repository = repository;
-        _mediator = mediator;
+        _dbContext = dbContext;
+        _microsoft = microsoft;
     }
 
     public async Task<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Microsoft, ct);
-        if (account is null)
-            throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var microsoft = await _microsoft.GetAsync(request.Token, ct);
+        var result =
+            await _dbContext.Accounts
+                .AsNoTracking()
+                .Where(x => x.Externals.Any(e => e.Type == ExternalService.Google && e.Identity == microsoft.Identity))
+                .Select(x => new SignInResult(x.Id, x.Name.FullName()))
+                .FirstOrDefaultAsync(ct)
+            ?? throw ExternalAccountException.NotFound(ExternalService.Google, microsoft.Identity);
 
-        account.SignIn(request.Microsoft, DateTime.UtcNow, request.Ip);
-
-        await _repository.UpdateAsync(account, ct);
-        await _mediator.DispatchDomainEventsAsync(account);
-
-        return new SignInResult(account.Id, account.Name.FullName());
+        return result;
     }
 }

@@ -1,35 +1,31 @@
-using System.Threading;
-using System.Threading.Tasks;
+using System.Net.Mail;
 using MediatR;
-using People.Api.Infrastructure;
-using People.Domain.Aggregates.AccountAggregate;
-using People.Domain.Aggregates.AccountAggregate.Identities;
+using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.Exceptions;
+using People.Domain.SeedWork;
 
 namespace People.Api.Application.Commands.ChangePrimaryEmail;
 
-internal sealed record ChangePrimaryEmailCommand(AccountId Id, EmailIdentity Email) : IRequest;
+internal sealed record ChangePrimaryEmailCommand(long Id, MailAddress Email) : IRequest;
 
 internal sealed class ChangePrimaryEmailCommandHandler : IRequestHandler<ChangePrimaryEmailCommand>
 {
-    private readonly IMediator _mediator;
     private readonly IAccountRepository _repository;
+    private readonly ITimeProvider _time;
 
-    public ChangePrimaryEmailCommandHandler(IAccountRepository repository, IMediator mediator)
+    public ChangePrimaryEmailCommandHandler(IAccountRepository repository, ITimeProvider time)
     {
         _repository = repository;
-        _mediator = mediator;
+        _time = time;
     }
 
     public async Task<Unit> Handle(ChangePrimaryEmailCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct)
-                      ?? throw new PeopleException(ExceptionCodes.AccountNotFound);
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
+        account.SetPrimaryEmail(request.Email, _time);
 
-        account.SetAsPrimaryEmail(request.Email);
-
-        await _repository.UpdateAsync(account, ct);
-        await _mediator.DispatchDomainEventsAsync(account);
+        _repository.Update(account);
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
 
         return Unit.Value;
     }

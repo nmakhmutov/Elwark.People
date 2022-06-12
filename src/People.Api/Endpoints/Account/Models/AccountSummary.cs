@@ -1,0 +1,17 @@
+namespace People.Api.Endpoints.Account.Models;
+
+internal sealed record AccountSummary(
+    long Id,
+    string Nickname,
+    string? FirstName,
+    string? LastName,
+    string FullName,
+    string Language,
+    string Picture,
+    string? CountryCode,
+    string TimeZone,
+    string DateFormat,
+    string TimeFormat,
+    DayOfWeek WeekStart,
+    bool IsBanned
+);

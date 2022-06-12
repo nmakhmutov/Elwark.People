@@ -1,13 +1,11 @@
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Fluid;
 using Fluid.ViewEngine;
 
 namespace People.Api.Infrastructure.EmailBuilder;
 
-public sealed class EmailBuilder : IEmailBuilder
+internal sealed class EmailBuilder : IEmailBuilder
 {
     private readonly Regex _emailTitleRegex = new(@"(?<=<title.*>)([\s\S]*)(?=</title>)");
     private readonly IFluidViewRenderer _rendering;
