@@ -12,7 +12,7 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
 
     public static Language Parse(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentNullException(nameof(value), $"{nameof(Language)} cannot be empty");
 
         if (value.Length != 2)
@@ -28,7 +28,7 @@ public readonly struct Language : IComparable, IComparable<Language>, IEquatable
     {
         language = Default;
 
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             return false;
 
         if (value.Length != 2)

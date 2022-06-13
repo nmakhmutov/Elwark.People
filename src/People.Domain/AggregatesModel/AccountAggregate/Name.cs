@@ -22,8 +22,8 @@ public sealed class Name : ValueObject
             throw new ArgumentOutOfRangeException(nameof(lastName), lastName, $"Nickname cannot be more then {LastNameLength}");
 
         Nickname = nickname.Trim();
-        FirstName = firstName?.Trim();
-        LastName = lastName?.Trim();
+        FirstName = Normalize(firstName);
+        LastName = Normalize(lastName);
         PreferNickname = preferNickname;
     }
 
@@ -45,6 +45,9 @@ public sealed class Name : ValueObject
         
         return $"{FirstName} {LastName}".Trim();
     }
+
+    private static string? Normalize(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {

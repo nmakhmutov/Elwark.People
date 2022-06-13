@@ -12,7 +12,7 @@ public readonly struct CountryCode : IComparable, IComparable<CountryCode>, IEqu
 
     public static CountryCode Parse(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentNullException(nameof(value), $"{nameof(CountryCode)} cannot be empty");
 
         if (value.Length != 2)
@@ -25,7 +25,7 @@ public readonly struct CountryCode : IComparable, IComparable<CountryCode>, IEqu
     {
         countryCode = Empty;
 
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             return false;
 
         if (value.Length != 2)

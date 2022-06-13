@@ -22,7 +22,7 @@ public readonly struct DateFormat : IEquatable<DateFormat>
 
     public static DateFormat Parse(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentNullException(nameof(value), "Date format cannot be null or empty.");
 
         if (!List.Contains(value))
@@ -35,7 +35,7 @@ public readonly struct DateFormat : IEquatable<DateFormat>
     {
         dateFormat = Default;
 
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             return false;
 
         if (!List.Contains(value))

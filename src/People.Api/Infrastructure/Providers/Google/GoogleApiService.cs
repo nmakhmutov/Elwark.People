@@ -40,8 +40,8 @@ internal sealed class GoogleApiService : IGoogleApiService
             account.VerifiedEmail,
             account.GivenName,
             account.FamilyName,
-            string.IsNullOrEmpty(account.Picture) ? null : new Uri(account.Picture),
-            string.IsNullOrEmpty(account.Locale) ? null : new CultureInfo(account.Locale)
+            string.IsNullOrWhiteSpace(account.Picture) ? null : new Uri(account.Picture),
+            string.IsNullOrWhiteSpace(account.Locale) ? null : new CultureInfo(account.Locale)
         );
     }
 

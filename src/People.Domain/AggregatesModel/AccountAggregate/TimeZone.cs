@@ -12,7 +12,7 @@ public readonly struct TimeZone : IComparable, IComparable<TimeZone>, IEquatable
 
     public static TimeZone Parse(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Value cannot be null or empty.", nameof(value));
 
         return new TimeZone(TimeZoneInfo.FindSystemTimeZoneById(value).Id);
@@ -22,7 +22,7 @@ public readonly struct TimeZone : IComparable, IComparable<TimeZone>, IEquatable
     {
         timeZone = Utc;
 
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             return false;
 
         try

@@ -5,7 +5,7 @@ internal sealed class NpgsqlDataProvider : INpgsqlDataProvider
     private readonly string _connection;
 
     public NpgsqlDataProvider(string connection) =>
-        _connection = string.IsNullOrEmpty(connection)
+        _connection = connection is { Length: 0 }
             ? throw new ArgumentException("Value cannot be null or empty.", nameof(connection))
             : connection;
 

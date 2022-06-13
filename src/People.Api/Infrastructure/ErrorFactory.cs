@@ -114,7 +114,7 @@ public static class ErrorFactory
         };
 
         var id = exception.Trailers.FirstOrDefault(entry => entry.Key == "ex-id")?.Value;
-        if (!string.IsNullOrEmpty(id))
+        if (id is { Length: > 0 })
             problem.Extensions.Add("id", id);
 
         return problem;
@@ -148,7 +148,7 @@ public static class ErrorFactory
 
     private static string GetValidationMessage(string propertyName, string code)
     {
-        if (string.IsNullOrEmpty(code))
+        if (code is { Length: 0 })
             return "Unknown";
 
         // var template = Errors.ResourceManager.GetString($"ValidationException:Validator:{code}") ?? code;

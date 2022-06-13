@@ -54,10 +54,10 @@ public sealed record AppSecurityOptions
 {
     public AppSecurityOptions(string appKey, string appVector)
     {
-        if (string.IsNullOrEmpty(appKey))
+        if (string.IsNullOrWhiteSpace(appKey))
             throw new ArgumentException("Value cannot be null or empty.", nameof(appKey));
 
-        if (string.IsNullOrEmpty(appVector))
+        if (string.IsNullOrWhiteSpace(appVector))
             throw new ArgumentException("Value cannot be null or empty.", nameof(appVector));
 
         AppKey = Encoding.UTF8.GetBytes(appKey);

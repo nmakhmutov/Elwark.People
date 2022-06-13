@@ -20,7 +20,7 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
 
     public static TimeFormat Parse(string? value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Time format cannot be null or empty.", nameof(value));
 
         if (!List.Contains(value))
@@ -33,7 +33,7 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
     {
         timeFormat = Default;
 
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
             return false;
 
         if (!List.Contains(value))
