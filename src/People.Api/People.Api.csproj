@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0-preview.4.22251.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0-preview.5.22303.8" />
         <PackageReference Include="Fluid.Core" Version="2.2.15" />
         <PackageReference Include="MinimalApis.LiquidViews" Version="2.2.15" />
         <PackageReference Include="CorrelationId" Version="3.0.1" />

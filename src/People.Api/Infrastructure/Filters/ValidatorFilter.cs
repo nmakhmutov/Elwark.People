@@ -11,7 +11,7 @@ internal sealed class ValidatorFilter<T> : IRouteHandlerFilter where T : class
 
     public async ValueTask<object?> InvokeAsync(RouteHandlerInvocationContext context, RouteHandlerFilterDelegate next)
     {
-        if (context.Parameters.SingleOrDefault(x => x?.GetType() == typeof(T)) is not T body)
+        if (context.Arguments.SingleOrDefault(x => x?.GetType() == typeof(T)) is not T body)
             return Results.Problem(title: "Invalid model state", detail: "Body is empty", statusCode: 400);
 
         var result = await _validator.ValidateAsync(body);

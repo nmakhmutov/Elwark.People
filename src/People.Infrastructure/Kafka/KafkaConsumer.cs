@@ -46,17 +46,24 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        _logger.LogInformation("Consumer for {N} starting...", _handlerOptions.MessageType.Name);
-        ct.Register(() =>
-            _logger.LogInformation("Consumer for {N} shutting down...", _handlerOptions.MessageType.Name));
+        ct.Register(() => _logger.LogInformation("{N} consumer shutting down...", _handlerOptions.MessageType.Name));
 
         await CreateTopicIfNotExistsAsync();
 
-        var consumers = Enumerable.Range(0, _handlerOptions.Threads)
-            .Select(_ => Task.Run(() => CreateConsumer(ct).ConfigureAwait(false), ct))
-            .ToArray();
+        switch (_handlerOptions.Threads)
+        {
+            case 0:
+                _logger.LogWarning("{N} consumer doesn't have any threads", _handlerOptions.MessageType.Name);
+                break;
 
-        await Task.WhenAll(consumers);
+            case 1:
+                await CreateConsumer(ct).ConfigureAwait(false);
+                break;
+
+            default:
+                await Task.WhenAll(Enumerable.Range(0, _handlerOptions.Threads).Select(_ => CreateConsumer(ct)));
+                break;
+        }
     }
 
     private async Task CreateConsumer(CancellationToken ct)
@@ -67,10 +74,10 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
         using var consumer = builder.Build();
         consumer.Subscribe(_handlerOptions.Topic);
 
-        _logger.LogInformation("Consumer for {N} handling by {C} from topic {T}",
+        _logger.LogInformation("Topic {T} with messages {N} handling by {C}",
+            _handlerOptions.Topic,
             _handlerOptions.MessageType.Name,
-            consumer.Name,
-            _handlerOptions.Topic
+            consumer.Name
         );
 
         while (!ct.IsCancellationRequested)
@@ -80,7 +87,7 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
                 if (result.IsPartitionEOF)
                     continue;
 
-                _logger.LogInformation("Consumer {N} received event {E} from topic {T}. {M}", consumer.Name,
+                _logger.LogInformation("{N} received {E} from topic {T}. {M}", consumer.Name,
                     _handlerOptions.MessageType.Name, _handlerOptions.Topic, result.Message.Value);
 
                 await using var scope = _serviceFactory.CreateAsyncScope();
@@ -89,7 +96,7 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
                 await _policy.ExecuteAsync(() => handler.HandleAsync(result.Message.Value))
                     .ConfigureAwait(false);
 
-                _logger.LogInformation("Consumer {N} handled event {E} from topic {T}", consumer.Name,
+                _logger.LogInformation("{N} handled {E} from topic {T}", consumer.Name,
                     _handlerOptions.MessageType.Name, _handlerOptions.Topic);
 
                 consumer.Commit(result);
@@ -137,7 +144,8 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
 
         try
         {
-            await client.CreateTopicsAsync(new[] { topic });
+            await client.CreateTopicsAsync(new[] { topic })
+                .ConfigureAwait(false);
 
             _logger.LogInformation("Topic {T} created with {P} partitions", topic.Name, topic.NumPartitions);
         }
