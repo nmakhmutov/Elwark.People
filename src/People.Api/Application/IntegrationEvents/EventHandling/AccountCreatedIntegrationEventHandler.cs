@@ -26,7 +26,7 @@ internal sealed class AccountCreatedIntegrationEventHandler : IKafkaHandler<Acco
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message)
     {
-        var account = await _repository.GetAsync(message.Id);
+        var account = await _repository.GetAsync(message.AccountId);
         if (account is null)
             return;
 
