@@ -5,7 +5,7 @@ using People.Domain.AggregatesModel.AccountAggregate;
 namespace People.Api.Endpoints.Account.Requests;
 
 internal sealed record UpdateRequest(string? FirstName, string? LastName, string Nickname, bool PreferNickname,
-    string Language, string CountryCode, string TimeZone, string DateFormat, string TimeFormat, DayOfWeek WeekStart)
+    string Language, string CountryCode, string TimeZone, string DateFormat, string TimeFormat, DayOfWeek StartOfWeek)
 {
     public UpdateAccountCommand ToCommand(long id) =>
         new(
@@ -18,7 +18,7 @@ internal sealed record UpdateRequest(string? FirstName, string? LastName, string
             Domain.AggregatesModel.AccountAggregate.TimeZone.Parse(TimeZone),
             Domain.AggregatesModel.AccountAggregate.DateFormat.Parse(DateFormat),
             Domain.AggregatesModel.AccountAggregate.TimeFormat.Parse(TimeFormat),
-            WeekStart,
+            StartOfWeek,
             Domain.AggregatesModel.AccountAggregate.CountryCode.Parse(CountryCode)
         );
 
@@ -59,7 +59,7 @@ internal sealed record UpdateRequest(string? FirstName, string? LastName, string
                 .NotEmpty()
                 .Must(x => Domain.AggregatesModel.AccountAggregate.TimeFormat.TryParse(x, out _));
 
-            RuleFor(x => x.WeekStart)
+            RuleFor(x => x.StartOfWeek)
                 .IsInEnum();
         }
     }

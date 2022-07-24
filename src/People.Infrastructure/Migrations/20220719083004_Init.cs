@@ -29,7 +29,7 @@ namespace People.Infrastructure.Migrations
                     time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     date_format = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     time_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    week_start = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    start_of_week = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     is_activated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     ban = table.Column<Ban>(type: "json", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),

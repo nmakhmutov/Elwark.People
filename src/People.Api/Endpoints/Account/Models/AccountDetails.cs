@@ -15,7 +15,7 @@ internal sealed record AccountDetails(
     string TimeZone,
     string DateFormat,
     string TimeFormat,
-    DayOfWeek WeekStart,
+    DayOfWeek StartOfWeek,
     DateTime CreatedAt,
     IEnumerable<Email> Emails,
     IEnumerable<Connection> Connections

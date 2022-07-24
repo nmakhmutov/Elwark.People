@@ -12,6 +12,6 @@ internal sealed record AccountSummary(
     string TimeZone,
     string DateFormat,
     string TimeFormat,
-    DayOfWeek WeekStart,
+    DayOfWeek StartOfWeek,
     bool IsBanned
 );

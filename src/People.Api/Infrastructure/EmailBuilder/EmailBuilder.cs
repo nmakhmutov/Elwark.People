@@ -7,7 +7,7 @@ namespace People.Api.Infrastructure.EmailBuilder;
 
 internal sealed class EmailBuilder : IEmailBuilder
 {
-    private readonly Regex _emailTitleRegex = new(@"(?<=<title.*>)([\s\S]*)(?=</title>)");
+    private readonly Regex _emailTitleRegex = new(@"(?<=<title.*>)([\s\S]*)(?=</title>)", RegexOptions.Compiled);
     private readonly IFluidViewRenderer _rendering;
 
     public EmailBuilder(IFluidViewRenderer rendering) =>

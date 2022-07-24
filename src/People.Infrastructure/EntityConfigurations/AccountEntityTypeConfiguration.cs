@@ -77,8 +77,8 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasMaxLength(32)
             .IsRequired();
 
-        builder.Property(x => x.WeekStart)
-            .HasColumnName("week_start")
+        builder.Property(x => x.StartOfWeek)
+            .HasColumnName("start_of_week")
             .HasDefaultValue(DayOfWeek.Monday)
             .IsRequired();
 

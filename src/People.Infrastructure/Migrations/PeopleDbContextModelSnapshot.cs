@@ -18,7 +18,7 @@ namespace People.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-preview.4.22229.2")
+                .HasAnnotation("ProductVersion", "7.0.0-preview.6.22329.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -62,6 +62,12 @@ namespace People.Infrastructure.Migrations
                         .HasColumnType("character varying(2048)")
                         .HasColumnName("picture");
 
+                    b.Property<int>("StartOfWeek")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("start_of_week");
+
                     b.Property<string>("TimeFormat")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -73,12 +79,6 @@ namespace People.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")
                         .HasColumnName("time_zone");
-
-                    b.Property<int>("WeekStart")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1)
-                        .HasColumnName("week_start");
 
                     b.Property<Ban>("_ban")
                         .HasColumnType("json")

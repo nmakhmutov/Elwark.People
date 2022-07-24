@@ -40,7 +40,7 @@ public sealed class Account : Entity<long>, IAggregateRoot
         TimeZone = TimeZone.Utc;
         TimeFormat = TimeFormat.Default;
         DateFormat = DateFormat.Default;
-        WeekStart = DayOfWeek.Monday;
+        StartOfWeek = DayOfWeek.Monday;
         IsActivated = false;
         _createdAt = _updatedAt = time.Now;
         _ban = null;
@@ -66,7 +66,7 @@ public sealed class Account : Entity<long>, IAggregateRoot
 
     public TimeFormat TimeFormat { get; private set; }
 
-    public DayOfWeek WeekStart { get; private set; }
+    public DayOfWeek StartOfWeek { get; private set; }
 
     public bool IsActivated { get; private set; }
 
@@ -255,7 +255,7 @@ public sealed class Account : Entity<long>, IAggregateRoot
 
     public void Update(DayOfWeek weekStart, ITimeProvider time)
     {
-        WeekStart = weekStart;
+        StartOfWeek = weekStart;
         _updatedAt = time.Now;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));

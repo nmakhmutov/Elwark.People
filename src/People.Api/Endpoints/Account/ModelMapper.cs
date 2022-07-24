@@ -18,7 +18,7 @@ internal static class AccountModelMapper
             result.TimeZone.ToString(),
             result.DateFormat.ToString(),
             result.TimeFormat.ToString(),
-            result.WeekStart,
+            result.StartOfWeek,
             result.Ban is not null
         );
 
@@ -36,7 +36,7 @@ internal static class AccountModelMapper
             account.TimeZone.ToString(),
             account.DateFormat.ToString(),
             account.TimeFormat.ToString(),
-            account.WeekStart,
+            account.StartOfWeek,
             account.GetCreatedDateTime(),
             account.Emails.Select(x => x.ToModel()),
             account.Externals.Select(x => x.ToModel())

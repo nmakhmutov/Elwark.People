@@ -8,7 +8,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Infrastructure;
 
-public static class ErrorFactory
+internal static class ErrorFactory
 {
     public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder app) =>
         app.UseExceptionHandler(builder => builder.Run(async context =>

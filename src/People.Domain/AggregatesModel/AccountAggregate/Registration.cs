@@ -18,9 +18,9 @@ public sealed class Registration : ValueObject
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
+        yield return CountryCode;
+        
         foreach (var b in Ip)
             yield return b;
-
-        yield return CountryCode;
     }
 }

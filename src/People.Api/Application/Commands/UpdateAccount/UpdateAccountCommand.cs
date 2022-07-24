@@ -16,7 +16,7 @@ internal sealed record UpdateAccountCommand(
     TimeZone TimeZone,
     DateFormat DateFormat,
     TimeFormat TimeFormat,
-    DayOfWeek WeekStart,
+    DayOfWeek StartOfWeek,
     CountryCode Country
 ) : IRequest<Account>;
 
@@ -42,7 +42,7 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         account.Update(request.DateFormat, _time);
         account.Update(request.TimeFormat, _time);
         account.Update(request.Language, _time);
-        account.Update(request.WeekStart, _time);
+        account.Update(request.StartOfWeek, _time);
 
         _repository.Update(account);
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);

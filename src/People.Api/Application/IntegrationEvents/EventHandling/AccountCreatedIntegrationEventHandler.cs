@@ -36,13 +36,15 @@ internal sealed class AccountCreatedIntegrationEventHandler : IKafkaHandler<Acco
 
         if (ipInformation is not null)
         {
-            var country = CountryCode.TryParse(ipInformation.CountryCode, out var x) ? x : CountryCode.Empty;
-            account.Update(country, _time);
-            account.UpdateRegistrationCountry(country);
-            
+            if (CountryCode.TryParse(ipInformation.CountryCode, out var country))
+            {
+                account.Update(country, _time);
+                account.UpdateRegistrationCountry(country);
+            }
+
             if (TimeZone.TryParse(ipInformation.TimeZone, out var timeZone))
                 account.Update(timeZone, _time);
-            
+
             changed = true;
         }
 

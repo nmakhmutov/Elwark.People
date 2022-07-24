@@ -29,7 +29,7 @@ SELECT a.id,
        a.time_zone,
        a.date_format,
        a.time_format,
-       a.week_start,
+       a.start_of_week,
        a.roles,
        a.ban
 FROM accounts a
@@ -69,7 +69,7 @@ internal sealed record AccountSummary(
     TimeZone TimeZone,
     DateFormat DateFormat,
     TimeFormat TimeFormat,
-    DayOfWeek WeekStart,
+    DayOfWeek StartOfWeek,
     string[] Roles,
     Ban? Ban
 );
