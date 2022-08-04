@@ -3,4 +3,4 @@ using People.Domain.Entities;
 
 namespace People.Domain.DomainEvents;
 
-public sealed record AccountUnbannedDomainEvent(Account Account) : INotification;
+public sealed record AccountUnbannedDomainEvent(AccountId Id) : INotification;

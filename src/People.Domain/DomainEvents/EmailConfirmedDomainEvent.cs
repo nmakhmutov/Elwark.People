@@ -4,4 +4,4 @@ using People.Domain.Entities;
 
 namespace People.Domain.DomainEvents;
 
-public sealed record EmailConfirmedDomainEvent(Account Account, MailAddress Email) : INotification;
+public sealed record EmailConfirmedDomainEvent(AccountId Id, MailAddress Email) : INotification;

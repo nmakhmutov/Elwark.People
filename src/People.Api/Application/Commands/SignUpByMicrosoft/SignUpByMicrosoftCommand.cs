@@ -11,7 +11,8 @@ using People.Infrastructure;
 
 namespace People.Api.Application.Commands.SignUpByMicrosoft;
 
-internal sealed record SignUpByMicrosoftCommand(string Token, Language Language, IPAddress Ip) : IRequest<SignUpResult>;
+internal sealed record SignUpByMicrosoftCommand(string Token, Language Language, IPAddress Ip, string? UserAgent) :
+    IRequest<SignUpResult>;
 
 internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMicrosoftCommand, SignUpResult>
 {

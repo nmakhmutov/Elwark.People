@@ -1,3 +1,4 @@
+using System.Net;
 using MediatR;
 using People.Api.Application.Models;
 using People.Domain.Exceptions;
@@ -6,7 +7,8 @@ using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SignUpByEmail;
 
-internal sealed record SignUpByEmailCommand(string Token, string Code) : IRequest<SignUpResult>;
+internal sealed record SignUpByEmailCommand(string Token, string Code, IPAddress Ip, string? UserAgent) :
+    IRequest<SignUpResult>;
 
 internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmailCommand, SignUpResult>
 {

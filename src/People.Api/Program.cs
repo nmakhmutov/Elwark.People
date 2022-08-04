@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
@@ -230,6 +231,7 @@ builder.Host
         .Destructure.AsScalar<TimeZone>()
         .Destructure.AsScalar<DateFormat>()
         .Destructure.AsScalar<TimeFormat>()
+        .Destructure.AsScalar<IPAddress>()
         .Destructure.ByTransforming<Account>(x => new { x.Id, x.CountryCode, x.Name.Nickname })
         .Destructure.ByTransforming<AccountSummary>(x => new { x.Id, x.CountryCode, x.Name.Nickname })
         .ReadFrom.Configuration(context.Configuration)

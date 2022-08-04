@@ -11,7 +11,8 @@ using People.Infrastructure;
 
 namespace People.Api.Application.Commands.SignUpByGoogle;
 
-internal sealed record SignUpByGoogleCommand(string Token, Language Language, IPAddress Ip) : IRequest<SignUpResult>;
+internal sealed record SignUpByGoogleCommand(string Token, Language Language, IPAddress Ip, string? UserAgent) :
+    IRequest<SignUpResult>;
 
 internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoogleCommand, SignUpResult>
 {

@@ -28,6 +28,18 @@ message IpAddress {
   string value = 1;
 }
 
+message UserAgent {
+  string value = 1;
+}
+
+message Language {
+  string value = 1;
+}
+
+message Email {
+  string value = 1;
+}
+
 message AccountRequest {
   int64 id = 1;
 }
@@ -57,15 +69,16 @@ message AccountReply {
   string picture = 6;
   string country_code = 7;
   string time_zone = 8;
-  string language = 9;
+  Language language = 9;
   Ban ban = 10;
   repeated string roles = 11;
 }
 
 message EmailSigningUpRequest {
-  string email = 1;
-  string language = 2;
+  Email email = 1;
+  Language language = 2;
   IpAddress ip = 3;
+  UserAgent user_agent = 4;
 }
 
 message EmailSigningUpReply {
@@ -75,11 +88,13 @@ message EmailSigningUpReply {
 message EmailSignUpRequest {
   string token = 1;
   string code = 2;
+  IpAddress ip = 3;
+  UserAgent user_agent = 4;
 }
 
 message EmailSigningInRequest {
-  string email = 1;
-  string language = 2;
+  Email email = 1;
+  Language language = 2;
 }
 
 message EmailSigningInReply {
@@ -89,17 +104,21 @@ message EmailSigningInReply {
 message EmailSignInRequest {
   string token = 1;
   string code = 2;
+  IpAddress ip = 3;
+  UserAgent user_agent = 4;
 }
 
 message ExternalSignInRequest {
   string access_token = 1;
   IpAddress ip = 2;
+  UserAgent user_agent = 3;
 }
 
 message ExternalSignUpRequest {
   string access_token = 1;
-  string language = 2;
+  Language language = 2;
   IpAddress ip = 3;
+  UserAgent user_agent = 4;
 }
 
 message ExternalAppendRequest {

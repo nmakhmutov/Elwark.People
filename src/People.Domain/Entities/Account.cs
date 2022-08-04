@@ -16,8 +16,8 @@ public sealed class Account : Entity<AccountId>,
     private const string DefaultPicture =
         "https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default.svg";
 
-    private readonly List<EmailAccount> _emails;
-    private readonly List<ExternalConnection> _externals;
+    private readonly HashSet<EmailAccount> _emails;
+    private readonly HashSet<ExternalConnection> _externals;
 
     private Ban? _ban;
     private DateTime _createdAt;
@@ -49,9 +49,9 @@ public sealed class Account : Entity<AccountId>,
         IsActivated = false;
         _createdAt = _updatedAt = _lastActive = _lastLogIn = DateTime.MinValue;
         _ban = null;
-        _emails = new List<EmailAccount>();
         _roles = Array.Empty<string>();
-        _externals = new List<ExternalConnection>();
+        _emails = new HashSet<EmailAccount>();
+        _externals = new HashSet<ExternalConnection>();
         _regCountryCode = CountryCode.Empty;
         _regIp = hasher.CreateHash(ip);
 
@@ -82,10 +82,10 @@ public sealed class Account : Entity<AccountId>,
         _ban is not null;
 
     public IReadOnlyCollection<EmailAccount> Emails =>
-        _emails.AsReadOnly();
+        _emails.ToArray();
 
     public IReadOnlyCollection<ExternalConnection> Externals =>
-        _externals.AsReadOnly();
+        _externals.ToArray();
 
     public void SetAsUpdated(TimeProvider provider)
     {
@@ -132,7 +132,7 @@ public sealed class Account : Entity<AccountId>,
         result.Confirm(timeProvider.UtcNow());
 
         UpdateActivation();
-        AddDomainEvent(new EmailConfirmedDomainEvent(this, email));
+        AddDomainEvent(new EmailConfirmedDomainEvent(Id, email));
     }
 
     public void DeleteEmail(MailAddress email)
@@ -155,12 +155,12 @@ public sealed class Account : Entity<AccountId>,
         Name = new Name(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void DeleteGoogle(string identity)
     {
-        _externals.RemoveAll(x => x.Type == ExternalService.Google && x.Identity == identity);
+        _externals.RemoveWhere(x => x.Type == ExternalService.Google && x.Identity == identity);
 
         UpdateActivation();
     }
@@ -171,12 +171,12 @@ public sealed class Account : Entity<AccountId>,
         Name = new Name(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void DeleteMicrosoft(string identity)
     {
-        _externals.RemoveAll(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
+        _externals.RemoveWhere(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
 
         UpdateActivation();
     }
@@ -191,14 +191,14 @@ public sealed class Account : Entity<AccountId>,
     {
         _ban = new Ban(reason, expiredAt, timeProvider.UtcNow());
 
-        AddDomainEvent(new AccountBannedDomainEvent(this, reason, expiredAt));
+        AddDomainEvent(new AccountBannedDomainEvent(Id, reason, expiredAt));
     }
 
     public void Unban()
     {
         _ban = null;
 
-        AddDomainEvent(new AccountUnbannedDomainEvent(this));
+        AddDomainEvent(new AccountUnbannedDomainEvent(Id));
     }
 
     public void Update(string? firstName, string? lastName) =>
@@ -208,14 +208,14 @@ public sealed class Account : Entity<AccountId>,
     {
         Name = new Name(nickname, firstName, lastName, preferNickname);
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void Update(Uri? picture)
     {
         Picture = picture?.ToString() ?? DefaultPicture;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void Update(Language language, RegionCode region, CountryCode country, TimeZone timeZone)
@@ -228,7 +228,7 @@ public sealed class Account : Entity<AccountId>,
         if (_regCountryCode == CountryCode.Empty)
             _regCountryCode = CountryCode;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void Update(DateFormat dateFormat, TimeFormat timeFormat, DayOfWeek weekStart)
@@ -237,7 +237,7 @@ public sealed class Account : Entity<AccountId>,
         TimeFormat = timeFormat;
         StartOfWeek = weekStart;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     private void UpdateActivation() =>

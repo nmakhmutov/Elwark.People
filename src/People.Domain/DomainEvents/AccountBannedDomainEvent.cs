@@ -3,4 +3,4 @@ using People.Domain.Entities;
 
 namespace People.Domain.DomainEvents;
 
-public sealed record AccountBannedDomainEvent(Account Account, string Reason, DateTime ExpiredAt) : INotification;
+public sealed record AccountBannedDomainEvent(AccountId Id, string Reason, DateTime ExpiredAt) : INotification;

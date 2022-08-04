@@ -12,7 +12,7 @@ using People.Kafka.Integration;
 
 namespace People.Api.Application.Commands.SignInByGoogle;
 
-internal sealed record SignInByGoogleCommand(string Token, IPAddress Ip) : IRequest<SignInResult>;
+internal sealed record SignInByGoogleCommand(string Token, IPAddress Ip, string? UserAgent) : IRequest<SignInResult>;
 
 internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoogleCommand, SignInResult>
 {

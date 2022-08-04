@@ -12,7 +12,7 @@ using People.Kafka.Integration;
 
 namespace People.Api.Application.Commands.SignInByMicrosoft;
 
-internal sealed record SignInByMicrosoftCommand(string Token, IPAddress Ip) : IRequest<SignInResult>;
+internal sealed record SignInByMicrosoftCommand(string Token, IPAddress Ip, string? UserAgent) : IRequest<SignInResult>;
 
 internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInByMicrosoftCommand, SignInResult>
 {

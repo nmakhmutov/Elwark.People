@@ -13,7 +13,8 @@ using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SigningUpByEmail;
 
-internal sealed record SigningUpByEmailCommand(MailAddress Email, Language Language, IPAddress Ip) : IRequest<string>;
+internal sealed record SigningUpByEmailCommand(MailAddress Email, Language Language, IPAddress Ip, string? UserAgent) :
+    IRequest<string>;
 
 internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUpByEmailCommand, string>
 {
