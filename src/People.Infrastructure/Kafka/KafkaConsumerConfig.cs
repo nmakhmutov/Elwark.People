@@ -2,8 +2,7 @@ namespace People.Infrastructure.Kafka;
 
 public sealed record KafkaConsumerConfig<T>
 {
-    public Type MessageType =>
-        typeof(T);
+    public string EventName { get; } = typeof(T).Name;
 
     public string Topic { get; set; } = string.Empty;
 

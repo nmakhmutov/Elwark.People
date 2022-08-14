@@ -24,6 +24,7 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.Property(x => x.Code)
             .HasColumnName("code")
+            .HasMaxLength(16)
             .IsRequired();
 
         builder.Property(x => x.Type)

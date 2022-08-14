@@ -3,6 +3,7 @@ using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
 using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.SeedWork;
+using People.Infrastructure.Confirmations;
 using People.Infrastructure.Kafka;
 using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
 
@@ -10,14 +11,16 @@ namespace People.Api.Application.IntegrationEvents.EventHandling;
 
 internal sealed class AccountCreatedIntegrationEventHandler : IKafkaHandler<AccountCreatedIntegrationEvent>
 {
+    private readonly IConfirmationService _confirmation;
     private readonly IGravatarService _gravatar;
     private readonly IIpApiService _ipService;
     private readonly IAccountRepository _repository;
     private readonly ITimeProvider _time;
 
-    public AccountCreatedIntegrationEventHandler(IGravatarService gravatar, IIpApiService ipService,
-        IAccountRepository repository, ITimeProvider time)
+    public AccountCreatedIntegrationEventHandler(IConfirmationService confirmation, IGravatarService gravatar,
+        IIpApiService ipService, IAccountRepository repository, ITimeProvider time)
     {
+        _confirmation = confirmation;
         _gravatar = gravatar;
         _ipService = ipService;
         _repository = repository;
@@ -26,6 +29,8 @@ internal sealed class AccountCreatedIntegrationEventHandler : IKafkaHandler<Acco
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message)
     {
+        await _confirmation.DeleteAsync(message.AccountId);
+
         var account = await _repository.GetAsync(message.AccountId);
         if (account is null)
             return;

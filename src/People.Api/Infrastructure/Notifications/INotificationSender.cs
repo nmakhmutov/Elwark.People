@@ -5,5 +5,5 @@ namespace People.Api.Infrastructure.Notifications;
 
 public interface INotificationSender
 {
-    Task SendConfirmationAsync(MailAddress email, int code, Language language, CancellationToken ct = default);
+    Task SendConfirmationAsync(MailAddress email, string code, Language language, CancellationToken ct = default);
 }

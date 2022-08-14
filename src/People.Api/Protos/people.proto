@@ -69,7 +69,7 @@ message EmailSigningUpReply {
 
 message EmailSignUpRequest {
     string token = 1;
-    int32 code = 2;
+    string code = 2;
 }
 
 message EmailSigningInRequest {
@@ -83,7 +83,7 @@ message EmailSigningInReply {
 
 message EmailSignInRequest {
   string token = 1;
-  int32 code = 2;
+  string code = 2;
 }
 
 message ExternalSignInRequest {

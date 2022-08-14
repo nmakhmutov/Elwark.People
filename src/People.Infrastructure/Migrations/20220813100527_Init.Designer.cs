@@ -13,7 +13,7 @@ using People.Infrastructure;
 namespace People.Infrastructure.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
-    [Migration("20220719083004_Init")]
+    [Migration("20220813100527_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace People.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-preview.6.22329.4")
+                .HasAnnotation("ProductVersion", "7.0.0-preview.7.22376.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -214,8 +214,10 @@ namespace People.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("account_id");
 
-                    b.Property<int>("Code")
-                        .HasColumnType("integer")
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
                         .HasColumnName("code");
 
                     b.Property<DateTime>("CreatedAt")

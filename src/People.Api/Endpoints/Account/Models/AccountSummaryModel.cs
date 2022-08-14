@@ -1,6 +1,6 @@
 namespace People.Api.Endpoints.Account.Models;
 
-internal sealed record AccountSummary(
+internal sealed record AccountSummaryModel(
     long Id,
     string Nickname,
     string? FirstName,

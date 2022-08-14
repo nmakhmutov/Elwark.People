@@ -5,15 +5,19 @@ namespace People.Infrastructure.Confirmations;
 
 public interface IConfirmationService
 {
-    Task<Result<AccountConfirmation>> CheckSignInAsync(string token, int code);
+    Task<ConfirmationResult> SignInAsync(long id, ITimeProvider time, CancellationToken ct = default);
 
-    Task<ConfirmationResult> CreateSignInAsync(long id, ITimeProvider time);
+    Task<AccountConfirmation> SignInAsync(string token, string code, CancellationToken ct = default);
 
-    Task<Result<AccountConfirmation>> CheckSignUpAsync(string token, int code);
+    Task<ConfirmationResult> SignUpAsync(long id, ITimeProvider time, CancellationToken ct = default);
 
-    Task<ConfirmationResult> CreateSignUpAsync(long id, ITimeProvider time);
+    Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct = default);
 
-    Task<Result<EmailConfirmation>> CheckEmailVerifyAsync(string token, int code);
+    Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time, CancellationToken ct = default);
 
-    Task<ConfirmationResult> CreateEmailVerifyAsync(long id, MailAddress email, ITimeProvider time);
+    Task<EmailConfirmation> VerifyEmailAsync(string token, string code, CancellationToken ct = default);
+
+    Task<int> DeleteAsync(DateTime now, CancellationToken ct = default);
+
+    Task<int> DeleteAsync(long id, CancellationToken ct = default);
 }

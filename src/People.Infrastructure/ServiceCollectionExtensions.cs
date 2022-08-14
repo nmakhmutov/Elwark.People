@@ -33,7 +33,8 @@ public static class ServiceCollectionExtensions
             )
             .AddSingleton<IOptions<AppSecurityOptions>>(_ =>
                 new OptionsWrapper<AppSecurityOptions>(new AppSecurityOptions(options.AppKey, options.AppVector))
-            );
+            )
+            .AddHostedService<ConfirmationsWorker>();
 
         return services;
     }
@@ -64,7 +65,7 @@ public sealed record AppSecurityOptions
         AppVector = Encoding.UTF8.GetBytes(appVector);
     }
 
-    public byte[] AppKey { get; set; }
+    public byte[] AppKey { get; init; }
 
-    public byte[] AppVector { get; set; }
+    public byte[] AppVector { get; init; }
 }

@@ -9,7 +9,7 @@ namespace People.Domain.AggregatesModel.AccountAggregate;
 public sealed class Account : Entity<long>, IAggregateRoot
 {
     private static readonly Uri DefaultPicture =
-        new("https://res.cloudinary.com/elwark/image/upload/v1610430646/People/default_j21xml.png");
+        new("https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default_nhpke4.svg");
 
     private readonly List<EmailAccount> _emails;
     private readonly List<ExternalConnection> _externals;
@@ -93,10 +93,10 @@ public sealed class Account : Entity<long>, IAggregateRoot
         var notConfirmed = _emails.FirstOrDefault(x => !x.IsConfirmed);
         if (notConfirmed is not null)
             throw EmailException.NotConfirmed(new MailAddress(notConfirmed.Email));
-                
+
         var now = time.Now;
-        _emails.Add(new EmailAccount(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
         _updatedAt = now;
+        _emails.Add(new EmailAccount(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
 
         UpdateActivation();
     }
@@ -110,9 +110,9 @@ public sealed class Account : Entity<long>, IAggregateRoot
         if (result is null)
             throw EmailException.NotFound(email);
 
-        if(!result.IsConfirmed)
+        if (!result.IsConfirmed)
             throw EmailException.NotConfirmed(email);
-        
+
         foreach (var item in _emails)
             item.RemovePrimary();
 
@@ -122,11 +122,12 @@ public sealed class Account : Entity<long>, IAggregateRoot
 
     public void ConfirmEmail(MailAddress email, ITimeProvider time)
     {
-        var result = _emails.FirstOrDefault(x => x.Email == email.Address);
-        result?.Confirm(time.Now);
+        var result = _emails.FirstOrDefault(x => x.Email == email.Address) ?? throw EmailException.NotFound(email);
+        result.Confirm(time.Now);
         _updatedAt = time.Now;
 
         UpdateActivation();
+        AddDomainEvent(new EmailConfirmedDomainEvent(this, email));
     }
 
     public void DeleteEmail(MailAddress email, ITimeProvider time)

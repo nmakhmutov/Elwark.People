@@ -38,7 +38,7 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
         if (!email.IsConfirmed)
             throw EmailException.NotConfirmed(email.Email);
 
-        var confirmation = await _confirmation.CreateSignInAsync(email.AccountId, _time);
+        var confirmation = await _confirmation.SignInAsync(email.AccountId, _time, ct);
         await _notification.SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct);
 
         return confirmation.Token;

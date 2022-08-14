@@ -1,3 +1,3 @@
 namespace People.Infrastructure.Confirmations;
 
-public sealed record ConfirmationResult(string Token, int Code);
+public sealed record ConfirmationResult(string Token, string Code);

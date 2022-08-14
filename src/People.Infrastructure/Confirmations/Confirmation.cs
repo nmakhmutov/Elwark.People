@@ -5,10 +5,13 @@ namespace People.Infrastructure.Confirmations;
 
 public sealed class Confirmation
 {
-    private Confirmation() =>
+    private Confirmation()
+    {
+        Code = string.Empty;
         Type = string.Empty;
+    }
 
-    public Confirmation(Guid id, long accountId, int code, string type, DateTime createdAt, TimeSpan ttl)
+    public Confirmation(Guid id, long accountId, string code, string type, DateTime createdAt, TimeSpan ttl)
     {
         Id = id;
         AccountId = accountId;
@@ -22,7 +25,7 @@ public sealed class Confirmation
 
     public long AccountId { get; private set; }
 
-    public int Code { get; private set; }
+    public string Code { get; private set; }
 
     public string Type { get; private set; }
 

@@ -29,7 +29,7 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
         var result =
             await _dbContext.Accounts
                 .AsNoTracking()
-                .Where(x => x.Externals.Any(e => e.Type == ExternalService.Google && e.Identity == google.Identity))
+                .WhereGoogle(google.Identity)
                 .Select(x => new SignInResult(x.Id, x.Name.FullName()))
                 .FirstOrDefaultAsync(ct)
             ?? throw ExternalAccountException.NotFound(ExternalService.Google, google.Identity);

@@ -6,11 +6,15 @@ networks:
 
 services:
   people.api:
-    container_name: "people_api"
     image: "elwark/people/api:${TAG:-latest}"
+    container_name: "people_api"
     build:
       context: .
       dockerfile: People.Api/Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Serilog__WriteTo__0__Name=Console

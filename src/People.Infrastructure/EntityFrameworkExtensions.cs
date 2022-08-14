@@ -13,7 +13,7 @@ public static class EntityFrameworkExtensions
     {
         if (email is null)
             throw new ArgumentNullException(nameof(email));
-        
+
         return emails.AnyAsync(x => x.Email == email.Address, ct);
     }
 
@@ -38,4 +38,10 @@ public static class EntityFrameworkExtensions
 
         return accounts.AnyAsync(x => x.Type == ExternalService.Microsoft && x.Identity == identity, ct);
     }
+
+    public static IQueryable<Account> WhereGoogle(this IQueryable<Account> source, string identity) =>
+        source.Where(x => x.Externals.Any(e => e.Type == ExternalService.Google && e.Identity == identity));
+    
+    public static IQueryable<Account> WhereMicrosoft(this IQueryable<Account> source, string identity) =>
+        source.Where(x => x.Externals.Any(e => e.Type == ExternalService.Microsoft && e.Identity == identity));
 }

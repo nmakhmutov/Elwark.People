@@ -50,7 +50,7 @@ namespace People.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     account_id = table.Column<long>(type: "bigint", nullable: false),
-                    code = table.Column<int>(type: "integer", nullable: false),
+                    code = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)

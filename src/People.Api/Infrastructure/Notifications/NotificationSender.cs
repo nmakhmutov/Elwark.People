@@ -17,7 +17,7 @@ internal sealed class NotificationSender : INotificationSender
         _notification = notification;
     }
 
-    public async Task SendConfirmationAsync(MailAddress email, int code, Language language, CancellationToken ct)
+    public async Task SendConfirmationAsync(MailAddress email, string code, Language language, CancellationToken ct)
     {
         var template = $"Confirmation.{language}.liquid";
         var (subject, body) = await _emailBuilder.CreateEmailAsync(template, new ConfirmationCodeModel(code));

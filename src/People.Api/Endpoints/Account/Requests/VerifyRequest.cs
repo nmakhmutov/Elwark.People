@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace People.Api.Endpoints.Account.Requests;
 
-internal sealed record VerifyRequest(string Token, int Code)
+internal sealed record VerifyRequest(string Token, string Code)
 {
     internal sealed class Validator : AbstractValidator<VerifyRequest>
     {
@@ -12,7 +12,7 @@ internal sealed record VerifyRequest(string Token, int Code)
                 .NotEmpty();
 
             RuleFor(x => x.Code)
-                .GreaterThan(0);
+                .NotEmpty();
         }
     }
 }

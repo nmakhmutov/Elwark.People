@@ -32,13 +32,11 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
         var emailAccount = account.Emails.FirstOrDefault(x => x.Email == request.Email.Address)
                     ?? throw EmailException.NotFound(request.Email);
 
-        var email = new MailAddress(emailAccount.Email);
-        
         if(emailAccount.IsConfirmed)
-            throw EmailException.AlreadyConfirmed(email);
+            throw EmailException.AlreadyConfirmed(request.Email);
         
-        var confirmation = await _confirmation.CreateEmailVerifyAsync(account.Id, email, _time);
-        await _notification.SendConfirmationAsync(email, confirmation.Code, account.Language, ct);
+        var confirmation = await _confirmation.VerifyEmailAsync(account.Id, request.Email, _time, ct);
+        await _notification.SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct);
 
         return confirmation.Token;
     }

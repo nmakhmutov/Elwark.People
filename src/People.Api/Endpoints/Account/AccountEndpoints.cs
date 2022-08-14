@@ -42,7 +42,7 @@ internal static class AccountEndpoints
                     return Results.Ok(result.ToModel());
                 })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
-            .AddRouteHandlerFilter<ValidatorFilter<UpdateRequest>>();
+            .AddEndpointFilter<ValidatorFilter<UpdateRequest>>();
 
         routes.MapPost("/accounts/me/emails",
                 async (EmailRequest request, ClaimsPrincipal user, IMediator mediator, CancellationToken ct) =>
@@ -53,7 +53,7 @@ internal static class AccountEndpoints
                     return Results.Ok(result.ToModel());
                 })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
-            .AddRouteHandlerFilter<ValidatorFilter<EmailRequest>>();
+            .AddEndpointFilter<ValidatorFilter<EmailRequest>>();
 
         routes.MapDelete("/accounts/me/emails/{email}",
                 async (string email, ClaimsPrincipal user, IMediator mediator, CancellationToken ct) =>
@@ -73,7 +73,7 @@ internal static class AccountEndpoints
                     return Results.Ok(emails.Select(x => x.ToModel()));
                 })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
-            .AddRouteHandlerFilter<ValidatorFilter<EmailRequest>>();
+            .AddEndpointFilter<ValidatorFilter<EmailRequest>>();
 
         routes.MapPost("/accounts/me/emails/verify",
                 async (EmailRequest request, ClaimsPrincipal user, IMediator mediator, CancellationToken ct) =>
@@ -82,7 +82,7 @@ internal static class AccountEndpoints
                     return Results.Ok(new { token = await mediator.Send(command, ct) });
                 })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
-            .AddRouteHandlerFilter<ValidatorFilter<EmailRequest>>();
+            .AddEndpointFilter<ValidatorFilter<EmailRequest>>();
 
         routes.MapPut("/accounts/me/emails/verify",
                 async (VerifyRequest request, IMediator mediator, CancellationToken ct) =>
@@ -93,7 +93,7 @@ internal static class AccountEndpoints
                     return Results.Ok(result.ToModel());
                 })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
-            .AddRouteHandlerFilter<ValidatorFilter<VerifyRequest>>();
+            .AddEndpointFilter<ValidatorFilter<VerifyRequest>>();
 
         routes.MapDelete("/accounts/me/connections/google/identities/{id}",
                 async (string id, ClaimsPrincipal user, IMediator mediator, CancellationToken ct) =>

@@ -25,10 +25,11 @@ internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInBy
     public async Task<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
     {
         var microsoft = await _microsoft.GetAsync(request.Token, ct);
+        
         var result =
             await _dbContext.Accounts
                 .AsNoTracking()
-                .Where(x => x.Externals.Any(e => e.Type == ExternalService.Google && e.Identity == microsoft.Identity))
+                .WhereMicrosoft(microsoft.Identity)
                 .Select(x => new SignInResult(x.Id, x.Name.FullName()))
                 .FirstOrDefaultAsync(ct)
             ?? throw ExternalAccountException.NotFound(ExternalService.Google, microsoft.Identity);

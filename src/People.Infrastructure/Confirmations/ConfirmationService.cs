@@ -11,8 +11,8 @@ namespace People.Infrastructure.Confirmations;
 internal sealed class ConfirmationService : IConfirmationService
 {
     private const string LockTemplate = "ppl-conf-lk-{0}";
+    private const int ConfirmationLength = 5;
 
-    private static readonly Random Random = new();
     private static readonly TimeSpan CodeTtl = TimeSpan.FromMinutes(15);
     private static readonly TimeSpan LockTtl = TimeSpan.FromMinutes(1);
 
@@ -28,57 +28,64 @@ internal sealed class ConfirmationService : IConfirmationService
         _options = options.Value;
     }
 
-    public async Task<Result<AccountConfirmation>> CheckSignInAsync(string token, int code)
+    public async Task<AccountConfirmation> SignInAsync(string token, string code, CancellationToken ct)
     {
         if (TryGetGuid(token, out var id))
-            return await CheckAsync(id, "SignIn", code);
+            return await CheckAsync(id, "SignIn", code, ct);
 
-        return new Result<AccountConfirmation>(ConfirmationException.Mismatch());
+        throw ConfirmationException.Mismatch();
     }
 
-    public async Task<ConfirmationResult> CreateSignInAsync(long id, ITimeProvider time)
+    public async Task<ConfirmationResult> SignInAsync(long id, ITimeProvider time, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignIn", time);
+        var confirmation = await GetOrCreateAsync(id, "SignIn", time, ct);
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
 
-    public async Task<Result<AccountConfirmation>> CheckSignUpAsync(string token, int code)
+    public async Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct)
     {
         if (TryGetGuid(token, out var id))
-            return await CheckAsync(id, "SignUp", code);
+            return await CheckAsync(id, "SignUp", code, ct);
 
-        return new Result<AccountConfirmation>(ConfirmationException.Mismatch());
+        throw ConfirmationException.Mismatch();
     }
 
-    public async Task<ConfirmationResult> CreateSignUpAsync(long id, ITimeProvider time)
+    public async Task<ConfirmationResult> SignUpAsync(long id, ITimeProvider time, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignUp", time);
+        var confirmation = await GetOrCreateAsync(id, "SignUp", time, ct);
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
 
-    public async Task<Result<EmailConfirmation>> CheckEmailVerifyAsync(string token, int code)
+    public async Task<EmailConfirmation> VerifyEmailAsync(string token, string code, CancellationToken ct)
     {
+        Guid id;
+        MailAddress email;
+
         try
         {
             var bytes = Decrypt(Convert.FromBase64String(token));
-            var id = new Guid(bytes[..16]);
-            var email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
-
-            var check = await CheckAsync(id, "EmailVerify", code);
-            if (check.HasException)
-                return new Result<EmailConfirmation>(check.Exception);
-
-            return new EmailConfirmation(check.Value.AccountId, email);
+            id = new Guid(bytes[..16]);
+            email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
         }
         catch
         {
-            return new Result<EmailConfirmation>(ConfirmationException.Mismatch());
+            throw ConfirmationException.Mismatch();
         }
+
+        var check = await CheckAsync(id, "EmailVerify", code, ct);
+        return new EmailConfirmation(check.AccountId, email);
     }
 
-    public async Task<ConfirmationResult> CreateEmailVerifyAsync(long id, MailAddress email, ITimeProvider time)
+    public Task<int> DeleteAsync(DateTime now, CancellationToken ct) =>
+        _dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM confirmations WHERE expires_at < '{now:O}'", ct);
+
+    public Task<int> DeleteAsync(long id, CancellationToken ct) =>
+        _dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM confirmations WHERE account_id = {id}", ct);
+
+    public async Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time,
+        CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "EmailVerify", time);
+        var confirmation = await GetOrCreateAsync(id, "EmailVerify", time, ct);
         var bytes = Encrypt(confirmation.Id.ToByteArray().Concat(Encoding.UTF8.GetBytes(email.Address)).ToArray());
 
         return new ConfirmationResult(Convert.ToBase64String(bytes), confirmation.Code);
@@ -104,46 +111,46 @@ internal sealed class ConfirmationService : IConfirmationService
         return encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
     }
 
-    private async Task<Result<AccountConfirmation>> CheckAsync(Guid id, string type, int code)
+    private async Task<AccountConfirmation> CheckAsync(Guid id, string type, string code, CancellationToken ct)
     {
         var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id, ct) ?? throw ConfirmationException.NotFound();
 
-        if (confirmation is null)
-            return new Result<AccountConfirmation>(ConfirmationException.NotFound());
+        if (!string.Equals(confirmation.Type, type, StringComparison.InvariantCultureIgnoreCase))
+            throw ConfirmationException.Mismatch();
 
-        if (confirmation.Type != type)
-            return new Result<AccountConfirmation>(ConfirmationException.Mismatch());
+        if (!string.Equals(confirmation.Code, code, StringComparison.InvariantCultureIgnoreCase))
+            throw ConfirmationException.Mismatch();
 
-        if (confirmation.Code != code)
-            return new Result<AccountConfirmation>(ConfirmationException.Mismatch());
-
-        return new Result<AccountConfirmation>(new AccountConfirmation(confirmation.AccountId));
+        return new AccountConfirmation(confirmation.AccountId);
     }
 
-    private async Task<Confirmation> GetOrCreateAsync(long id, string type, ITimeProvider time)
+    private async Task<Confirmation> GetOrCreateAsync(long id, string type, ITimeProvider time, CancellationToken ct)
     {
         var key = string.Format(LockTemplate, id);
-        
+
         if (await _redis.KeyExistsAsync(key))
             throw ConfirmationException.AlreadySent();
-        
-        await _redis.StringSetAsync(key, true, LockTtl);
-        
+
         var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type);
+            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
 
         if (confirmation is not null)
             return confirmation;
 
-        var entity = new Confirmation(CreateSortedGuid(time.Now, id), id, Generate(), type, time.Now, CodeTtl);
-        await _dbContext.AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
-        
+        var guid = CreateSortedGuid(id, time.Now);
+        var code = Generate(ConfirmationLength);
+
+        var entity = new Confirmation(guid, id, code, type, time.Now, CodeTtl);
+        await _dbContext.AddAsync(entity, ct);
+        await _dbContext.SaveChangesAsync(ct);
+
+        await _redis.StringSetAsync(key, true, LockTtl);
+
         return entity;
     }
 
-    private static Guid CreateSortedGuid(DateTime time, long id)
+    private static Guid CreateSortedGuid(long id, DateTime time)
     {
         Span<byte> bytes = stackalloc byte[16];
         BitConverter.GetBytes(id).CopyTo(bytes[..8]);
@@ -166,6 +173,14 @@ internal sealed class ConfirmationService : IConfirmationService
         }
     }
 
-    private static int Generate() =>
-        Random.Next(1_000, 10_000);
+    private static string Generate(int length)
+    {
+        const string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var sb = new StringBuilder(length);
+
+        for (var i = 0; i < length; i++)
+            sb.Append(chars[RandomNumberGenerator.GetInt32(chars.Length)]);
+
+        return sb.ToString();
+    }
 }

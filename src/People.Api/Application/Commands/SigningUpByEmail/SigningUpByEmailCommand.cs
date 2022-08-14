@@ -59,7 +59,7 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
 
     private async Task<string> SendConfirmationAsync(long id, MailAddress email, Language language, CancellationToken ct)
     {
-        var confirmation = await _confirmation.CreateSignUpAsync(id, _time);
+        var confirmation = await _confirmation.SignUpAsync(id, _time, ct);
         await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct);
 
         return confirmation.Token;

@@ -28,7 +28,6 @@ using People.Api.Infrastructure.Providers.Google;
 using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
 using People.Api.Infrastructure.Providers.Microsoft;
-using People.Api.Infrastructure.Workers;
 using People.Infrastructure;
 using People.Infrastructure.Kafka;
 using Serilog;
@@ -122,7 +121,6 @@ builder.Services
     });
 
 builder.Services
-    .AddHostedService<ClearExpiredConfirmationsWorker>()
     .AddSingleton<INotificationSender, NotificationSender>()
     .AddSingleton<IEmailBuilder, EmailBuilder>()
     .AddFluid(options =>

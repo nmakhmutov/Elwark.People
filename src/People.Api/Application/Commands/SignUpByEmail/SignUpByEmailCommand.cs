@@ -7,7 +7,7 @@ using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SignUpByEmail;
 
-internal sealed record SignUpByEmailCommand(string Token, int Code) : IRequest<SignUpResult>;
+internal sealed record SignUpByEmailCommand(string Token, string Code) : IRequest<SignUpResult>;
 
 internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmailCommand, SignUpResult>
 {
@@ -25,8 +25,7 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
 
     public async Task<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
     {
-        var confirmation = (await _confirmation.CheckSignUpAsync(request.Token, request.Code))
-            .GetOrThrow();
+        var confirmation = await _confirmation.SignUpAsync(request.Token, request.Code, ct);
         
         var account = await _repository.GetAsync(confirmation.AccountId, ct)
                       ?? throw AccountException.NotFound(confirmation.AccountId);

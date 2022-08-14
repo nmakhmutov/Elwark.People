@@ -1,3 +1,4 @@
+using People.Api.Application.Queries.GetAccountSummary;
 using People.Api.Endpoints.Account.Models;
 using People.Domain.AggregatesModel.AccountAggregate;
 
@@ -5,7 +6,7 @@ namespace People.Api.Endpoints.Account;
 
 internal static class AccountModelMapper
 {
-    internal static AccountSummary ToModel(this Application.Queries.GetAccountSummary.AccountSummary result) =>
+    internal static AccountSummaryModel ToModel(this AccountSummary result) =>
         new(
             result.Id,
             result.Name.Nickname,
@@ -22,7 +23,7 @@ internal static class AccountModelMapper
             result.Ban is not null
         );
 
-    internal static AccountDetails ToModel(this Domain.AggregatesModel.AccountAggregate.Account account) =>
+    internal static AccountDetailsModel ToModel(this Domain.AggregatesModel.AccountAggregate.Account account) =>
         new(
             account.Id,
             account.Name.Nickname,
@@ -45,12 +46,12 @@ internal static class AccountModelMapper
     private static string? ToModel(this CountryCode code) =>
         code.IsEmpty() ? null : code.ToString();
 
-    private static Connection ToModel(this ExternalConnection x) =>
+    private static ConnectionModel ToModel(this ExternalConnection x) =>
         new(x.Type, x.Identity, x.FirstName, x.LastName);
 
-    public static Models.Email ToModel(this EmailAccount x) =>
+    public static EmailModel ToModel(this EmailAccount x) =>
         new(x.Email, x.IsPrimary, x.IsConfirmed);
 
-    public static Models.Email ToModel(this Application.Queries.GetEmails.Email x) =>
+    public static EmailModel ToModel(this Application.Queries.GetEmails.Email x) =>
         new(x.Value, x.IsPrimary, x.IsConfirmed);
 }
