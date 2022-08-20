@@ -4,7 +4,7 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
 {
     public static readonly TimeFormat Default = new("HH:mm");
 
-    public static readonly IReadOnlyCollection<string> List = new[]
+    private static readonly IReadOnlyCollection<string> List = new[]
     {
         "H:mm",
         "HH:mm",

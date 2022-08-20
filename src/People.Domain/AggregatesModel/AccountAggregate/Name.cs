@@ -37,10 +37,7 @@ public sealed class Name : ValueObject
 
     public string FullName()
     {
-        if (PreferNickname)
-            return Nickname;
-        
-        if (FirstName is null && LastName is null)
+        if (PreferNickname || (FirstName is null && LastName is null))
             return Nickname;
         
         return $"{FirstName} {LastName}".Trim();

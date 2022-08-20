@@ -10,7 +10,6 @@ namespace People.Infrastructure.Confirmations;
 
 internal sealed class ConfirmationService : IConfirmationService
 {
-    private const string LockTemplate = "ppl-conf-lk-{0}";
     private const int ConfirmationLength = 5;
 
     private static readonly TimeSpan CodeTtl = TimeSpan.FromMinutes(15);
@@ -127,7 +126,7 @@ internal sealed class ConfirmationService : IConfirmationService
 
     private async Task<Confirmation> GetOrCreateAsync(long id, string type, ITimeProvider time, CancellationToken ct)
     {
-        var key = string.Format(LockTemplate, id);
+        var key = $"ppl-conf-lk-{id}";
 
         if (await _redis.KeyExistsAsync(key))
             throw ConfirmationException.AlreadySent();
@@ -175,12 +174,12 @@ internal sealed class ConfirmationService : IConfirmationService
 
     private static string Generate(int length)
     {
-        const string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        var sb = new StringBuilder(length);
+        const string chars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
 
-        for (var i = 0; i < length; i++)
-            sb.Append(chars[RandomNumberGenerator.GetInt32(chars.Length)]);
+        using var generator = RandomNumberGenerator.Create();
+        var bytes = new byte[length];
+        generator.GetBytes(bytes);
 
-        return sb.ToString();
+        return new string(bytes.Select(x => chars[x % chars.Length]).ToArray());
     }
 }
