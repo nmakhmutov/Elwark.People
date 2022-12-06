@@ -115,6 +115,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("updated_at")
             .HasDefaultValueSql("now()")
             .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken()
             .IsRequired();
 
         builder.Property<DateTime>("_createdAt")
@@ -134,7 +135,5 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasForeignKey("_accountId")
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
-
-        builder.UseXminAsConcurrencyToken();
     }
 }

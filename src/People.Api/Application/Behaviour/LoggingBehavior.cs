@@ -13,7 +13,7 @@ internal sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<T
         _logger = logger;
 
     [DebuggerStepThrough]
-    public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
         var name = request.GetType().Name;
 

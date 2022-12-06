@@ -188,7 +188,7 @@ builder.Services
     });
 
 builder.Services
-    .ConfigureRouteHandlerJsonOptions(options =>
+    .ConfigureHttpJsonOptions(options =>
     {
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;

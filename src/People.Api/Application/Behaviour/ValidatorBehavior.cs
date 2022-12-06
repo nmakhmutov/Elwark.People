@@ -14,7 +14,7 @@ internal sealed class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior
         _validators = validators?.ToArray() ?? Array.Empty<IValidator<TRequest>>();
 
     [DebuggerStepThrough]
-    public async Task<TResponse> Handle(TRequest request, CancellationToken ct, RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
         if (_validators.Length == 0)
             return await next();

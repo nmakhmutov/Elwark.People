@@ -20,24 +20,23 @@ namespace People.Infrastructure.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     nickname = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    first_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    last_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    prefer_nickname = table.Column<bool>(type: "boolean", nullable: false),
+                    firstname = table.Column<string>(name: "first_name", type: "character varying(128)", maxLength: 128, nullable: true),
+                    lastname = table.Column<string>(name: "last_name", type: "character varying(128)", maxLength: 128, nullable: true),
+                    prefernickname = table.Column<bool>(name: "prefer_nickname", type: "boolean", nullable: false),
                     picture = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     language = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
-                    country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
-                    time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    date_format = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    time_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    start_of_week = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    is_activated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    countrycode = table.Column<string>(name: "country_code", type: "character varying(2)", maxLength: 2, nullable: false),
+                    timezone = table.Column<string>(name: "time_zone", type: "character varying(128)", maxLength: 128, nullable: false),
+                    dateformat = table.Column<string>(name: "date_format", type: "character varying(64)", maxLength: 64, nullable: false),
+                    timeformat = table.Column<string>(name: "time_format", type: "character varying(32)", maxLength: 32, nullable: false),
+                    startofweek = table.Column<int>(name: "start_of_week", type: "integer", nullable: false, defaultValue: 1),
+                    isactivated = table.Column<bool>(name: "is_activated", type: "boolean", nullable: false, defaultValue: false),
                     ban = table.Column<Ban>(type: "json", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     roles = table.Column<string[]>(type: "text[]", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    reg_ip = table.Column<byte[]>(type: "bytea", nullable: true),
-                    reg_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: true)
+                    regip = table.Column<byte[]>(name: "reg_ip", type: "bytea", nullable: true),
+                    regcountrycode = table.Column<string>(name: "reg_country_code", type: "character varying(2)", maxLength: 2, nullable: true),
+                    updatedat = table.Column<DateTime>(name: "updated_at", type: "timestamp with time zone", rowVersion: true, nullable: false, defaultValueSql: "now()"),
+                    createdat = table.Column<DateTime>(name: "created_at", type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -49,11 +48,11 @@ namespace People.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    account_id = table.Column<long>(type: "bigint", nullable: false),
+                    accountid = table.Column<long>(name: "account_id", type: "bigint", nullable: false),
                     code = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    createdat = table.Column<DateTime>(name: "created_at", type: "timestamp with time zone", nullable: false),
+                    expiresat = table.Column<DateTime>(name: "expires_at", type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,10 +66,10 @@ namespace People.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
                     type = table.Column<byte>(type: "smallint", nullable: false),
                     identity = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    first_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    last_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    account_id = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    firstname = table.Column<string>(name: "first_name", type: "character varying(256)", maxLength: 256, nullable: true),
+                    lastname = table.Column<string>(name: "last_name", type: "character varying(256)", maxLength: 256, nullable: true),
+                    accountid = table.Column<long>(name: "account_id", type: "bigint", nullable: false),
+                    createdat = table.Column<DateTime>(name: "created_at", type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -78,7 +77,7 @@ namespace People.Infrastructure.Migrations
                     table.UniqueConstraint("AK_connections_type_identity", x => new { x.type, x.identity });
                     table.ForeignKey(
                         name: "FK_connections_accounts_account_id",
-                        column: x => x.account_id,
+                        column: x => x.accountid,
                         principalTable: "accounts",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -89,11 +88,11 @@ namespace People.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
-                    account_id = table.Column<long>(type: "bigint", nullable: false),
+                    accountid = table.Column<long>(name: "account_id", type: "bigint", nullable: false),
                     email = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
-                    is_primary = table.Column<bool>(type: "boolean", nullable: false),
-                    confirmed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
+                    isprimary = table.Column<bool>(name: "is_primary", type: "boolean", nullable: false),
+                    confirmedat = table.Column<DateTime>(name: "confirmed_at", type: "timestamp with time zone", nullable: true),
+                    createdat = table.Column<DateTime>(name: "created_at", type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -101,7 +100,7 @@ namespace People.Infrastructure.Migrations
                     table.UniqueConstraint("AK_emails_email", x => x.email);
                     table.ForeignKey(
                         name: "FK_emails_accounts_account_id",
-                        column: x => x.account_id,
+                        column: x => x.accountid,
                         principalTable: "accounts",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
