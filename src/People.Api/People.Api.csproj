@@ -1,35 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <Protobuf Include="Protos\people.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
-        <PackageReference Include="Fluid.Core" Version="2.3.0" />
-        <PackageReference Include="MinimalApis.LiquidViews" Version="2.3.0" />
-        <PackageReference Include="CorrelationId" Version="3.0.1" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.50.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.50.0" PrivateAssets="all" />
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Email\Views\*">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Protobuf Include="Protos\people.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CorrelationId" Version="3.0.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
+    <PackageReference Include="Fluid.Core" Version="2.3.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.51.0" PrivateAssets="all" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.2" />
+    <PackageReference Include="MinimalApis.LiquidViews" Version="2.3.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Email\Views\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

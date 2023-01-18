@@ -4,12 +4,12 @@ using People.Api.Infrastructure.Providers.IpApi;
 using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
-using People.Infrastructure.Kafka;
+using People.Infrastructure.Integration;
 using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
 
 namespace People.Api.Application.IntegrationEvents.EventHandling;
 
-internal sealed class AccountCreatedIntegrationEventHandler : IKafkaHandler<AccountCreatedIntegrationEvent>
+internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventHandler<AccountCreatedIntegrationEvent>
 {
     private readonly IConfirmationService _confirmation;
     private readonly IGravatarService _gravatar;

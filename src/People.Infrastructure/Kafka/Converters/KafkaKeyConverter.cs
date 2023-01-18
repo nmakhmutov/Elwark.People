@@ -1,7 +1,7 @@
 using System.Text;
 using Confluent.Kafka;
 
-namespace People.Infrastructure.Kafka;
+namespace People.Infrastructure.Kafka.Converters;
 
 internal sealed class KafkaKeyConverter : ISerializer<string>, IDeserializer<string>
 {

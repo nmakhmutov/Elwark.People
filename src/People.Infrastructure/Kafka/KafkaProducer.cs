@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 using People.Infrastructure.Integration;
+using People.Infrastructure.Kafka.Configurations;
 
 namespace People.Infrastructure.Kafka;
 

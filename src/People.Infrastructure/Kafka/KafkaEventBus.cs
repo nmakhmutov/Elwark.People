@@ -8,14 +8,14 @@ using Polly.Retry;
 
 namespace People.Infrastructure.Kafka;
 
-internal sealed class KafkaMessageBus : IIntegrationEventBus
+internal sealed class KafkaEventBus : IIntegrationEventBus
 {
     private static readonly ConcurrentDictionary<Type, Type> Types = new();
     private readonly IServiceScopeFactory _factory;
-    private readonly ILogger<KafkaMessageBus> _logger;
+    private readonly ILogger<KafkaEventBus> _logger;
     private readonly AsyncRetryPolicy _policy;
 
-    public KafkaMessageBus(IServiceScopeFactory factory, ILogger<KafkaMessageBus> logger)
+    public KafkaEventBus(IServiceScopeFactory factory, ILogger<KafkaEventBus> logger)
     {
         var sleepDurations = new[]
         {
@@ -47,7 +47,8 @@ internal sealed class KafkaMessageBus : IIntegrationEventBus
         await _policy.ExecuteAsync(token => producer.ProduceAsync(message, token), ct)
             .ConfigureAwait(false);
 
-        _logger.LogInformation("Kafka message {m} sent.", message);
+        _logger.LogInformation("Message {M} with key {K} has been sent. Message body is: {B}",
+            type.Name, message.MessageId, message);
     }
 
     public Task PublishAsync<T>(IEnumerable<T> messages, CancellationToken ct) where T : IIntegrationEvent =>

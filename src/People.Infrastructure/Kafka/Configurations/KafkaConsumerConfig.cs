@@ -1,8 +1,9 @@
-namespace People.Infrastructure.Kafka;
+namespace People.Infrastructure.Kafka.Configurations;
 
 public sealed record KafkaConsumerConfig<T>
 {
-    public string EventName { get; } = typeof(T).Name;
+    public string EventName =>
+        typeof(T).Name;
 
     public string Topic { get; set; } = string.Empty;
 

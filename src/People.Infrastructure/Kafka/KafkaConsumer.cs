@@ -5,25 +5,27 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using People.Infrastructure.Integration;
+using People.Infrastructure.Kafka.Configurations;
+using People.Infrastructure.Kafka.Converters;
 using Polly;
 using Polly.Retry;
 
 namespace People.Infrastructure.Kafka;
 
-internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
-    where Event : IIntegrationEvent
-    where Handler : class, IKafkaHandler<Event>
+internal sealed class KafkaConsumer<TEvent, THandler> : BackgroundService
+    where TEvent : IIntegrationEvent
+    where THandler : class, IIntegrationEventHandler<TEvent>
 {
     private readonly IHostApplicationLifetime _application;
     private readonly ConsumerConfig _consumerConfig;
-    private readonly KafkaConsumerConfig<Event> _handlerOptions;
-    private readonly ILogger<KafkaConsumer<Event, Handler>> _logger;
+    private readonly KafkaConsumerConfig<TEvent> _handlerOptions;
+    private readonly ILogger<KafkaConsumer<TEvent, THandler>> _logger;
     private readonly AsyncRetryPolicy _policy;
     private readonly IServiceScopeFactory _serviceFactory;
 
     public KafkaConsumer(IServiceScopeFactory serviceFactory, IHostApplicationLifetime application,
-        ILogger<KafkaConsumer<Event, Handler>> logger, IOptions<ConsumerConfig> consumerOptions,
-        IOptions<KafkaConsumerConfig<Event>> handlerOptions)
+        ILogger<KafkaConsumer<TEvent, THandler>> logger, IOptions<ConsumerConfig> consumerOptions,
+        IOptions<KafkaConsumerConfig<TEvent>> handlerOptions)
     {
         _logger = logger;
         _application = application;
@@ -37,27 +39,27 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
                 _handlerOptions.RetryCount,
                 _ => _handlerOptions.RetryInterval,
                 (ex, time, retry, _) =>
-                    _logger.LogCritical(ex, "Error occured in kafka handler for {N}. Retry {R}. Time {T}",
+                    _logger.LogCritical(ex, "Error occured in kafka handler for {N}. Retry {R} ({T})",
                         _handlerOptions.EventName, retry, time)
             );
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
+        await CreateTopicIfNotExistsAsync();
+
         switch (_handlerOptions.Threads)
         {
-            case 0:
-                _logger.LogWarning("{N} consumer doesn't have any threads", _handlerOptions.EventName);
+            case < 1:
+                _logger.LogWarning("Topic {T} doesn't have any consumer handlers for messages {M}",
+                    _handlerOptions.Topic, _handlerOptions.EventName);
                 break;
 
             case 1:
-                await CreateTopicIfNotExistsAsync();
                 await Task.Factory.StartNew(() => CreateConsumer(ct), TaskCreationOptions.LongRunning);
                 break;
 
-            default:
-                await CreateTopicIfNotExistsAsync();
-
+            case > 1:
                 var tasks = new Task[_handlerOptions.Threads];
                 for (var i = 0; i < _handlerOptions.Threads; i++)
                     tasks[i] = Task.Factory.StartNew(() => CreateConsumer(ct), TaskCreationOptions.LongRunning);
@@ -69,26 +71,24 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
 
     private async Task CreateConsumer(CancellationToken ct)
     {
-        var builder = new ConsumerBuilder<string, Event>(_consumerConfig)
-            .SetValueDeserializer(KafkaDataConverter<Event>.Instance);
+        var builder = new ConsumerBuilder<string, TEvent>(_consumerConfig)
+            .SetValueDeserializer(KafkaDataConverter<TEvent>.Instance);
 
         using var consumer = builder.Build();
         consumer.Subscribe(_handlerOptions.Topic);
+        var name = GetConsumerName(consumer);
 
-        var name = consumer.Name;
-        var id = consumer.MemberId;
+        _logger.LogInformation("Consumer {C} for message {M} from topic {T} has been subscribed",
+            name, _handlerOptions.EventName, _handlerOptions.Topic);
 
-        _logger.LogInformation("Consumer {N} ({I}) for message {M} from topic {T} subscribed", name, id,
-            _handlerOptions.EventName, _handlerOptions.Topic);
-
-        ct.Register(() => _logger.LogInformation("Consumer {N} ({I}) for message {M} from topic {T} shutting down...",
-            name, id, _handlerOptions.EventName, _handlerOptions.Topic));
+        ct.Register(() => _logger.LogInformation("Consumer {C} for message {M} from topic {T} stopping...",
+            name, _handlerOptions.EventName, _handlerOptions.Topic));
 
         while (!ct.IsCancellationRequested)
             await ConsumeAsync(consumer, ct);
     }
 
-    private async Task ConsumeAsync(IConsumer<string, Event> consumer, CancellationToken ct)
+    private async Task ConsumeAsync(IConsumer<string, TEvent> consumer, CancellationToken ct)
     {
         try
         {
@@ -96,40 +96,39 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
             if (result.IsPartitionEOF)
                 return;
 
-            _logger.LogInformation("Consumer {N} ({I}) received {E} from topic {T}. {M}", consumer.Name,
-                consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic, result.Message.Value);
+            _logger.LogInformation("Message {M} with key {K} from topic {T} is processed by the consumer {C}...",
+                _handlerOptions.EventName, result.Message.Key, _handlerOptions.Topic, consumer.MemberId);
 
             await using var scope = _serviceFactory.CreateAsyncScope();
-            var handler = scope.ServiceProvider.GetRequiredService<IKafkaHandler<Event>>();
+            var handler = scope.ServiceProvider.GetRequiredService<IIntegrationEventHandler<TEvent>>();
 
             await _policy.ExecuteAsync(() => handler.HandleAsync(result.Message.Value));
 
-            _logger.LogInformation("Consumer {N} ({I}) handled {E} from topic {T}. {M}", consumer.Name,
-                consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic, result.Message.Value);
+            _logger.LogInformation("Message {M} with key {K} from topic {T} has been processed by the consumer {C}",
+                _handlerOptions.EventName, result.Message.Key, _handlerOptions.Topic, consumer.MemberId);
 
             consumer.Commit(result);
         }
         catch (OperationCanceledException ex)
         {
+            _logger.LogWarning(ex, "Consumer {C} has been canceled while processing messages {M} from topic {T}",
+                consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic);
             consumer.Close();
-            _logger.LogWarning(ex, "Consumer {N} ({I}) for message {M} from topic {T} canceled", 
-                consumer.Name, consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic);
 
             throw;
         }
         catch (ConsumeException ex) when (ex.Error.IsFatal)
         {
-            _logger.LogCritical(ex, "Consumer {N} ({I}) for message {M} from topic {T} failed. Application stopping",
-                consumer.Name, consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic);
+            _logger.LogCritical(ex, "Consumer {C} threw a fatal exception while processing messages {M} from topic {T}",
+                consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic);
             _application.StopApplication();
 
             throw;
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex,
-                "Consumer {N} ({I}) for message {M} from topic {T} failed. Unhandled exception has occured",
-                consumer.Name, consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic);
+            _logger.LogWarning(ex, "Consumer {C} threw an exception while processing messages {M} from topic {T}",
+                consumer.MemberId, _handlerOptions.EventName, _handlerOptions.Topic);
         }
     }
 
@@ -158,10 +157,13 @@ internal sealed class KafkaConsumer<Event, Handler> : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "Exception occured on kafka topic creation");
+            _logger.LogCritical(ex, "Exception occured while creating topic {T}", topic.Name);
             _application.StopApplication();
 
             throw;
         }
     }
+
+    private static string GetConsumerName(IConsumer<string, TEvent> consumer) =>
+        string.IsNullOrEmpty(consumer.MemberId) ? consumer.Name : consumer.MemberId;
 }
