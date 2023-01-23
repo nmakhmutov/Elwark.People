@@ -3,8 +3,8 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /
-COPY . ./
-WORKDIR People.Api
+COPY "src" "src/"
+WORKDIR /src/People.Api
 RUN dotnet publish People.Api.csproj -c Release -o /app
 
 FROM build AS publish

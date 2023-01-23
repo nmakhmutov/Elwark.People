@@ -23,6 +23,6 @@ internal sealed partial class EmailBuilder : IEmailBuilder
         return new EmailTemplateResult(subject, body);
     }
 
-    [GeneratedRegex("(?<=<title.*>)([\\s\\S]*)(?=</title>)", RegexOptions.Compiled)]
+    [GeneratedRegex("(?<=<title.*>)([\\s\\S]*)(?=</title>)", RegexOptions.NonBacktracking)]
     private static partial Regex GetHtmlTitleRegex();
 }
