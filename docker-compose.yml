@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  people.api:
+    image: "elwark/people/api:${TAG:-latest}"
+    build:
+      context: .
+      dockerfile: src/People.Api/Dockerfile

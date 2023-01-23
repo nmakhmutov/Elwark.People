@@ -1,13 +1,11 @@
-using System.Text;
 using System.Text.RegularExpressions;
 using Fluid;
 using Fluid.ViewEngine;
 
 namespace People.Api.Infrastructure.EmailBuilder;
 
-internal sealed class EmailBuilder : IEmailBuilder
+internal sealed partial class EmailBuilder : IEmailBuilder
 {
-    private readonly Regex _emailTitleRegex = new(@"(?<=<title.*>)([\s\S]*)(?=</title>)", RegexOptions.Compiled);
     private readonly IFluidViewRenderer _rendering;
 
     public EmailBuilder(IFluidViewRenderer rendering) =>
@@ -15,13 +13,16 @@ internal sealed class EmailBuilder : IEmailBuilder
 
     public async Task<EmailTemplateResult> CreateEmailAsync(string templateName, ITemplateModel model)
     {
-        await using var ms = new MemoryStream();
-        await using var sw = new StreamWriter(ms);
+        await using var sw = new StringWriter();
         await _rendering.RenderViewAsync(sw, $"Email/Views/{templateName}", new TemplateContext(model));
-
-        var body = Encoding.UTF8.GetString(ms.ToArray());
-        var subject = _emailTitleRegex.Match(body).Value.Trim();
+        await sw.FlushAsync();
+        
+        var body = sw.ToString();
+        var subject = GetHtmlTitleRegex().Match(body).Value.Trim();
 
         return new EmailTemplateResult(subject, body);
     }
+
+    [GeneratedRegex("(?<=<title.*>)([\\s\\S]*)(?=</title>)", RegexOptions.Compiled)]
+    private static partial Regex GetHtmlTitleRegex();
 }

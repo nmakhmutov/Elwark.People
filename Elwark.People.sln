@@ -1,9 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FEA0C318-FFED-4D39-8781-265718CA43DD}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}"
-	ProjectSection(SolutionItems) = preProject
-		src\docker-compose.yml = src\docker-compose.yml
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Domain", "src\People.Domain\People.Domain.csproj", "{34D9032C-5705-42B6-B687-D05307645F63}"
 EndProject
