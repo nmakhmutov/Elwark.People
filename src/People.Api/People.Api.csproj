@@ -9,7 +9,9 @@
     <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CorrelationId" Version="3.0.1" />
+    <PackageReference Include="Elwark.CorrelationId" Version="1.0.0" />
+    <PackageReference Include="Elwark.CorrelationId.Grpc" Version="1.0.0" />
+    <PackageReference Include="Elwark.CorrelationId.Http" Version="1.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.4.0" />
     <PackageReference Include="Fluid.Core" Version="2.3.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />

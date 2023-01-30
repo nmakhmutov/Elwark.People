@@ -1,11 +1,9 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CorrelationId;
-using CorrelationId.DependencyInjection;
-using CorrelationId.HttpClient;
 using FluentValidation;
 using Fluid;
+using Grpc.AspNetCore.Server;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
 using MediatR;
@@ -37,11 +35,7 @@ const string mainCors = "MainCORS";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddCorrelationId(options =>
-    {
-        options.UpdateTraceIdentifier = true;
-        options.AddToLoggingScope = true;
-    })
+    .AddCorrelationId(options => options.UpdateTraceIdentifier = true)
     .WithTraceIdentifierProvider();
 
 builder.Services
@@ -129,26 +123,6 @@ builder.Services
         options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
     });
 
-var defaultMethodConfig = new MethodConfig
-{
-    Names = { MethodName.Default },
-    RetryPolicy = new RetryPolicy
-    {
-        MaxAttempts = 5,
-        InitialBackoff = TimeSpan.FromSeconds(1),
-        MaxBackoff = TimeSpan.FromSeconds(3),
-        BackoffMultiplier = 1,
-        RetryableStatusCodes = { StatusCode.Unavailable }
-    }
-};
-
-var defaultHttpHandler = new HttpClientHandler
-{
-    UseProxy = false,
-    AllowAutoRedirect = false,
-    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-};
-
 builder.Services
     .AddGrpcClient<NotificationService.NotificationServiceClient>(options =>
     {
@@ -156,11 +130,34 @@ builder.Services
         options.ChannelOptionsActions.Add(channel =>
         {
             channel.Credentials = ChannelCredentials.Insecure;
-            channel.ServiceConfig = new ServiceConfig { MethodConfigs = { defaultMethodConfig } };
-            channel.HttpHandler = defaultHttpHandler;
+            channel.ServiceConfig = new ServiceConfig
+            {
+                MethodConfigs =
+                {
+                    new MethodConfig
+                    {
+                        Names = { MethodName.Default },
+                        RetryPolicy = new RetryPolicy
+                        {
+                            MaxAttempts = 5,
+                            InitialBackoff = TimeSpan.FromSeconds(1),
+                            MaxBackoff = TimeSpan.FromSeconds(3),
+                            BackoffMultiplier = 1,
+                            RetryableStatusCodes = { StatusCode.Unavailable }
+                        }
+                    }
+                }
+            };
+            channel.HttpHandler = new HttpClientHandler
+            {
+                UseProxy = false,
+                AllowAutoRedirect = false,
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
         });
     })
-    .AddCorrelationIdForwarding();
+    .AddGrpcCorrelationIdForwarding();
 
 builder.Services
     .AddHttpClient<IGoogleApiService, GoogleApiService>(client =>
@@ -196,7 +193,11 @@ builder.Services
         options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.SerializerOptions.PropertyNameCaseInsensitive = true;
     })
-    .AddGrpc(options => options.Interceptors.Add<GrpcExceptionInterceptor>());
+    .AddGrpc(options =>
+    {
+        options.UseCorrelationId();
+        options.Interceptors.Add<GrpcExceptionInterceptor>();
+    });
 
 builder.Host
     .UseSerilog((context, configuration) => configuration

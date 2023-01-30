@@ -9,7 +9,7 @@ namespace People.Domain.AggregatesModel.AccountAggregate;
 public sealed class Account : Entity<long>, IAggregateRoot
 {
     private static readonly Uri DefaultPicture =
-        new("https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default_nhpke4.svg");
+        new("https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default.svg");
 
     private readonly List<EmailAccount> _emails;
     private readonly List<ExternalConnection> _externals;
