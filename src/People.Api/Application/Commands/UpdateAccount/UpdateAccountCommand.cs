@@ -33,8 +33,9 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
 
     public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct)
-                      ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository
+            .GetAsync(request.Id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
         account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname, _time);
         account.Update(request.Country, _time);
@@ -45,7 +46,9 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         account.Update(request.StartOfWeek, _time);
 
         _repository.Update(account);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
 
         return account;
     }

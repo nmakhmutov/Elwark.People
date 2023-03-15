@@ -10,7 +10,7 @@ namespace People.Infrastructure.Confirmations;
 
 internal sealed class ConfirmationService : IConfirmationService
 {
-    private const int ConfirmationLength = 5;
+    private const int ConfirmationLength = 6;
 
     private static readonly TimeSpan CodeTtl = TimeSpan.FromMinutes(15);
     private static readonly TimeSpan LockTtl = TimeSpan.FromMinutes(1);
@@ -27,31 +27,25 @@ internal sealed class ConfirmationService : IConfirmationService
         _options = options.Value;
     }
 
-    public async Task<AccountConfirmation> SignInAsync(string token, string code, CancellationToken ct)
-    {
-        if (TryGetGuid(token, out var id))
-            return await CheckAsync(id, "SignIn", code, ct);
-
-        throw ConfirmationException.Mismatch();
-    }
+    public Task<AccountConfirmation> SignInAsync(string token, string code, CancellationToken ct) =>
+        CheckAsync(ConventToGuid(token), "SignIn", code, ct);
 
     public async Task<ConfirmationResult> SignInAsync(long id, ITimeProvider time, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignIn", time, ct);
+        var confirmation = await GetOrCreateAsync(id, "SignIn", time, ct)
+            .ConfigureAwait(false);
+
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
 
-    public async Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct)
-    {
-        if (TryGetGuid(token, out var id))
-            return await CheckAsync(id, "SignUp", code, ct);
-
-        throw ConfirmationException.Mismatch();
-    }
+    public Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct) =>
+        CheckAsync(ConventToGuid(token), "SignUp", code, ct);
 
     public async Task<ConfirmationResult> SignUpAsync(long id, ITimeProvider time, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignUp", time, ct);
+        var confirmation = await GetOrCreateAsync(id, "SignUp", time, ct)
+            .ConfigureAwait(false);
+
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
 
@@ -71,7 +65,9 @@ internal sealed class ConfirmationService : IConfirmationService
             throw ConfirmationException.Mismatch();
         }
 
-        var check = await CheckAsync(id, "EmailVerify", code, ct);
+        var check = await CheckAsync(id, "EmailVerify", code, ct)
+            .ConfigureAwait(false);
+
         return new EmailConfirmation(check.AccountId, email);
     }
 
@@ -84,7 +80,9 @@ internal sealed class ConfirmationService : IConfirmationService
     public async Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time,
         CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "EmailVerify", time, ct);
+        var confirmation = await GetOrCreateAsync(id, "EmailVerify", time, ct)
+            .ConfigureAwait(false);
+
         var bytes = Encrypt(confirmation.Id.ToByteArray().Concat(Encoding.UTF8.GetBytes(email.Address)).ToArray());
 
         return new ConfirmationResult(Convert.ToBase64String(bytes), confirmation.Code);
@@ -112,8 +110,10 @@ internal sealed class ConfirmationService : IConfirmationService
 
     private async Task<AccountConfirmation> CheckAsync(Guid id, string type, string code, CancellationToken ct)
     {
-        var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.Id == id, ct) ?? throw ConfirmationException.NotFound();
+        var confirmation = await _dbContext
+            .Set<Confirmation>()
+            .FirstOrDefaultAsync(x => x.Id == id, ct)
+            .ConfigureAwait(false) ?? throw ConfirmationException.NotFound();
 
         if (!string.Equals(confirmation.Type, type, StringComparison.InvariantCultureIgnoreCase))
             throw ConfirmationException.Mismatch();
@@ -128,11 +128,13 @@ internal sealed class ConfirmationService : IConfirmationService
     {
         var key = $"ppl-conf-lk-{id}";
 
-        if (await _redis.KeyExistsAsync(key))
+        if (await _redis.KeyExistsAsync(key).ConfigureAwait(false))
             throw ConfirmationException.AlreadySent();
 
-        var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
+        var confirmation = await _dbContext
+            .Set<Confirmation>()
+            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct)
+            .ConfigureAwait(false);
 
         if (confirmation is not null)
             return confirmation;
@@ -141,10 +143,17 @@ internal sealed class ConfirmationService : IConfirmationService
         var code = Generate(ConfirmationLength);
 
         var entity = new Confirmation(guid, id, code, type, time.Now, CodeTtl);
-        await _dbContext.AddAsync(entity, ct);
-        await _dbContext.SaveChangesAsync(ct);
+        await _dbContext
+            .AddAsync(entity, ct)
+            .ConfigureAwait(false);
 
-        await _redis.StringSetAsync(key, true, LockTtl);
+        await _dbContext
+            .SaveChangesAsync(ct)
+            .ConfigureAwait(false);
+
+        await _redis
+            .StringSetAsync(key, true, LockTtl)
+            .ConfigureAwait(false);
 
         return entity;
     }
@@ -158,28 +167,22 @@ internal sealed class ConfirmationService : IConfirmationService
         return new Guid(bytes);
     }
 
-    private static bool TryGetGuid(string token, out Guid guid)
+    private static Guid ConventToGuid(string token)
     {
         try
         {
-            guid = new Guid(Convert.FromBase64String(token));
-            return true;
+            return new Guid(Convert.FromBase64String(token));
         }
         catch
         {
-            guid = Guid.Empty;
-            return false;
+            throw ConfirmationException.Mismatch();
         }
     }
 
     private static string Generate(int length)
     {
-        const string chars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
-
-        using var generator = RandomNumberGenerator.Create();
-        var bytes = new byte[length];
-        generator.GetBytes(bytes);
-
-        return new string(bytes.Select(x => chars[x % chars.Length]).ToArray());
+        const string chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+        
+        return RandomNumberGenerator.GetString(chars, length);
     }
 }

@@ -25,14 +25,20 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
 
     public async Task<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
     {
-        var confirmation = await _confirmation.SignUpAsync(request.Token, request.Code, ct);
-        
-        var account = await _repository.GetAsync(confirmation.AccountId, ct)
-                      ?? throw AccountException.NotFound(confirmation.AccountId);
+        var confirmation = await _confirmation
+            .SignUpAsync(request.Token, request.Code, ct)
+            .ConfigureAwait(false);
+
+        var account = await _repository
+            .GetAsync(confirmation.AccountId, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(confirmation.AccountId);
+
         account.ConfirmEmail(account.GetPrimaryEmail(), _time);
 
         _repository.Update(account);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
 
         return new SignUpResult(account.Id, account.Name.FullName());
     }

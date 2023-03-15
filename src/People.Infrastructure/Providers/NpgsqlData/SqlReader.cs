@@ -21,15 +21,17 @@ public sealed class SqlReader<T>
 
     public async Task<T?> FirstOrDefaultAsync(CancellationToken ct = default)
     {
-        await using var connection = new NpgsqlConnection(_connection);
-        await using var command = new NpgsqlCommand(_sql, connection);
+        await using var source = NpgsqlDataSource.Create(_connection);
+        await using var command = source.CreateCommand(_sql);
+
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await connection.OpenAsync(ct);
+        await using var reader = await command
+            .ExecuteReaderAsync(ct)
+            .ConfigureAwait(false);
 
-        await using var reader = await command.ExecuteReaderAsync(ct);
-        if (await reader.ReadAsync(ct))
+        if (await reader.ReadAsync(ct).ConfigureAwait(false))
             return _mapper(reader);
 
         return default;
@@ -37,15 +39,17 @@ public sealed class SqlReader<T>
 
     public async IAsyncEnumerable<T> AsEnumerableAsync([EnumeratorCancellation] CancellationToken ct = default)
     {
-        await using var connection = new NpgsqlConnection(_connection);
-        await using var command = new NpgsqlCommand(_sql, connection);
+        await using var source = NpgsqlDataSource.Create(_connection);
+        await using var command = source.CreateCommand(_sql);
+
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await connection.OpenAsync(ct);
+        await using var reader = await command
+            .ExecuteReaderAsync(ct)
+            .ConfigureAwait(false);
 
-        await using var reader = await command.ExecuteReaderAsync(ct);
-        while (await reader.ReadAsync(ct))
+        while (await reader.ReadAsync(ct).ConfigureAwait(false))
         {
             ct.ThrowIfCancellationRequested();
             yield return _mapper(reader);
@@ -55,7 +59,8 @@ public sealed class SqlReader<T>
     public async Task<List<T>> ToListAsync(CancellationToken ct)
     {
         var result = new List<T>();
-        await foreach (var item in AsEnumerableAsync(ct))
+
+        await foreach (var item in AsEnumerableAsync(ct).ConfigureAwait(false))
             result.Add(item);
 
         return result;

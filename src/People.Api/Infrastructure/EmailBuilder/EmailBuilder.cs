@@ -13,11 +13,16 @@ internal sealed partial class EmailBuilder : IEmailBuilder
 
     public async Task<EmailTemplateResult> CreateEmailAsync(string templateName, ITemplateModel model)
     {
-        await using var sw = new StringWriter();
-        await _rendering.RenderViewAsync(sw, $"Email/Views/{templateName}", new TemplateContext(model));
-        await sw.FlushAsync();
-        
-        var body = sw.ToString();
+        await using var writer = new StringWriter();
+        await _rendering
+            .RenderViewAsync(writer, $"Email/Views/{templateName}", new TemplateContext(model))
+            .ConfigureAwait(false);
+
+        await writer
+            .FlushAsync()
+            .ConfigureAwait(false);
+
+        var body = writer.ToString();
         var subject = GetHtmlTitleRegex().Match(body).Value.Trim();
 
         return new EmailTemplateResult(subject, body);

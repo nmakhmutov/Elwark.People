@@ -33,13 +33,19 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)
             .Select(x => new { x.AccountId, Email = new MailAddress(x.Email), x.IsConfirmed })
-            .FirstOrDefaultAsync(ct) ?? throw EmailException.NotFound(request.Email);
+            .FirstOrDefaultAsync(ct)
+            .ConfigureAwait(false) ?? throw EmailException.NotFound(request.Email);
 
         if (!email.IsConfirmed)
             throw EmailException.NotConfirmed(email.Email);
 
-        var confirmation = await _confirmation.SignInAsync(email.AccountId, _time, ct);
-        await _notification.SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct);
+        var confirmation = await _confirmation
+            .SignInAsync(email.AccountId, _time, ct)
+            .ConfigureAwait(false);
+
+        await _notification
+            .SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct)
+            .ConfigureAwait(false);
 
         return confirmation.Token;
     }

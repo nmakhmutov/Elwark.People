@@ -56,7 +56,8 @@ LIMIT 1";
                 x.GetFieldValue<string[]>(12),
                 x.IsDBNull(13) ? null : x.GetFieldValue<Ban>(13)
             ))
-            .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(request.Id);
+            .FirstOrDefaultAsync(ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
     }
 }
 

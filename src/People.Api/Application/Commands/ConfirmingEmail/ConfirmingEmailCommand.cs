@@ -28,15 +28,23 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
 
     public async Task<string> Handle(ConfirmingEmailCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
-        var emailAccount = account.Emails.FirstOrDefault(x => x.Email == request.Email.Address)
-                    ?? throw EmailException.NotFound(request.Email);
+        var account = await _repository
+            .GetAsync(request.Id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
-        if(emailAccount.IsConfirmed)
+        var emailAccount = account.Emails
+            .FirstOrDefault(x => x.Email == request.Email.Address) ?? throw EmailException.NotFound(request.Email);
+
+        if (emailAccount.IsConfirmed)
             throw EmailException.AlreadyConfirmed(request.Email);
-        
-        var confirmation = await _confirmation.VerifyEmailAsync(account.Id, request.Email, _time, ct);
-        await _notification.SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct);
+
+        var confirmation = await _confirmation
+            .VerifyEmailAsync(account.Id, request.Email, _time, ct)
+            .ConfigureAwait(false);
+
+        await _notification
+            .SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct)
+            .ConfigureAwait(false);
 
         return confirmation.Token;
     }

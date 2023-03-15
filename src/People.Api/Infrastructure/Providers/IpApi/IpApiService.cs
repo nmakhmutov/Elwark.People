@@ -22,14 +22,18 @@ public sealed class IpApiService : IIpApiService
 
     public async Task<IpApiDto?> GetAsync(string ip, string lang)
     {
-        var response = await _httpClient.GetAsync($"/json/{ip}?lang={lang}");
+        var response = await _httpClient
+            .GetAsync($"/json/{ip}?lang={lang}")
+            .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
             return null;
 
         try
         {
-            var data = await response.Content.ReadFromJsonAsync<IpApiDto>(Options);
+            var data = await response.Content
+                .ReadFromJsonAsync<IpApiDto>(Options)
+                .ConfigureAwait(false);
 
             return data?.Status == IpInformationStatus.Success ? data : null;
         }

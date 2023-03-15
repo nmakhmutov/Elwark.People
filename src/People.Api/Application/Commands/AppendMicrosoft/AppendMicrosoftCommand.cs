@@ -25,20 +25,26 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
         _time = time;
     }
 
-    public async Task<Unit> Handle(AppendMicrosoftCommand request, CancellationToken ct)
+    public async Task Handle(AppendMicrosoftCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
-        var microsoft = await _microsoft.GetAsync(request.Token, ct);
-        
-        if (!await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct))
+        var account = await _repository
+            .GetAsync(request.Id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+
+        var microsoft = await _microsoft
+            .GetAsync(request.Token, ct)
+            .ConfigureAwait(false);
+
+        if (!await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct).ConfigureAwait(false))
             account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _time);
 
-        if(!await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct))
+        if (!await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct).ConfigureAwait(false))
             account.AddEmail(microsoft.Email, true, _time);
-        
+
         _repository.Update(account);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
         
-        return Unit.Value;
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
     }
 }

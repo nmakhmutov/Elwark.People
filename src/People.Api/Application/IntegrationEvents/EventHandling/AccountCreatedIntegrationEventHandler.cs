@@ -29,15 +29,25 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message)
     {
-        await _confirmation.DeleteAsync(message.AccountId);
+        await _confirmation
+            .DeleteAsync(message.AccountId)
+            .ConfigureAwait(false);
 
-        var account = await _repository.GetAsync(message.AccountId);
+        var account = await _repository
+            .GetAsync(message.AccountId)
+            .ConfigureAwait(false);
+
         if (account is null)
             return;
 
         var changed = false;
-        var ipInformation = await _ipService.GetAsync(message.Ip, account.Language.ToString());
-        var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail());
+        var ipInformation = await _ipService
+            .GetAsync(message.Ip, account.Language.ToString())
+            .ConfigureAwait(false);
+
+        var gravatar = await _gravatar
+            .GetAsync(account.GetPrimaryEmail())
+            .ConfigureAwait(false);
 
         if (ipInformation is not null)
         {
@@ -68,7 +78,9 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         if (changed)
         {
             _repository.Update(account);
-            await _repository.UnitOfWork.SaveEntitiesAsync();
+            await _repository.UnitOfWork
+                .SaveEntitiesAsync()
+                .ConfigureAwait(false);
         }
     }
 }

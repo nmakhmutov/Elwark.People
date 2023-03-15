@@ -4,7 +4,7 @@ using People.Domain.Exceptions;
 
 namespace People.Api.Application.Queries.GetAccountDetails;
 
-internal sealed record GetAccountDetailsQuery(long Id):IRequest<Account>;
+internal sealed record GetAccountDetailsQuery(long Id) : IRequest<Account>;
 
 internal sealed class GetAccountDetailsQueryHandler : IRequestHandler<GetAccountDetailsQuery, Account>
 {
@@ -14,5 +14,7 @@ internal sealed class GetAccountDetailsQueryHandler : IRequestHandler<GetAccount
         _repository = repository;
 
     public async Task<Account> Handle(GetAccountDetailsQuery request, CancellationToken ct) =>
-        await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
+        await _repository
+            .GetAsync(request.Id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 }

@@ -24,15 +24,16 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
 
     public async Task<SignInResult> Handle(SignInByGoogleCommand request, CancellationToken ct)
     {
-        var google = await _google.GetAsync(request.Token, ct);
+        var google = await _google
+            .GetAsync(request.Token, ct)
+            .ConfigureAwait(false);
 
-        var result =
-            await _dbContext.Accounts
-                .AsNoTracking()
-                .WhereGoogle(google.Identity)
-                .Select(x => new SignInResult(x.Id, x.Name.FullName()))
-                .FirstOrDefaultAsync(ct)
-            ?? throw ExternalAccountException.NotFound(ExternalService.Google, google.Identity);
+        var result = await _dbContext.Accounts
+            .AsNoTracking()
+            .WhereGoogle(google.Identity)
+            .Select(x => new SignInResult(x.Id, x.Name.FullName()))
+            .FirstOrDefaultAsync(ct)
+            .ConfigureAwait(false) ?? throw ExternalAccountException.NotFound(ExternalService.Google, google.Identity);
 
         return result;
     }

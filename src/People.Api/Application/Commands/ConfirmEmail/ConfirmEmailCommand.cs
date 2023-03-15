@@ -26,23 +26,34 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
 
     public async Task<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
     {
-        var (id, email) = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct);
+        var (id, email) = await _confirmation
+            .VerifyEmailAsync(request.Token, request.Code, ct)
+            .ConfigureAwait(false);
 
-        var account = await _repository.GetAsync(id, ct) ?? throw AccountException.NotFound(id);
+        var account = await _repository
+            .GetAsync(id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(id);
+
         account.ConfirmEmail(email, _time);
 
         _repository.Update(account);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
 
         try
         {
-            await _confirmation.DeleteAsync(account.Id, ct);
+            await _confirmation
+                .DeleteAsync(account.Id, ct)
+                .ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occured while deleting confirmations for user {U}", account.Id);
         }
 
-        return account.Emails.First(x => x.Email == email.Address);
+        return account.Emails
+            .First(x => x.Email == email.Address);
     }
 }

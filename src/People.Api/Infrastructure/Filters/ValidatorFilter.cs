@@ -14,9 +14,13 @@ internal sealed class ValidatorFilter<T> : IEndpointFilter where T : class
         if (context.Arguments.SingleOrDefault(x => x?.GetType() == typeof(T)) is not T body)
             return Results.Problem(title: "Invalid model state", detail: "Body is empty", statusCode: 400);
 
-        var result = await _validator.ValidateAsync(body);
+        var result = await _validator
+            .ValidateAsync(body)
+            .ConfigureAwait(false);
+
         if (result.IsValid)
-            return await next(context);
+            return await next(context)
+                .ConfigureAwait(false);
 
         return Results.Problem(new ValidationException(result.Errors).ToProblem());
     }

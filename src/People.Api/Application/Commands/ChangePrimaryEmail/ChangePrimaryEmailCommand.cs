@@ -19,14 +19,17 @@ internal sealed class ChangePrimaryEmailCommandHandler : IRequestHandler<ChangeP
         _time = time;
     }
 
-    public async Task<Unit> Handle(ChangePrimaryEmailCommand request, CancellationToken ct)
+    public async Task Handle(ChangePrimaryEmailCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository
+            .GetAsync(request.Id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+
         account.SetPrimaryEmail(request.Email, _time);
 
         _repository.Update(account);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
-
-        return Unit.Value;
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
     }
 }

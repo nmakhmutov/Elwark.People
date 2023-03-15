@@ -17,7 +17,8 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
     {
         try
         {
-            return await continuation(request, context);
+            return await continuation(request, context)
+                .ConfigureAwait(false);
         }
         catch (PeopleException ex)
         {

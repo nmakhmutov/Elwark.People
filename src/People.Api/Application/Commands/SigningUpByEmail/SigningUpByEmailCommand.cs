@@ -38,29 +38,43 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)
             .Select(x => new { x.AccountId, Email = new MailAddress(x.Email), x.IsConfirmed })
-            .FirstOrDefaultAsync(ct);
+            .FirstOrDefaultAsync(ct)
+            .ConfigureAwait(false);
 
         if (email is not null)
         {
             if (email.IsConfirmed)
                 throw EmailException.AlreadyCreated(request.Email);
 
-            return await SendConfirmationAsync(email.AccountId, email.Email, request.Language, ct);
+            return await SendConfirmationAsync(email.AccountId, email.Email, request.Language, ct)
+                .ConfigureAwait(false);
         }
 
         var account = new Account(request.Email.User, request.Language, null, request.Ip, _time, _hasher);
         account.AddEmail(request.Email, false, _time);
 
-        await _repository.AddAsync(account, ct);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+        await _repository
+            .AddAsync(account, ct)
+            .ConfigureAwait(false);
 
-        return await SendConfirmationAsync(account.Id, account.GetPrimaryEmail(), request.Language, ct);
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
+
+        return await SendConfirmationAsync(account.Id, account.GetPrimaryEmail(), request.Language, ct)
+            .ConfigureAwait(false);
     }
 
-    private async Task<string> SendConfirmationAsync(long id, MailAddress email, Language language, CancellationToken ct)
+    private async Task<string> SendConfirmationAsync(long id, MailAddress email, Language language,
+        CancellationToken ct)
     {
-        var confirmation = await _confirmation.SignUpAsync(id, _time, ct);
-        await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct);
+        var confirmation = await _confirmation
+            .SignUpAsync(id, _time, ct)
+            .ConfigureAwait(false);
+
+        await _notification
+            .SendConfirmationAsync(email, confirmation.Code, language, ct)
+            .ConfigureAwait(false);
 
         return confirmation.Token;
     }

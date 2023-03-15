@@ -11,7 +11,7 @@ public sealed class GravatarService : IGravatarService
     {
         PropertyNameCaseInsensitive = true,
     };
-    
+
     private readonly HttpClient _client;
     private readonly ILogger<GravatarService> _logger;
 
@@ -27,7 +27,9 @@ public sealed class GravatarService : IGravatarService
         var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(email.Address));
         var id = string.Concat(hash.Select(x => x.ToString("x2")));
 
-        var response = await _client.GetAsync($"/{id}.json");
+        var response = await _client
+            .GetAsync($"/{id}.json")
+            .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -37,7 +39,10 @@ public sealed class GravatarService : IGravatarService
 
         try
         {
-            var content = await response.Content.ReadFromJsonAsync<Wrapper>(Options);
+            var content = await response.Content
+                .ReadFromJsonAsync<Wrapper>(Options)
+                .ConfigureAwait(false);
+            
             return content?.Entry.FirstOrDefault();
         }
         catch (Exception ex)

@@ -29,16 +29,17 @@ public sealed class SqlBuilder
 
     public SqlReader<T> Select<T>(Func<NpgsqlDataReader, T> mapper) =>
         new(_connection, _sql, _parameters, mapper ?? throw new ArgumentNullException(nameof(mapper)));
-    
+
     public async Task<int> ExecuteAsync(CancellationToken ct = default)
     {
-        await using var connection = new NpgsqlConnection(_connection);
-        await using var command = new NpgsqlCommand(_sql, connection);
+        await using var source = NpgsqlDataSource.Create(_connection);
+        await using var command = source.CreateCommand(_sql);
+
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await connection.OpenAsync(ct);
-
-        return await command.ExecuteNonQueryAsync(ct);
+        return await command
+            .ExecuteNonQueryAsync(ct)
+            .ConfigureAwait(false);
     }
 }

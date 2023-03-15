@@ -25,20 +25,25 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
         _time = time;
     }
 
-    public async Task<Unit> Handle(AppendGoogleCommand request, CancellationToken ct)
+    public async Task Handle(AppendGoogleCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
-        var google = await _google.GetAsync(request.Token, ct);
+        var account = await _repository
+            .GetAsync(request.Id, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
-        if (!await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct))
+        var google = await _google
+            .GetAsync(request.Token, ct)
+            .ConfigureAwait(false);
+
+        if (!await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct).ConfigureAwait(false))
             account.AddGoogle(google.Identity, google.FirstName, google.LastName, _time);
 
-        if(!await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct))
+        if (!await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct).ConfigureAwait(false))
             account.AddEmail(google.Email, google.IsEmailVerified, _time);
-        
+
         _repository.Update(account);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
-        
-        return Unit.Value;
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
     }
 }

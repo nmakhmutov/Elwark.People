@@ -6,7 +6,7 @@ using Fluid;
 using Grpc.AspNetCore.Server;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
-using MediatR;
+using Grpc.Net.ClientFactory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
@@ -93,10 +93,13 @@ builder.Services
 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
 builder.Services
-    .AddMediatR(assemblies)
+    .AddMediatR(configuration =>
+    {
+        configuration.RegisterServicesFromAssemblies(assemblies);
+        configuration.AddOpenBehavior(typeof(RequestLoggingBehavior<,>));
+        configuration.AddOpenBehavior(typeof(RequestValidatorBehavior<,>));
+    })
     .AddValidatorsFromAssemblies(assemblies, ServiceLifetime.Scoped, null, true)
-    .AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
-    .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>))
     .AddInfrastructure(options =>
     {
         options.PostgresqlConnectionString = builder.Configuration["Postgresql:ConnectionString"]!;
@@ -156,8 +159,8 @@ builder.Services
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
         });
-    })
-    .AddGrpcCorrelationIdForwarding();
+        options.AddCorrelationIdForwarding();
+    });
 
 builder.Services
     .AddHttpClient<IGoogleApiService, GoogleApiService>(client =>
@@ -208,8 +211,11 @@ builder.Host
 var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
-    await scope.ServiceProvider.GetRequiredService<PeopleDbContext>()
-        .Database.MigrateAsync();
+    await scope.ServiceProvider
+        .GetRequiredService<PeopleDbContext>()
+        .Database
+        .MigrateAsync()
+        .ConfigureAwait(false);
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
     {

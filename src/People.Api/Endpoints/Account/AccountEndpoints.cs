@@ -26,14 +26,18 @@ internal static class AccountEndpoints
 
         group.MapGet("/{id:long}", async (long id, IMediator mediator, CancellationToken ct) =>
             {
-                var result = await mediator.Send(new GetAccountSummaryQuery(id), ct);
+                var result = await mediator
+                    .Send(new GetAccountSummaryQuery(id), ct);
+
                 return result.ToModel();
             })
             .RequireAuthorization(Policy.RequireCommonAccess.Name);
 
         group.MapGet("/me", async (ClaimsPrincipal user, IMediator mediator, CancellationToken ct) =>
             {
-                var result = await mediator.Send(new GetAccountDetailsQuery(user.GetAccountId()), ct);
+                var result = await mediator
+                    .Send(new GetAccountDetailsQuery(user.GetAccountId()), ct);
+
                 return result.ToModel();
             })
             .RequireAuthorization(Policy.RequireAuthenticatedUser.Name);
@@ -41,7 +45,9 @@ internal static class AccountEndpoints
         group.MapPut("/me", async (UpdateRequest request, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                var result = await mediator.Send(request.ToCommand(user.GetAccountId()), ct);
+                var result = await mediator
+                    .Send(request.ToCommand(user.GetAccountId()), ct);
+
                 return result.ToModel();
             })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
@@ -50,8 +56,8 @@ internal static class AccountEndpoints
         group.MapPost("/me/emails", async (EmailRequest request, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                var command = new AppendEmailCommand(user.GetAccountId(), new MailAddress(request.Email));
-                var result = await mediator.Send(command, ct);
+                var result = await mediator
+                    .Send(new AppendEmailCommand(user.GetAccountId(), new MailAddress(request.Email)), ct);
 
                 return result.ToModel();
             })
@@ -61,7 +67,9 @@ internal static class AccountEndpoints
         group.MapDelete("/me/emails/{email}", async (string email, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                await mediator.Send(new DeleteEmailCommand(user.GetAccountId(), new MailAddress(email)), ct);
+                await mediator
+                    .Send(new DeleteEmailCommand(user.GetAccountId(), new MailAddress(email)), ct);
+
                 return TypedResults.Empty;
             })
             .RequireAuthorization(Policy.RequireProfileAccess.Name);
@@ -70,9 +78,13 @@ internal static class AccountEndpoints
                 CancellationToken ct) =>
             {
                 var id = user.GetAccountId();
-                await mediator.Send(new ChangePrimaryEmailCommand(id, new MailAddress(request.Email)), ct);
 
-                var emails = await mediator.Send(new GetEmailsQuery(id), ct);
+                await mediator
+                    .Send(new ChangePrimaryEmailCommand(id, new MailAddress(request.Email)), ct);
+
+                var emails = await mediator
+                    .Send(new GetEmailsQuery(id), ct);
+
                 return emails.Select(x => x.ToModel());
             })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
@@ -81,16 +93,18 @@ internal static class AccountEndpoints
         group.MapPost("/me/emails/verify", async (EmailRequest request, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                var command = new ConfirmingEmailCommand(user.GetAccountId(), new MailAddress(request.Email));
-                return new { token = await mediator.Send(command, ct) };
+                var token = await mediator
+                    .Send(new ConfirmingEmailCommand(user.GetAccountId(), new MailAddress(request.Email)), ct);
+
+                return new { token };
             })
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
             .AddEndpointFilter<ValidatorFilter<EmailRequest>>();
 
         group.MapPut("/me/emails/verify", async (VerifyRequest request, IMediator mediator, CancellationToken ct) =>
             {
-                var command = new ConfirmEmailCommand(request.Token, request.Code);
-                var result = await mediator.Send(command, ct);
+                var result = await mediator
+                    .Send(new ConfirmEmailCommand(request.Token, request.Code), ct);
 
                 return result.ToModel();
             })
@@ -100,7 +114,9 @@ internal static class AccountEndpoints
         group.MapDelete("/me/connections/google/identities/{id}", async (string id, ClaimsPrincipal user,
                 IMediator mediator, CancellationToken ct) =>
             {
-                await mediator.Send(new DeleteGoogleCommand(user.GetAccountId(), id), ct);
+                await mediator
+                    .Send(new DeleteGoogleCommand(user.GetAccountId(), id), ct);
+
                 return TypedResults.Empty;
             })
             .RequireAuthorization(Policy.RequireProfileAccess.Name);
@@ -108,7 +124,9 @@ internal static class AccountEndpoints
         group.MapDelete("/me/connections/microsoft/identities/{id}", async (string id, ClaimsPrincipal user,
                 IMediator mediator, CancellationToken ct) =>
             {
-                await mediator.Send(new DeleteMicrosoftCommand(user.GetAccountId(), id), ct);
+                await mediator
+                    .Send(new DeleteMicrosoftCommand(user.GetAccountId(), id), ct);
+
                 return TypedResults.Empty;
             })
             .RequireAuthorization(Policy.RequireProfileAccess.Name);

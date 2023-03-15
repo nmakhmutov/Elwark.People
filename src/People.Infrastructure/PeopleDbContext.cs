@@ -9,12 +9,14 @@ using People.Infrastructure.EntityConfigurations;
 
 namespace People.Infrastructure;
 
-public sealed class PeopleDbContext : DbContext, IUnitOfWork
+public sealed class PeopleDbContext : DbContext,
+    IUnitOfWork
 {
     private readonly IMediator _mediator;
 
     public PeopleDbContext(DbContextOptions<PeopleDbContext> options, IMediator mediator)
-        : base(options) => _mediator = mediator;
+        : base(options) =>
+        _mediator = mediator;
 
     public DbSet<Account> Accounts { get; set; } = default!;
 
@@ -24,8 +26,12 @@ public sealed class PeopleDbContext : DbContext, IUnitOfWork
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
     {
-        await SaveChangesAsync(cancellationToken);
-        await _mediator.DispatchDomainEventsAsync(this);
+        await SaveChangesAsync(cancellationToken)
+            .ConfigureAwait(false);
+        
+        await _mediator
+            .DispatchDomainEventsAsync(this)
+            .ConfigureAwait(false);
 
         return true;
     }
@@ -52,7 +58,8 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
 
     private sealed class NoMediator : IMediator
     {
-        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct) =>
+        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request,
+            CancellationToken ct) =>
             default!;
 
         public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken ct) =>
@@ -67,6 +74,10 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
 
         public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken ct) =>
             Task.FromResult<TResponse>(default!);
+
+        public Task Send<TRequest>(TRequest request, CancellationToken ct)
+            where TRequest : IRequest =>
+            Task.CompletedTask;
 
         public Task<object?> Send(object request, CancellationToken ct) =>
             Task.FromResult<object?>(null);

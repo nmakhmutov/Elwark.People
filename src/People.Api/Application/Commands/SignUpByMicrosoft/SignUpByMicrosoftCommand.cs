@@ -31,19 +31,27 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
 
     public async Task<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
     {
-        var microsoft = await _microsoft.GetAsync(request.Token, ct);
-        if (await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct))
+        var microsoft = await _microsoft
+            .GetAsync(request.Token, ct)
+            .ConfigureAwait(false);
+
+        if (await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct).ConfigureAwait(false))
             throw EmailException.AlreadyCreated(microsoft.Email);
 
-        if (await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct))
+        if (await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct).ConfigureAwait(false))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
         var account = new Account(microsoft.Email.User, request.Language, null, request.Ip, _time, _hasher);
         account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _time);
         account.AddEmail(microsoft.Email, true, _time);
 
-        await _repository.AddAsync(account, ct);
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+        await _repository
+            .AddAsync(account, ct)
+            .ConfigureAwait(false);
+
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct)
+            .ConfigureAwait(false);
 
         return new SignUpResult(account.Id, account.Name.FullName());
     }

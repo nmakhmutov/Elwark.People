@@ -24,15 +24,16 @@ internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInBy
 
     public async Task<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
     {
-        var microsoft = await _microsoft.GetAsync(request.Token, ct);
-        
-        var result =
-            await _dbContext.Accounts
-                .AsNoTracking()
-                .WhereMicrosoft(microsoft.Identity)
-                .Select(x => new SignInResult(x.Id, x.Name.FullName()))
-                .FirstOrDefaultAsync(ct)
-            ?? throw ExternalAccountException.NotFound(ExternalService.Google, microsoft.Identity);
+        var ms = await _microsoft
+            .GetAsync(request.Token, ct)
+            .ConfigureAwait(false);
+
+        var result = await _dbContext.Accounts
+            .AsNoTracking()
+            .WhereMicrosoft(ms.Identity)
+            .Select(x => new SignInResult(x.Id, x.Name.FullName()))
+            .FirstOrDefaultAsync(ct)
+            .ConfigureAwait(false) ?? throw ExternalAccountException.NotFound(ExternalService.Microsoft, ms.Identity);
 
         return result;
     }

@@ -14,9 +14,12 @@ internal static class MediatorExtension
         foreach (var entity in entities)
         {
             foreach (var notification in entity.Entity.DomainEvents)
-                await mediator.Publish(notification);
+                await mediator
+                    .Publish(notification)
+                    .ConfigureAwait(false);
 
-            entity.Entity.ClearDomainEvents();
+            entity.Entity
+                .ClearDomainEvents();
         }
     }
 }
