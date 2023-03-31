@@ -1,8 +1,10 @@
 using MediatR;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
-using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
+using People.Domain.ValueObjects;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Api.Application.Commands.UpdateAccount;
 

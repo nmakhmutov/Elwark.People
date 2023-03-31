@@ -1,6 +1,6 @@
 using MediatR;
-using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
 
 namespace People.Api.Application.Commands.DeleteGoogle;

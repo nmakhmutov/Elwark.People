@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 
 #nullable disable
 

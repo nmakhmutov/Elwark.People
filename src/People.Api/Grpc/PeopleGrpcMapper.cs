@@ -1,7 +1,7 @@
 using Google.Protobuf.WellKnownTypes;
 using People.Api.Application.Models;
 using People.Api.Application.Queries.GetAccountSummary;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 using People.Grpc.People;
 
 namespace People.Api.Grpc;

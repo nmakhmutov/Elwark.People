@@ -1,8 +1,8 @@
 using MediatR;
-using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.Exceptions;
+using People.Domain.ValueObjects;
 using People.Infrastructure.Providers.NpgsqlData;
-using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Api.Application.Queries.GetAccountSummary;
 

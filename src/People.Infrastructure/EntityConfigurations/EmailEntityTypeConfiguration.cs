@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 
 namespace People.Infrastructure.EntityConfigurations;
 

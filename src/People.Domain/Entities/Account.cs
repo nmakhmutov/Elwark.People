@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Mail;
-using People.Domain.Events;
+using People.Domain.DomainEvents;
 using People.Domain.Exceptions;
 using People.Domain.SeedWork;
+using People.Domain.ValueObjects;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
-namespace People.Domain.AggregatesModel.AccountAggregate;
+namespace People.Domain.Entities;
 
 public sealed class Account : Entity<long>, IAggregateRoot
 {

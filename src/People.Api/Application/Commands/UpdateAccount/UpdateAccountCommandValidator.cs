@@ -1,5 +1,5 @@
 using FluentValidation;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 
 namespace People.Api.Application.Commands.UpdateAccount;
 

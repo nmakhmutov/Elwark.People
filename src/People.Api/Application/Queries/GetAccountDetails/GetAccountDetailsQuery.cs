@@ -1,6 +1,7 @@
 using MediatR;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 
 namespace People.Api.Application.Queries.GetAccountDetails;
 

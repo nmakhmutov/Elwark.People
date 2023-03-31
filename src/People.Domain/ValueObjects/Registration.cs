@@ -2,7 +2,7 @@ using People.Domain.SeedWork;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace People.Domain.AggregatesModel.AccountAggregate;
+namespace People.Domain.ValueObjects;
 
 public sealed class Registration : ValueObject
 {

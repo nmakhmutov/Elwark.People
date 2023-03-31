@@ -1,4 +1,4 @@
-namespace People.Domain.AggregatesModel.AccountAggregate;
+namespace People.Domain.ValueObjects;
 
 public readonly struct TimeZone : IComparable, IComparable<TimeZone>, IEquatable<TimeZone>
 {

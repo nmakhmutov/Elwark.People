@@ -1,4 +1,4 @@
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 
 namespace People.Api.Endpoints.Account.Models;
 

@@ -15,7 +15,7 @@ using People.Api.Application.Commands.SignUpByGoogle;
 using People.Api.Application.Commands.SignUpByMicrosoft;
 using People.Api.Application.Queries.GetAccountSummary;
 using People.Api.Application.Queries.IsAccountActive;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 using People.Grpc.People;
 
 namespace People.Api.Grpc;

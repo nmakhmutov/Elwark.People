@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Cryptography;

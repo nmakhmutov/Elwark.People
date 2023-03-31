@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using People.Domain.AggregatesModel.AccountAggregate;
-using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
+using People.Domain.Entities;
+using People.Domain.ValueObjects;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Infrastructure.EntityConfigurations;
 

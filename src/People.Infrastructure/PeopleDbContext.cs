@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 using People.Domain.SeedWork;
 using People.Infrastructure.EntityConfigurations;
 

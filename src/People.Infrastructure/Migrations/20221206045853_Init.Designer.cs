@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 using People.Infrastructure;
 
 #nullable disable

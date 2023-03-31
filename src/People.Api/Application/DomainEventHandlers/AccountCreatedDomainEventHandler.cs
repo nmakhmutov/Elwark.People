@@ -1,6 +1,6 @@
 using MediatR;
 using People.Api.Application.IntegrationEvents.Events;
-using People.Domain.Events;
+using People.Domain.DomainEvents;
 using People.Infrastructure.Integration;
 
 namespace People.Api.Application.DomainEventHandlers;

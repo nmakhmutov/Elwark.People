@@ -1,7 +1,8 @@
 using System.Net.Mail;
 using MediatR;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Infrastructure;
 

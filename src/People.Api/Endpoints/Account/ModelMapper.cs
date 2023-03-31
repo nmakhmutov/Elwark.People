@@ -1,6 +1,7 @@
 using People.Api.Application.Queries.GetAccountSummary;
 using People.Api.Endpoints.Account.Models;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
+using People.Domain.ValueObjects;
 
 namespace People.Api.Endpoints.Account;
 
@@ -23,7 +24,7 @@ internal static class AccountModelMapper
             result.Ban is not null
         );
 
-    internal static AccountDetailsModel ToModel(this Domain.AggregatesModel.AccountAggregate.Account account) =>
+    internal static AccountDetailsModel ToModel(this Domain.Entities.Account account) =>
         new(
             account.Id,
             account.Name.Nickname,

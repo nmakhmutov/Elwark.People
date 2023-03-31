@@ -1,4 +1,4 @@
-namespace People.Domain.AggregatesModel.AccountAggregate;
+namespace People.Domain.ValueObjects;
 
 public readonly struct Language : IComparable, IComparable<Language>, IEquatable<Language>
 {

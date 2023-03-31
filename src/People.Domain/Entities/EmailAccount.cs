@@ -3,7 +3,7 @@ using People.Domain.SeedWork;
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace People.Domain.AggregatesModel.AccountAggregate;
+namespace People.Domain.Entities;
 
 public sealed class EmailAccount : Entity<Guid>
 {

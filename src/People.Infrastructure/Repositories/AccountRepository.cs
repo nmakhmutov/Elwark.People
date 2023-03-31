@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
 
 namespace People.Infrastructure.Repositories;

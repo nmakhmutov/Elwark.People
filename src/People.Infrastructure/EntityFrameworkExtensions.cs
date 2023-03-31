@@ -1,6 +1,6 @@
 using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 
 namespace People.Infrastructure;
 

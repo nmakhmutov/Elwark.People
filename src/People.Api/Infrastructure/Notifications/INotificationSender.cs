@@ -1,5 +1,5 @@
 using System.Net.Mail;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 
 namespace People.Api.Infrastructure.Notifications;
 

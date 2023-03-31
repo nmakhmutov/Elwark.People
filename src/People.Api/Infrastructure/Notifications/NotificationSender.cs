@@ -2,7 +2,7 @@ using System.Net.Mail;
 using Notification.Grpc;
 using People.Api.Email.Models;
 using People.Api.Infrastructure.EmailBuilder;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 
 namespace People.Api.Infrastructure.Notifications;
 

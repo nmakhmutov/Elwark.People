@@ -3,9 +3,11 @@ using System.Net.Mail;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Infrastructure.Notifications;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
+using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
 

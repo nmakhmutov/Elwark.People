@@ -1,6 +1,6 @@
 using MediatR;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 
-namespace People.Domain.Events;
+namespace People.Domain.DomainEvents;
 
 public sealed record AccountUpdatedDomainEvent(Account Account) : INotification;

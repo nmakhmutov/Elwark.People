@@ -1,11 +1,12 @@
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
+using People.Domain.ValueObjects;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Integration;
-using TimeZone = People.Domain.AggregatesModel.AccountAggregate.TimeZone;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Api.Application.IntegrationEvents.EventHandling;
 

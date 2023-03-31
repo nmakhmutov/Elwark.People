@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Application.Models;
 using People.Api.Infrastructure.Providers.Google;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Infrastructure;
 

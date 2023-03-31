@@ -1,6 +1,6 @@
 using FluentValidation;
 using People.Api.Application.Commands.UpdateAccount;
-using People.Domain.AggregatesModel.AccountAggregate;
+using People.Domain.ValueObjects;
 
 namespace People.Api.Endpoints.Account.Requests;
 
@@ -14,12 +14,12 @@ internal sealed record UpdateRequest(string? FirstName, string? LastName, string
             LastName,
             Nickname,
             PreferNickname,
-            Domain.AggregatesModel.AccountAggregate.Language.Parse(Language),
-            Domain.AggregatesModel.AccountAggregate.TimeZone.Parse(TimeZone),
-            Domain.AggregatesModel.AccountAggregate.DateFormat.Parse(DateFormat),
-            Domain.AggregatesModel.AccountAggregate.TimeFormat.Parse(TimeFormat),
+            Domain.ValueObjects.Language.Parse(Language),
+            Domain.ValueObjects.TimeZone.Parse(TimeZone),
+            Domain.ValueObjects.DateFormat.Parse(DateFormat),
+            Domain.ValueObjects.TimeFormat.Parse(TimeFormat),
             StartOfWeek,
-            Domain.AggregatesModel.AccountAggregate.CountryCode.Parse(CountryCode)
+            Domain.ValueObjects.CountryCode.Parse(CountryCode)
         );
 
     internal sealed class Validator : AbstractValidator<UpdateRequest>
@@ -40,24 +40,24 @@ internal sealed record UpdateRequest(string? FirstName, string? LastName, string
             RuleFor(x => x.Language)
                 .NotEmpty()
                 .Length(2)
-                .Must(x => Domain.AggregatesModel.AccountAggregate.Language.TryParse(x, out _));
+                .Must(x => Domain.ValueObjects.Language.TryParse(x, out _));
 
             RuleFor(x => x.CountryCode)
                 .NotEmpty()
                 .Length(2)
-                .Must(x => Domain.AggregatesModel.AccountAggregate.CountryCode.TryParse(x, out _));
+                .Must(x => Domain.ValueObjects.CountryCode.TryParse(x, out _));
 
             RuleFor(x => x.TimeZone)
                 .NotEmpty()
-                .Must(x => Domain.AggregatesModel.AccountAggregate.TimeZone.TryParse(x, out _));
+                .Must(x => Domain.ValueObjects.TimeZone.TryParse(x, out _));
 
             RuleFor(x => x.DateFormat)
                 .NotEmpty()
-                .Must(x => Domain.AggregatesModel.AccountAggregate.DateFormat.TryParse(x, out _));
+                .Must(x => Domain.ValueObjects.DateFormat.TryParse(x, out _));
 
             RuleFor(x => x.TimeFormat)
                 .NotEmpty()
-                .Must(x => Domain.AggregatesModel.AccountAggregate.TimeFormat.TryParse(x, out _));
+                .Must(x => Domain.ValueObjects.TimeFormat.TryParse(x, out _));
 
             RuleFor(x => x.StartOfWeek)
                 .IsInEnum();

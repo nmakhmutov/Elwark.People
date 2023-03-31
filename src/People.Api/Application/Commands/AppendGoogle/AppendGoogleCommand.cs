@@ -1,7 +1,7 @@
 using MediatR;
 using People.Api.Infrastructure.Providers.Google;
-using People.Domain.AggregatesModel.AccountAggregate;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Infrastructure;
 
