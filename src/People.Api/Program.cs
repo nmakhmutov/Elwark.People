@@ -27,7 +27,7 @@ using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
 using People.Api.Infrastructure.Providers.Microsoft;
 using People.Infrastructure;
-using People.Infrastructure.Kafka;
+using People.Kafka;
 using Serilog;
 
 const string appName = "People.Api";
@@ -102,20 +102,21 @@ builder.Services
     .AddValidatorsFromAssemblies(assemblies, ServiceLifetime.Scoped, null, true)
     .AddInfrastructure(options =>
     {
-        options.PostgresqlConnectionString = builder.Configuration["Postgresql:ConnectionString"]!;
-        options.RedisConnectionString = builder.Configuration["Redis:ConnectionString"]!;
+        options.PostgresqlConnectionString = builder.Configuration.GetConnectionString("Postgresql")!;
+        options.RedisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
         options.AppKey = builder.Configuration["App:Key"]!;
         options.AppVector = builder.Configuration["App:Vector"]!;
     })
-    .AddKafkaMessageBus(appName, builder.Configuration["Kafka:Servers"]!)
-    .AddProducer<AccountCreatedIntegrationEvent>(x => x.Topic = KafkaTopic.CreatedAccounts)
-    .AddProducer<AccountUpdatedIntegrationEvent>(x => x.Topic = KafkaTopic.UpdatedAccounts)
-    .AddProducer<AccountDeletedIntegrationEvent>(x => x.Topic = KafkaTopic.DeletedAccounts)
-    .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(x =>
-    {
-        x.Topic = KafkaTopic.CreatedAccounts;
-        x.Threads = 2;
-    });
+    .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
+    .AddProducer<AccountCreatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.CreatedAccounts))
+    .AddProducer<AccountUpdatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.UpdatedAccounts))
+    .AddProducer<AccountDeletedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.DeletedAccounts))
+    .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
+        consumer.WithTopic(KafkaTopic.CreatedAccounts)
+            .WithGroupId(appName)
+            .WithWorkers(2)
+            .CreateTopicIfNotExists(2)
+    );
 
 builder.Services
     .AddSingleton<INotificationSender, NotificationSender>()
@@ -211,8 +212,7 @@ builder.Host
 var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
-    await scope.ServiceProvider
-        .GetRequiredService<PeopleDbContext>()
+    await scope.ServiceProvider.GetRequiredService<PeopleDbContext>()
         .Database
         .MigrateAsync()
         .ConfigureAwait(false);

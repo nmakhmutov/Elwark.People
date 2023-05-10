@@ -8,15 +8,17 @@ using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Domain.Entities;
 
-public sealed class Account : Entity<long>, IAggregateRoot
+public sealed class Account : Entity<long>,
+    IAggregateRoot
 {
-    private static readonly Uri DefaultPicture =
-        new("https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default.svg");
+    private const string DefaultPicture =
+        "https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default.svg";
 
     private readonly List<EmailAccount> _emails;
     private readonly List<ExternalConnection> _externals;
 
     private Ban? _ban;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private DateTime _createdAt;
     private Registration _registration;
     private string[] _roles;
@@ -36,7 +38,7 @@ public sealed class Account : Entity<long>, IAggregateRoot
     public Account(string nickname, Language language, Uri? picture, IPAddress ip, ITimeProvider time, IIpHasher hasher)
     {
         Name = new Name(nickname);
-        Picture = picture ?? DefaultPicture;
+        Picture = picture?.ToString() ?? DefaultPicture;
         Language = language;
         CountryCode = CountryCode.Empty;
         TimeZone = TimeZone.Utc;
@@ -56,7 +58,7 @@ public sealed class Account : Entity<long>, IAggregateRoot
 
     public Name Name { get; private set; }
 
-    public Uri Picture { get; private set; }
+    public string Picture { get; private set; }
 
     public Language Language { get; private set; }
 
@@ -86,9 +88,6 @@ public sealed class Account : Entity<long>, IAggregateRoot
 
     public DateTime GetCreatedDateTime() =>
         _createdAt;
-
-    public DateTime GetUpdatedDateTime() =>
-        _updatedAt;
 
     public void AddEmail(MailAddress email, bool isConfirmed, ITimeProvider time)
     {
@@ -218,7 +217,7 @@ public sealed class Account : Entity<long>, IAggregateRoot
 
     public void Update(Uri? picture, ITimeProvider time)
     {
-        Picture = picture ?? DefaultPicture;
+        Picture = picture?.ToString() ?? DefaultPicture;
         _updatedAt = time.Now;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
@@ -281,5 +280,5 @@ public sealed class Account : Entity<long>, IAggregateRoot
     }
 
     private void UpdateActivation() =>
-        IsActivated = _externals.Count > 0 || _emails.Any(x => x.IsPrimary && x.IsConfirmed);
+        IsActivated = _externals.Count > 0 || _emails.Any(x => x is { IsPrimary: true, IsConfirmed: true });
 }

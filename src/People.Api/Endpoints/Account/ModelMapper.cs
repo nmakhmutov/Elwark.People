@@ -33,7 +33,7 @@ internal static class AccountModelMapper
             account.Name.LastName,
             account.Name.FullName(),
             account.Language.ToString(),
-            account.Picture.ToString(),
+            account.Picture,
             account.CountryCode.ToModel(),
             account.TimeZone.ToString(),
             account.DateFormat.ToString(),

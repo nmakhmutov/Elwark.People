@@ -11,8 +11,7 @@ public static class EntityFrameworkExtensions
         MailAddress email,
         CancellationToken ct = default)
     {
-        if (email is null)
-            throw new ArgumentNullException(nameof(email));
+        ArgumentNullException.ThrowIfNull(email);
 
         return emails.AnyAsync(x => x.Email == email.Address, ct);
     }
@@ -22,8 +21,7 @@ public static class EntityFrameworkExtensions
         string identity,
         CancellationToken ct = default)
     {
-        if (string.IsNullOrEmpty(identity))
-            throw new ArgumentException("Value cannot be null or empty.", nameof(identity));
+        ArgumentException.ThrowIfNullOrEmpty(identity);
 
         return accounts.AnyAsync(x => x.Type == ExternalService.Google && x.Identity == identity, ct);
     }
@@ -33,8 +31,7 @@ public static class EntityFrameworkExtensions
         string identity,
         CancellationToken ct = default)
     {
-        if (string.IsNullOrEmpty(identity))
-            throw new ArgumentException("Value cannot be null or empty.", nameof(identity));
+        ArgumentException.ThrowIfNullOrEmpty(identity);
 
         return accounts.AnyAsync(x => x.Type == ExternalService.Microsoft && x.Identity == identity, ct);
     }

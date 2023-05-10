@@ -15,16 +15,38 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Serilog__WriteTo__0__Name=Console
-      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
+      #      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Kestrel__EndPoints__Grpc__Url=http://+:81
       - Urls__Identity=http://identity_api
       - Urls__Notification.Api=http://notification_api
-      - Postgresql__ConnectionString=Host=postgresql;Database=people;Username=master_account;Password=master_password
-      - Redis__ConnectionString=redis:6379,resolveDns=True,defaultDatabase=15
-      - Kafka__Servers=broker:29092
+      - ConnectionStrings__Postgresql=Host=postgresql;Database=people;Username=master_account;Password=master_password
+      - ConnectionStrings__Redis=redis:6379,resolveDns=True,defaultDatabase=15
+      - ConnectionStrings__Kafka=broker:29092
     ports:
       - "5001:80"
       - "5002:81"
+    networks:
+      - elwarknetwork
+  
+  people.webhooks:
+    container_name: "people_webhooks"
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Serilog__WriteTo__0__Name=Console
+      #      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
+      - Kestrel__EndPoints__Http__Url=http://+:80
+      - Urls__Identity=http://identity_api
+      - Urls__Notification.Api=http://notification_api
+      - ConnectionStrings__Postgresql=Host=postgresql;Database=people;Username=master_account;Password=master_password
+      - ConnectionStrings__Redis=redis:6379,resolveDns=True,defaultDatabase=15
+      - ConnectionStrings__Kafka=broker:29092
+    ports:
+      - "5003:80"
     networks:
       - elwarknetwork

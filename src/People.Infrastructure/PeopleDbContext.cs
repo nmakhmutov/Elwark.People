@@ -29,8 +29,7 @@ public sealed class PeopleDbContext : DbContext,
         await SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
         
-        await _mediator
-            .DispatchDomainEventsAsync(this)
+        await _mediator.DispatchDomainEventsAsync(this)
             .ConfigureAwait(false);
 
         return true;

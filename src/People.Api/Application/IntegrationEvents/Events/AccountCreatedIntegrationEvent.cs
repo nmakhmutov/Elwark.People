@@ -1,4 +1,4 @@
-using People.Infrastructure.Integration;
+using People.Kafka.Integration;
 
 namespace People.Api.Application.IntegrationEvents.Events;
 

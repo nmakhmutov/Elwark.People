@@ -1,7 +1,7 @@
 using MediatR;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.DomainEvents;
-using People.Infrastructure.Integration;
+using People.Kafka.Integration;
 
 namespace People.Api.Application.DomainEventHandlers;
 
@@ -16,10 +16,10 @@ internal sealed class AccountUpdatedDomainEventHandler : INotificationHandler<Ac
     {
         var evt = new AccountUpdatedIntegrationEvent(
             Guid.NewGuid(),
-            notification.Account.GetUpdatedDateTime(),
+            DateTime.UtcNow,
             notification.Account.Id
-        ); 
-        
+        );
+
         return _bus.PublishAsync(evt, ct);
     }
 }
