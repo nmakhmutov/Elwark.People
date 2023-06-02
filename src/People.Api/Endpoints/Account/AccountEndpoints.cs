@@ -26,8 +26,8 @@ internal static class AccountEndpoints
 
         group.MapGet("/{id:long}", async (long id, IMediator mediator, CancellationToken ct) =>
             {
-                var result = await mediator
-                    .Send(new GetAccountSummaryQuery(id), ct);
+                var query = new GetAccountSummaryQuery(id);
+                var result = await mediator.Send(query, ct);
 
                 return result.ToModel();
             })
@@ -35,8 +35,8 @@ internal static class AccountEndpoints
 
         group.MapGet("/me", async (ClaimsPrincipal user, IMediator mediator, CancellationToken ct) =>
             {
-                var result = await mediator
-                    .Send(new GetAccountDetailsQuery(user.GetAccountId()), ct);
+                var query = new GetAccountDetailsQuery(user.GetAccountId());
+                var result = await mediator.Send(query, ct);
 
                 return result.ToModel();
             })
@@ -45,8 +45,8 @@ internal static class AccountEndpoints
         group.MapPut("/me", async (UpdateRequest request, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                var result = await mediator
-                    .Send(request.ToCommand(user.GetAccountId()), ct);
+                var command = request.ToCommand(user.GetAccountId());
+                var result = await mediator.Send(command, ct);
 
                 return result.ToModel();
             })
@@ -56,8 +56,8 @@ internal static class AccountEndpoints
         group.MapPost("/me/emails", async (EmailRequest request, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                var result = await mediator
-                    .Send(new AppendEmailCommand(user.GetAccountId(), new MailAddress(request.Email)), ct);
+                var command = new AppendEmailCommand(user.GetAccountId(), new MailAddress(request.Email));
+                var result = await mediator.Send(command, ct);
 
                 return result.ToModel();
             })
@@ -67,8 +67,8 @@ internal static class AccountEndpoints
         group.MapDelete("/me/emails/{email}", async (string email, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                await mediator
-                    .Send(new DeleteEmailCommand(user.GetAccountId(), new MailAddress(email)), ct);
+                var command = new DeleteEmailCommand(user.GetAccountId(), new MailAddress(email));
+                await mediator.Send(command, ct);
 
                 return TypedResults.Empty;
             })
@@ -78,12 +78,11 @@ internal static class AccountEndpoints
                 CancellationToken ct) =>
             {
                 var id = user.GetAccountId();
+                var command = new ChangePrimaryEmailCommand(id, new MailAddress(request.Email));
+                await mediator.Send(command, ct);
 
-                await mediator
-                    .Send(new ChangePrimaryEmailCommand(id, new MailAddress(request.Email)), ct);
-
-                var emails = await mediator
-                    .Send(new GetEmailsQuery(id), ct);
+                var query = new GetEmailsQuery(id);
+                var emails = await mediator.Send(query, ct);
 
                 return emails.Select(x => x.ToModel());
             })
@@ -93,8 +92,8 @@ internal static class AccountEndpoints
         group.MapPost("/me/emails/verify", async (EmailRequest request, ClaimsPrincipal user, IMediator mediator,
                 CancellationToken ct) =>
             {
-                var token = await mediator
-                    .Send(new ConfirmingEmailCommand(user.GetAccountId(), new MailAddress(request.Email)), ct);
+                var command = new ConfirmingEmailCommand(user.GetAccountId(), new MailAddress(request.Email));
+                var token = await mediator.Send(command, ct);
 
                 return new { token };
             })
@@ -103,8 +102,8 @@ internal static class AccountEndpoints
 
         group.MapPut("/me/emails/verify", async (VerifyRequest request, IMediator mediator, CancellationToken ct) =>
             {
-                var result = await mediator
-                    .Send(new ConfirmEmailCommand(request.Token, request.Code), ct);
+                var command = new ConfirmEmailCommand(request.Token, request.Code);
+                var result = await mediator.Send(command, ct);
 
                 return result.ToModel();
             })
@@ -114,8 +113,8 @@ internal static class AccountEndpoints
         group.MapDelete("/me/connections/google/identities/{id}", async (string id, ClaimsPrincipal user,
                 IMediator mediator, CancellationToken ct) =>
             {
-                await mediator
-                    .Send(new DeleteGoogleCommand(user.GetAccountId(), id), ct);
+                var command = new DeleteGoogleCommand(user.GetAccountId(), id);
+                await mediator.Send(command, ct);
 
                 return TypedResults.Empty;
             })
@@ -124,8 +123,8 @@ internal static class AccountEndpoints
         group.MapDelete("/me/connections/microsoft/identities/{id}", async (string id, ClaimsPrincipal user,
                 IMediator mediator, CancellationToken ct) =>
             {
-                await mediator
-                    .Send(new DeleteMicrosoftCommand(user.GetAccountId(), id), ct);
+                var command = new DeleteMicrosoftCommand(user.GetAccountId(), id);
+                await mediator.Send(command, ct);
 
                 return TypedResults.Empty;
             })

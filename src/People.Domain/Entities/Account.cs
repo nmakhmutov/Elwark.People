@@ -6,6 +6,9 @@ using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
+// ReSharper disable FieldCanBeMadeReadOnly.Local
+// ReSharper disable UnusedMember.Local
+
 namespace People.Domain.Entities;
 
 public sealed class Account : Entity<long>,
@@ -18,13 +21,11 @@ public sealed class Account : Entity<long>,
     private readonly List<ExternalConnection> _externals;
 
     private Ban? _ban;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private DateTime _createdAt;
     private Registration _registration;
     private string[] _roles;
     private DateTime _updatedAt;
 
-    // ReSharper disable once UnusedMember.Local
     private Account()
     {
         Name = default!;

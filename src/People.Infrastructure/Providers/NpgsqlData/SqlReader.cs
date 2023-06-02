@@ -27,8 +27,7 @@ public sealed class SqlReader<T>
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await using var reader = await command
-            .ExecuteReaderAsync(ct)
+        await using var reader = await command.ExecuteReaderAsync(ct)
             .ConfigureAwait(false);
 
         if (await reader.ReadAsync(ct).ConfigureAwait(false))
@@ -45,8 +44,7 @@ public sealed class SqlReader<T>
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await using var reader = await command
-            .ExecuteReaderAsync(ct)
+        await using var reader = await command.ExecuteReaderAsync(ct)
             .ConfigureAwait(false);
 
         while (await reader.ReadAsync(ct).ConfigureAwait(false))

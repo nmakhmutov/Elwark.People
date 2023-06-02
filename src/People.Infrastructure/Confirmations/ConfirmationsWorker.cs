@@ -24,14 +24,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
         {
             try
             {
-                await using var scope = _provider
-                    .CreateAsyncScope();
-
-                var confirmation = scope.ServiceProvider
-                    .GetRequiredService<IConfirmationService>();
-                var result = await confirmation
-                    .DeleteAsync(_time.Now, stoppingToken)
-                    .ConfigureAwait(false);
+                var result = await DeleteAsync(stoppingToken);
 
                 if (result > 0)
                     _logger.LogInformation("Deleted {c} expired confirmations", result);
@@ -41,9 +34,21 @@ internal sealed class ConfirmationsWorker : BackgroundService
                 _logger.LogWarning(ex, "Exception occured in {service}", nameof(ConfirmationsWorker));
             }
 
-            await Task
-                .Delay(TimeSpan.FromMinutes(1), stoppingToken)
+            await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken)
                 .ConfigureAwait(false);
         }
+    }
+
+    private async Task<int> DeleteAsync(CancellationToken ct)
+    {
+        await using var scope = _provider.CreateAsyncScope();
+
+        var confirmation = scope.ServiceProvider
+            .GetRequiredService<IConfirmationService>();
+
+        var result = await confirmation.DeleteAsync(_time.Now, ct)
+            .ConfigureAwait(false);
+
+        return result;
     }
 }

@@ -6,7 +6,6 @@ using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
 using People.Infrastructure.Cryptography;
-using People.Infrastructure.Providers;
 using People.Infrastructure.Providers.NpgsqlData;
 using People.Infrastructure.Repositories;
 using StackExchange.Redis;
@@ -25,7 +24,7 @@ public static class ServiceCollectionExtensions
             .AddDbContext<PeopleDbContext>(builder => builder.UseNpgsql(options.PostgresqlConnectionString))
             .AddScoped<IAccountRepository, AccountRepository>()
             .AddScoped<IConfirmationService, ConfirmationService>()
-            .AddSingleton<ITimeProvider, TimeProvider>()
+            .AddSingleton<ITimeProvider, People.Infrastructure.Providers.TimeProvider>()
             .AddSingleton<IIpHasher, IpHasher>()
             .AddSingleton<INpgsqlDataProvider>(_ => new NpgsqlDataProvider(options.PostgresqlConnectionString))
             .AddSingleton<IConnectionMultiplexer>(_ =>

@@ -72,10 +72,10 @@ internal sealed class ConfirmationService : IConfirmationService
     }
 
     public Task<int> DeleteAsync(DateTime now, CancellationToken ct) =>
-        _dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM confirmations WHERE expires_at < '{now:O}'", ct);
+        _dbContext.Set<Confirmation>().Where(x => x.ExpiresAt < now).ExecuteDeleteAsync(ct);
 
     public Task<int> DeleteAsync(long id, CancellationToken ct) =>
-        _dbContext.Database.ExecuteSqlRawAsync($"DELETE FROM confirmations WHERE account_id = {id}", ct);
+        _dbContext.Set<Confirmation>().Where(x => x.AccountId == id).ExecuteDeleteAsync(ct);
 
     public async Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time,
         CancellationToken ct)
@@ -110,8 +110,7 @@ internal sealed class ConfirmationService : IConfirmationService
 
     private async Task<AccountConfirmation> CheckAsync(Guid id, string type, string code, CancellationToken ct)
     {
-        var confirmation = await _dbContext
-            .Set<Confirmation>()
+        var confirmation = await _dbContext.Set<Confirmation>()
             .FirstOrDefaultAsync(x => x.Id == id, ct)
             .ConfigureAwait(false) ?? throw ConfirmationException.NotFound();
 
@@ -131,8 +130,7 @@ internal sealed class ConfirmationService : IConfirmationService
         if (await _redis.KeyExistsAsync(key).ConfigureAwait(false))
             throw ConfirmationException.AlreadySent();
 
-        var confirmation = await _dbContext
-            .Set<Confirmation>()
+        var confirmation = await _dbContext.Set<Confirmation>()
             .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct)
             .ConfigureAwait(false);
 
@@ -143,16 +141,13 @@ internal sealed class ConfirmationService : IConfirmationService
         var code = Generate(ConfirmationLength);
 
         var entity = new Confirmation(guid, id, code, type, time.Now, CodeTtl);
-        await _dbContext
-            .AddAsync(entity, ct)
+        await _dbContext.AddAsync(entity, ct)
             .ConfigureAwait(false);
 
-        await _dbContext
-            .SaveChangesAsync(ct)
+        await _dbContext.SaveChangesAsync(ct)
             .ConfigureAwait(false);
 
-        await _redis
-            .StringSetAsync(key, true, LockTtl)
+        await _redis.StringSetAsync(key, true, LockTtl)
             .ConfigureAwait(false);
 
         return entity;
@@ -161,8 +156,8 @@ internal sealed class ConfirmationService : IConfirmationService
     private static Guid CreateSortedGuid(long id, DateTime time)
     {
         Span<byte> bytes = stackalloc byte[16];
-        BitConverter.GetBytes(id).CopyTo(bytes[..8]);
-        BitConverter.GetBytes(time.Ticks).CopyTo(bytes[8..]);
+        BitConverter.GetBytes(time.Ticks).CopyTo(bytes[..8]);
+        BitConverter.GetBytes(id).CopyTo(bytes[8..]);
 
         return new Guid(bytes);
     }

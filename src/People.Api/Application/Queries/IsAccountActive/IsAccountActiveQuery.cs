@@ -20,9 +20,6 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
             .FirstOrDefaultAsync(ct)
             .ConfigureAwait(false);
 
-        if (data is null)
-            return false;
-
-        return data.IsActivated && !data.IsBanned;
+        return data is { IsActivated: true, IsBanned: false };
     }
 }

@@ -18,7 +18,7 @@
     <PackageReference Include="Grpc.Tools" Version="2.54.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0-preview.*" />
     <PackageReference Include="MinimalApis.LiquidViews" Version="2.4.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />

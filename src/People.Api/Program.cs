@@ -212,10 +212,13 @@ builder.Host
 var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
-    await scope.ServiceProvider.GetRequiredService<PeopleDbContext>()
-        .Database
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>(); 
+    
+    await dbContext.Database
         .MigrateAsync()
         .ConfigureAwait(false);
+}
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
     {
