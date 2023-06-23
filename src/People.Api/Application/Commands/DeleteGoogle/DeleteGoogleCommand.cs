@@ -27,7 +27,7 @@ internal sealed class DeleteGoogleCommandHandler : IRequestHandler<DeleteGoogleC
         account.DeleteGoogle(request.Identity, _time);
 
         _repository.Update(account);
-        
+
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct)
             .ConfigureAwait(false);

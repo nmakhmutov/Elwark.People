@@ -4,9 +4,7 @@ namespace People.Api.Application.Commands.AppendMicrosoft;
 
 internal sealed class AppendMicrosoftCommandValidator : AbstractValidator<AppendMicrosoftCommand>
 {
-    public AppendMicrosoftCommandValidator()
-    {
+    public AppendMicrosoftCommandValidator() =>
         RuleFor(x => x.Token)
             .NotEmpty();
-    }
 }

@@ -8,7 +8,6 @@ using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Local
 // ReSharper disable UnusedMember.Local
-
 namespace People.Domain.Entities;
 
 public sealed class Account : Entity<long>,

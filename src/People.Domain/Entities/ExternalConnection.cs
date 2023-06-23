@@ -2,7 +2,6 @@ using People.Domain.SeedWork;
 
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 namespace People.Domain.Entities;
 
 public enum ExternalService : byte
@@ -16,7 +15,8 @@ public sealed class ExternalConnection : Entity<Guid>
 {
     private DateTime _createdAt;
 
-    private ExternalConnection(ExternalService type, string identity, string? firstName, string? lastName, DateTime createdAt)
+    private ExternalConnection(ExternalService type, string identity, string? firstName, string? lastName,
+        DateTime createdAt)
     {
         Type = type;
         Identity = identity;

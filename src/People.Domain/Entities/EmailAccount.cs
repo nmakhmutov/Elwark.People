@@ -2,7 +2,6 @@ using People.Domain.SeedWork;
 
 // ReSharper disable NotAccessedField.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 namespace People.Domain.Entities;
 
 public sealed class EmailAccount : Entity<Guid>
@@ -18,9 +17,9 @@ public sealed class EmailAccount : Entity<Guid>
         _confirmedAt = confirmedAt;
         _createdAt = createdAt;
     }
-    
+
     public long AccountId { get; private set; }
-    
+
     public string Email { get; private set; }
 
     public bool IsPrimary { get; private set; }

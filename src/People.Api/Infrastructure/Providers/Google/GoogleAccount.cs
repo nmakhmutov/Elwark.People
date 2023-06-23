@@ -18,7 +18,7 @@ internal sealed class GoogleAccount
     }
 
     public string Identity { get; }
-    
+
     public MailAddress Email { get; }
 
     public bool IsEmailVerified { get; }

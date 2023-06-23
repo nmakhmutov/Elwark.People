@@ -9,6 +9,7 @@ using People.Infrastructure.Cryptography;
 using People.Infrastructure.Providers.NpgsqlData;
 using People.Infrastructure.Repositories;
 using StackExchange.Redis;
+using TimeProvider = People.Infrastructure.Providers.TimeProvider;
 
 namespace People.Infrastructure;
 
@@ -24,7 +25,7 @@ public static class ServiceCollectionExtensions
             .AddDbContext<PeopleDbContext>(builder => builder.UseNpgsql(options.PostgresqlConnectionString))
             .AddScoped<IAccountRepository, AccountRepository>()
             .AddScoped<IConfirmationService, ConfirmationService>()
-            .AddSingleton<ITimeProvider, People.Infrastructure.Providers.TimeProvider>()
+            .AddSingleton<ITimeProvider, TimeProvider>()
             .AddSingleton<IIpHasher, IpHasher>()
             .AddSingleton<INpgsqlDataProvider>(_ => new NpgsqlDataProvider(options.PostgresqlConnectionString))
             .AddSingleton<IConnectionMultiplexer>(_ =>

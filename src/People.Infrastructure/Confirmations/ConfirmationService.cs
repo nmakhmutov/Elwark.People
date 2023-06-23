@@ -177,7 +177,7 @@ internal sealed class ConfirmationService : IConfirmationService
     private static string Generate(int length)
     {
         const string chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-        
+
         return RandomNumberGenerator.GetString(chars, length);
     }
 }

@@ -38,7 +38,7 @@ public static class EntityFrameworkExtensions
 
     public static IQueryable<Account> WhereGoogle(this IQueryable<Account> source, string identity) =>
         source.Where(x => x.Externals.Any(e => e.Type == ExternalService.Google && e.Identity == identity));
-    
+
     public static IQueryable<Account> WhereMicrosoft(this IQueryable<Account> source, string identity) =>
         source.Where(x => x.Externals.Any(e => e.Type == ExternalService.Microsoft && e.Identity == identity));
 }

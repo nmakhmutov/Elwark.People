@@ -5,7 +5,7 @@ namespace People.Domain.Exceptions;
 public sealed class EmailException : PeopleException
 {
     public EmailException(MailAddress email, string code, string? message = null)
-        : base(nameof(EmailException),code, message) =>
+        : base(nameof(EmailException), code, message) =>
         Email = email;
 
     public MailAddress Email { get; }
@@ -18,7 +18,7 @@ public sealed class EmailException : PeopleException
 
     public static EmailException NotConfirmed(MailAddress email) =>
         new(email, nameof(NotConfirmed), $"Email '{email}' not confirmed");
-    
+
     public static EmailException AlreadyConfirmed(MailAddress email) =>
         new(email, nameof(AlreadyConfirmed), $"Email '{email}' already confirmed");
 }

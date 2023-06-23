@@ -91,11 +91,11 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property("_roles")
             .HasColumnName("roles")
             .IsRequired();
-        
+
         builder.Property<Ban>("_ban")
             .HasColumnName("ban")
             .HasColumnType("json");
-        
+
         builder.OwnsOne<Registration>("_registration", navigationBuilder =>
         {
             navigationBuilder.Property(x => x.Ip)
@@ -111,7 +111,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
 
             navigationBuilder.WithOwner();
         });
-        
+
         builder.Property<DateTime>("_updatedAt")
             .HasColumnName("updated_at")
             .HasDefaultValueSql("now()")

@@ -1,6 +1,9 @@
 namespace People.Domain.ValueObjects;
 
-public readonly struct TimeZone : IComparable, IComparable<TimeZone>, IEquatable<TimeZone>
+public readonly struct TimeZone :
+    IComparable,
+    IComparable<TimeZone>,
+    IEquatable<TimeZone>
 {
     public static readonly TimeZone Utc =
         new(TimeZoneInfo.Utc.Id);

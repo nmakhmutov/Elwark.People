@@ -13,7 +13,8 @@ public interface IConfirmationService
 
     Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct = default);
 
-    Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time, CancellationToken ct = default);
+    Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time,
+        CancellationToken ct = default);
 
     Task<EmailConfirmation> VerifyEmailAsync(string token, string code, CancellationToken ct = default);
 

@@ -18,11 +18,11 @@ internal sealed class ExternalConnectionEntityTypeConfiguration : IEntityTypeCon
         builder.Property(x => x.Id)
             .HasColumnName("id")
             .HasDefaultValueSql("gen_random_uuid()");
-        
+
         builder.Property("_accountId")
             .HasColumnName("account_id")
             .IsRequired();
-        
+
         builder.Property(x => x.Type)
             .HasColumnName("type")
             .IsRequired();

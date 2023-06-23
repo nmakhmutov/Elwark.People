@@ -42,7 +42,7 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
             account.AddEmail(microsoft.Email, true, _time);
 
         _repository.Update(account);
-        
+
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct)
             .ConfigureAwait(false);

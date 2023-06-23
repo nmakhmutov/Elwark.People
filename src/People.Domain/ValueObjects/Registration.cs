@@ -1,7 +1,6 @@
 using People.Domain.SeedWork;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 namespace People.Domain.ValueObjects;
 
 public sealed class Registration : ValueObject
@@ -19,7 +18,7 @@ public sealed class Registration : ValueObject
     protected override IEnumerable<object?> GetEqualityComponents()
     {
         yield return CountryCode;
-        
+
         foreach (var b in Ip)
             yield return b;
     }

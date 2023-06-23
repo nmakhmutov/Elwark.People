@@ -32,7 +32,7 @@ internal sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAc
 
         RuleFor(x => x.StartOfWeek)
             .IsInEnum();
-        
+
         RuleFor(x => x.Country)
             .NotNull();
     }

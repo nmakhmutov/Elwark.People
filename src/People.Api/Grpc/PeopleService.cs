@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Mail;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -32,7 +31,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var query = new GetAccountSummaryQuery(request.Id);
         var result = await _mediator.Send(query, context.CancellationToken);
 
-        return result.ToGrpc();
+        return AccountReply.Map(result);
     }
 
     public override async Task<BoolValue> IsAccountActive(AccountRequest request, ServerCallContext context)
@@ -49,12 +48,12 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SigningUpByEmailCommand(
             new MailAddress(request.Email),
             Language.Parse(request.Language),
-            ParseIpAddress(request.Ip)
+            request.Ip.ToIpAddress()
         );
 
         var token = await _mediator.Send(command, context.CancellationToken);
 
-        return new EmailSigningUpReply { Token = token };
+        return EmailSigningUpReply.Map(token);
     }
 
     public override async Task<SignUpReply> SignUpByEmail(EmailSignUpRequest request, ServerCallContext context)
@@ -62,7 +61,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByEmailCommand(request.Token, request.Code);
         var result = await _mediator.Send(command, context.CancellationToken);
 
-        return result.ToGrpc();
+        return SignUpReply.Map(result);
     }
 
     public override async Task<EmailSigningInReply> SigningInByEmail(EmailSigningInRequest request,
@@ -71,7 +70,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SigningInByEmailCommand(new MailAddress(request.Email), Language.Parse(request.Language));
         var token = await _mediator.Send(command, context.CancellationToken);
 
-        return new EmailSigningInReply { Token = token };
+        return EmailSigningInReply.Map(token);
     }
 
     public override async Task<SignInReply> SignInByEmail(EmailSignInRequest request, ServerCallContext context)
@@ -79,7 +78,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignInByEmailCommand(request.Token, request.Code);
         var result = await _mediator.Send(command, context.CancellationToken);
 
-        return result.ToGrpc();
+        return SignInReply.Map(result);
     }
 
     public override async Task<SignUpReply> SignUpByGoogle(ExternalSignUpRequest request, ServerCallContext context)
@@ -87,20 +86,20 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByGoogleCommand(
             request.AccessToken,
             Language.Parse(request.Language),
-            ParseIpAddress(request.Ip)
+            request.Ip.ToIpAddress()
         );
 
         var result = await _mediator.Send(command, context.CancellationToken);
 
-        return result.ToGrpc();
+        return SignUpReply.Map(result);
     }
 
     public override async Task<SignInReply> SignInByGoogle(ExternalSignInRequest request, ServerCallContext context)
     {
-        var command = new SignInByGoogleCommand(request.AccessToken, ParseIpAddress(request.Ip));
+        var command = new SignInByGoogleCommand(request.AccessToken, request.Ip.ToIpAddress());
         var result = await _mediator.Send(command, context.CancellationToken);
 
-        return result.ToGrpc();
+        return SignInReply.Map(result);
     }
 
     public override async Task<Empty> AppendGoogle(ExternalAppendRequest request, ServerCallContext context)
@@ -116,20 +115,20 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByMicrosoftCommand(
             request.AccessToken,
             Language.Parse(request.Language),
-            ParseIpAddress(request.Ip)
+            request.Ip.ToIpAddress()
         );
 
         var result = await _mediator.Send(command, context.CancellationToken);
 
-        return result.ToGrpc();
+        return SignUpReply.Map(result);
     }
 
     public override async Task<SignInReply> SignInByMicrosoft(ExternalSignInRequest request, ServerCallContext context)
     {
-        var command = new SignInByMicrosoftCommand(request.AccessToken, ParseIpAddress(request.Ip));
+        var command = new SignInByMicrosoftCommand(request.AccessToken, request.Ip.ToIpAddress());
         var result = await _mediator.Send(command, context.CancellationToken);
 
-        return result.ToGrpc();
+        return SignInReply.Map(result);
     }
 
     public override async Task<Empty> AppendMicrosoft(ExternalAppendRequest request, ServerCallContext context)
@@ -139,7 +138,4 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
 
         return new Empty();
     }
-
-    private static IPAddress ParseIpAddress(string? ip) =>
-        IPAddress.TryParse(ip, out var value) ? value : IPAddress.None;
 }

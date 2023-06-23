@@ -9,7 +9,7 @@ public sealed class GravatarService : IGravatarService
 {
     private static readonly JsonSerializerOptions Options = new()
     {
-        PropertyNameCaseInsensitive = true,
+        PropertyNameCaseInsensitive = true
     };
 
     private readonly HttpClient _client;
@@ -42,7 +42,7 @@ public sealed class GravatarService : IGravatarService
             var content = await response.Content
                 .ReadFromJsonAsync<Wrapper>(Options)
                 .ConfigureAwait(false);
-            
+
             return content?.Entry.FirstOrDefault();
         }
         catch (Exception ex)

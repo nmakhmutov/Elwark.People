@@ -1,7 +1,6 @@
 using People.Domain.SeedWork;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 namespace People.Domain.ValueObjects;
 
 public sealed class Ban : ValueObject

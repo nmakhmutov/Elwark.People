@@ -24,6 +24,10 @@ service PeopleService {
   rpc AppendMicrosoft (ExternalAppendRequest) returns (google.protobuf.Empty);
 }
 
+message IpAddress {
+  string value = 1;
+}
+
 message AccountRequest {
   int64 id = 1;
 }
@@ -60,7 +64,7 @@ message AccountReply {
 message EmailSigningUpRequest {
   string email = 1;
   string language = 2;
-  string ip = 3;
+  IpAddress ip = 3;
 }
 
 message EmailSigningUpReply {
@@ -68,8 +72,8 @@ message EmailSigningUpReply {
 }
 
 message EmailSignUpRequest {
-    string token = 1;
-    string code = 2;
+  string token = 1;
+  string code = 2;
 }
 
 message EmailSigningInRequest {
@@ -88,13 +92,13 @@ message EmailSignInRequest {
 
 message ExternalSignInRequest {
   string access_token = 1;
-  string ip = 2;
+  IpAddress ip = 2;
 }
 
 message ExternalSignUpRequest {
   string access_token = 1;
   string language = 2;
-  string ip = 3;
+  IpAddress ip = 3;
 }
 
 message ExternalAppendRequest {

@@ -1,6 +1,9 @@
 namespace People.Domain.ValueObjects;
 
-public readonly struct CountryCode : IComparable, IComparable<CountryCode>, IEquatable<CountryCode>
+public readonly struct CountryCode : 
+    IComparable,
+    IComparable<CountryCode>,
+    IEquatable<CountryCode>
 {
     public static CountryCode Empty =>
         new("--");

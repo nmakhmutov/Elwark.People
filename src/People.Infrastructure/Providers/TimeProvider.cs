@@ -4,5 +4,6 @@ namespace People.Infrastructure.Providers;
 
 internal sealed class TimeProvider : ITimeProvider
 {
-    public DateTime Now => DateTime.UtcNow;
+    public DateTime Now =>
+        DateTime.UtcNow;
 }

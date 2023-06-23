@@ -10,6 +10,6 @@ public abstract class PeopleException : Exception
     }
 
     public string Name { get; }
-    
+
     public string Code { get; }
 }

@@ -1,6 +1,9 @@
 namespace People.Domain.ValueObjects;
 
-public readonly struct Language : IComparable, IComparable<Language>, IEquatable<Language>
+public readonly struct Language : 
+    IComparable,
+    IComparable<Language>,
+    IEquatable<Language>
 {
     public static Language Default =>
         new("en");

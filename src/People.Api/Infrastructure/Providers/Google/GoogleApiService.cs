@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-
 namespace People.Api.Infrastructure.Providers.Google;
 
 internal sealed class GoogleApiService : IGoogleApiService
@@ -28,7 +27,7 @@ internal sealed class GoogleApiService : IGoogleApiService
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
-        
+
         var google = await response.Content
             .ReadFromJsonAsync<Dto>(Options, ct)
             .ConfigureAwait(false);

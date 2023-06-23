@@ -6,7 +6,6 @@ using People.Domain.SeedWork;
 using People.Infrastructure.EntityConfigurations;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-
 namespace People.Infrastructure;
 
 public sealed class PeopleDbContext : DbContext,
@@ -28,7 +27,7 @@ public sealed class PeopleDbContext : DbContext,
     {
         await SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
-        
+
         await _mediator.DispatchDomainEventsAsync(this)
             .ConfigureAwait(false);
 

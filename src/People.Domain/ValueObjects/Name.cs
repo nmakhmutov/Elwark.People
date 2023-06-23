@@ -1,7 +1,6 @@
 using People.Domain.SeedWork;
 
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
-
 namespace People.Domain.ValueObjects;
 
 public sealed class Name : ValueObject
@@ -13,13 +12,16 @@ public sealed class Name : ValueObject
     public Name(string nickname, string? firstName = null, string? lastName = null, bool preferNickname = false)
     {
         if (nickname.Length > NicknameLength)
-            throw new ArgumentOutOfRangeException(nameof(nickname), nickname, $"Nickname cannot be more then {NicknameLength}");
+            throw new ArgumentOutOfRangeException(nameof(nickname), nickname,
+                $"Nickname cannot be more then {NicknameLength}");
 
         if (firstName?.Length > FirstNameLength)
-            throw new ArgumentOutOfRangeException(nameof(firstName), firstName, $"Nickname cannot be more then {FirstName}");
+            throw new ArgumentOutOfRangeException(nameof(firstName), firstName,
+                $"Nickname cannot be more then {FirstName}");
 
         if (lastName?.Length > NicknameLength)
-            throw new ArgumentOutOfRangeException(nameof(lastName), lastName, $"Nickname cannot be more then {LastNameLength}");
+            throw new ArgumentOutOfRangeException(nameof(lastName), lastName,
+                $"Nickname cannot be more then {LastNameLength}");
 
         Nickname = nickname.Trim();
         FirstName = Normalize(firstName);
@@ -39,7 +41,7 @@ public sealed class Name : ValueObject
     {
         if (PreferNickname || (FirstName is null && LastName is null))
             return Nickname;
-        
+
         return $"{FirstName} {LastName}".Trim();
     }
 
