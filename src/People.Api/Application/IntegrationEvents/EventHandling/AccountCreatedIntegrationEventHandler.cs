@@ -2,7 +2,6 @@ using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using People.Infrastructure.Confirmations;
 using People.Kafka.Integration;
@@ -16,16 +15,14 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
     private readonly IGravatarService _gravatar;
     private readonly IIpApiService _ipService;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
 
     public AccountCreatedIntegrationEventHandler(IConfirmationService confirmation, IGravatarService gravatar,
-        IIpApiService ipService, IAccountRepository repository, ITimeProvider time)
+        IIpApiService ipService, IAccountRepository repository)
     {
         _confirmation = confirmation;
         _gravatar = gravatar;
         _ipService = ipService;
         _repository = repository;
-        _time = time;
     }
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message)
@@ -49,13 +46,10 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         if (ipInformation is not null)
         {
             if (CountryCode.TryParse(ipInformation.CountryCode, out var country))
-            {
-                account.Update(country, _time);
                 account.UpdateRegistrationCountry(country);
-            }
 
             if (TimeZone.TryParse(ipInformation.TimeZone, out var timeZone))
-                account.Update(timeZone, _time);
+                account.Update(account.Language, account.CountryCode, timeZone);
 
             changed = true;
         }
@@ -64,10 +58,10 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         {
             var firstName = gravatar.Name?.FirstOrDefault()?.FirstName ?? account.Name.FirstName;
             var lastName = gravatar.Name?.FirstOrDefault()?.LastName ?? account.Name.LastName;
-            account.Update(firstName, lastName, _time);
+            account.Update(firstName, lastName);
 
             if (Uri.TryCreate(gravatar.ThumbnailUrl, UriKind.Absolute, out var image))
-                account.Update(image, _time);
+                account.Update(image);
 
             changed = true;
         }

@@ -2,7 +2,6 @@ using MediatR;
 using People.Api.Application.Models;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SignUpByEmail;
@@ -13,14 +12,14 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
 {
     private readonly IConfirmationService _confirmation;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public SignUpByEmailCommandHandler(IConfirmationService confirmation, IAccountRepository repository,
-        ITimeProvider time)
+        TimeProvider timeProvider)
     {
         _confirmation = confirmation;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
@@ -33,7 +32,7 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
             .GetAsync(confirmation.AccountId, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(confirmation.AccountId);
 
-        account.ConfirmEmail(account.GetPrimaryEmail(), _time);
+        account.ConfirmEmail(account.GetPrimaryEmail(), _timeProvider);
 
         _repository.Update(account);
         await _repository.UnitOfWork

@@ -22,17 +22,17 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
     private readonly IIpHasher _hasher;
     private readonly INotificationSender _notification;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public SigningUpByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        IIpHasher hasher, INotificationSender notification, IAccountRepository repository, ITimeProvider time)
+        IIpHasher hasher, INotificationSender notification, IAccountRepository repository, TimeProvider timeProvider)
     {
         _confirmation = confirmation;
         _dbContext = dbContext;
         _hasher = hasher;
         _notification = notification;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task<string> Handle(SigningUpByEmailCommand request, CancellationToken ct)
@@ -52,8 +52,8 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
                 .ConfigureAwait(false);
         }
 
-        var account = new Account(request.Email.User, request.Language, null, request.Ip, _time, _hasher);
-        account.AddEmail(request.Email, false, _time);
+        var account = new Account(request.Email.User, request.Language, request.Ip, _hasher);
+        account.AddEmail(request.Email, false, _timeProvider);
 
         await _repository
             .AddAsync(account, ct)
@@ -71,7 +71,7 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
         CancellationToken ct)
     {
         var confirmation = await _confirmation
-            .SignUpAsync(id, _time, ct)
+            .SignUpAsync(id, _timeProvider, ct)
             .ConfigureAwait(false);
 
         await _notification

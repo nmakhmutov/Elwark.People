@@ -2,7 +2,6 @@ using MediatR;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
@@ -25,13 +24,9 @@ internal sealed record UpdateAccountCommand(
 internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, Account>
 {
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
 
-    public UpdateAccountCommandHandler(IAccountRepository repository, ITimeProvider time)
-    {
+    public UpdateAccountCommandHandler(IAccountRepository repository) =>
         _repository = repository;
-        _time = time;
-    }
 
     public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
@@ -39,13 +34,9 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
             .GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
-        account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname, _time);
-        account.Update(request.Country, _time);
-        account.Update(request.TimeZone, _time);
-        account.Update(request.DateFormat, _time);
-        account.Update(request.TimeFormat, _time);
-        account.Update(request.Language, _time);
-        account.Update(request.StartOfWeek, _time);
+        account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);
+        account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek);
+        account.Update(request.Language, request.Country, request.TimeZone);
 
         _repository.Update(account);
         await _repository.UnitOfWork

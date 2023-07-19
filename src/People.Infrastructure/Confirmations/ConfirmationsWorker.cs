@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using People.Domain.SeedWork;
+using People.Domain;
 
 namespace People.Infrastructure.Confirmations;
 
@@ -9,13 +9,14 @@ internal sealed class ConfirmationsWorker : BackgroundService
 {
     private readonly ILogger<ConfirmationsWorker> _logger;
     private readonly IServiceProvider _provider;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
-    public ConfirmationsWorker(ILogger<ConfirmationsWorker> logger, IServiceProvider provider, ITimeProvider time)
+    public ConfirmationsWorker(ILogger<ConfirmationsWorker> logger, IServiceProvider provider,
+        TimeProvider timeProvider)
     {
         _logger = logger;
         _provider = provider;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -26,8 +27,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
             {
                 var result = await DeleteAsync(stoppingToken);
 
-                if (result > 0)
-                    _logger.LogInformation("Deleted {c} expired confirmations", result);
+                _logger.LogDebug("Deleted {c} expired confirmations", result);
             }
             catch (Exception ex)
             {
@@ -46,7 +46,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
         var confirmation = scope.ServiceProvider
             .GetRequiredService<IConfirmationService>();
 
-        var result = await confirmation.DeleteAsync(_time.Now, ct)
+        var result = await confirmation.DeleteAsync(_timeProvider.UtcNow(), ct)
             .ConfigureAwait(false);
 
         return result;

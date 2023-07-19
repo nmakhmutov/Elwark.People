@@ -6,8 +6,8 @@ using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
-// ReSharper disable FieldCanBeMadeReadOnly.Local
-// ReSharper disable UnusedMember.Local
+// ReSharper disable NotAccessedField.Local
+
 namespace People.Domain.Entities;
 
 public sealed class Account : Entity<long>,
@@ -21,24 +21,29 @@ public sealed class Account : Entity<long>,
 
     private Ban? _ban;
     private DateTime _createdAt;
-    private Registration _registration;
+    private DateTime _lastActive;
+    private DateTime _lastLogIn;
+    private CountryCode _regCountryCode;
+    private byte[] _regIp;
     private string[] _roles;
     private DateTime _updatedAt;
 
     private Account()
     {
-        Name = default!;
+        Name = new Name("Empty");
         Picture = DefaultPicture;
-        _registration = default!;
         _emails = new List<EmailAccount>();
         _roles = Array.Empty<string>();
         _externals = new List<ExternalConnection>();
+        _regCountryCode = CountryCode.Empty;
+        _regIp = Array.Empty<byte>();
     }
 
-    public Account(string nickname, Language language, Uri? picture, IPAddress ip, ITimeProvider time, IIpHasher hasher)
+    public Account(string nickname, Language language, IPAddress ip, IIpHasher hasher)
+        : this()
     {
         Name = new Name(nickname);
-        Picture = picture?.ToString() ?? DefaultPicture;
+        Picture = DefaultPicture;
         Language = language;
         CountryCode = CountryCode.Empty;
         TimeZone = TimeZone.Utc;
@@ -46,12 +51,13 @@ public sealed class Account : Entity<long>,
         DateFormat = DateFormat.Default;
         StartOfWeek = DayOfWeek.Monday;
         IsActivated = false;
-        _createdAt = _updatedAt = time.Now;
+        _createdAt = _updatedAt = _lastActive = _lastLogIn = DateTime.MinValue;
         _ban = null;
         _emails = new List<EmailAccount>();
         _roles = Array.Empty<string>();
         _externals = new List<ExternalConnection>();
-        _registration = new Registration(hasher.CreateHash(ip), CountryCode.Empty);
+        _regCountryCode = CountryCode.Empty;
+        _regIp = hasher.CreateHash(ip);
 
         AddDomainEvent(new AccountCreatedDomainEvent(this, ip));
     }
@@ -86,17 +92,24 @@ public sealed class Account : Entity<long>,
     public IReadOnlyCollection<ExternalConnection> Externals =>
         _externals.AsReadOnly();
 
+    public void SetAsUpdated(TimeProvider provider)
+    {
+        if (_createdAt == DateTime.MinValue)
+            _createdAt = provider.UtcNow();
+
+        _updatedAt = provider.UtcNow();
+    }
+
     public DateTime GetCreatedDateTime() =>
         _createdAt;
 
-    public void AddEmail(MailAddress email, bool isConfirmed, ITimeProvider time)
+    public void AddEmail(MailAddress email, bool isConfirmed, TimeProvider timeProvider)
     {
         var notConfirmed = _emails.FirstOrDefault(x => !x.IsConfirmed);
         if (notConfirmed is not null)
             throw EmailException.NotConfirmed(new MailAddress(notConfirmed.Email));
 
-        var now = time.Now;
-        _updatedAt = now;
+        var now = timeProvider.UtcNow();
         _emails.Add(new EmailAccount(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
 
         UpdateActivation();
@@ -105,11 +118,9 @@ public sealed class Account : Entity<long>,
     public MailAddress GetPrimaryEmail() =>
         new(_emails.First(x => x.IsPrimary).Email);
 
-    public void SetPrimaryEmail(MailAddress email, ITimeProvider time)
+    public void SetPrimaryEmail(MailAddress email)
     {
-        var result = _emails.FirstOrDefault(x => x.Email == email.Address);
-        if (result is null)
-            throw EmailException.NotFound(email);
+        var result = _emails.FirstOrDefault(x => x.Email == email.Address) ?? throw EmailException.NotFound(email);
 
         if (!result.IsConfirmed)
             throw EmailException.NotConfirmed(email);
@@ -118,20 +129,18 @@ public sealed class Account : Entity<long>,
             item.RemovePrimary();
 
         result.SetPrimary();
-        _updatedAt = time.Now;
     }
 
-    public void ConfirmEmail(MailAddress email, ITimeProvider time)
+    public void ConfirmEmail(MailAddress email, TimeProvider timeProvider)
     {
         var result = _emails.FirstOrDefault(x => x.Email == email.Address) ?? throw EmailException.NotFound(email);
-        result.Confirm(time.Now);
-        _updatedAt = time.Now;
+        result.Confirm(timeProvider.UtcNow());
 
         UpdateActivation();
         AddDomainEvent(new EmailConfirmedDomainEvent(this, email));
     }
 
-    public void DeleteEmail(MailAddress email, ITimeProvider time)
+    public void DeleteEmail(MailAddress email)
     {
         var result = _emails.FirstOrDefault(x => x.Email == email.Address);
         if (result is null)
@@ -141,43 +150,38 @@ public sealed class Account : Entity<long>,
             throw AccountException.PrimaryEmailCannotBeRemoved(Id);
 
         _emails.Remove(result);
-        _updatedAt = time.Now;
 
         UpdateActivation();
     }
 
-    public void AddGoogle(string identity, string? firstName, string? lastName, ITimeProvider time)
+    public void AddGoogle(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
     {
-        _updatedAt = time.Now;
-        _externals.Add(ExternalConnection.Google(identity, firstName, lastName, _updatedAt));
+        _externals.Add(ExternalConnection.Google(identity, firstName, lastName, timeProvider.UtcNow()));
         Name = new Name(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
-    public void DeleteGoogle(string identity, ITimeProvider time)
+    public void DeleteGoogle(string identity)
     {
         _externals.RemoveAll(x => x.Type == ExternalService.Google && x.Identity == identity);
-        _updatedAt = time.Now;
 
         UpdateActivation();
     }
 
-    public void AddMicrosoft(string identity, string? firstName, string? lastName, ITimeProvider time)
+    public void AddMicrosoft(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
     {
-        _updatedAt = time.Now;
-        _externals.Add(ExternalConnection.Microsoft(identity, firstName, lastName, _updatedAt));
+        _externals.Add(ExternalConnection.Microsoft(identity, firstName, lastName, timeProvider.UtcNow()));
         Name = new Name(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
-    public void DeleteMicrosoft(string identity, ITimeProvider time)
+    public void DeleteMicrosoft(string identity)
     {
         _externals.RemoveAll(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
-        _updatedAt = time.Now;
 
         UpdateActivation();
     }
@@ -188,95 +192,63 @@ public sealed class Account : Entity<long>,
     public void DeleteRole(string role) =>
         _roles = _roles.Where(x => x != role).ToArray();
 
-    public void Ban(string reason, DateTime expiredAt, ITimeProvider time)
+    public void Ban(string reason, DateTime expiredAt, TimeProvider timeProvider)
     {
-        _updatedAt = time.Now;
-        _ban = new Ban(reason, expiredAt, _updatedAt);
+        _ban = new Ban(reason, expiredAt, timeProvider.UtcNow());
 
         AddDomainEvent(new AccountBannedDomainEvent(this, reason, expiredAt));
     }
 
-    public void Unban(ITimeProvider time)
+    public void Unban()
     {
         _ban = null;
-        _updatedAt = time.Now;
 
         AddDomainEvent(new AccountUnbannedDomainEvent(this));
     }
 
-    public void Update(string? firstName, string? lastName, ITimeProvider time) =>
-        Update(Name.Nickname, firstName, lastName, Name.PreferNickname, time);
+    public void Update(string? firstName, string? lastName) =>
+        Update(Name.Nickname, firstName, lastName, Name.PreferNickname);
 
-    public void Update(string nickname, string? firstName, string? lastName, bool preferNickname, ITimeProvider time)
+    public void Update(string nickname, string? firstName, string? lastName, bool preferNickname)
     {
         Name = new Name(nickname, firstName, lastName, preferNickname);
-        _updatedAt = time.Now;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
-    public void Update(Uri? picture, ITimeProvider time)
+    public void Update(Uri? picture)
     {
         Picture = picture?.ToString() ?? DefaultPicture;
-        _updatedAt = time.Now;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
-    public void Update(CountryCode country, ITimeProvider time)
-    {
-        CountryCode = country;
-        _updatedAt = time.Now;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
-    }
-
-    public void Update(TimeZone timeZone, ITimeProvider time)
-    {
-        TimeZone = timeZone;
-        _updatedAt = time.Now;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
-    }
-
-    public void Update(DateFormat dateFormat, ITimeProvider time)
-    {
-        DateFormat = dateFormat;
-        _updatedAt = time.Now;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
-    }
-
-    public void Update(TimeFormat timeFormat, ITimeProvider time)
-    {
-        TimeFormat = timeFormat;
-        _updatedAt = time.Now;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
-    }
-
-    public void Update(DayOfWeek weekStart, ITimeProvider time)
-    {
-        StartOfWeek = weekStart;
-        _updatedAt = time.Now;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(this));
-    }
-
-    public void Update(Language language, ITimeProvider time)
+    public void Update(Language language, CountryCode country, TimeZone timeZone)
     {
         Language = language;
-        _updatedAt = time.Now;
+        CountryCode = country;
+        TimeZone = timeZone;
+
+        AddDomainEvent(new AccountUpdatedDomainEvent(this));
+    }
+
+    public void Update(DateFormat dateFormat, TimeFormat timeFormat, DayOfWeek weekStart)
+    {
+        DateFormat = dateFormat;
+        TimeFormat = timeFormat;
+        StartOfWeek = weekStart;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
     public void UpdateRegistrationCountry(CountryCode code)
     {
-        if (_registration.CountryCode != CountryCode.Empty)
+        CountryCode = code;
+
+        if (_regCountryCode != CountryCode.Empty)
             return;
 
-        _registration = new Registration(_registration.Ip, code);
+        _regCountryCode = code;
     }
 
     private void UpdateActivation() =>

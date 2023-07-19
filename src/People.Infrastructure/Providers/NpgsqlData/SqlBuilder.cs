@@ -5,7 +5,7 @@ namespace People.Infrastructure.Providers.NpgsqlData;
 public sealed class SqlBuilder
 {
     private readonly string _connection;
-    private readonly IList<NpgsqlParameter> _parameters;
+    private readonly List<NpgsqlParameter> _parameters;
     private readonly string _sql;
 
     public SqlBuilder(string connection, string sql)

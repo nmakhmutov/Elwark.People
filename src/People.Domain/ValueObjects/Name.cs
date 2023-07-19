@@ -11,6 +11,9 @@ public sealed class Name : ValueObject
 
     public Name(string nickname, string? firstName = null, string? lastName = null, bool preferNickname = false)
     {
+        if (string.IsNullOrWhiteSpace(nickname))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(nickname));
+
         if (nickname.Length > NicknameLength)
             throw new ArgumentOutOfRangeException(nameof(nickname), nickname,
                 $"Nickname cannot be more then {NicknameLength}");

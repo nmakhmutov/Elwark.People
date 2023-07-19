@@ -19,9 +19,13 @@ public sealed class ProducerConfigurationBuilder
         return this;
     }
 
-    internal ProducerConfiguration Build(string brokers) =>
-        new(
-            _topic ?? throw new ArgumentNullException(),
+    internal ProducerConfiguration Build(string brokers)
+    {
+        if (string.IsNullOrEmpty(_topic))
+            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka topic not specified"));
+
+        return new ProducerConfiguration(
+            _topic,
             new ProducerConfig
             {
                 BootstrapServers = brokers,
@@ -29,4 +33,5 @@ public sealed class ProducerConfigurationBuilder
                 EnableDeliveryReports = true
             }
         );
+    }
 }

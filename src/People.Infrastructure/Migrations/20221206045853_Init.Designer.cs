@@ -21,12 +21,12 @@ namespace People.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "7.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.Account", b =>
+            modelBuilder.Entity("People.Domain.Entities.Account", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -93,24 +93,52 @@ namespace People.Infrastructure.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<DateTime>("_lastActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_active")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("_lastLogIn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_log_in")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("_regCountryCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("reg_country_code");
+
+                    b.Property<byte[]>("_regIp")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("reg_ip");
+
                     b.Property<string[]>("_roles")
                         .IsRequired()
                         .HasColumnType("text[]")
                         .HasColumnName("roles");
 
                     b.Property<DateTime>("_updatedAt")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("now()");
+
+                    b.Property<uint>("version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
                     b.ToTable("accounts", (string)null);
                 });
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.EmailAccount", b =>
+            modelBuilder.Entity("People.Domain.Entities.EmailAccount", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,7 +179,7 @@ namespace People.Infrastructure.Migrations
                     b.ToTable("emails", (string)null);
                 });
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.ExternalConnection", b =>
+            modelBuilder.Entity("People.Domain.Entities.ExternalConnection", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -237,9 +265,9 @@ namespace People.Infrastructure.Migrations
                     b.ToTable("confirmations", (string)null);
                 });
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.Account", b =>
+            modelBuilder.Entity("People.Domain.Entities.Account", b =>
                 {
-                    b.OwnsOne("People.Domain.AggregatesModel.AccountAggregate.Name", "Name", b1 =>
+                    b.OwnsOne("People.Domain.ValueObjects.Name", "Name", b1 =>
                         {
                             b1.Property<long>("AccountId")
                                 .HasColumnType("bigint");
@@ -272,55 +300,29 @@ namespace People.Infrastructure.Migrations
                                 .HasForeignKey("AccountId");
                         });
 
-                    b.OwnsOne("People.Domain.AggregatesModel.AccountAggregate.Registration", "_registration", b1 =>
-                        {
-                            b1.Property<long>("AccountId")
-                                .HasColumnType("bigint");
-
-                            b1.Property<string>("CountryCode")
-                                .IsRequired()
-                                .HasMaxLength(2)
-                                .HasColumnType("character varying(2)")
-                                .HasColumnName("reg_country_code");
-
-                            b1.Property<byte[]>("Ip")
-                                .IsRequired()
-                                .HasColumnType("bytea")
-                                .HasColumnName("reg_ip");
-
-                            b1.HasKey("AccountId");
-
-                            b1.ToTable("accounts");
-
-                            b1.WithOwner()
-                                .HasForeignKey("AccountId");
-                        });
-
                     b.Navigation("Name")
                         .IsRequired();
-
-                    b.Navigation("_registration");
                 });
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.EmailAccount", b =>
+            modelBuilder.Entity("People.Domain.Entities.EmailAccount", b =>
                 {
-                    b.HasOne("People.Domain.AggregatesModel.AccountAggregate.Account", null)
+                    b.HasOne("People.Domain.Entities.Account", null)
                         .WithMany("Emails")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.ExternalConnection", b =>
+            modelBuilder.Entity("People.Domain.Entities.ExternalConnection", b =>
                 {
-                    b.HasOne("People.Domain.AggregatesModel.AccountAggregate.Account", null)
+                    b.HasOne("People.Domain.Entities.Account", null)
                         .WithMany("Externals")
                         .HasForeignKey("_accountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("People.Domain.AggregatesModel.AccountAggregate.Account", b =>
+            modelBuilder.Entity("People.Domain.Entities.Account", b =>
                 {
                     b.Navigation("Emails");
 

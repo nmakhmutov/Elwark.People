@@ -111,8 +111,15 @@ builder.Services
     .AddProducer<AccountCreatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.CreatedAccounts))
     .AddProducer<AccountUpdatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.UpdatedAccounts))
     .AddProducer<AccountDeletedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.DeletedAccounts))
+    .AddProducer<AccountEngaged>(producer => producer.WithTopic(KafkaTopic.EngagedAccounts))
     .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
         consumer.WithTopic(KafkaTopic.CreatedAccounts)
+            .WithGroupId(appName)
+            .WithWorkers(2)
+            .CreateTopicIfNotExists(2)
+    )
+    .AddConsumer<AccountEngaged, AccountEngagedIntegrationEventHandler>(consumer =>
+        consumer.WithTopic(KafkaTopic.EngagedAccounts)
             .WithGroupId(appName)
             .WithWorkers(2)
             .CreateTopicIfNotExists(2)

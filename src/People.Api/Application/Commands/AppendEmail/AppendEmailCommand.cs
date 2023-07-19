@@ -3,7 +3,6 @@ using MediatR;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Infrastructure;
 
 namespace People.Api.Application.Commands.AppendEmail;
@@ -14,12 +13,13 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
 {
     private readonly PeopleDbContext _dbContext;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
-    public AppendEmailCommandHandler(PeopleDbContext dbContext, ITimeProvider time, IAccountRepository repository)
+    public AppendEmailCommandHandler(PeopleDbContext dbContext, TimeProvider timeProvider,
+        IAccountRepository repository)
     {
         _dbContext = dbContext;
-        _time = time;
+        _timeProvider = timeProvider;
         _repository = repository;
     }
 
@@ -32,7 +32,7 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
             .GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
-        account.AddEmail(request.Email, false, _time);
+        account.AddEmail(request.Email, false, _timeProvider);
 
         _repository.Update(account);
         await _repository.UnitOfWork

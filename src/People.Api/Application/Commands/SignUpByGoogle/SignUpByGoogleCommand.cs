@@ -19,16 +19,16 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
     private readonly IGoogleApiService _google;
     private readonly IIpHasher _hasher;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public SignUpByGoogleCommandHandler(PeopleDbContext dbContext, IGoogleApiService google, IIpHasher hasher,
-        IAccountRepository repository, ITimeProvider time)
+        IAccountRepository repository, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _google = google;
         _hasher = hasher;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task<SignUpResult> Handle(SignUpByGoogleCommand request, CancellationToken ct)
@@ -47,9 +47,10 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
             ? request.Language
             : Language.Parse(google.Locale.TwoLetterISOLanguageName);
 
-        var account = new Account(google.Email.User, language, google.Picture, request.Ip, _time, _hasher);
-        account.AddGoogle(google.Identity, google.FirstName, google.LastName, _time);
-        account.AddEmail(google.Email, google.IsEmailVerified, _time);
+        var account = new Account(google.Email.User, language, request.Ip, _hasher);
+        account.Update(google.Picture);
+        account.AddGoogle(google.Identity, google.FirstName, google.LastName, _timeProvider);
+        account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 
         await _repository
             .AddAsync(account, ct)

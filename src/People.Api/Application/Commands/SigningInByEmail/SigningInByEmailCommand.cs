@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Exceptions;
-using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
@@ -17,15 +16,15 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
     private readonly INotificationSender _notification;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public SigningInByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        INotificationSender notification, ITimeProvider time)
+        INotificationSender notification, TimeProvider timeProvider)
     {
         _confirmation = confirmation;
         _dbContext = dbContext;
         _notification = notification;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task<string> Handle(SigningInByEmailCommand request, CancellationToken ct)
@@ -40,7 +39,7 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
             throw EmailException.NotConfirmed(email.Email);
 
         var confirmation = await _confirmation
-            .SignInAsync(email.AccountId, _time, ct)
+            .SignInAsync(email.AccountId, _timeProvider, ct)
             .ConfigureAwait(false);
 
         await _notification

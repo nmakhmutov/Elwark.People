@@ -24,14 +24,12 @@ internal sealed class AccountRepository : IAccountRepository
         if (account is null)
             return null;
 
-        await _dbContext
-            .Entry(account)
+        await _dbContext.Entry(account)
             .Collection(x => x.Emails)
             .LoadAsync(ct)
             .ConfigureAwait(false);
 
-        await _dbContext
-            .Entry(account)
+        await _dbContext.Entry(account)
             .Collection(x => x.Externals)
             .LoadAsync(ct)
             .ConfigureAwait(false);

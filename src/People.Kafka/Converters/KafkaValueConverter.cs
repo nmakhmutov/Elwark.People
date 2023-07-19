@@ -10,23 +10,31 @@ internal sealed class KafkaValueConverter<T> :
     IDeserializer<T>
     where T : IIntegrationEvent
 {
+    private static readonly Lazy<KafkaValueConverter<T>> Lazy = new(() => new KafkaValueConverter<T>());
+
+    public static readonly KafkaValueConverter<T> Instance =
+        Lazy.Value;
+
     private readonly JsonSerializerOptions _options = new()
     {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
+        IgnoreReadOnlyProperties = false,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = false
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
     };
 
     private KafkaValueConverter()
     {
     }
 
-    public static KafkaValueConverter<T> Instance { get; } = new();
-
     public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context) =>
         JsonSerializer.Deserialize<T>(data, _options)!;
 
-    public byte[] Serialize(T data, SerializationContext context) =>
-        JsonSerializer.SerializeToUtf8Bytes(data, typeof(T), _options);
+    public byte[] Serialize(T data, SerializationContext context)
+    {
+        var type = data.GetType();
+        return JsonSerializer.SerializeToUtf8Bytes(data, type.BaseType ?? typeof(object), _options);
+    }
 }

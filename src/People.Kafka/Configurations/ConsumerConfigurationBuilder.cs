@@ -50,26 +50,34 @@ public sealed class ConsumerConfigurationBuilder
 
     public ConsumerConfigurationBuilder CreateTopicIfNotExists(int numPartitions, short replicationFactor = 1)
     {
-        var topic = _topic ?? throw new Exception("Topic not specified");
+        if (string.IsNullOrEmpty(_topic))
+            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka topic not specified"));
 
         _topicSpecification = new TopicSpecification
         {
-            Name = topic,
+            Name = _topic,
             NumPartitions = numPartitions,
             ReplicationFactor = replicationFactor,
             Configs = new Dictionary<string, string>
             {
                 ["cleanup.policy"] = "delete",
-                ["retention.ms"] = TimeSpan.FromDays(7).TotalMilliseconds.ToString("0000")
+                ["retention.ms"] = TimeSpan.FromDays(14).TotalMilliseconds.ToString("0000")
             }
         };
 
         return this;
     }
 
-    internal ConsumerConfiguration Build(string brokers) =>
-        new(
-            _topic ?? throw new Exception("Topic is not specified"),
+    internal ConsumerConfiguration Build(string brokers)
+    {
+        if (string.IsNullOrEmpty(_topic))
+            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka topic not specified"));
+
+        if (string.IsNullOrEmpty(_groupId))
+            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka group id is not specified"));
+
+        return new ConsumerConfiguration(
+            _topic,
             _workers,
             _retryCount,
             _retryInterval,
@@ -77,11 +85,12 @@ public sealed class ConsumerConfigurationBuilder
             new ConsumerConfig
             {
                 BootstrapServers = brokers,
-                GroupId = _groupId ?? throw new Exception("Group id is not specified"),
+                GroupId = _groupId,
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 EnableAutoCommit = false,
                 EnablePartitionEof = false,
                 EnableAutoOffsetStore = false
             }
         );
+    }
 }

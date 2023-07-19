@@ -2,7 +2,6 @@ using MediatR;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.ConfirmEmail;
@@ -14,13 +13,13 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
     private readonly IConfirmationService _confirmation;
     private readonly ILogger<ConfirmEmailCommandHandler> _logger;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
-    public ConfirmEmailCommandHandler(IConfirmationService confirmation, ITimeProvider time,
+    public ConfirmEmailCommandHandler(IConfirmationService confirmation, TimeProvider timeProvider,
         IAccountRepository repository, ILogger<ConfirmEmailCommandHandler> logger)
     {
         _confirmation = confirmation;
-        _time = time;
+        _timeProvider = timeProvider;
         _repository = repository;
         _logger = logger;
     }
@@ -35,7 +34,7 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
             .GetAsync(id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(id);
 
-        account.ConfirmEmail(email, _time);
+        account.ConfirmEmail(email, _timeProvider);
 
         _repository.Update(account);
 

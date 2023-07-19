@@ -2,7 +2,6 @@ using MediatR;
 using People.Api.Infrastructure.Providers.Microsoft;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Infrastructure;
 
 namespace People.Api.Application.Commands.AppendMicrosoft;
@@ -14,15 +13,15 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
     private readonly PeopleDbContext _dbContext;
     private readonly IMicrosoftApiService _microsoft;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public AppendMicrosoftCommandHandler(PeopleDbContext dbContext, IMicrosoftApiService microsoft,
-        IAccountRepository repository, ITimeProvider time)
+        IAccountRepository repository, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _microsoft = microsoft;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task Handle(AppendMicrosoftCommand request, CancellationToken ct)
@@ -36,10 +35,10 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
             .ConfigureAwait(false);
 
         if (!await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct).ConfigureAwait(false))
-            account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _time);
+            account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _timeProvider);
 
         if (!await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct).ConfigureAwait(false))
-            account.AddEmail(microsoft.Email, true, _time);
+            account.AddEmail(microsoft.Email, true, _timeProvider);
 
         _repository.Update(account);
 

@@ -9,13 +9,13 @@
     <Protobuf Include="Protos\notification.proto" GrpcServices="Client" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Elwark.CorrelationId" Version="1.0.2" />
-    <PackageReference Include="Elwark.CorrelationId.Grpc" Version="1.0.2" />
-    <PackageReference Include="Elwark.CorrelationId.Http" Version="1.0.2" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+    <PackageReference Include="Elwark.CorrelationId" Version="1.0.3" />
+    <PackageReference Include="Elwark.CorrelationId.Grpc" Version="1.0.3" />
+    <PackageReference Include="Elwark.CorrelationId.Http" Version="1.0.3" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
     <PackageReference Include="Fluid.Core" Version="2.4.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.54.0" PrivateAssets="all" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.55.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.56.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0-preview.*" />
     <PackageReference Include="MinimalApis.LiquidViews" Version="2.4.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />

@@ -1,9 +1,11 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
 using People.Domain.Exceptions;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
+using People.Kafka.Integration;
 
 namespace People.Api.Application.Commands.SignInByEmail;
 
@@ -11,42 +13,37 @@ internal sealed record SignInByEmailCommand(string Token, string Code) : IReques
 
 internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailCommand, SignInResult>
 {
+    private readonly IIntegrationEventBus _bus;
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
-    private readonly ILogger<SignInByEmailCommandHandler> _logger;
 
-    public SignInByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        ILogger<SignInByEmailCommandHandler> logger)
+    public SignInByEmailCommandHandler(IIntegrationEventBus bus, IConfirmationService confirmation,
+        PeopleDbContext dbContext)
     {
+        _bus = bus;
         _confirmation = confirmation;
         _dbContext = dbContext;
-        _logger = logger;
     }
 
     public async Task<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
     {
-        var confirmation = await _confirmation
-            .SignInAsync(request.Token, request.Code, ct)
+        var confirmation = await _confirmation.SignInAsync(request.Token, request.Code, ct)
             .ConfigureAwait(false);
 
-        var account = await _dbContext.Accounts
+        var result = await _dbContext.Accounts
             .AsNoTracking()
             .Where(x => x.Id == confirmation.AccountId)
             .Select(x => new SignInResult(x.Id, x.Name.FullName()))
             .FirstOrDefaultAsync(ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(confirmation.AccountId);
 
-        try
-        {
-            await _confirmation
-                .DeleteAsync(account.Id, ct)
-                .ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occured while deleting confirmations for user {U}", account.Id);
-        }
+        await _confirmation.DeleteAsync(result.Id, ct)
+            .ConfigureAwait(false);
 
-        return account;
+        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, result.Id);
+        await _bus.PublishAsync(evt, ct)
+            .ConfigureAwait(false);
+
+        return result;
     }
 }

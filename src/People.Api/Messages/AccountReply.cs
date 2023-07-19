@@ -13,6 +13,7 @@ public partial class AccountReply
             Nickname = account.Name.Nickname,
             FirstName = account.Name.FirstName,
             LastName = account.Name.LastName,
+            FullName = account.Name.FullName(),
             Picture = account.Picture,
             CountryCode = account.CountryCode.ToString(),
             TimeZone = account.TimeZone.ToString(),
@@ -26,9 +27,11 @@ public partial class AccountReply
         public partial class Ban
         {
             public static Ban? Map(Domain.ValueObjects.Ban? ban) =>
-                ban is null
-                    ? null
-                    : new Ban { Reason = ban.Reason, ExpiresAt = ban.ExpiredAt.ToTimestamp() };
+                ban switch
+                {
+                    not null => new Ban { Reason = ban.Reason, ExpiresAt = ban.ExpiredAt.ToTimestamp() },
+                    _ => null
+                };
         }
     }
 }

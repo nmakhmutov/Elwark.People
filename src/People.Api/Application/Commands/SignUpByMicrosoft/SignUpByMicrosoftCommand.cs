@@ -19,16 +19,16 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
     private readonly IIpHasher _hasher;
     private readonly IMicrosoftApiService _microsoft;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public SignUpByMicrosoftCommandHandler(PeopleDbContext dbContext, IMicrosoftApiService microsoft, IIpHasher hasher,
-        IAccountRepository repository, ITimeProvider time)
+        IAccountRepository repository, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _microsoft = microsoft;
         _hasher = hasher;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
@@ -43,9 +43,9 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
         if (await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct).ConfigureAwait(false))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
-        var account = new Account(microsoft.Email.User, request.Language, null, request.Ip, _time, _hasher);
-        account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _time);
-        account.AddEmail(microsoft.Email, true, _time);
+        var account = new Account(microsoft.Email.User, request.Language, request.Ip, _hasher);
+        account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _timeProvider);
+        account.AddEmail(microsoft.Email, true, _timeProvider);
 
         await _repository
             .AddAsync(account, ct)

@@ -3,7 +3,6 @@ using MediatR;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.ConfirmingEmail;
@@ -15,15 +14,15 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
     private readonly IConfirmationService _confirmation;
     private readonly INotificationSender _notification;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public ConfirmingEmailCommandHandler(IConfirmationService confirmation, INotificationSender notification,
-        IAccountRepository repository, ITimeProvider time)
+        IAccountRepository repository, TimeProvider timeProvider)
     {
         _confirmation = confirmation;
         _notification = notification;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task<string> Handle(ConfirmingEmailCommand request, CancellationToken ct)
@@ -38,12 +37,10 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
         if (emailAccount.IsConfirmed)
             throw EmailException.AlreadyConfirmed(request.Email);
 
-        var confirmation = await _confirmation
-            .VerifyEmailAsync(account.Id, request.Email, _time, ct)
+        var confirmation = await _confirmation.VerifyEmailAsync(account.Id, request.Email, _timeProvider, ct)
             .ConfigureAwait(false);
 
-        await _notification
-            .SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct)
+        await _notification.SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct)
             .ConfigureAwait(false);
 
         return confirmation.Token;

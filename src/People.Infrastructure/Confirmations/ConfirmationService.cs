@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using People.Domain.SeedWork;
+using People.Domain;
 using StackExchange.Redis;
 
 namespace People.Infrastructure.Confirmations;
@@ -30,9 +30,9 @@ internal sealed class ConfirmationService : IConfirmationService
     public Task<AccountConfirmation> SignInAsync(string token, string code, CancellationToken ct) =>
         CheckAsync(ConventToGuid(token), "SignIn", code, ct);
 
-    public async Task<ConfirmationResult> SignInAsync(long id, ITimeProvider time, CancellationToken ct)
+    public async Task<ConfirmationResult> SignInAsync(long id, TimeProvider timeProvider, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignIn", time, ct)
+        var confirmation = await GetOrCreateAsync(id, "SignIn", timeProvider, ct)
             .ConfigureAwait(false);
 
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
@@ -41,9 +41,9 @@ internal sealed class ConfirmationService : IConfirmationService
     public Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct) =>
         CheckAsync(ConventToGuid(token), "SignUp", code, ct);
 
-    public async Task<ConfirmationResult> SignUpAsync(long id, ITimeProvider time, CancellationToken ct)
+    public async Task<ConfirmationResult> SignUpAsync(long id, TimeProvider timeProvider, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignUp", time, ct)
+        var confirmation = await GetOrCreateAsync(id, "SignUp", timeProvider, ct)
             .ConfigureAwait(false);
 
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
@@ -77,10 +77,10 @@ internal sealed class ConfirmationService : IConfirmationService
     public Task<int> DeleteAsync(long id, CancellationToken ct) =>
         _dbContext.Set<Confirmation>().Where(x => x.AccountId == id).ExecuteDeleteAsync(ct);
 
-    public async Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, ITimeProvider time,
+    public async Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, TimeProvider timeProvider,
         CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "EmailVerify", time, ct)
+        var confirmation = await GetOrCreateAsync(id, "EmailVerify", timeProvider, ct)
             .ConfigureAwait(false);
 
         var bytes = Encrypt(confirmation.Id.ToByteArray().Concat(Encoding.UTF8.GetBytes(email.Address)).ToArray());
@@ -123,7 +123,7 @@ internal sealed class ConfirmationService : IConfirmationService
         return new AccountConfirmation(confirmation.AccountId);
     }
 
-    private async Task<Confirmation> GetOrCreateAsync(long id, string type, ITimeProvider time, CancellationToken ct)
+    private async Task<Confirmation> GetOrCreateAsync(long id, string type, TimeProvider timeProvider, CancellationToken ct)
     {
         var key = $"ppl-conf-lk-{id}";
 
@@ -137,10 +137,10 @@ internal sealed class ConfirmationService : IConfirmationService
         if (confirmation is not null)
             return confirmation;
 
-        var guid = CreateSortedGuid(id, time.Now);
+        var guid = CreateSortedGuid(id, timeProvider.UtcNow());
         var code = Generate(ConfirmationLength);
 
-        var entity = new Confirmation(guid, id, code, type, time.Now, CodeTtl);
+        var entity = new Confirmation(guid, id, code, type, timeProvider.UtcNow(), CodeTtl);
         await _dbContext.AddAsync(entity, ct)
             .ConfigureAwait(false);
 

@@ -12,10 +12,14 @@ public sealed class PeopleDbContext : DbContext,
     IUnitOfWork
 {
     private readonly IMediator _mediator;
+    private readonly TimeProvider _timeProvider;
 
-    public PeopleDbContext(DbContextOptions<PeopleDbContext> options, IMediator mediator)
-        : base(options) =>
+    public PeopleDbContext(DbContextOptions<PeopleDbContext> options, IMediator mediator, TimeProvider timeProvider)
+        : base(options)
+    {
         _mediator = mediator;
+        _timeProvider = timeProvider;
+    }
 
     public DbSet<Account> Accounts { get; set; } = default!;
 
@@ -25,6 +29,9 @@ public sealed class PeopleDbContext : DbContext,
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
     {
+        foreach (var entry in ChangeTracker.Entries<IAggregateRoot>())
+            entry.Entity.SetAsUpdated(_timeProvider);
+
         await SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
@@ -51,7 +58,7 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
         var optionsBuilder = new DbContextOptionsBuilder<PeopleDbContext>()
             .UseNpgsql("Host=_;Database=_;Username=_;Password=_");
 
-        return new PeopleDbContext(optionsBuilder.Options, new NoMediator());
+        return new PeopleDbContext(optionsBuilder.Options, new NoMediator(), TimeProvider.System);
     }
 
     private sealed class NoMediator : IMediator

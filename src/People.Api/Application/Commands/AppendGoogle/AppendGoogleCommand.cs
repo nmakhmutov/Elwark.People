@@ -2,7 +2,6 @@ using MediatR;
 using People.Api.Infrastructure.Providers.Google;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.SeedWork;
 using People.Infrastructure;
 
 namespace People.Api.Application.Commands.AppendGoogle;
@@ -14,15 +13,15 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
     private readonly PeopleDbContext _dbContext;
     private readonly IGoogleApiService _google;
     private readonly IAccountRepository _repository;
-    private readonly ITimeProvider _time;
+    private readonly TimeProvider _timeProvider;
 
     public AppendGoogleCommandHandler(PeopleDbContext dbContext, IGoogleApiService google,
-        IAccountRepository repository, ITimeProvider time)
+        IAccountRepository repository, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
         _google = google;
         _repository = repository;
-        _time = time;
+        _timeProvider = timeProvider;
     }
 
     public async Task Handle(AppendGoogleCommand request, CancellationToken ct)
@@ -36,10 +35,10 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
             .ConfigureAwait(false);
 
         if (!await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct).ConfigureAwait(false))
-            account.AddGoogle(google.Identity, google.FirstName, google.LastName, _time);
+            account.AddGoogle(google.Identity, google.FirstName, google.LastName, _timeProvider);
 
         if (!await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct).ConfigureAwait(false))
-            account.AddEmail(google.Email, google.IsEmailVerified, _time);
+            account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 
         _repository.Update(account);
         await _repository.UnitOfWork

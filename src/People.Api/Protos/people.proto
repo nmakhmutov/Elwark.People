@@ -53,12 +53,13 @@ message AccountReply {
   string nickname = 2;
   google.protobuf.StringValue first_name = 3;
   google.protobuf.StringValue last_name = 4;
-  string picture = 5;
-  string country_code = 6;
-  string time_zone = 7;
-  string language = 8;
-  Ban ban = 9;
-  repeated string roles = 10;
+  string full_name = 5;
+  string picture = 6;
+  string country_code = 7;
+  string time_zone = 8;
+  string language = 9;
+  Ban ban = 10;
+  repeated string roles = 11;
 }
 
 message EmailSigningUpRequest {

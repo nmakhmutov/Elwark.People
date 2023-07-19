@@ -96,27 +96,30 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("ban")
             .HasColumnType("json");
 
-        builder.OwnsOne<Registration>("_registration", navigationBuilder =>
-        {
-            navigationBuilder.Property(x => x.Ip)
-                .HasColumnName("reg_ip")
-                .HasColumnType("bytea")
-                .IsRequired();
+        builder.Property<byte[]>("_regIp")
+            .HasColumnName("reg_ip")
+            .HasColumnType("bytea")
+            .IsRequired();
 
-            navigationBuilder.Property(x => x.CountryCode)
-                .HasColumnName("reg_country_code")
-                .HasConversion(x => x.ToString(), x => CountryCode.Parse(x))
-                .HasMaxLength(2)
-                .IsRequired();
+        builder.Property<CountryCode>("_regCountryCode")
+            .HasColumnName("reg_country_code")
+            .HasConversion(x => x.ToString(), x => CountryCode.Parse(x))
+            .HasMaxLength(2)
+            .IsRequired();
 
-            navigationBuilder.WithOwner();
-        });
+        builder.Property<DateTime>("_lastActive")
+            .HasColumnName("last_active")
+            .HasDefaultValueSql("now()")
+            .IsRequired();
+
+        builder.Property<DateTime>("_lastLogIn")
+            .HasColumnName("last_log_in")
+            .HasDefaultValueSql("now()")
+            .IsRequired();
 
         builder.Property<DateTime>("_updatedAt")
             .HasColumnName("updated_at")
             .HasDefaultValueSql("now()")
-            .ValueGeneratedOnAddOrUpdate()
-            .IsConcurrencyToken()
             .IsRequired();
 
         builder.Property<DateTime>("_createdAt")
@@ -124,6 +127,9 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasDefaultValueSql("now()")
             .ValueGeneratedOnAdd()
             .IsRequired();
+
+        builder.Property<uint>("version")
+            .IsRowVersion();
 
         builder.HasMany(x => x.Emails)
             .WithOne()

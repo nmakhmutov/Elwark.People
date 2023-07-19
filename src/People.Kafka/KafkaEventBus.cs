@@ -36,11 +36,27 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
 
     public async Task PublishAsync<T>(T message, CancellationToken ct) where T : IIntegrationEvent
     {
-        var type = message.GetType();
-        var handlerType = Types.GetOrAdd(type, static x => typeof(IKafkaProducer<>).MakeGenericType(x));
-
         await using var scope = _factory.CreateAsyncScope();
-        var producer = scope.ServiceProvider.GetRequiredService(handlerType) as IKafkaProducer
+        await PublishAsync(scope.ServiceProvider, message, ct)
+            .ConfigureAwait(false);
+    }
+
+    public async Task PublishAsync<T>(IEnumerable<T> messages, CancellationToken ct) where T : IIntegrationEvent
+    {
+        await using var scope = _factory.CreateAsyncScope();
+        await Parallel.ForEachAsync(messages, ct, async (message, token) =>
+            await PublishAsync(scope.ServiceProvider, message, token)
+                .ConfigureAwait(false)
+        );
+    }
+
+    private async Task PublishAsync<T>(IServiceProvider provider, T message, CancellationToken ct)
+        where T : IIntegrationEvent
+    {
+        var type = message.GetType();
+        var handlerType = Types.GetOrAdd(type, x => GetProducerType(provider, x));
+
+        var producer = provider.GetRequiredService(handlerType) as IKafkaProducer
                        ?? throw new KafkaException(ErrorCode.InvalidMsg, new Exception($"{type}'s producer not found"));
 
         await _policy.ExecuteAsync(token => producer.ProduceAsync(message, token), ct)
@@ -49,11 +65,23 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
         Log.LogMessageSent(_logger, type.Name, message.MessageId, message);
     }
 
-    public Task PublishAsync<T>(IEnumerable<T> messages, CancellationToken ct) where T : IIntegrationEvent =>
-        Parallel.ForEachAsync(messages, ct, async (message, token) =>
-            await PublishAsync(message, token)
-                .ConfigureAwait(false)
-        );
+    private static Type GetProducerType(IServiceProvider provider, Type type)
+    {
+        var producer = GetProducerTypeOrDefault(provider, type);
+        return producer ?? throw new KafkaException(ErrorCode.InvalidMsg, new Exception("Unknown producer type"));
+    }
+
+    private static Type? GetProducerTypeOrDefault(IServiceProvider provider, Type type)
+    {
+        if (type == typeof(object))
+            return null;
+
+        var handler = typeof(IKafkaProducer<>).MakeGenericType(type);
+        if (provider.GetService(handler) is IKafkaProducer)
+            return handler;
+
+        return type.BaseType is null ? null : GetProducerTypeOrDefault(provider, type.BaseType);
+    }
 
     private static class Log
     {

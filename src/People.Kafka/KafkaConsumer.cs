@@ -57,7 +57,7 @@ internal sealed class KafkaConsumer<TEvent, THandler> : BackgroundService
 
         consumer.Subscribe(_configuration.Topic);
         while (string.IsNullOrEmpty(consumer.MemberId))
-            await Task.Delay(500, ct);
+            await Task.Delay(200, ct);
 
         _logger.LogConsumerSubscribed(_configuration.Topic, consumer.MemberId);
 
