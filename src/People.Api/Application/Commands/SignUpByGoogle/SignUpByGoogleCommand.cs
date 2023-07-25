@@ -33,8 +33,7 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
 
     public async Task<SignUpResult> Handle(SignUpByGoogleCommand request, CancellationToken ct)
     {
-        var google = await _google
-            .GetAsync(request.Token, ct)
+        var google = await _google.GetAsync(request.Token, ct)
             .ConfigureAwait(false);
 
         if (await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct).ConfigureAwait(false))
@@ -48,12 +47,11 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
             : Language.Parse(google.Locale.TwoLetterISOLanguageName);
 
         var account = new Account(google.Email.User, language, request.Ip, _hasher);
-        account.Update(google.Picture);
         account.AddGoogle(google.Identity, google.FirstName, google.LastName, _timeProvider);
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
+        account.Update(google.Picture);
 
-        await _repository
-            .AddAsync(account, ct)
+        await _repository.AddAsync(account, ct)
             .ConfigureAwait(false);
 
         await _repository.UnitOfWork

@@ -1,10 +1,11 @@
 using MediatR;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 
 namespace People.Api.Application.Commands.DeleteMicrosoft;
 
-internal sealed record DeleteMicrosoftCommand(long Id, string Identity) : IRequest;
+internal sealed record DeleteMicrosoftCommand(AccountId Id, string Identity) : IRequest;
 
 internal sealed class DeleteMicrosoftCommandHandler : IRequestHandler<DeleteMicrosoftCommand>
 {
@@ -15,8 +16,7 @@ internal sealed class DeleteMicrosoftCommandHandler : IRequestHandler<DeleteMicr
 
     public async Task Handle(DeleteMicrosoftCommand request, CancellationToken ct)
     {
-        var account = await _repository
-            .GetAsync(request.Id, ct)
+        var account = await _repository.GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
         account.DeleteMicrosoft(request.Identity);

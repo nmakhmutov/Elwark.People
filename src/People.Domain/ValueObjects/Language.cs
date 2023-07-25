@@ -1,6 +1,6 @@
 namespace People.Domain.ValueObjects;
 
-public readonly struct Language : 
+public readonly struct Language :
     IComparable,
     IComparable<Language>,
     IEquatable<Language>

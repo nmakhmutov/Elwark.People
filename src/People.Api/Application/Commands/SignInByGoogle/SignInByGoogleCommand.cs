@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
 using People.Api.Infrastructure.Providers.Google;
+using People.Domain;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Infrastructure;
@@ -18,18 +19,20 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
     private readonly IIntegrationEventBus _bus;
     private readonly PeopleDbContext _dbContext;
     private readonly IGoogleApiService _google;
+    private readonly TimeProvider _timeProvider;
 
-    public SignInByGoogleCommandHandler(IIntegrationEventBus bus, PeopleDbContext dbContext, IGoogleApiService google)
+    public SignInByGoogleCommandHandler(IIntegrationEventBus bus, PeopleDbContext dbContext, IGoogleApiService google,
+        TimeProvider timeProvider)
     {
         _bus = bus;
         _dbContext = dbContext;
         _google = google;
+        _timeProvider = timeProvider;
     }
 
     public async Task<SignInResult> Handle(SignInByGoogleCommand request, CancellationToken ct)
     {
-        var google = await _google
-            .GetAsync(request.Token, ct)
+        var google = await _google.GetAsync(request.Token, ct)
             .ConfigureAwait(false);
 
         var result = await _dbContext.Accounts
@@ -39,10 +42,10 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
             .FirstOrDefaultAsync(ct)
             .ConfigureAwait(false) ?? throw ExternalAccountException.NotFound(ExternalService.Google, google.Identity);
 
-        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, result.Id);
+        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
         await _bus.PublishAsync(evt, ct)
             .ConfigureAwait(false);
-        
+
         return result;
     }
 }

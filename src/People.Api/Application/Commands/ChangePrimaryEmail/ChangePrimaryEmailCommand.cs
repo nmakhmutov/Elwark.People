@@ -1,11 +1,12 @@
 using System.Net.Mail;
 using MediatR;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 
 namespace People.Api.Application.Commands.ChangePrimaryEmail;
 
-internal sealed record ChangePrimaryEmailCommand(long Id, MailAddress Email) : IRequest;
+internal sealed record ChangePrimaryEmailCommand(AccountId Id, MailAddress Email) : IRequest;
 
 internal sealed class ChangePrimaryEmailCommandHandler : IRequestHandler<ChangePrimaryEmailCommand>
 {

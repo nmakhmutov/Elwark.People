@@ -12,11 +12,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "actions", "actions", "{28D0700F-E64C-494A-ADAE-93F62A07E4ED}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\people.yml = .github\workflows\people.yml
+		.github\workflows\webhooks.yml = .github\workflows\webhooks.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Webhooks", "src\People.Webhooks\People.Webhooks.csproj", "{51B26503-D625-4629-89C5-62CEEC12E30B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "People.Kafka", "src\People.Kafka\People.Kafka.csproj", "{2B5F33CE-8ED0-49A3-AB6E-E52254EA4905}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "composite", "composite", "{50444B63-895D-4848-8C82-C09FC4B936DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{360F9701-FFC8-479E-BE1D-EE792B6AAE5D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\composite\build\action.yml = .github\workflows\composite\build\action.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,5 +59,7 @@ Global
 		{61EA839C-6373-4E9B-B176-7FE6158CCB15} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
 		{51B26503-D625-4629-89C5-62CEEC12E30B} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
 		{2B5F33CE-8ED0-49A3-AB6E-E52254EA4905} = {1C9CCB21-0190-4FE3-AA2D-5CAFF98194DF}
+		{50444B63-895D-4848-8C82-C09FC4B936DC} = {28D0700F-E64C-494A-ADAE-93F62A07E4ED}
+		{360F9701-FFC8-479E-BE1D-EE792B6AAE5D} = {50444B63-895D-4848-8C82-C09FC4B936DC}
 	EndGlobalSection
 EndGlobal

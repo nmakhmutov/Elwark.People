@@ -5,7 +5,7 @@ using People.Domain.Repositories;
 
 namespace People.Api.Application.Queries.GetAccountDetails;
 
-internal sealed record GetAccountDetailsQuery(long Id) : IRequest<Account>;
+internal sealed record GetAccountDetailsQuery(AccountId Id) : IRequest<Account>;
 
 internal sealed class GetAccountDetailsQueryHandler : IRequestHandler<GetAccountDetailsQuery, Account>
 {

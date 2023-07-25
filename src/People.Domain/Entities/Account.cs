@@ -10,7 +10,7 @@ using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Domain.Entities;
 
-public sealed class Account : Entity<long>,
+public sealed class Account : Entity<AccountId>,
     IAggregateRoot
 {
     private const string DefaultPicture =
@@ -82,9 +82,6 @@ public sealed class Account : Entity<long>,
 
     public bool IsBaned =>
         _ban is not null;
-
-    public IReadOnlyCollection<string> Roles =>
-        _roles;
 
     public IReadOnlyCollection<EmailAccount> Emails =>
         _emails.AsReadOnly();

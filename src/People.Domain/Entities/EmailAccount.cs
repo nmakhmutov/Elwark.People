@@ -9,7 +9,7 @@ public sealed class EmailAccount : Entity<Guid>
     private DateTime? _confirmedAt;
     private DateTime _createdAt;
 
-    public EmailAccount(long accountId, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt)
+    public EmailAccount(AccountId accountId, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt)
     {
         AccountId = accountId;
         Email = email;
@@ -18,7 +18,7 @@ public sealed class EmailAccount : Entity<Guid>
         _createdAt = createdAt;
     }
 
-    public long AccountId { get; private set; }
+    public AccountId AccountId { get; private set; }
 
     public string Email { get; private set; }
 

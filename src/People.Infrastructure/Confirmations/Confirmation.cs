@@ -1,3 +1,5 @@
+using People.Domain.Entities;
+
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable UnusedMember.Local
 
@@ -11,7 +13,7 @@ public sealed class Confirmation
         Type = string.Empty;
     }
 
-    public Confirmation(Guid id, long accountId, string code, string type, DateTime createdAt, TimeSpan ttl)
+    public Confirmation(Guid id, AccountId accountId, string code, string type, DateTime createdAt, TimeSpan ttl)
     {
         Id = id;
         AccountId = accountId;
@@ -23,7 +25,7 @@ public sealed class Confirmation
 
     public Guid Id { get; private set; }
 
-    public long AccountId { get; private set; }
+    public AccountId AccountId { get; private set; }
 
     public string Code { get; private set; }
 

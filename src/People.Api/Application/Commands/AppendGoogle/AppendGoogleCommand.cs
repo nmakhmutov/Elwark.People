@@ -1,12 +1,13 @@
 using MediatR;
 using People.Api.Infrastructure.Providers.Google;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Infrastructure;
 
 namespace People.Api.Application.Commands.AppendGoogle;
 
-internal sealed record AppendGoogleCommand(long Id, string Token) : IRequest;
+internal sealed record AppendGoogleCommand(AccountId Id, string Token) : IRequest;
 
 internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleCommand>
 {
@@ -26,12 +27,10 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
 
     public async Task Handle(AppendGoogleCommand request, CancellationToken ct)
     {
-        var account = await _repository
-            .GetAsync(request.Id, ct)
+        var account = await _repository.GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
-        var google = await _google
-            .GetAsync(request.Token, ct)
+        var google = await _google.GetAsync(request.Token, ct)
             .ConfigureAwait(false);
 
         if (!await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct).ConfigureAwait(false))

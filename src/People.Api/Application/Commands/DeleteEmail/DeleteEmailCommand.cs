@@ -1,11 +1,12 @@
 using System.Net.Mail;
 using MediatR;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 
 namespace People.Api.Application.Commands.DeleteEmail;
 
-internal sealed record DeleteEmailCommand(long Id, MailAddress Email) : IRequest;
+internal sealed record DeleteEmailCommand(AccountId Id, MailAddress Email) : IRequest;
 
 internal sealed class DeleteEmailCommandHandler : IRequestHandler<DeleteEmailCommand>
 {

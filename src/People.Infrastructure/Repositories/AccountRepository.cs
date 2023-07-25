@@ -15,7 +15,7 @@ internal sealed class AccountRepository : IAccountRepository
     public IUnitOfWork UnitOfWork =>
         _dbContext;
 
-    public async Task<Account?> GetAsync(long id, CancellationToken ct)
+    public async Task<Account?> GetAsync(AccountId id, CancellationToken ct)
     {
         var account = await _dbContext.Accounts
             .FirstOrDefaultAsync(x => x.Id == id, ct)

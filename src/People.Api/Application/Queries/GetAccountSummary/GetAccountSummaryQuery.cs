@@ -1,4 +1,5 @@
 using MediatR;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.ValueObjects;
 using People.Infrastructure.Providers.NpgsqlData;
@@ -6,7 +7,7 @@ using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Api.Application.Queries.GetAccountSummary;
 
-internal sealed record GetAccountSummaryQuery(long Id) : IRequest<AccountSummary>;
+internal sealed record GetAccountSummaryQuery(AccountId Id) : IRequest<AccountSummary>;
 
 internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccountSummaryQuery, AccountSummary>
 {
@@ -40,7 +41,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
         return await _dataProvider
             .Sql(sql)
             .Select(x => new AccountSummary(
-                x.GetInt64(0),
+                new AccountId(x.GetInt64(0)),
                 new Name(
                     x.GetString(1),
                     x.IsDBNull(2) ? null : x.GetString(2),
@@ -63,7 +64,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
 }
 
 internal sealed record AccountSummary(
-    long Id,
+    AccountId Id,
     Name Name,
     string Picture,
     Language Language,

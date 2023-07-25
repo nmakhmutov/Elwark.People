@@ -15,11 +15,12 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.HasKey(x => x.Id);
 
         builder.Ignore(x => x.DomainEvents);
-        builder.Ignore(x => x.Roles);
         builder.Ignore(x => x.IsBaned);
 
         builder.Property(x => x.Id)
-            .HasColumnName("id");
+            .HasColumnName("id")
+            .HasConversion(x => (long)x, x => new AccountId(x))
+            .UseIdentityByDefaultColumn();
 
         builder.OwnsOne(x => x.Name, navigationBuilder =>
         {

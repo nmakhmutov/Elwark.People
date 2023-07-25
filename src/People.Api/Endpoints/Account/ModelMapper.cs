@@ -1,4 +1,5 @@
 using People.Api.Application.Queries.GetAccountSummary;
+using People.Api.Application.Queries.GetEmails;
 using People.Api.Endpoints.Account.Models;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
@@ -53,6 +54,6 @@ internal static class AccountModelMapper
     public static EmailModel ToModel(this EmailAccount x) =>
         new(x.Email, x.IsPrimary, x.IsConfirmed);
 
-    public static EmailModel ToModel(this Application.Queries.GetEmails.Email x) =>
-        new(x.Value, x.IsPrimary, x.IsConfirmed);
+    public static EmailModel ToModel(this UserEmail x) =>
+        new(x.Email, x.IsPrimary, x.IsConfirmed);
 }

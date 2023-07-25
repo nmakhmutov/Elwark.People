@@ -7,7 +7,7 @@ using People.Infrastructure;
 
 namespace People.Api.Application.Commands.AppendEmail;
 
-internal sealed record AppendEmailCommand(long Id, MailAddress Email) : IRequest<EmailAccount>;
+internal sealed record AppendEmailCommand(AccountId Id, MailAddress Email) : IRequest<EmailAccount>;
 
 internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCommand, EmailAccount>
 {
@@ -28,8 +28,7 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
         if (await _dbContext.Emails.IsEmailExistsAsync(request.Email, ct).ConfigureAwait(false))
             throw EmailException.AlreadyCreated(request.Email);
 
-        var account = await _repository
-            .GetAsync(request.Id, ct)
+        var account = await _repository.GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
         account.AddEmail(request.Email, false, _timeProvider);

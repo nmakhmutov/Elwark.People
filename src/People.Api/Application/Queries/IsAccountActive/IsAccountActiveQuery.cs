@@ -1,21 +1,26 @@
 using MediatR;
 using People.Api.Application.IntegrationEvents.Events;
+using People.Domain;
+using People.Domain.Entities;
 using People.Infrastructure.Providers.NpgsqlData;
 using People.Kafka.Integration;
 
 namespace People.Api.Application.Queries.IsAccountActive;
 
-internal sealed record IsAccountActiveQuery(long Id) : IRequest<bool>;
+internal sealed record IsAccountActiveQuery(AccountId Id) : IRequest<bool>;
 
 internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountActiveQuery, bool>
 {
     private readonly IIntegrationEventBus _bus;
     private readonly INpgsqlDataProvider _dataProvider;
+    private readonly TimeProvider _timeProvider;
 
-    public IsAccountActiveQueryHandler(IIntegrationEventBus bus, INpgsqlDataProvider dataProvider)
+    public IsAccountActiveQueryHandler(IIntegrationEventBus bus, INpgsqlDataProvider dataProvider,
+        TimeProvider timeProvider)
     {
         _bus = bus;
         _dataProvider = dataProvider;
+        _timeProvider = timeProvider;
     }
 
     public async Task<bool> Handle(IsAccountActiveQuery request, CancellationToken ct)
@@ -29,7 +34,12 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
         if (data is null)
             return false;
 
-        var evt = new AccountEngaged.CheckedActivityIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, request.Id);
+        var evt = new AccountEngaged.CheckedActivityIntegrationEvent(
+            Guid.NewGuid(),
+            _timeProvider.UtcNow(),
+            request.Id
+        );
+
         await _bus.PublishAsync(evt, ct)
             .ConfigureAwait(false);
 

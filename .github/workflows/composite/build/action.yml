@@ -1,0 +1,17 @@
+name: Build docker compose
+description: Builds a docker image without pushing
+
+inputs:
+  service:
+    description: Service to build
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Compose build ${{ inputs.service }}
+      shell: bash
+      run: sudo -E docker compose build ${{ inputs.service }} --no-cache
+      working-directory: ./src
+      env:
+        TAG: ${{ github.sha }}

@@ -26,15 +26,13 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
 
     public async Task<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
     {
-        var (id, email) = await _confirmation
-            .VerifyEmailAsync(request.Token, request.Code, ct)
+        var confirmation = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct)
             .ConfigureAwait(false);
 
-        var account = await _repository
-            .GetAsync(id, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(id);
+        var account = await _repository.GetAsync(confirmation.AccountId, ct)
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(confirmation.AccountId);
 
-        account.ConfirmEmail(email, _timeProvider);
+        account.ConfirmEmail(confirmation.Email, _timeProvider);
 
         _repository.Update(account);
 
@@ -44,8 +42,7 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
 
         try
         {
-            await _confirmation
-                .DeleteAsync(account.Id, ct)
+            await _confirmation.DeleteAsync(account.Id, ct)
                 .ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -54,6 +51,6 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
         }
 
         return account.Emails
-            .First(x => x.Email == email.Address);
+            .First(x => x.Email == confirmation.Email.Address);
     }
 }

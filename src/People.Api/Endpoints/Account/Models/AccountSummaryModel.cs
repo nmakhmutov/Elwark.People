@@ -1,7 +1,9 @@
+using People.Domain.Entities;
+
 namespace People.Api.Endpoints.Account.Models;
 
 internal sealed record AccountSummaryModel(
-    long Id,
+    AccountId Id,
     string Nickname,
     string? FirstName,
     string? LastName,

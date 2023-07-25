@@ -16,6 +16,7 @@ using Notification.Grpc;
 using People.Api.Application.Behaviour;
 using People.Api.Application.IntegrationEvents.EventHandling;
 using People.Api.Application.IntegrationEvents.Events;
+using People.Api.Application.Queries.GetAccountSummary;
 using People.Api.Endpoints.Account;
 using People.Api.Grpc;
 using People.Api.Infrastructure;
@@ -26,9 +27,12 @@ using People.Api.Infrastructure.Providers.Google;
 using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
 using People.Api.Infrastructure.Providers.Microsoft;
+using People.Domain.Entities;
+using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.Kafka;
 using Serilog;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
 const string mainCors = "MainCORS";
@@ -213,6 +217,14 @@ builder.Services
 builder.Host
     .UseSerilog((context, configuration) => configuration
         .Enrich.WithProperty("ApplicationName", appName)
+        .Destructure.AsScalar<AccountId>()
+        .Destructure.AsScalar<Language>()
+        .Destructure.AsScalar<CountryCode>()
+        .Destructure.AsScalar<TimeZone>()
+        .Destructure.AsScalar<DateFormat>()
+        .Destructure.AsScalar<TimeFormat>()
+        .Destructure.ByTransforming<Account>(x => new { x.Id, x.CountryCode, x.Name.Nickname })
+        .Destructure.ByTransforming<AccountSummary>(x => new { x.Id, x.CountryCode, x.Name.Nickname })
         .ReadFrom.Configuration(context.Configuration)
     );
 
@@ -220,7 +232,8 @@ var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<PeopleDbContext>();
 
     await dbContext.Database
         .MigrateAsync()

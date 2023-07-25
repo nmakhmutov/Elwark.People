@@ -55,8 +55,7 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
         var account = new Account(request.Email.User, request.Language, request.Ip, _hasher);
         account.AddEmail(request.Email, false, _timeProvider);
 
-        await _repository
-            .AddAsync(account, ct)
+        await _repository.AddAsync(account, ct)
             .ConfigureAwait(false);
 
         await _repository.UnitOfWork
@@ -67,15 +66,13 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
             .ConfigureAwait(false);
     }
 
-    private async Task<string> SendConfirmationAsync(long id, MailAddress email, Language language,
+    private async Task<string> SendConfirmationAsync(AccountId id, MailAddress email, Language language,
         CancellationToken ct)
     {
-        var confirmation = await _confirmation
-            .SignUpAsync(id, _timeProvider, ct)
+        var confirmation = await _confirmation.SignUpAsync(id, ct)
             .ConfigureAwait(false);
 
-        await _notification
-            .SendConfirmationAsync(email, confirmation.Code, language, ct)
+        await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct)
             .ConfigureAwait(false);
 
         return confirmation.Token;

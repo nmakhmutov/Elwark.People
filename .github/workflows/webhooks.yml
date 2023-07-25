@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 env:
-  SERVICE: people.api
+  SERVICE: people.webhooks
 
 jobs:
   BuildContainer:

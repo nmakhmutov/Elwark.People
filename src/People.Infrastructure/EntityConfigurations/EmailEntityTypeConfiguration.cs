@@ -22,6 +22,7 @@ internal sealed class EmailEntityTypeConfiguration : IEntityTypeConfiguration<Em
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")
+            .HasConversion(x => (long)x, x => new AccountId(x))
             .IsRequired();
 
         builder.Property(x => x.Email)

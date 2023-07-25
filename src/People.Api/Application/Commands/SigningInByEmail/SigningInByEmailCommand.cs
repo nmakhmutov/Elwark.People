@@ -16,15 +16,13 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
     private readonly INotificationSender _notification;
-    private readonly TimeProvider _timeProvider;
 
     public SigningInByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        INotificationSender notification, TimeProvider timeProvider)
+        INotificationSender notification)
     {
         _confirmation = confirmation;
         _dbContext = dbContext;
         _notification = notification;
-        _timeProvider = timeProvider;
     }
 
     public async Task<string> Handle(SigningInByEmailCommand request, CancellationToken ct)
@@ -38,12 +36,10 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
         if (!email.IsConfirmed)
             throw EmailException.NotConfirmed(email.Email);
 
-        var confirmation = await _confirmation
-            .SignInAsync(email.AccountId, _timeProvider, ct)
+        var confirmation = await _confirmation.SignInAsync(email.AccountId, ct)
             .ConfigureAwait(false);
 
-        await _notification
-            .SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct)
+        await _notification.SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct)
             .ConfigureAwait(false);
 
         return confirmation.Token;

@@ -8,7 +8,7 @@ using TimeZone = People.Domain.ValueObjects.TimeZone;
 namespace People.Api.Application.Commands.UpdateAccount;
 
 internal sealed record UpdateAccountCommand(
-    long Id,
+    AccountId Id,
     string? FirstName,
     string? LastName,
     string Nickname,
@@ -30,8 +30,7 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
 
     public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
-        var account = await _repository
-            .GetAsync(request.Id, ct)
+        var account = await _repository.GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
         account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);

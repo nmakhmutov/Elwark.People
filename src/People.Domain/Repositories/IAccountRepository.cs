@@ -5,5 +5,5 @@ namespace People.Domain.Repositories;
 
 public interface IAccountRepository : IRepository<Account>
 {
-    Task<Account?> GetAsync(long id, CancellationToken ct = default);
+    Task<Account?> GetAsync(AccountId id, CancellationToken ct = default);
 }

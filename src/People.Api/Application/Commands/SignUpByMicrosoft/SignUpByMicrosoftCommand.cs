@@ -33,8 +33,7 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
 
     public async Task<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
     {
-        var microsoft = await _microsoft
-            .GetAsync(request.Token, ct)
+        var microsoft = await _microsoft.GetAsync(request.Token, ct)
             .ConfigureAwait(false);
 
         if (await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct).ConfigureAwait(false))
@@ -47,8 +46,7 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
         account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _timeProvider);
         account.AddEmail(microsoft.Email, true, _timeProvider);
 
-        await _repository
-            .AddAsync(account, ct)
+        await _repository.AddAsync(account, ct)
             .ConfigureAwait(false);
 
         await _repository.UnitOfWork

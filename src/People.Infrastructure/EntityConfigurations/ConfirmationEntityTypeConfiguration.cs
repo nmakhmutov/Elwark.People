@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using People.Domain.Entities;
 using People.Infrastructure.Confirmations;
 
 namespace People.Infrastructure.EntityConfigurations;
@@ -20,6 +21,7 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")
+            .HasConversion(x => (long)x, x => new AccountId(x))
             .IsRequired();
 
         builder.Property(x => x.Code)

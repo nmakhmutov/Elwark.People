@@ -8,12 +8,12 @@ internal sealed class RequestLoggingBehavior<TRequest, TResponse> : IPipelineBeh
 {
     private static readonly Action<ILogger, string, TRequest, Exception?> Before =
         LoggerMessage.Define<string, TRequest>(LogLevel.Information, new EventId(1, "RequestLogging"),
-            "Handling command {CommandName} ({Request})"
+            "Handling command {CommandName} ({@Request})"
         );
 
     private static readonly Action<ILogger, string, TResponse, Exception?> After =
         LoggerMessage.Define<string, TResponse>(LogLevel.Information, new EventId(2, "ResponseLogging"),
-            "Command {CommandName} handled - response: {Response}"
+            "Command {CommandName} handled - response: {@Response}"
         );
 
     private readonly ILogger<RequestLoggingBehavior<TRequest, TResponse>> _logger;

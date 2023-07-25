@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
+using People.Domain;
 using People.Domain.Exceptions;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
@@ -16,31 +17,33 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
     private readonly IIntegrationEventBus _bus;
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
+    private readonly TimeProvider _timeProvider;
 
     public SignInByEmailCommandHandler(IIntegrationEventBus bus, IConfirmationService confirmation,
-        PeopleDbContext dbContext)
+        PeopleDbContext dbContext, TimeProvider timeProvider)
     {
         _bus = bus;
         _confirmation = confirmation;
         _dbContext = dbContext;
+        _timeProvider = timeProvider;
     }
 
     public async Task<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
     {
-        var confirmation = await _confirmation.SignInAsync(request.Token, request.Code, ct)
+        var id = await _confirmation.SignInAsync(request.Token, request.Code, ct)
             .ConfigureAwait(false);
 
         var result = await _dbContext.Accounts
             .AsNoTracking()
-            .Where(x => x.Id == confirmation.AccountId)
+            .Where(x => x.Id == id)
             .Select(x => new SignInResult(x.Id, x.Name.FullName()))
             .FirstOrDefaultAsync(ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(confirmation.AccountId);
+            .ConfigureAwait(false) ?? throw AccountException.NotFound(id);
 
         await _confirmation.DeleteAsync(result.Id, ct)
             .ConfigureAwait(false);
 
-        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), DateTime.UtcNow, result.Id);
+        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
         await _bus.PublishAsync(evt, ct)
             .ConfigureAwait(false);
 

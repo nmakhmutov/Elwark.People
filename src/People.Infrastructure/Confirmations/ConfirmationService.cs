@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using People.Domain;
+using People.Domain.Entities;
 using StackExchange.Redis;
 
 namespace People.Infrastructure.Confirmations;
@@ -18,75 +19,77 @@ internal sealed class ConfirmationService : IConfirmationService
     private readonly PeopleDbContext _dbContext;
     private readonly AppSecurityOptions _options;
     private readonly IDatabaseAsync _redis;
+    private readonly TimeProvider _timeProvider;
 
     public ConfirmationService(PeopleDbContext dbContext, IConnectionMultiplexer multiplexer,
-        IOptions<AppSecurityOptions> options)
+        IOptions<AppSecurityOptions> options, TimeProvider timeProvider)
     {
         _dbContext = dbContext;
+        _timeProvider = timeProvider;
         _redis = multiplexer.GetDatabase();
         _options = options.Value;
     }
 
-    public Task<AccountConfirmation> SignInAsync(string token, string code, CancellationToken ct) =>
-        CheckAsync(ConventToGuid(token), "SignIn", code, ct);
-
-    public async Task<ConfirmationResult> SignInAsync(long id, TimeProvider timeProvider, CancellationToken ct)
+    public async Task<ConfirmationResult> SignInAsync(AccountId id, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignIn", timeProvider, ct)
+        var confirmation = await EncodeAsync(id, "SignIn", ct)
             .ConfigureAwait(false);
 
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
 
-    public Task<AccountConfirmation> SignUpAsync(string token, string code, CancellationToken ct) =>
-        CheckAsync(ConventToGuid(token), "SignUp", code, ct);
+    public Task<AccountId> SignInAsync(string token, string code, CancellationToken ct) =>
+        DecodeAsync(ConventToGuid(token), "SignIn", code, ct);
 
-    public async Task<ConfirmationResult> SignUpAsync(long id, TimeProvider timeProvider, CancellationToken ct)
+    public async Task<ConfirmationResult> SignUpAsync(AccountId id, CancellationToken ct)
     {
-        var confirmation = await GetOrCreateAsync(id, "SignUp", timeProvider, ct)
+        var confirmation = await EncodeAsync(id, "SignUp", ct)
             .ConfigureAwait(false);
 
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
 
-    public async Task<EmailConfirmation> VerifyEmailAsync(string token, string code, CancellationToken ct)
+    public Task<AccountId> SignUpAsync(string token, string code, CancellationToken ct) =>
+        DecodeAsync(ConventToGuid(token), "SignUp", code, ct);
+
+    public async Task<ConfirmationResult> VerifyEmailAsync(AccountId id, MailAddress email, CancellationToken ct)
     {
-        Guid id;
-        MailAddress email;
-
-        try
-        {
-            var bytes = Decrypt(Convert.FromBase64String(token));
-            id = new Guid(bytes[..16]);
-            email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
-        }
-        catch
-        {
-            throw ConfirmationException.Mismatch();
-        }
-
-        var check = await CheckAsync(id, "EmailVerify", code, ct)
-            .ConfigureAwait(false);
-
-        return new EmailConfirmation(check.AccountId, email);
-    }
-
-    public Task<int> DeleteAsync(DateTime now, CancellationToken ct) =>
-        _dbContext.Set<Confirmation>().Where(x => x.ExpiresAt < now).ExecuteDeleteAsync(ct);
-
-    public Task<int> DeleteAsync(long id, CancellationToken ct) =>
-        _dbContext.Set<Confirmation>().Where(x => x.AccountId == id).ExecuteDeleteAsync(ct);
-
-    public async Task<ConfirmationResult> VerifyEmailAsync(long id, MailAddress email, TimeProvider timeProvider,
-        CancellationToken ct)
-    {
-        var confirmation = await GetOrCreateAsync(id, "EmailVerify", timeProvider, ct)
+        var confirmation = await EncodeAsync(id, "EmailVerify", ct)
             .ConfigureAwait(false);
 
         var bytes = Encrypt(confirmation.Id.ToByteArray().Concat(Encoding.UTF8.GetBytes(email.Address)).ToArray());
 
         return new ConfirmationResult(Convert.ToBase64String(bytes), confirmation.Code);
     }
+
+    public async Task<EmailConfirmation> VerifyEmailAsync(string token, string code, CancellationToken ct)
+    {
+        try
+        {
+            var bytes = Decrypt(Convert.FromBase64String(token));
+            var id = new Guid(bytes[..16]);
+            var email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
+
+            var accountId = await DecodeAsync(id, "EmailVerify", code, ct)
+                .ConfigureAwait(false);
+
+            return new EmailConfirmation(accountId, email);
+        }
+        catch (ConfirmationException)
+        {
+            throw;
+        }
+        catch
+        {
+            throw ConfirmationException.Mismatch();
+        }
+    }
+
+    public Task<int> DeleteAsync(AccountId id, CancellationToken ct) =>
+        _dbContext.Set<Confirmation>().Where(x => x.AccountId == id).ExecuteDeleteAsync(ct);
+
+    public Task<int> CleanUpAsync(CancellationToken ct) =>
+        _dbContext.Set<Confirmation>().Where(x => x.ExpiresAt < DateTime.UtcNow).ExecuteDeleteAsync(ct);
 
     private byte[] Encrypt(byte[] bytes)
     {
@@ -108,22 +111,7 @@ internal sealed class ConfirmationService : IConfirmationService
         return encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
     }
 
-    private async Task<AccountConfirmation> CheckAsync(Guid id, string type, string code, CancellationToken ct)
-    {
-        var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.Id == id, ct)
-            .ConfigureAwait(false) ?? throw ConfirmationException.NotFound();
-
-        if (!string.Equals(confirmation.Type, type, StringComparison.InvariantCultureIgnoreCase))
-            throw ConfirmationException.Mismatch();
-
-        if (!string.Equals(confirmation.Code, code, StringComparison.InvariantCultureIgnoreCase))
-            throw ConfirmationException.Mismatch();
-
-        return new AccountConfirmation(confirmation.AccountId);
-    }
-
-    private async Task<Confirmation> GetOrCreateAsync(long id, string type, TimeProvider timeProvider, CancellationToken ct)
+    private async Task<Confirmation> EncodeAsync(AccountId id, string type, CancellationToken ct)
     {
         var key = $"ppl-conf-lk-{id}";
 
@@ -137,10 +125,11 @@ internal sealed class ConfirmationService : IConfirmationService
         if (confirmation is not null)
             return confirmation;
 
-        var guid = CreateSortedGuid(id, timeProvider.UtcNow());
-        var code = Generate(ConfirmationLength);
+        var now = _timeProvider.UtcNow();
+        var guid = CreateSortedGuid(id, now);
+        var code = CreateCode(ConfirmationLength);
 
-        var entity = new Confirmation(guid, id, code, type, timeProvider.UtcNow(), CodeTtl);
+        var entity = new Confirmation(guid, id, code, type, now, CodeTtl);
         await _dbContext.AddAsync(entity, ct)
             .ConfigureAwait(false);
 
@@ -153,7 +142,22 @@ internal sealed class ConfirmationService : IConfirmationService
         return entity;
     }
 
-    private static Guid CreateSortedGuid(long id, DateTime time)
+    private async Task<AccountId> DecodeAsync(Guid id, string type, string code, CancellationToken ct)
+    {
+        var confirmation = await _dbContext.Set<Confirmation>()
+            .FirstOrDefaultAsync(x => x.Id == id, ct)
+            .ConfigureAwait(false) ?? throw ConfirmationException.NotFound();
+
+        if (!string.Equals(confirmation.Type, type, StringComparison.OrdinalIgnoreCase))
+            throw ConfirmationException.Mismatch();
+
+        if (!string.Equals(confirmation.Code, code, StringComparison.OrdinalIgnoreCase))
+            throw ConfirmationException.Mismatch();
+
+        return confirmation.AccountId;
+    }
+
+    private static Guid CreateSortedGuid(AccountId id, DateTime time)
     {
         Span<byte> bytes = stackalloc byte[16];
         BitConverter.GetBytes(time.Ticks).CopyTo(bytes[..8]);
@@ -174,7 +178,7 @@ internal sealed class ConfirmationService : IConfirmationService
         }
     }
 
-    private static string Generate(int length)
+    private static string CreateCode(int length)
     {
         const string chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 

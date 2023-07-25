@@ -1,10 +1,11 @@
 using System.Security.Claims;
+using People.Domain.Entities;
 
 namespace People.Api.Infrastructure;
 
 internal static class ClaimsPrincipalExtensions
 {
-    internal static long GetAccountId(this ClaimsPrincipal principal)
+    internal static AccountId GetAccountId(this ClaimsPrincipal principal)
     {
         var sub = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(sub))

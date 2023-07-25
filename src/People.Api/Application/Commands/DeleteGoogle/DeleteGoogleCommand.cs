@@ -1,10 +1,11 @@
 using MediatR;
+using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 
 namespace People.Api.Application.Commands.DeleteGoogle;
 
-internal sealed record DeleteGoogleCommand(long Id, string Identity) : IRequest;
+internal sealed record DeleteGoogleCommand(AccountId Id, string Identity) : IRequest;
 
 internal sealed class DeleteGoogleCommandHandler : IRequestHandler<DeleteGoogleCommand>
 {
