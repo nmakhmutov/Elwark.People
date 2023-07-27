@@ -31,7 +31,7 @@ builder.Services
     .AddHttpClient<IWebhooksSender, WebhooksSender>()
     .AddPolicyHandler(
         HttpPolicyExtensions.HandleTransientHttpError()
-            .WaitAndRetryAsync(3, x => TimeSpan.FromSeconds(Math.Pow(2, x)))
+            .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(Math.Pow(2, x)))
     );
 
 builder.Services

@@ -28,24 +28,20 @@ public sealed class Account : Entity<AccountId>,
     private string[] _roles;
     private DateTime _updatedAt;
 
+#pragma warning disable CS8618
     private Account()
     {
-        Name = new Name("Empty");
-        Picture = DefaultPicture;
-        _emails = new List<EmailAccount>();
-        _roles = Array.Empty<string>();
-        _externals = new List<ExternalConnection>();
-        _regCountryCode = CountryCode.Empty;
-        _regIp = Array.Empty<byte>();
     }
+#pragma warning restore CS8618
 
     public Account(string nickname, Language language, IPAddress ip, IIpHasher hasher)
         : this()
     {
         Name = new Name(nickname);
         Picture = DefaultPicture;
-        Language = language;
+        ContinentCode = ContinentCode.Empty;
         CountryCode = CountryCode.Empty;
+        Language = language;
         TimeZone = TimeZone.Utc;
         TimeFormat = TimeFormat.Default;
         DateFormat = DateFormat.Default;
@@ -66,9 +62,11 @@ public sealed class Account : Entity<AccountId>,
 
     public string Picture { get; private set; }
 
-    public Language Language { get; private set; }
+    public ContinentCode ContinentCode { get; private set; }
 
     public CountryCode CountryCode { get; private set; }
+
+    public Language Language { get; private set; }
 
     public TimeZone TimeZone { get; private set; }
 
@@ -220,11 +218,15 @@ public sealed class Account : Entity<AccountId>,
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
-    public void Update(Language language, CountryCode country, TimeZone timeZone)
+    public void Update(Language language, ContinentCode continent, CountryCode country, TimeZone timeZone)
     {
-        Language = language;
+        ContinentCode = continent;
         CountryCode = country;
+        Language = language;
         TimeZone = timeZone;
+
+        if (_regCountryCode == CountryCode.Empty)
+            _regCountryCode = CountryCode;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
@@ -236,16 +238,6 @@ public sealed class Account : Entity<AccountId>,
         StartOfWeek = weekStart;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
-    }
-
-    public void UpdateRegistrationCountry(CountryCode code)
-    {
-        CountryCode = code;
-
-        if (_regCountryCode != CountryCode.Empty)
-            return;
-
-        _regCountryCode = code;
     }
 
     private void UpdateActivation() =>

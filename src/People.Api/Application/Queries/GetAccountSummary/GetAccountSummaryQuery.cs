@@ -26,6 +26,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
                    a.prefer_nickname,
                    a.picture,
                    a.language,
+                   a.continent_code,
                    a.country_code,
                    a.time_zone,
                    a.date_format,
@@ -50,13 +51,14 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
                 ),
                 x.GetString(5),
                 Language.Parse(x.GetString(6)),
-                CountryCode.Parse(x.GetString(7)),
-                TimeZone.Parse(x.GetString(8)),
-                DateFormat.Parse(x.GetString(9)),
-                TimeFormat.Parse(x.GetString(10)),
-                (DayOfWeek)x.GetInt32(11),
-                x.GetFieldValue<string[]>(12),
-                x.IsDBNull(13) ? null : x.GetFieldValue<Ban>(13)
+                ContinentCode.Parse(x.GetString(7)),
+                CountryCode.Parse(x.GetString(8)),
+                TimeZone.Parse(x.GetString(9)),
+                DateFormat.Parse(x.GetString(10)),
+                TimeFormat.Parse(x.GetString(11)),
+                (DayOfWeek)x.GetInt32(12),
+                x.GetFieldValue<string[]>(13),
+                x.IsDBNull(14) ? null : x.GetFieldValue<Ban>(14)
             ))
             .FirstOrDefaultAsync(ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
@@ -68,6 +70,7 @@ internal sealed record AccountSummary(
     Name Name,
     string Picture,
     Language Language,
+    ContinentCode ContinentCode,
     CountryCode CountryCode,
     TimeZone TimeZone,
     DateFormat DateFormat,

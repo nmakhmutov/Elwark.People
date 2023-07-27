@@ -1,4 +1,5 @@
 using MediatR;
+using People.Api.Infrastructure.Providers.World;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -24,24 +25,38 @@ internal sealed record UpdateAccountCommand(
 internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, Account>
 {
     private readonly IAccountRepository _repository;
+    private readonly IWorldClient _worldClient;
 
-    public UpdateAccountCommandHandler(IAccountRepository repository) =>
+    public UpdateAccountCommandHandler(IAccountRepository repository, IWorldClient worldClient)
+    {
         _repository = repository;
+        _worldClient = worldClient;
+    }
 
     public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
+        var continent = await GetContinentAsync(request.Country, ct)
+            .ConfigureAwait(false);
+
         account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);
         account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek);
-        account.Update(request.Language, request.Country, request.TimeZone);
+        account.Update(request.Language, continent, request.Country, request.TimeZone);
 
         _repository.Update(account);
+
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct)
             .ConfigureAwait(false);
 
         return account;
+    }
+
+    private async Task<ContinentCode> GetContinentAsync(CountryCode country, CancellationToken ct)
+    {
+        var result = await _worldClient.GetCountryAsync(country, ct);
+        return result is null ? ContinentCode.Empty : ContinentCode.Parse(result.Continent);
     }
 }

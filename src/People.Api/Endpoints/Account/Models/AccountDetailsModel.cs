@@ -1,9 +1,7 @@
-using People.Domain.Entities;
-
 namespace People.Api.Endpoints.Account.Models;
 
 internal sealed record AccountDetailsModel(
-    AccountId Id,
+    long Id,
     string Nickname,
     bool PreferNickname,
     string? FirstName,
@@ -11,6 +9,7 @@ internal sealed record AccountDetailsModel(
     string FullName,
     string Language,
     string Picture,
+    string? ContinentCode,
     string? CountryCode,
     string TimeZone,
     string DateFormat,

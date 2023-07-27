@@ -8,6 +8,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
 {
     private readonly ILogger<ConfirmationsWorker> _logger;
     private readonly IServiceProvider _provider;
+    private readonly PeriodicTimer _timer = new(TimeSpan.FromMinutes(10));
 
     public ConfirmationsWorker(ILogger<ConfirmationsWorker> logger, IServiceProvider provider)
     {
@@ -17,8 +18,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
-        {
+        while (await _timer.WaitForNextTickAsync(stoppingToken))
             try
             {
                 var result = await DeleteAsync(stoppingToken);
@@ -29,10 +29,6 @@ internal sealed class ConfirmationsWorker : BackgroundService
             {
                 _logger.LogWarning(ex, "Exception occured in {service}", nameof(ConfirmationsWorker));
             }
-
-            await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken)
-                .ConfigureAwait(false);
-        }
     }
 
     private async Task<int> DeleteAsync(CancellationToken ct)

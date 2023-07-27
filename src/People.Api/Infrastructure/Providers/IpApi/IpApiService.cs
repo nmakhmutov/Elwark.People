@@ -11,19 +11,20 @@ public sealed class IpApiService : IIpApiService
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
     };
 
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _client;
     private readonly ILogger<IpApiService> _logger;
 
-    public IpApiService(HttpClient httpClient, ILogger<IpApiService> logger)
+    public IpApiService(HttpClient client, ILogger<IpApiService> logger)
     {
-        _httpClient = httpClient;
+        _client = client;
         _logger = logger;
     }
 
     public async Task<IpApiDto?> GetAsync(string ip, string lang)
     {
-        var response = await _httpClient
-            .GetAsync($"/json/{ip}?lang={lang}")
+        var uri = $"/json/{ip}?lang={lang}&fields=status,continentCode,countryCode,region,city,timezone";
+
+        var response = await _client.GetAsync(uri)
             .ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
@@ -35,7 +36,7 @@ public sealed class IpApiService : IIpApiService
                 .ReadFromJsonAsync<IpApiDto>(Options)
                 .ConfigureAwait(false);
 
-            return data?.Status == IpInformationStatus.Success ? data : null;
+            return data?.Status == Status.Success ? data : null;
         }
         catch (Exception ex)
         {

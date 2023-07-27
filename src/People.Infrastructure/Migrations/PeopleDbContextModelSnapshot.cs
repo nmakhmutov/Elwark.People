@@ -32,10 +32,20 @@ namespace People.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("CountryCode")
+                    b.Property<string>("ContinentCode")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)")
+                        .HasDefaultValue("--")
+                        .HasColumnName("continent_code");
+
+                    b.Property<string>("CountryCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasDefaultValue("--")
                         .HasColumnName("country_code");
 
                     b.Property<string>("DateFormat")

@@ -40,9 +40,6 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
             .FirstOrDefaultAsync(ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(id);
 
-        await _confirmation.DeleteAsync(result.Id, ct)
-            .ConfigureAwait(false);
-
         var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
         await _bus.PublishAsync(evt, ct)
             .ConfigureAwait(false);

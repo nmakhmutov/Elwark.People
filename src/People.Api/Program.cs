@@ -27,6 +27,7 @@ using People.Api.Infrastructure.Providers.Google;
 using People.Api.Infrastructure.Providers.Gravatar;
 using People.Api.Infrastructure.Providers.IpApi;
 using People.Api.Infrastructure.Providers.Microsoft;
+using People.Api.Infrastructure.Providers.World;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
@@ -175,6 +176,11 @@ builder.Services
     });
 
 builder.Services
+    .AddHttpClient<IWorldClient, WorldClient>(client =>
+        client.BaseAddress = new Uri(builder.Configuration["Urls:World.Api"]!)
+    );
+
+builder.Services
     .AddHttpClient<IGoogleApiService, GoogleApiService>(client =>
         client.BaseAddress = new Uri(builder.Configuration["Urls:Google.Api"]!)
     );
@@ -219,6 +225,7 @@ builder.Host
         .Enrich.WithProperty("ApplicationName", appName)
         .Destructure.AsScalar<AccountId>()
         .Destructure.AsScalar<Language>()
+        .Destructure.AsScalar<ContinentCode>()
         .Destructure.AsScalar<CountryCode>()
         .Destructure.AsScalar<TimeZone>()
         .Destructure.AsScalar<DateFormat>()
@@ -228,7 +235,7 @@ builder.Host
         .ReadFrom.Configuration(context.Configuration)
     );
 
-var app = builder.Build();
+await using var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
@@ -256,4 +263,4 @@ app.MapAccountEndpoints();
 
 app.MapGrpcService<PeopleService>();
 
-app.Run();
+await app.RunAsync();

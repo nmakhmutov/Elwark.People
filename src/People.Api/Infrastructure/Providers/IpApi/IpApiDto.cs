@@ -1,9 +1,15 @@
 ﻿namespace People.Api.Infrastructure.Providers.IpApi;
 
-public sealed record IpApiDto(IpInformationStatus Status, string TimeZone, double? Lat, double? Lon, string? City,
-    string? Country, string CountryCode, string? Isp, string? Org, string? Query, string? Region, string? RegionName);
+public sealed record IpApiDto(
+    Status Status,
+    string ContinentCode,
+    string CountryCode,
+    string Region,
+    string? City,
+    string TimeZone
+);
 
-public enum IpInformationStatus
+public enum Status
 {
     Success = 1,
     Fail = 2

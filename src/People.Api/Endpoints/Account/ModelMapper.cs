@@ -17,6 +17,7 @@ internal static class AccountModelMapper
             result.Name.FullName(),
             result.Language.ToString(),
             result.Picture,
+            result.ContinentCode.ToModel(),
             result.CountryCode.ToModel(),
             result.TimeZone.ToString(),
             result.DateFormat.ToString(),
@@ -35,6 +36,7 @@ internal static class AccountModelMapper
             account.Name.FullName(),
             account.Language.ToString(),
             account.Picture,
+            account.ContinentCode.ToModel(),
             account.CountryCode.ToModel(),
             account.TimeZone.ToString(),
             account.DateFormat.ToString(),
@@ -45,6 +47,9 @@ internal static class AccountModelMapper
             account.Externals.Select(x => x.ToModel())
         );
 
+    private static string? ToModel(this ContinentCode code) =>
+        code.IsEmpty() ? null : code.ToString();
+    
     private static string? ToModel(this CountryCode code) =>
         code.IsEmpty() ? null : code.ToString();
 

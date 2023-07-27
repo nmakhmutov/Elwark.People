@@ -11,17 +11,15 @@ internal sealed record ConfirmEmailCommand(string Token, string Code) : IRequest
 internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, EmailAccount>
 {
     private readonly IConfirmationService _confirmation;
-    private readonly ILogger<ConfirmEmailCommandHandler> _logger;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public ConfirmEmailCommandHandler(IConfirmationService confirmation, TimeProvider timeProvider,
-        IAccountRepository repository, ILogger<ConfirmEmailCommandHandler> logger)
+        IAccountRepository repository)
     {
         _confirmation = confirmation;
         _timeProvider = timeProvider;
         _repository = repository;
-        _logger = logger;
     }
 
     public async Task<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
@@ -39,16 +37,6 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct)
             .ConfigureAwait(false);
-
-        try
-        {
-            await _confirmation.DeleteAsync(account.Id, ct)
-                .ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occured while deleting confirmations for user {U}", account.Id);
-        }
 
         return account.Emails
             .First(x => x.Email == confirmation.Email.Address);

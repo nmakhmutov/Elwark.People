@@ -27,32 +27,26 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message)
     {
-        await _confirmation.DeleteAsync(message.AccountId)
-            .ConfigureAwait(false);
-
         var account = await _repository.GetAsync(message.AccountId)
             .ConfigureAwait(false);
 
         if (account is null)
             return;
 
-        var changed = false;
         var ipInformation = await _ipService.GetAsync(message.Ip, account.Language.ToString())
-            .ConfigureAwait(false);
-
-        var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail())
             .ConfigureAwait(false);
 
         if (ipInformation is not null)
         {
-            if (CountryCode.TryParse(ipInformation.CountryCode, out var country))
-                account.UpdateRegistrationCountry(country);
+            _ = ContinentCode.TryParse(ipInformation.ContinentCode, out var continent);
+            _ = CountryCode.TryParse(ipInformation.CountryCode, out var country);
+            _ = TimeZone.TryParse(ipInformation.TimeZone, out var timeZone);
 
-            if (TimeZone.TryParse(ipInformation.TimeZone, out var timeZone))
-                account.Update(account.Language, account.CountryCode, timeZone);
-
-            changed = true;
+            account.Update(account.Language, continent, country, timeZone);
         }
+
+        var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail())
+            .ConfigureAwait(false);
 
         if (gravatar is not null)
         {
@@ -62,15 +56,14 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
             if (Uri.TryCreate(gravatar.ThumbnailUrl, UriKind.Absolute, out var image))
                 account.Update(image);
-
-            changed = true;
         }
 
-        if (changed)
-        {
-            _repository.Update(account);
-            await _repository.UnitOfWork.SaveEntitiesAsync()
-                .ConfigureAwait(false);
-        }
+        _repository.Update(account);
+
+        await _repository.UnitOfWork.SaveEntitiesAsync()
+            .ConfigureAwait(false);
+
+        await _confirmation.DeleteAsync(message.AccountId)
+            .ConfigureAwait(false);
     }
 }

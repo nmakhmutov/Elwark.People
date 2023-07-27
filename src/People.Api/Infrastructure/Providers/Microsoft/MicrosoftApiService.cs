@@ -11,16 +11,15 @@ internal sealed class MicrosoftApiService : IMicrosoftApiService
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _client;
 
-    public MicrosoftApiService(HttpClient httpClient) =>
-        _httpClient = httpClient;
+    public MicrosoftApiService(HttpClient client) =>
+        _client = client;
 
     public async Task<MicrosoftAccount> GetAsync(string accessToken, CancellationToken ct)
     {
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        var response = await _httpClient
-            .GetAsync("/v1.0/users/me", ct)
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var response = await _client.GetAsync("/v1.0/users/me", ct)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();

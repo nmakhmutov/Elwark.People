@@ -14,16 +14,15 @@ internal sealed class GoogleApiService : IGoogleApiService
         PropertyNameCaseInsensitive = true
     };
 
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient _client;
 
-    public GoogleApiService(HttpClient httpClient) =>
-        _httpClient = httpClient;
+    public GoogleApiService(HttpClient client) =>
+        _client = client;
 
     public async Task<GoogleAccount> GetAsync(string accessToken, CancellationToken ct)
     {
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        var response = await _httpClient
-            .GetAsync("/oauth2/v1/userinfo", ct)
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var response = await _client.GetAsync("/oauth2/v1/userinfo", ct)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();

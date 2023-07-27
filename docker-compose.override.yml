@@ -3,6 +3,7 @@ version: '3.9'
 networks:
   elwarknetwork:
     name: elwark_network
+    external: true
 
 services:
   people.api:
@@ -20,6 +21,7 @@ services:
       - Kestrel__EndPoints__Grpc__Url=http://+:81
       - Urls__Identity=http://identity_api
       - Urls__Notification.Api=http://notification_api
+      - Urls__World.Api=http://world_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=people;Username=master_account;Password=master_password
       - ConnectionStrings__Redis=redis:6379,resolveDns=True,defaultDatabase=15
       - ConnectionStrings__Kafka=broker:29092
