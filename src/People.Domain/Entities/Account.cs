@@ -39,7 +39,7 @@ public sealed class Account : Entity<AccountId>,
     {
         Name = new Name(nickname);
         Picture = DefaultPicture;
-        ContinentCode = ContinentCode.Empty;
+        RegionCode = RegionCode.Empty;
         CountryCode = CountryCode.Empty;
         Language = language;
         TimeZone = TimeZone.Utc;
@@ -62,7 +62,7 @@ public sealed class Account : Entity<AccountId>,
 
     public string Picture { get; private set; }
 
-    public ContinentCode ContinentCode { get; private set; }
+    public RegionCode RegionCode { get; private set; }
 
     public CountryCode CountryCode { get; private set; }
 
@@ -218,9 +218,9 @@ public sealed class Account : Entity<AccountId>,
         AddDomainEvent(new AccountUpdatedDomainEvent(this));
     }
 
-    public void Update(Language language, ContinentCode continent, CountryCode country, TimeZone timeZone)
+    public void Update(Language language, RegionCode region, CountryCode country, TimeZone timeZone)
     {
-        ContinentCode = continent;
+        RegionCode = region;
         CountryCode = country;
         Language = language;
         TimeZone = timeZone;

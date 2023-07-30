@@ -225,7 +225,7 @@ builder.Host
         .Enrich.WithProperty("ApplicationName", appName)
         .Destructure.AsScalar<AccountId>()
         .Destructure.AsScalar<Language>()
-        .Destructure.AsScalar<ContinentCode>()
+        .Destructure.AsScalar<RegionCode>()
         .Destructure.AsScalar<CountryCode>()
         .Destructure.AsScalar<TimeZone>()
         .Destructure.AsScalar<DateFormat>()

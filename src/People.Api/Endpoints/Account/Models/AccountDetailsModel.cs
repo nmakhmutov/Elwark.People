@@ -9,7 +9,7 @@ internal sealed record AccountDetailsModel(
     string FullName,
     string Language,
     string Picture,
-    string? ContinentCode,
+    string? RegionCode,
     string? CountryCode,
     string TimeZone,
     string DateFormat,

@@ -24,7 +24,7 @@ namespace People.Infrastructure.Migrations
                     last_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     prefer_nickname = table.Column<bool>(type: "boolean", nullable: false),
                     picture = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
-                    continent_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
+                    region_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
                     country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
                     time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     language = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),

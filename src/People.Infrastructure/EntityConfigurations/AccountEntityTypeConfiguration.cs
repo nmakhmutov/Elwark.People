@@ -55,10 +55,10 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasMaxLength(2)
             .IsRequired();
 
-        builder.Property(x => x.ContinentCode)
-            .HasColumnName("continent_code")
-            .HasConversion(x => x.ToString(), x => ContinentCode.Parse(x))
-            .HasDefaultValue(ContinentCode.Empty)
+        builder.Property(x => x.RegionCode)
+            .HasColumnName("region_code")
+            .HasConversion(x => x.ToString(), x => RegionCode.Parse(x))
+            .HasDefaultValue(RegionCode.Empty)
             .HasMaxLength(2)
             .IsRequired();
             

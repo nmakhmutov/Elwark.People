@@ -38,12 +38,12 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         var account = await _repository.GetAsync(request.Id, ct)
             .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
 
-        var continent = await GetContinentAsync(request.Country, ct)
+        var region = await GetRegionAsync(request.Country, ct)
             .ConfigureAwait(false);
 
         account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);
         account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek);
-        account.Update(request.Language, continent, request.Country, request.TimeZone);
+        account.Update(request.Language, region, request.Country, request.TimeZone);
 
         _repository.Update(account);
 
@@ -54,9 +54,9 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         return account;
     }
 
-    private async Task<ContinentCode> GetContinentAsync(CountryCode country, CancellationToken ct)
+    private async Task<RegionCode> GetRegionAsync(CountryCode country, CancellationToken ct)
     {
         var result = await _worldClient.GetCountryAsync(country, ct);
-        return result is null ? ContinentCode.Empty : ContinentCode.Parse(result.Continent);
+        return result is null ? RegionCode.Empty : RegionCode.Parse(result.Region);
     }
 }
