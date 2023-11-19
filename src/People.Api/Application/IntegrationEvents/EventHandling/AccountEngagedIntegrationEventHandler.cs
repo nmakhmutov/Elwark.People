@@ -38,7 +38,7 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
             _logger.LogInformation("Account {id} {property} updated successful", message.AccountId, property);
         else
             _logger.LogWarning("Account {id} not found, engagement not updated", message.AccountId);
-        
+
         await _confirmation.DeleteAsync(message.AccountId)
             .ConfigureAwait(false);
     }

@@ -49,7 +49,7 @@ internal static class AccountModelMapper
 
     private static string? ToModel(this RegionCode code) =>
         code.IsEmpty() ? null : code.ToString();
-    
+
     private static string? ToModel(this CountryCode code) =>
         code.IsEmpty() ? null : code.ToString();
 

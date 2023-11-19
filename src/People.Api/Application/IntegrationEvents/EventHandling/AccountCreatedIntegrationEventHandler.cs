@@ -38,9 +38,9 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
         if (ipInformation is not null)
         {
-            _ = RegionCode.TryParse(ipInformation.ContinentCode, out var region);
-            _ = CountryCode.TryParse(ipInformation.CountryCode, out var country);
-            _ = TimeZone.TryParse(ipInformation.TimeZone, out var timeZone);
+            RegionCode.TryParse(ipInformation.ContinentCode, out var region);
+            CountryCode.TryParse(ipInformation.CountryCode, out var country);
+            TimeZone.TryParse(ipInformation.TimeZone, out var timeZone);
 
             account.Update(account.Language, region, country, timeZone);
         }

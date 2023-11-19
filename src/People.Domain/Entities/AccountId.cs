@@ -1,18 +1,11 @@
 namespace People.Domain.Entities;
 
-public readonly struct AccountId :
-    IEquatable<AccountId>,
-    IComparable<AccountId>
+public readonly struct AccountId(long userId) :
+    IComparable,
+    IComparable<AccountId>,
+    IEquatable<AccountId>
 {
-    private readonly long _value;
-
-    public AccountId(long userId)
-    {
-        if (userId < 0)
-            throw new ArgumentOutOfRangeException(nameof(userId), userId, null);
-
-        _value = userId;
-    }
+    private readonly long _value = userId;
 
     public int CompareTo(AccountId other) =>
         _value.CompareTo(other._value);

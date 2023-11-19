@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+
 namespace People.Domain.ValueObjects;
 
 public readonly struct RegionCode :
@@ -5,16 +7,18 @@ public readonly struct RegionCode :
     IComparable<RegionCode>,
     IEquatable<RegionCode>
 {
-    private static readonly (string Code, string Name)[] Regions =
-    {
-        ("AF", "Africa"),
-        ("AN", "Antarctica"),
-        ("AS", "Asia"),
-        ("EU", "Europe"),
-        ("NA", "North America"),
-        ("OC", "Oceania"),
-        ("SA", "South America")
-    };
+    private static readonly FrozenDictionary<string, string> Regions =
+        new Dictionary<string, string>
+            {
+                ["AF"] = "Africa",
+                ["AN"] = "Antarctica",
+                ["AS"] = "Asia",
+                ["EU"] = "Europe",
+                ["NA"] = "North America",
+                ["OC"] = "Oceania",
+                ["SA"] = "South America"
+            }
+            .ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
     public static RegionCode Empty =>
         new("--");
@@ -29,36 +33,30 @@ public readonly struct RegionCode :
         if (TryParse(value, out var code))
             return code;
 
-        throw new ArgumentException($"{nameof(RegionCode)} value must be two chars", nameof(value));
+        throw new ArgumentOutOfRangeException(nameof(value), value, $"{nameof(RegionCode)} value must be two chars");
     }
 
     public static bool TryParse(string? value, out RegionCode regionCode)
     {
         regionCode = Empty;
 
-        if (string.IsNullOrWhiteSpace(value))
-            return false;
-
-        if (value.Length != 2)
+        if (string.IsNullOrWhiteSpace(value) || value.Length != 2)
             return false;
 
         regionCode = GetCodeOrDefault(value);
 
-        return !regionCode.IsEmpty();
+        return true;
     }
 
     private static RegionCode GetCodeOrDefault(string value)
     {
-        if (value.Length == 2)
-        {
-            foreach (var (code, _) in Regions.AsSpan())
-                if (code.Equals(value, StringComparison.OrdinalIgnoreCase))
-                    return new RegionCode(code);
-
+        if (value == "--")
             return Empty;
-        }
 
-        foreach (var (code, name) in Regions.AsSpan())
+        if (value.Length == 2)
+            return Regions.TryGetValue(value, out var region) ? new RegionCode(region) : Empty;
+
+        foreach (var (code, name) in Regions)
             if (name.Equals(value, StringComparison.OrdinalIgnoreCase))
                 return new RegionCode(code);
 

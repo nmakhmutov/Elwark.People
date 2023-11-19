@@ -5,8 +5,17 @@ using People.Domain.ValueObjects;
 
 namespace People.Api.Endpoints.Account.Requests;
 
-internal sealed record UpdateRequest(string? FirstName, string? LastName, string Nickname, bool PreferNickname,
-    string Language, string CountryCode, string TimeZone, string DateFormat, string TimeFormat, DayOfWeek StartOfWeek)
+internal sealed record UpdateRequest(
+    string? FirstName,
+    string? LastName,
+    string Nickname,
+    bool PreferNickname,
+    string Language,
+    string CountryCode,
+    string TimeZone,
+    string DateFormat,
+    string TimeFormat,
+    DayOfWeek StartOfWeek)
 {
     public UpdateAccountCommand ToCommand(AccountId id) =>
         new(

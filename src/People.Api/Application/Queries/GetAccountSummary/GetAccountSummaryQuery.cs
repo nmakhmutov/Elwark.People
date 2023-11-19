@@ -19,25 +19,25 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
     public async Task<AccountSummary> Handle(GetAccountSummaryQuery request, CancellationToken ct)
     {
         var sql = $"""
-            SELECT a.id,
-                   a.nickname,
-                   a.first_name,
-                   a.last_name,
-                   a.prefer_nickname,
-                   a.picture,
-                   a.language,
-                   a.region_code,
-                   a.country_code,
-                   a.time_zone,
-                   a.date_format,
-                   a.time_format,
-                   a.start_of_week,
-                   a.roles,
-                   a.ban
-            FROM accounts a
-            WHERE a.id = {request.Id}
-            LIMIT 1
-            """;
+                   SELECT a.id,
+                          a.nickname,
+                          a.first_name,
+                          a.last_name,
+                          a.prefer_nickname,
+                          a.picture,
+                          a.language,
+                          a.region_code,
+                          a.country_code,
+                          a.time_zone,
+                          a.date_format,
+                          a.time_format,
+                          a.start_of_week,
+                          a.roles,
+                          a.ban
+                   FROM accounts a
+                   WHERE a.id = {request.Id}
+                   LIMIT 1
+                   """;
 
         return await _dataProvider
             .Sql(sql)

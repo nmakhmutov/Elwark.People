@@ -5,8 +5,6 @@ using People.Webhooks.IntegrationEvents.EventHandling;
 using People.Webhooks.IntegrationEvents.Events;
 using People.Webhooks.Services.Retriever;
 using People.Webhooks.Services.Sender;
-using Polly;
-using Polly.Extensions.Http;
 using Serilog;
 
 const string appName = "People.Webhooks";
@@ -29,10 +27,7 @@ builder.Services
 
 builder.Services
     .AddHttpClient<IWebhooksSender, WebhooksSender>()
-    .AddPolicyHandler(
-        HttpPolicyExtensions.HandleTransientHttpError()
-            .WaitAndRetryAsync(10, x => TimeSpan.FromSeconds(Math.Pow(2, x)))
-    );
+    .AddStandardResilienceHandler();
 
 builder.Services
     .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
