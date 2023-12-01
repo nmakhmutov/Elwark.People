@@ -114,21 +114,21 @@ builder.Services
         options.AppVector = builder.Configuration["App:Vector"]!;
     })
     .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
-    .AddProducer<AccountCreatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.CreatedAccounts))
-    .AddProducer<AccountUpdatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.UpdatedAccounts))
-    .AddProducer<AccountDeletedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.DeletedAccounts))
-    .AddProducer<AccountEngaged>(producer => producer.WithTopic(KafkaTopic.EngagedAccounts))
+    .AddProducer<AccountCreatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Created))
+    .AddProducer<AccountUpdatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Updated))
+    .AddProducer<AccountDeletedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Deleted))
+    .AddProducer<AccountActivity>(producer => producer.WithTopic(KafkaTopic.Activity))
     .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.CreatedAccounts)
+        consumer.WithTopic(KafkaTopic.Created)
             .WithGroupId(appName)
             .WithWorkers(2)
-            .CreateTopicIfNotExists(2)
+            .CreateTopicIfNotExists(8)
     )
-    .AddConsumer<AccountEngaged, AccountEngagedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.EngagedAccounts)
+    .AddConsumer<AccountActivity, AccountEngagedIntegrationEventHandler>(consumer =>
+        consumer.WithTopic(KafkaTopic.Activity)
             .WithGroupId(appName)
             .WithWorkers(2)
-            .CreateTopicIfNotExists(2)
+            .CreateTopicIfNotExists(8)
     );
 
 builder.Services

@@ -42,7 +42,7 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
             .FirstOrDefaultAsync(ct)
             .ConfigureAwait(false) ?? throw ExternalAccountException.NotFound(ExternalService.Google, google.Identity);
 
-        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
+        var evt = new AccountActivity.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
         await _bus.PublishAsync(evt, ct)
             .ConfigureAwait(false);
 

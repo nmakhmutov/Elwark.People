@@ -34,7 +34,7 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
         if (data is null)
             return false;
 
-        var evt = new AccountEngaged.CheckedActivityIntegrationEvent(
+        var evt = new AccountActivity.InspectedIntegrationEvent(
             Guid.NewGuid(),
             _timeProvider.UtcNow(),
             request.Id

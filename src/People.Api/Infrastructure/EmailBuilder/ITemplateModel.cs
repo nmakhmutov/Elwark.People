@@ -1,5 +1,3 @@
 namespace People.Api.Infrastructure.EmailBuilder;
 
-public interface ITemplateModel
-{
-}
+public interface ITemplateModel;

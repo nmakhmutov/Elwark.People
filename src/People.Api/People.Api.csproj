@@ -12,7 +12,7 @@
     <PackageReference Include="Elwark.CorrelationId" Version="1.0.5"/>
     <PackageReference Include="Elwark.CorrelationId.Grpc" Version="1.0.5"/>
     <PackageReference Include="Elwark.CorrelationId.Http" Version="1.0.5"/>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
     <PackageReference Include="Fluid.Core" Version="2.5.0"/>
     <PackageReference Include="Grpc.AspNetCore" Version="2.59.0"/>
     <PackageReference Include="Grpc.Tools" Version="2.59.0" PrivateAssets="all"/>

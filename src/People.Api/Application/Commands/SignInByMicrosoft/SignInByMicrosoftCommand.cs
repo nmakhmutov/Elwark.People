@@ -43,7 +43,7 @@ internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInBy
                          .ConfigureAwait(false) ??
                      throw ExternalAccountException.NotFound(ExternalService.Microsoft, microsoft.Identity);
 
-        var evt = new AccountEngaged.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
+        var evt = new AccountActivity.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
         await _bus.PublishAsync(evt, ct)
             .ConfigureAwait(false);
 

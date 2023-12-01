@@ -6,7 +6,7 @@ using People.Kafka.Integration;
 
 namespace People.Api.Application.IntegrationEvents.EventHandling;
 
-internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventHandler<AccountEngaged>
+internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventHandler<AccountActivity>
 {
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
@@ -20,12 +20,12 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
         _logger = logger;
     }
 
-    public async Task HandleAsync(AccountEngaged message)
+    public async Task HandleAsync(AccountActivity message)
     {
         var property = message switch
         {
-            AccountEngaged.CheckedActivityIntegrationEvent _ => "_lastActive",
-            AccountEngaged.LoggedInIntegrationEvent _ => "_lastLogIn",
+            AccountActivity.InspectedIntegrationEvent _ => "_lastActive",
+            AccountActivity.LoggedInIntegrationEvent _ => "_lastLogIn",
             _ => throw new ArgumentOutOfRangeException(nameof(message))
         };
 

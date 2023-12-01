@@ -32,22 +32,22 @@ builder.Services
 builder.Services
     .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
     .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.CreatedAccounts)
+        consumer.WithTopic(KafkaTopic.Created)
             .WithGroupId(appName)
             .WithWorkers(2)
-            .CreateTopicIfNotExists(2)
+            .CreateTopicIfNotExists(8)
     )
     .AddConsumer<AccountUpdatedIntegrationEvent, AccountUpdatedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.UpdatedAccounts)
+        consumer.WithTopic(KafkaTopic.Updated)
             .WithGroupId(appName)
             .WithWorkers(4)
-            .CreateTopicIfNotExists(4)
+            .CreateTopicIfNotExists(8)
     )
     .AddConsumer<AccountDeletedIntegrationEvent, AccountDeletedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.DeletedAccounts)
+        consumer.WithTopic(KafkaTopic.Deleted)
             .WithGroupId(appName)
             .WithWorkers(2)
-            .CreateTopicIfNotExists(2)
+            .CreateTopicIfNotExists(8)
     );
 
 builder.Host

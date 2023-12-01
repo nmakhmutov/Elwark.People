@@ -49,9 +49,9 @@ public sealed class Account : Entity<AccountId>,
         IsActivated = false;
         _createdAt = _updatedAt = _lastActive = _lastLogIn = DateTime.MinValue;
         _ban = null;
-        _roles = Array.Empty<string>();
-        _emails = new HashSet<EmailAccount>();
-        _externals = new HashSet<ExternalConnection>();
+        _roles = [];
+        _emails = [];
+        _externals = [];
         _regCountryCode = CountryCode.Empty;
         _regIp = hasher.CreateHash(ip);
 
