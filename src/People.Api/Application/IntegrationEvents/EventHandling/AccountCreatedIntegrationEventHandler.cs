@@ -25,9 +25,9 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         _repository = repository;
     }
 
-    public async Task HandleAsync(AccountCreatedIntegrationEvent message)
+    public async Task HandleAsync(AccountCreatedIntegrationEvent message, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(message.AccountId)
+        var account = await _repository.GetAsync(message.AccountId, ct)
             .ConfigureAwait(false);
 
         if (account is null)
@@ -60,10 +60,10 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
         _repository.Update(account);
 
-        await _repository.UnitOfWork.SaveEntitiesAsync()
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct)
             .ConfigureAwait(false);
 
-        await _confirmation.DeleteAsync(message.AccountId)
+        await _confirmation.DeleteAsync(message.AccountId, ct)
             .ConfigureAwait(false);
     }
 }

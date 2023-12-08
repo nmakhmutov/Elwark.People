@@ -4,5 +4,5 @@ namespace People.Webhooks.Services.Retriever;
 
 internal interface IWebhooksRetriever
 {
-    Task<IReadOnlyCollection<WebhookSubscription>> GetSubscribersAsync(WebhookType type);
+    IAsyncEnumerable<WebhookSubscription> GetSubscribersAsync(WebhookType type, CancellationToken ct = default);
 }

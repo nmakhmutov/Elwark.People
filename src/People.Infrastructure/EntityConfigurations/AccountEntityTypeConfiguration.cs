@@ -116,11 +116,6 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasMaxLength(2)
             .IsRequired();
 
-        builder.Property<DateTime>("_lastActive")
-            .HasColumnName("last_active")
-            .HasDefaultValueSql("now()")
-            .IsRequired();
-
         builder.Property<DateTime>("_lastLogIn")
             .HasColumnName("last_log_in")
             .HasDefaultValueSql("now()")

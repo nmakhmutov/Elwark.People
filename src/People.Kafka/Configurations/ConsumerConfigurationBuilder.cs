@@ -6,8 +6,8 @@ namespace People.Kafka.Configurations;
 public sealed class ConsumerConfigurationBuilder
 {
     private string? _groupId;
-    private byte _retryCount = 5;
-    private TimeSpan _retryInterval = TimeSpan.FromSeconds(12);
+    private byte _retryCount = 8;
+    private TimeSpan _retryInterval = TimeSpan.FromSeconds(15);
     private string? _topic;
     private TopicSpecification? _topicSpecification;
     private byte _workers = 1;

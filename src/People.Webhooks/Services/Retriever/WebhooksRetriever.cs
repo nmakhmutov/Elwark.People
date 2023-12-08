@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using People.Webhooks.Infrastructure;
 using People.Webhooks.Model;
@@ -11,8 +12,14 @@ internal sealed class WebhooksRetriever : IWebhooksRetriever
     public WebhooksRetriever(WebhookDbContext dbContext) =>
         _dbContext = dbContext;
 
-    public async Task<IReadOnlyCollection<WebhookSubscription>> GetSubscribersAsync(WebhookType type) =>
-        await _dbContext.Subscriptions
+    public async IAsyncEnumerable<WebhookSubscription> GetSubscribersAsync(WebhookType type,
+        [EnumeratorCancellation] CancellationToken ct)
+    {
+        var query = _dbContext.Subscriptions
             .Where(x => x.Type == type)
-            .ToArrayAsync();
+            .AsAsyncEnumerable();
+
+        await foreach (var item in query.WithCancellation(ct))
+            yield return item;
+    }
 }

@@ -21,11 +21,14 @@ public sealed class PeopleDbContext : DbContext,
         _timeProvider = timeProvider;
     }
 
-    public DbSet<Account> Accounts { get; set; } = default!;
+    public DbSet<Account> Accounts =>
+        Set<Account>();
 
-    public DbSet<EmailAccount> Emails { get; set; } = default!;
+    public DbSet<EmailAccount> Emails =>
+        Set<EmailAccount>();
 
-    public DbSet<ExternalConnection> Connections { get; set; } = default!;
+    public DbSet<ExternalConnection> Connections =>
+        Set<ExternalConnection>();
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
     {

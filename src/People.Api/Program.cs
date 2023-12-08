@@ -4,10 +4,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using Fluid;
-using Grpc.AspNetCore.Server;
 using Grpc.Core;
 using Grpc.Net.Client.Configuration;
-using Grpc.Net.ClientFactory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
@@ -39,10 +37,6 @@ using TimeZone = People.Domain.ValueObjects.TimeZone;
 const string appName = "People.Api";
 const string mainCors = "MainCORS";
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services
-    .AddCorrelationId(options => options.UpdateTraceIdentifier = true)
-    .WithTraceIdentifierProvider();
 
 builder.Services
     .AddCors(options =>
@@ -173,7 +167,6 @@ builder.Services
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
         });
-        options.AddCorrelationIdForwarding();
     });
 
 builder.Services
@@ -215,11 +208,7 @@ builder.Services
         options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.SerializerOptions.PropertyNameCaseInsensitive = true;
     })
-    .AddGrpc(options =>
-    {
-        options.UseCorrelationId();
-        options.Interceptors.Add<GrpcExceptionInterceptor>();
-    });
+    .AddGrpc(options => options.Interceptors.Add<GrpcExceptionInterceptor>());
 
 builder.Host
     .UseSerilog((context, configuration) => configuration
@@ -255,7 +244,6 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
         ForwardLimit = 10
     })
     .UseCors(mainCors)
-    .UseCorrelationId()
     .UseRequestLocalization()
     .UseAuthentication()
     .UseAuthorization()

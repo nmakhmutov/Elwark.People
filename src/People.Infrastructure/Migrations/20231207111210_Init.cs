@@ -36,7 +36,6 @@ namespace People.Infrastructure.Migrations
                     ban = table.Column<Ban>(type: "json", nullable: true),
                     reg_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     reg_ip = table.Column<byte[]>(type: "bytea", nullable: false),
-                    last_active = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     last_log_in = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),

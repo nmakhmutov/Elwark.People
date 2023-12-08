@@ -20,18 +20,18 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
         _logger = logger;
     }
 
-    public async Task HandleAsync(AccountActivity message)
+    public async Task HandleAsync(AccountActivity message, CancellationToken ct)
     {
         var property = message switch
         {
-            AccountActivity.InspectedIntegrationEvent _ => "_lastActive",
+            AccountActivity.InspectedIntegrationEvent _ => "_updatedAt",
             AccountActivity.LoggedInIntegrationEvent _ => "_lastLogIn",
             _ => throw new ArgumentOutOfRangeException(nameof(message))
         };
 
         var result = await _dbContext.Accounts
             .Where(x => x.Id == message.AccountId)
-            .ExecuteUpdateAsync(x => x.SetProperty(p => EF.Property<DateTime>(p, property), message.CreatedAt))
+            .ExecuteUpdateAsync(x => x.SetProperty(p => EF.Property<DateTime>(p, property), message.CreatedAt), ct)
             .ConfigureAwait(false);
 
         if (result > 0)
@@ -39,7 +39,7 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
         else
             _logger.LogWarning("Account {id} not found, engagement not updated", message.AccountId);
 
-        await _confirmation.DeleteAsync(message.AccountId)
+        await _confirmation.DeleteAsync(message.AccountId, ct)
             .ConfigureAwait(false);
     }
 }

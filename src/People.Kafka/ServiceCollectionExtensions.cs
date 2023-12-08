@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using People.Kafka;
 using People.Kafka.Configurations;
+using People.Kafka.Consumers;
 using People.Kafka.Integration;
 using People.Kafka.Producers;
 
@@ -14,6 +16,11 @@ public static class ServiceCollectionExtensions
         var builder = new KafkaBuilder(services, servers);
 
         builder.Services
+            .Configure<HostOptions>(options =>
+            {
+                options.ServicesStartConcurrently = true;
+                options.ServicesStopConcurrently = true;
+            })
             .AddSingleton<IIntegrationEventBus, KafkaEventBus>();
 
         return builder;
@@ -49,7 +56,7 @@ public static class ServiceCollectionExtensions
             .AddHostedService(sp =>
             {
                 var factory = sp.GetRequiredService<IServiceScopeFactory>();
-                var logger = sp.GetRequiredService<ILogger<KafkaConsumer<E, H>>>();
+                var logger = sp.GetRequiredService<ILoggerFactory>();
 
                 return new KafkaConsumer<E, H>(configuration.Build(builder.Brokers), factory, logger);
             })

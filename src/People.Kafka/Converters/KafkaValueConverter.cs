@@ -5,7 +5,22 @@ using People.Kafka.Integration;
 
 namespace People.Kafka.Converters;
 
+internal abstract class KafkaValueConverter
+{
+    protected static readonly JsonSerializerOptions Options = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
+        IgnoreReadOnlyProperties = false,
+        PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+}
+
 internal sealed class KafkaValueConverter<T> :
+    KafkaValueConverter,
     ISerializer<T>,
     IDeserializer<T>
     where T : IIntegrationEvent
@@ -15,26 +30,13 @@ internal sealed class KafkaValueConverter<T> :
     public static readonly KafkaValueConverter<T> Instance =
         Lazy.Value;
 
-    private readonly JsonSerializerOptions _options = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        PropertyNameCaseInsensitive = true,
-        IgnoreReadOnlyProperties = false,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-        ReferenceHandler = ReferenceHandler.IgnoreCycles
-    };
-
     private KafkaValueConverter()
     {
     }
 
     public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context) =>
-        JsonSerializer.Deserialize<T>(data, _options)!;
+        JsonSerializer.Deserialize<T>(data, Options)!;
 
-    public byte[] Serialize(T data, SerializationContext context)
-    {
-        var type = data.GetType();
-        return JsonSerializer.SerializeToUtf8Bytes(data, type.BaseType ?? typeof(object), _options);
-    }
+    public byte[] Serialize(T data, SerializationContext context) =>
+        JsonSerializer.SerializeToUtf8Bytes(data, data.GetType().BaseType ?? typeof(object), Options);
 }

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using People.Kafka.Configurations;
@@ -27,11 +29,18 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
 
     public Task ProduceAsync(T message, CancellationToken ct)
     {
+        Activity.Current ??= new Activity(nameof(KafkaProducer<T>)).Start();
+        
         var kafkaMessage = new Message<Guid, T>
         {
             Key = message.MessageId,
             Value = message,
-            Timestamp = new Timestamp(message.CreatedAt)
+            Timestamp = new Timestamp(message.CreatedAt),
+            Headers = new Headers
+            {
+                { nameof(Activity.TraceId), Encoding.UTF8.GetBytes(Activity.Current.TraceId.ToHexString()) },
+                { nameof(Activity.SpanId), Encoding.UTF8.GetBytes(Activity.Current.SpanId.ToHexString()) }
+            }
         };
 
         return _producer.ProduceAsync(_topic, kafkaMessage, ct);

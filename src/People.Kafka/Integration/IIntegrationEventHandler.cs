@@ -2,5 +2,5 @@ namespace People.Kafka.Integration;
 
 public interface IIntegrationEventHandler<in T> where T : IIntegrationEvent
 {
-    Task HandleAsync(T message);
+    Task HandleAsync(T message, CancellationToken ct = default);
 }

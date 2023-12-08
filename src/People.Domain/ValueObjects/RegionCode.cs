@@ -25,8 +25,16 @@ public readonly struct RegionCode :
 
     private readonly string _value;
 
-    private RegionCode(string value) =>
+    private RegionCode(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("Region code cannot be null or whitespace.", nameof(value));
+
+        if (value.Length != 2)
+            throw new ArgumentException($"Region code has wrong format '{value}'", nameof(value));
+
         _value = value.ToUpperInvariant();
+    }
 
     public static RegionCode Parse(string? value)
     {
@@ -54,7 +62,7 @@ public readonly struct RegionCode :
             return Empty;
 
         if (value.Length == 2)
-            return Regions.TryGetValue(value, out var region) ? new RegionCode(region) : Empty;
+            return Regions.ContainsKey(value) ? new RegionCode(value) : Empty;
 
         foreach (var (code, name) in Regions)
             if (name.Equals(value, StringComparison.OrdinalIgnoreCase))

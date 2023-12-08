@@ -21,38 +21,37 @@ public sealed class Account : Entity<AccountId>,
 
     private Ban? _ban;
     private DateTime _createdAt;
-    private DateTime _lastActive;
+    private DateTime _updatedAt;
     private DateTime _lastLogIn;
     private CountryCode _regCountryCode;
     private byte[] _regIp;
     private string[] _roles;
-    private DateTime _updatedAt;
 
-#pragma warning disable CS8618
     private Account()
     {
-    }
-#pragma warning restore CS8618
-
-    public Account(string nickname, Language language, IPAddress ip, IIpHasher hasher)
-        : this()
-    {
-        Name = new Name(nickname);
+        Name = default!;
         Picture = DefaultPicture;
         RegionCode = RegionCode.Empty;
         CountryCode = CountryCode.Empty;
-        Language = language;
         TimeZone = TimeZone.Utc;
         TimeFormat = TimeFormat.Default;
         DateFormat = DateFormat.Default;
         StartOfWeek = DayOfWeek.Monday;
         IsActivated = false;
-        _createdAt = _updatedAt = _lastActive = _lastLogIn = DateTime.MinValue;
         _ban = null;
         _roles = [];
         _emails = [];
         _externals = [];
+        _regIp = [];
         _regCountryCode = CountryCode.Empty;
+        _createdAt = _updatedAt = _lastLogIn = DateTime.MinValue;
+    }
+
+    public Account(string nickname, Language language, IPAddress ip, IIpHasher hasher)
+        : this()
+    {
+        Name = new Name(nickname);
+        Language = language;
         _regIp = hasher.CreateHash(ip);
 
         AddDomainEvent(new AccountCreatedDomainEvent(this, ip));

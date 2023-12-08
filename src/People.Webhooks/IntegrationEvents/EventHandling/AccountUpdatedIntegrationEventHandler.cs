@@ -17,10 +17,12 @@ internal sealed class AccountUpdatedIntegrationEventHandler : IIntegrationEventH
         _sender = sender;
     }
 
-    public async Task HandleAsync(AccountUpdatedIntegrationEvent message)
+    public async Task HandleAsync(AccountUpdatedIntegrationEvent message, CancellationToken ct)
     {
-        var subscriptions = await _retriever.GetSubscribersAsync(WebhookType.Updated)
-            .ConfigureAwait(false);
+        var subscriptions = new List<WebhookSubscription>();
+
+        await foreach (var subscription in _retriever.GetSubscribersAsync(WebhookType.Updated, ct))
+            subscriptions.Add(subscription);
 
         await _sender.SendAll(subscriptions, new WebhookData(message.AccountId, WebhookType.Updated, message.CreatedAt))
             .ConfigureAwait(false);
