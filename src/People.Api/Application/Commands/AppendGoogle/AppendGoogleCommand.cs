@@ -27,21 +27,19 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
 
     public async Task Handle(AppendGoogleCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
-        var google = await _google.GetAsync(request.Token, ct)
-            .ConfigureAwait(false);
+        var google = await _google.GetAsync(request.Token, ct);
 
-        if (!await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct).ConfigureAwait(false))
+        if (!await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct))
             account.AddGoogle(google.Identity, google.FirstName, google.LastName, _timeProvider);
 
-        if (!await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct).ConfigureAwait(false))
+        if (!await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct))
             account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 
         _repository.Update(account);
+
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
     }
 }

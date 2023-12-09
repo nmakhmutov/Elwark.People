@@ -17,8 +17,7 @@ internal sealed class GetEmailsQueryHandler : IRequestHandler<GetEmailsQuery, IR
         await _dataProvider
             .Sql($"SELECT email, is_primary, confirmed_at IS NOT NULL FROM emails WHERE account_id = {request.Id};")
             .Select(x => new UserEmail(x.GetString(0), x.GetBoolean(1), x.GetBoolean(2)))
-            .ToListAsync(ct)
-            .ConfigureAwait(false);
+            .ToListAsync(ct);
 }
 
 internal sealed record UserEmail(string Email, bool IsPrimary, bool IsConfirmed);

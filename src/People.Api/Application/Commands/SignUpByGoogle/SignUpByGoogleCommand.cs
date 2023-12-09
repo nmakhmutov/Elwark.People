@@ -34,13 +34,12 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
 
     public async Task<SignUpResult> Handle(SignUpByGoogleCommand request, CancellationToken ct)
     {
-        var google = await _google.GetAsync(request.Token, ct)
-            .ConfigureAwait(false);
+        var google = await _google.GetAsync(request.Token, ct);
 
-        if (await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct).ConfigureAwait(false))
+        if (await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct))
             throw EmailException.AlreadyCreated(google.Email);
 
-        if (await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct).ConfigureAwait(false))
+        if (await _dbContext.Connections.IsGoogleExistsAsync(google.Identity, ct))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Google, google.Identity);
 
         var language = google.Locale is null
@@ -52,12 +51,10 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
         account.Update(google.Picture);
 
-        await _repository.AddAsync(account, ct)
-            .ConfigureAwait(false);
+        await _repository.AddAsync(account, ct);
 
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
 
         return new SignUpResult(account.Id, account.Name.FullName());
     }

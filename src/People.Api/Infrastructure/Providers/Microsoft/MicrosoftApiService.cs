@@ -19,13 +19,11 @@ internal sealed class MicrosoftApiService : IMicrosoftApiService
     public async Task<MicrosoftAccount> GetAsync(string accessToken, CancellationToken ct)
     {
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        var response = await _client.GetAsync("/v1.0/users/me", ct)
-            .ConfigureAwait(false);
+        var response = await _client.GetAsync("/v1.0/users/me", ct);
 
         response.EnsureSuccessStatusCode();
         var microsoft = await response.Content
-            .ReadFromJsonAsync<Dto>(Options, ct)
-            .ConfigureAwait(false);
+            .ReadFromJsonAsync<Dto>(Options, ct);
 
         return Success(microsoft);
     }

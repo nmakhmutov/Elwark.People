@@ -16,6 +16,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Serilog__WriteTo__0__Name=Console
+      - "Serilog__WriteTo__0__Args__outputTemplate=[{Timestamp:HH:mm:ss} {Level:u3}] {TraceId} {SourceContext}: {Message}{NewLine}{Exception}"
       #      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Kestrel__EndPoints__Grpc__Url=http://+:81
@@ -41,6 +42,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Serilog__WriteTo__0__Name=Console
+      - "Serilog__WriteTo__0__Args__outputTemplate=[{Timestamp:HH:mm:ss} {Level:u3}] {TraceId} {SourceContext}: {Message}{NewLine}{Exception}"
       #      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Urls__Identity=http://identity_api

@@ -38,7 +38,6 @@ public sealed class SqlBuilder
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        return await command.ExecuteNonQueryAsync(ct)
-            .ConfigureAwait(false);
+        return await command.ExecuteNonQueryAsync(ct);
     }
 }

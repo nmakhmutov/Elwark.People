@@ -35,11 +35,9 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
 
     public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
-        var region = await GetRegionAsync(request.Country, ct)
-            .ConfigureAwait(false);
+        var region = await GetRegionAsync(request.Country, ct);
 
         account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);
         account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek);
@@ -48,8 +46,7 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         _repository.Update(account);
 
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
 
         return account;
     }

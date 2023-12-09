@@ -35,8 +35,7 @@ internal static class ErrorFactory
             context.Response.StatusCode = error.Status ?? StatusCodes.Status500InternalServerError;
 
             await context.Response
-                .WriteAsJsonAsync(error)
-                .ConfigureAwait(false);
+                .WriteAsJsonAsync(error);
         }));
 
     public static ValidationProblemDetails ToProblem(this ValidationException ex) =>

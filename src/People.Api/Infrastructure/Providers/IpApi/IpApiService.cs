@@ -24,8 +24,7 @@ public sealed class IpApiService : IIpApiService
     {
         var uri = $"/json/{ip}?lang={lang}&fields=status,continentCode,countryCode,region,city,timezone";
 
-        var response = await _client.GetAsync(uri)
-            .ConfigureAwait(false);
+        var response = await _client.GetAsync(uri);
 
         if (!response.IsSuccessStatusCode)
             return null;
@@ -33,8 +32,7 @@ public sealed class IpApiService : IIpApiService
         try
         {
             var data = await response.Content
-                .ReadFromJsonAsync<IpApiDto>(Options)
-                .ConfigureAwait(false);
+                .ReadFromJsonAsync<IpApiDto>(Options);
 
             return data?.Status == Status.Success ? data : null;
         }

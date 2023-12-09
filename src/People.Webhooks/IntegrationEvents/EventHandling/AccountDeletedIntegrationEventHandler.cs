@@ -20,11 +20,11 @@ internal sealed class AccountDeletedIntegrationEventHandler : IIntegrationEventH
     public async Task HandleAsync(AccountDeletedIntegrationEvent message, CancellationToken ct)
     {
         var subscriptions = new List<WebhookSubscription>();
-        
+
         await foreach (var subscription in _retriever.GetSubscribersAsync(WebhookType.Deleted, ct))
             subscriptions.Add(subscription);
 
-        await _sender.SendAll(subscriptions, new WebhookData(message.AccountId, WebhookType.Deleted, message.CreatedAt))
-            .ConfigureAwait(false);
+        var data = new WebhookData(message.AccountId, WebhookType.Deleted, message.CreatedAt);
+        await _sender.SendAll(subscriptions, data);
     }
 }

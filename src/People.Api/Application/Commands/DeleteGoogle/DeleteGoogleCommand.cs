@@ -16,15 +16,13 @@ internal sealed class DeleteGoogleCommandHandler : IRequestHandler<DeleteGoogleC
 
     public async Task Handle(DeleteGoogleCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
         account.DeleteGoogle(request.Identity);
 
         _repository.Update(account);
 
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
     }
 }

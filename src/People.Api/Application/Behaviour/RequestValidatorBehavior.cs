@@ -17,12 +17,9 @@ internal sealed class RequestValidatorBehavior<TRequest, TResponse> : IPipelineB
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
         if (_validators.Count == 0)
-            return await next()
-                .ConfigureAwait(false);
+            return await next();
 
-        var results = await Task
-            .WhenAll(_validators.Select(x => x.ValidateAsync(request, ct)))
-            .ConfigureAwait(false);
+        var results = await Task.WhenAll(_validators.Select(x => x.ValidateAsync(request, ct)));
 
         var failures = results
             .SelectMany(x => x.Errors)
@@ -32,7 +29,6 @@ internal sealed class RequestValidatorBehavior<TRequest, TResponse> : IPipelineB
         if (failures.Length > 0)
             throw new ValidationException(failures);
 
-        return await next()
-            .ConfigureAwait(false);
+        return await next();
     }
 }

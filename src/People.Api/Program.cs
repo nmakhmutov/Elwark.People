@@ -234,8 +234,7 @@ await using (var scope = app.Services.CreateAsyncScope())
         .GetRequiredService<PeopleDbContext>();
 
     await dbContext.Database
-        .MigrateAsync()
-        .ConfigureAwait(false);
+        .MigrateAsync();
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

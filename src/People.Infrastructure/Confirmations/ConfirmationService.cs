@@ -32,8 +32,7 @@ internal sealed class ConfirmationService : IConfirmationService
 
     public async Task<ConfirmationResult> SignInAsync(AccountId id, CancellationToken ct)
     {
-        var confirmation = await EncodeAsync(id, "SignIn", ct)
-            .ConfigureAwait(false);
+        var confirmation = await EncodeAsync(id, "SignIn", ct);
 
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
@@ -43,8 +42,7 @@ internal sealed class ConfirmationService : IConfirmationService
 
     public async Task<ConfirmationResult> SignUpAsync(AccountId id, CancellationToken ct)
     {
-        var confirmation = await EncodeAsync(id, "SignUp", ct)
-            .ConfigureAwait(false);
+        var confirmation = await EncodeAsync(id, "SignUp", ct);
 
         return new ConfirmationResult(Convert.ToBase64String(confirmation.Id.ToByteArray()), confirmation.Code);
     }
@@ -54,8 +52,7 @@ internal sealed class ConfirmationService : IConfirmationService
 
     public async Task<ConfirmationResult> VerifyEmailAsync(AccountId id, MailAddress email, CancellationToken ct)
     {
-        var confirmation = await EncodeAsync(id, "EmailVerify", ct)
-            .ConfigureAwait(false);
+        var confirmation = await EncodeAsync(id, "EmailVerify", ct);
 
         var bytes = Encrypt(confirmation.Id.ToByteArray().Concat(Encoding.UTF8.GetBytes(email.Address)).ToArray());
 
@@ -70,8 +67,7 @@ internal sealed class ConfirmationService : IConfirmationService
             var id = new Guid(bytes[..16]);
             var email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
 
-            var accountId = await DecodeAsync(id, "EmailVerify", code, ct)
-                .ConfigureAwait(false);
+            var accountId = await DecodeAsync(id, "EmailVerify", code, ct);
 
             return new EmailConfirmation(accountId, email);
         }
@@ -115,12 +111,11 @@ internal sealed class ConfirmationService : IConfirmationService
     {
         var key = $"ppl-conf-lk-{id}";
 
-        if (await _redis.KeyExistsAsync(key).ConfigureAwait(false))
+        if (await _redis.KeyExistsAsync(key))
             throw ConfirmationException.AlreadySent();
 
         var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct)
-            .ConfigureAwait(false);
+            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
 
         if (confirmation is not null)
             return confirmation;
@@ -130,14 +125,11 @@ internal sealed class ConfirmationService : IConfirmationService
         var code = CreateCode(ConfirmationLength);
 
         var entity = new Confirmation(guid, id, code, type, now, CodeTtl);
-        await _dbContext.AddAsync(entity, ct)
-            .ConfigureAwait(false);
+        await _dbContext.AddAsync(entity, ct);
 
-        await _dbContext.SaveChangesAsync(ct)
-            .ConfigureAwait(false);
+        await _dbContext.SaveChangesAsync(ct);
 
-        await _redis.StringSetAsync(key, true, LockTtl)
-            .ConfigureAwait(false);
+        await _redis.StringSetAsync(key, true, LockTtl);
 
         return entity;
     }
@@ -145,8 +137,7 @@ internal sealed class ConfirmationService : IConfirmationService
     private async Task<AccountId> DecodeAsync(Guid id, string type, string code, CancellationToken ct)
     {
         var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.Id == id, ct)
-            .ConfigureAwait(false) ?? throw ConfirmationException.NotFound();
+            .FirstOrDefaultAsync(x => x.Id == id, ct) ?? throw ConfirmationException.NotFound();
 
         if (!string.Equals(confirmation.Type, type, StringComparison.OrdinalIgnoreCase))
             throw ConfirmationException.Mismatch();

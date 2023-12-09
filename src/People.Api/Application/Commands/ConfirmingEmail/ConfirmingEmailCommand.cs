@@ -26,8 +26,7 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
 
     public async Task<ConfirmingTokenModel> Handle(ConfirmingEmailCommand request, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(request.Id, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
         var emailAccount = account.Emails
             .FirstOrDefault(x => x.Email == request.Email.Address) ?? throw EmailException.NotFound(request.Email);
@@ -35,11 +34,9 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
         if (emailAccount.IsConfirmed)
             throw EmailException.AlreadyConfirmed(request.Email);
 
-        var confirmation = await _confirmation.VerifyEmailAsync(account.Id, request.Email, ct)
-            .ConfigureAwait(false);
+        var confirmation = await _confirmation.VerifyEmailAsync(account.Id, request.Email, ct);
 
-        await _notification.SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct)
-            .ConfigureAwait(false);
+        await _notification.SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct);
 
         return new ConfirmingTokenModel(confirmation.Token);
     }

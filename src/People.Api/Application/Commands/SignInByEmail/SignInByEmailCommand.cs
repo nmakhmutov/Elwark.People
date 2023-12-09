@@ -32,19 +32,16 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
 
     public async Task<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
     {
-        var id = await _confirmation.SignInAsync(request.Token, request.Code, ct)
-            .ConfigureAwait(false);
+        var id = await _confirmation.SignInAsync(request.Token, request.Code, ct);
 
         var result = await _dbContext.Accounts
             .AsNoTracking()
             .Where(x => x.Id == id)
             .Select(x => new SignInResult(x.Id, x.Name.FullName()))
-            .FirstOrDefaultAsync(ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(id);
+            .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(id);
 
         var evt = new AccountActivity.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
-        await _bus.PublishAsync(evt, ct)
-            .ConfigureAwait(false);
+        await _bus.PublishAsync(evt, ct);
 
         return result;
     }

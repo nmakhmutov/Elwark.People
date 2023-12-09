@@ -28,8 +28,7 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
         var data = await _dataProvider
             .Sql($"SELECT is_activated, ban IS NOT NULL FROM accounts WHERE id = {request.Id} LIMIT 1")
             .Select(x => new { IsActivated = x.GetBoolean(0), IsBanned = x.GetBoolean(1) })
-            .FirstOrDefaultAsync(ct)
-            .ConfigureAwait(false);
+            .FirstOrDefaultAsync(ct);
 
         if (data is null)
             return false;
@@ -40,8 +39,7 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
             request.Id
         );
 
-        await _bus.PublishAsync(evt, ct)
-            .ConfigureAwait(false);
+        await _bus.PublishAsync(evt, ct);
 
         return data is { IsActivated: true, IsBanned: false };
     }

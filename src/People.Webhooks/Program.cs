@@ -59,9 +59,9 @@ builder.Host
 var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
-    await scope.ServiceProvider.GetRequiredService<WebhookDbContext>()
+    await scope.ServiceProvider
+        .GetRequiredService<WebhookDbContext>()
         .Database
-        .MigrateAsync()
-        .ConfigureAwait(false);
+        .MigrateAsync();
 
 app.Run();

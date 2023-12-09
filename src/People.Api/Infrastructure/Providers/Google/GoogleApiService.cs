@@ -22,14 +22,12 @@ internal sealed class GoogleApiService : IGoogleApiService
     public async Task<GoogleAccount> GetAsync(string accessToken, CancellationToken ct)
     {
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        var response = await _client.GetAsync("/oauth2/v1/userinfo", ct)
-            .ConfigureAwait(false);
+        var response = await _client.GetAsync("/oauth2/v1/userinfo", ct);
 
         response.EnsureSuccessStatusCode();
 
         var google = await response.Content
-            .ReadFromJsonAsync<Dto>(Options, ct)
-            .ConfigureAwait(false);
+            .ReadFromJsonAsync<Dto>(Options, ct);
 
         return Success(google);
     }

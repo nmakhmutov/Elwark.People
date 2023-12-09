@@ -30,7 +30,7 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
     public Task ProduceAsync(T message, CancellationToken ct)
     {
         Activity.Current ??= new Activity(nameof(KafkaProducer<T>)).Start();
-        
+
         var kafkaMessage = new Message<Guid, T>
         {
             Key = message.MessageId,

@@ -38,8 +38,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
         var confirmation = scope.ServiceProvider
             .GetRequiredService<IConfirmationService>();
 
-        var result = await confirmation.CleanUpAsync(ct)
-            .ConfigureAwait(false);
+        var result = await confirmation.CleanUpAsync(ct);
 
         return result;
     }

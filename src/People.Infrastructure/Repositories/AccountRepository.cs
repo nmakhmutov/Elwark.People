@@ -18,27 +18,24 @@ internal sealed class AccountRepository : IAccountRepository
     public async Task<Account?> GetAsync(AccountId id, CancellationToken ct)
     {
         var account = await _dbContext.Accounts
-            .FirstOrDefaultAsync(x => x.Id == id, ct)
-            .ConfigureAwait(false);
+            .FirstOrDefaultAsync(x => x.Id == id, ct);
 
         if (account is null)
             return null;
 
         await _dbContext.Entry(account)
             .Collection(x => x.Emails)
-            .LoadAsync(ct)
-            .ConfigureAwait(false);
+            .LoadAsync(ct);
 
         await _dbContext.Entry(account)
             .Collection(x => x.Externals)
-            .LoadAsync(ct)
-            .ConfigureAwait(false);
+            .LoadAsync(ct);
 
         return account;
     }
 
     public async Task<Account> AddAsync(Account account, CancellationToken ct) =>
-        (await _dbContext.AddAsync(account, ct).ConfigureAwait(false)).Entity;
+        (await _dbContext.AddAsync(account, ct)).Entity;
 
     public void Update(Account account) =>
         _dbContext.Entry(account).State = EntityState.Modified;

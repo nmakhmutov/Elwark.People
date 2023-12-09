@@ -30,8 +30,7 @@ internal sealed class RequestLoggingBehavior<TRequest, TResponse> : IPipelineBeh
 
         Before(_logger, name, request, null);
 
-        var response = await next()
-            .ConfigureAwait(false);
+        var response = await next();
 
         After(_logger, name, response, null);
 

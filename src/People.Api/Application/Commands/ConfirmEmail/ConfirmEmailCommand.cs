@@ -24,19 +24,17 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
 
     public async Task<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
     {
-        var confirmation = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct)
-            .ConfigureAwait(false);
+        var confirmation = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct);
 
         var account = await _repository.GetAsync(confirmation.AccountId, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(confirmation.AccountId);
+                      ?? throw AccountException.NotFound(confirmation.AccountId);
 
         account.ConfirmEmail(confirmation.Email, _timeProvider);
 
         _repository.Update(account);
 
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
 
         return account.Emails
             .First(x => x.Email == confirmation.Email.Address);

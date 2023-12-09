@@ -27,14 +27,12 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(message.AccountId, ct)
-            .ConfigureAwait(false);
+        var account = await _repository.GetAsync(message.AccountId, ct);
 
         if (account is null)
             return;
 
-        var ipInformation = await _ipService.GetAsync(message.Ip, account.Language.ToString())
-            .ConfigureAwait(false);
+        var ipInformation = await _ipService.GetAsync(message.Ip, account.Language.ToString());
 
         if (ipInformation is not null)
         {
@@ -45,8 +43,7 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
             account.Update(account.Language, region, country, timeZone);
         }
 
-        var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail())
-            .ConfigureAwait(false);
+        var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail());
 
         if (gravatar is not null)
         {
@@ -60,10 +57,8 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 
         _repository.Update(account);
 
-        await _repository.UnitOfWork.SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
 
-        await _confirmation.DeleteAsync(message.AccountId, ct)
-            .ConfigureAwait(false);
+        await _confirmation.DeleteAsync(message.AccountId, ct);
     }
 }

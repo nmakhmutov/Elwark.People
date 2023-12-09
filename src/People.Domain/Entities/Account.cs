@@ -21,11 +21,11 @@ public sealed class Account : Entity<AccountId>,
 
     private Ban? _ban;
     private DateTime _createdAt;
-    private DateTime _updatedAt;
     private DateTime _lastLogIn;
     private CountryCode _regCountryCode;
     private byte[] _regIp;
     private string[] _roles;
+    private DateTime _updatedAt;
 
     private Account()
     {

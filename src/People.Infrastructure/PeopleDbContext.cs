@@ -35,11 +35,9 @@ public sealed class PeopleDbContext : DbContext,
         foreach (var entry in ChangeTracker.Entries<IAggregateRoot>())
             entry.Entity.SetAsUpdated(_timeProvider);
 
-        await SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
+        await SaveChangesAsync(cancellationToken);
 
-        await _mediator.DispatchDomainEventsAsync(this)
-            .ConfigureAwait(false);
+        await _mediator.DispatchDomainEventsAsync(this);
 
         return true;
     }

@@ -60,8 +60,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
                 x.GetFieldValue<string[]>(13),
                 x.IsDBNull(14) ? null : x.GetFieldValue<Ban>(14)
             ))
-            .FirstOrDefaultAsync(ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+            .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(request.Id);
     }
 }
 

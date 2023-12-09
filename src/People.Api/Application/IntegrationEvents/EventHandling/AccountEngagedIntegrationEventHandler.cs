@@ -31,15 +31,13 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
 
         var result = await _dbContext.Accounts
             .Where(x => x.Id == message.AccountId)
-            .ExecuteUpdateAsync(x => x.SetProperty(p => EF.Property<DateTime>(p, property), message.CreatedAt), ct)
-            .ConfigureAwait(false);
+            .ExecuteUpdateAsync(x => x.SetProperty(p => EF.Property<DateTime>(p, property), message.CreatedAt), ct);
 
         if (result > 0)
             _logger.LogInformation("Account {id} {property} updated successful", message.AccountId, property);
         else
             _logger.LogWarning("Account {id} not found, engagement not updated", message.AccountId);
 
-        await _confirmation.DeleteAsync(message.AccountId, ct)
-            .ConfigureAwait(false);
+        await _confirmation.DeleteAsync(message.AccountId, ct);
     }
 }

@@ -27,10 +27,9 @@ public sealed class SqlReader<T>
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await using var reader = await command.ExecuteReaderAsync(ct)
-            .ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync(ct);
 
-        if (await reader.ReadAsync(ct).ConfigureAwait(false))
+        if (await reader.ReadAsync(ct))
             return _mapper(reader);
 
         return default;
@@ -44,10 +43,9 @@ public sealed class SqlReader<T>
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);
 
-        await using var reader = await command.ExecuteReaderAsync(ct)
-            .ConfigureAwait(false);
+        await using var reader = await command.ExecuteReaderAsync(ct);
 
-        while (await reader.ReadAsync(ct).ConfigureAwait(false))
+        while (await reader.ReadAsync(ct))
         {
             ct.ThrowIfCancellationRequested();
             yield return _mapper(reader);
@@ -58,7 +56,7 @@ public sealed class SqlReader<T>
     {
         var result = new List<T>();
 
-        await foreach (var item in AsEnumerableAsync(ct).ConfigureAwait(false))
+        await foreach (var item in AsEnumerableAsync(ct))
             result.Add(item);
 
         return result;

@@ -25,18 +25,17 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
 
     public async Task<EmailAccount> Handle(AppendEmailCommand request, CancellationToken ct)
     {
-        if (await _dbContext.Emails.IsEmailExistsAsync(request.Email, ct).ConfigureAwait(false))
+        if (await _dbContext.Emails.IsEmailExistsAsync(request.Email, ct))
             throw EmailException.AlreadyCreated(request.Email);
 
-        var account = await _repository.GetAsync(request.Id, ct)
-            .ConfigureAwait(false) ?? throw AccountException.NotFound(request.Id);
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
         account.AddEmail(request.Email, false, _timeProvider);
 
         _repository.Update(account);
+
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
 
         return account.Emails
             .First(x => x.Email == request.Email.Address);

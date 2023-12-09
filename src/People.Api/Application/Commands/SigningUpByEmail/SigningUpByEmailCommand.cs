@@ -41,40 +41,33 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)
             .Select(x => new { x.AccountId, Email = new MailAddress(x.Email), x.IsConfirmed })
-            .FirstOrDefaultAsync(ct)
-            .ConfigureAwait(false);
+            .FirstOrDefaultAsync(ct);
 
         if (email is not null)
         {
             if (email.IsConfirmed)
                 throw EmailException.AlreadyCreated(request.Email);
 
-            return await SendConfirmationAsync(email.AccountId, email.Email, request.Language, ct)
-                .ConfigureAwait(false);
+            return await SendConfirmationAsync(email.AccountId, email.Email, request.Language, ct);
         }
 
         var account = new Account(request.Email.User, request.Language, request.Ip, _hasher);
         account.AddEmail(request.Email, false, _timeProvider);
 
-        await _repository.AddAsync(account, ct)
-            .ConfigureAwait(false);
+        await _repository.AddAsync(account, ct);
 
         await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct)
-            .ConfigureAwait(false);
+            .SaveEntitiesAsync(ct);
 
-        return await SendConfirmationAsync(account.Id, account.GetPrimaryEmail(), request.Language, ct)
-            .ConfigureAwait(false);
+        return await SendConfirmationAsync(account.Id, account.GetPrimaryEmail(), request.Language, ct);
     }
 
     private async Task<string> SendConfirmationAsync(AccountId id, MailAddress email, Language language,
         CancellationToken ct)
     {
-        var confirmation = await _confirmation.SignUpAsync(id, ct)
-            .ConfigureAwait(false);
+        var confirmation = await _confirmation.SignUpAsync(id, ct);
 
-        await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct)
-            .ConfigureAwait(false);
+        await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct);
 
         return confirmation.Token;
     }

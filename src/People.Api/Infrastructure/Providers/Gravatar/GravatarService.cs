@@ -27,9 +27,7 @@ public sealed class GravatarService : IGravatarService
         var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(email.Address));
         var id = string.Concat(hash.Select(x => x.ToString("x2")));
 
-        var response = await _client
-            .GetAsync($"/{id}.json")
-            .ConfigureAwait(false);
+        var response = await _client.GetAsync($"/{id}.json");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -40,8 +38,7 @@ public sealed class GravatarService : IGravatarService
         try
         {
             var content = await response.Content
-                .ReadFromJsonAsync<Wrapper>(Options)
-                .ConfigureAwait(false);
+                .ReadFromJsonAsync<Wrapper>(Options);
 
             return content?.Entry.FirstOrDefault();
         }
