@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO.Compression;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,9 +10,11 @@ using Grpc.Net.Client.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Notification.Grpc;
+using Npgsql;
 using People.Api.Application.Behaviour;
 using People.Api.Application.IntegrationEvents.EventHandling;
 using People.Api.Application.IntegrationEvents.Events;
@@ -35,42 +38,8 @@ using Serilog;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
-const string mainCors = "MainCORS";
+var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services
-    .AddCors(options =>
-        options.AddPolicy(mainCors, policyBuilder => policyBuilder
-            .WithOrigins(builder.Configuration.GetRequiredSection("Cors").Get<string[]>()!)
-            .WithMethods(HttpMethods.Get, HttpMethods.Post, HttpMethods.Put, HttpMethods.Delete)
-            .AllowAnyHeader()
-        ))
-    .AddRequestLocalization(options =>
-    {
-        var cultures = new CultureInfo[]
-        {
-            new("en"),
-            new("ru")
-        };
-
-        options.DefaultRequestCulture = new RequestCulture("en");
-        options.SupportedCultures = cultures;
-        options.SupportedUICultures = cultures;
-        options.RequestCultureProviders = new List<IRequestCultureProvider>
-        {
-            new QueryStringRequestCultureProvider { QueryStringKey = "language", UIQueryStringKey = "language" },
-            new AcceptLanguageHeaderRequestCultureProvider()
-        };
-    });
-
-builder.Services
-    .AddAuthorization(options =>
-    {
-        options.AddPolicy(Policy.RequireAuthenticatedUser.Name, Policy.RequireAuthenticatedUser.Policy);
-        options.AddPolicy(Policy.RequireCommonAccess.Name, Policy.RequireCommonAccess.Policy);
-        options.AddPolicy(Policy.RequireProfileAccess.Name, Policy.RequireProfileAccess.Policy);
-        options.AddPolicy(Policy.RequireManagementAccess.Name, Policy.RequireManagementAccess.Policy);
-    });
 
 builder.Services
     .AddAuthentication(options =>
@@ -90,7 +59,32 @@ builder.Services
         };
     });
 
-var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+builder.Services
+    .AddAuthorizationBuilder()
+    .AddPolicy(Policy.RequireAuthenticatedUser.Name, Policy.RequireAuthenticatedUser.Policy)
+    .AddPolicy(Policy.RequireCommonAccess.Name, Policy.RequireCommonAccess.Policy)
+    .AddPolicy(Policy.RequireProfileAccess.Name, Policy.RequireProfileAccess.Policy)
+    .AddPolicy(Policy.RequireManagementAccess.Name, Policy.RequireManagementAccess.Policy);
+
+builder.Services
+    .AddCors()
+    .AddRequestLocalization(options =>
+    {
+        var cultures = new CultureInfo[]
+        {
+            new("en"),
+            new("ru")
+        };
+
+        options.DefaultRequestCulture = new RequestCulture("en");
+        options.SupportedCultures = cultures;
+        options.SupportedUICultures = cultures;
+        options.RequestCultureProviders = new List<IRequestCultureProvider>
+        {
+            new QueryStringRequestCultureProvider { QueryStringKey = "language", UIQueryStringKey = "language" },
+            new AcceptLanguageHeaderRequestCultureProvider()
+        };
+    });
 
 builder.Services
     .AddMediatR(configuration =>
@@ -102,11 +96,18 @@ builder.Services
     .AddValidatorsFromAssemblies(assemblies, ServiceLifetime.Scoped, null, true)
     .AddInfrastructure(options =>
     {
-        options.PostgresqlConnectionString = builder.Configuration.GetConnectionString("Postgresql")!;
+        var postgresql = new NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("Postgresql"))
+        {
+            ApplicationName = appName
+        };
+
+        options.PostgresqlConnectionString = postgresql.ToString();
         options.RedisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
         options.AppKey = builder.Configuration["App:Key"]!;
         options.AppVector = builder.Configuration["App:Vector"]!;
-    })
+    });
+
+builder.Services
     .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
     .AddProducer<AccountCreatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Created))
     .AddProducer<AccountUpdatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Updated))
@@ -208,6 +209,20 @@ builder.Services
         options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.SerializerOptions.PropertyNameCaseInsensitive = true;
     })
+    .AddExceptionHandler<GlobalExceptionHandler>()
+    .AddProblemDetails();
+
+builder.Services
+    .AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.Providers.Add<BrotliCompressionProvider>();
+        options.Providers.Add<GzipCompressionProvider>();
+    })
+    .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal)
+    .Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+
+builder.Services
     .AddGrpc(options => options.Interceptors.Add<GrpcExceptionInterceptor>());
 
 builder.Host
@@ -221,8 +236,8 @@ builder.Host
         .Destructure.AsScalar<DateFormat>()
         .Destructure.AsScalar<TimeFormat>()
         .Destructure.AsScalar<IPAddress>()
-        .Destructure.ByTransforming<Account>(x => new { x.Id, x.CountryCode, x.Name.Nickname })
-        .Destructure.ByTransforming<AccountSummary>(x => new { x.Id, x.CountryCode, x.Name.Nickname })
+        .Destructure.ByTransforming<Account>(x => new { x.Id, x.Name.Nickname })
+        .Destructure.ByTransforming<AccountSummary>(x => new { x.Id, x.Name.Nickname })
         .ReadFrom.Configuration(context.Configuration)
     );
 
@@ -230,11 +245,8 @@ await using var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var dbContext = scope.ServiceProvider
-        .GetRequiredService<PeopleDbContext>();
-
-    await dbContext.Database
-        .MigrateAsync();
+    var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
+    await dbContext.Database.MigrateAsync();
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -242,11 +254,19 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
         ForwardLimit = 10
     })
-    .UseCors(mainCors)
+    .UseCors(policy => policy
+        .WithOrigins(builder.Configuration.GetRequiredSection("Cors").Get<string[]>()!)
+        .WithMethods(HttpMethods.Get, HttpMethods.Post, HttpMethods.Put, HttpMethods.Delete)
+        .AllowAnyHeader()
+        .AllowCredentials()
+    )
+    .UseExceptionHandler()
     .UseRequestLocalization()
     .UseAuthentication()
-    .UseAuthorization()
-    .UseGlobalExceptionHandler();
+    .UseAuthorization();
+
+if (app.Environment.IsProduction())
+    app.UseResponseCompression();
 
 app.MapAccountEndpoints();
 

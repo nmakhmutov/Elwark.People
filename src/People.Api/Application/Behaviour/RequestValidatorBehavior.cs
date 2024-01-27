@@ -21,8 +21,7 @@ internal sealed class RequestValidatorBehavior<TRequest, TResponse> : IPipelineB
 
         var results = await Task.WhenAll(_validators.Select(x => x.ValidateAsync(request, ct)));
 
-        var failures = results
-            .SelectMany(x => x.Errors)
+        var failures = results.SelectMany(x => x.Errors)
             .Where(x => x is not null)
             .ToArray();
 

@@ -1,8 +1,6 @@
-using System.Net.Mime;
 using System.Text;
 using FluentValidation;
 using Grpc.Core;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using People.Domain.Exceptions;
 
@@ -10,33 +8,15 @@ namespace People.Api.Infrastructure;
 
 internal static class ErrorFactory
 {
-    public static IApplicationBuilder UseGlobalExceptionHandler(this IApplicationBuilder app) =>
-        app.UseExceptionHandler(builder => builder.Run(async context =>
+    public static ProblemDetails ToProblem(this Exception exception) =>
+        exception switch
         {
-            var ex = context.Features.Get<IExceptionHandlerPathFeature>();
-            if (ex is null)
-                return;
-
-            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-
-            var error = ex.Error switch
-            {
-                ValidationException x => x.ToProblem(),
-                RpcException x => x.ToProblem(),
-                PeopleException x => x.ToProblem(),
-                ArgumentException x => x.ToProblem(),
-                _ => InternalProblem()
-            };
-
-            var level = error.Status > 499 ? LogLevel.Critical : LogLevel.Error;
-            logger.Log(level, ex.Error, "Error in: {name}. {message}", ex.Path, ex.Error.Message);
-
-            context.Response.ContentType = MediaTypeNames.Application.Json;
-            context.Response.StatusCode = error.Status ?? StatusCodes.Status500InternalServerError;
-
-            await context.Response
-                .WriteAsJsonAsync(error);
-        }));
+            ValidationException x => x.ToProblem(),
+            RpcException x => x.ToProblem(),
+            PeopleException x => x.ToProblem(),
+            ArgumentException x => x.ToProblem(),
+            _ => InternalProblem()
+        };
 
     public static ValidationProblemDetails ToProblem(this ValidationException ex) =>
         ValidationProblemDetails(GetValidationErrors(ex));

@@ -73,11 +73,11 @@ internal static class AccountEndpoints
     }
 
     private static async Task<AccountDetailsModel> GetMyAccountAsync(
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var query = new GetAccountDetailsQuery(user.GetAccountId());
+        var query = new GetAccountDetailsQuery(principal.GetAccountId());
         var result = await sender.Send(query, ct);
 
         return AccountDetailsModel.Map(result);
@@ -85,11 +85,11 @@ internal static class AccountEndpoints
 
     private static async Task<AccountDetailsModel> UpdateAccountAsync(
         UpdateRequest request,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var command = request.ToCommand(user.GetAccountId());
+        var command = request.ToCommand(principal.GetAccountId());
         var result = await sender.Send(command, ct);
 
         return AccountDetailsModel.Map(result);
@@ -97,11 +97,11 @@ internal static class AccountEndpoints
 
     private static async Task<EmailModel> AppendEmailAsync(
         EmailRequest request,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var command = new AppendEmailCommand(user.GetAccountId(), new MailAddress(request.Email));
+        var command = new AppendEmailCommand(principal.GetAccountId(), new MailAddress(request.Email));
         var result = await sender.Send(command, ct);
 
         return EmailModel.Map(result);
@@ -109,11 +109,11 @@ internal static class AccountEndpoints
 
     private static async Task<EmptyHttpResult> DeleteEmailAsync(
         string email,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var command = new DeleteEmailCommand(user.GetAccountId(), new MailAddress(email));
+        var command = new DeleteEmailCommand(principal.GetAccountId(), new MailAddress(email));
         await sender.Send(command, ct);
 
         return TypedResults.Empty;
@@ -121,11 +121,11 @@ internal static class AccountEndpoints
 
     private static async Task<IEnumerable<EmailModel>> ChangePrimaryEmailAsync(
         EmailRequest request,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var id = user.GetAccountId();
+        var id = principal.GetAccountId();
         var command = new ChangePrimaryEmailCommand(id, new MailAddress(request.Email));
         await sender.Send(command, ct);
 
@@ -137,11 +137,11 @@ internal static class AccountEndpoints
 
     private static async Task<ConfirmingTokenModel> ConfirmingEmailAsync(
         EmailRequest request,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var command = new ConfirmingEmailCommand(user.GetAccountId(), new MailAddress(request.Email));
+        var command = new ConfirmingEmailCommand(principal.GetAccountId(), new MailAddress(request.Email));
         var token = await sender.Send(command, ct);
 
         return token;
@@ -160,11 +160,11 @@ internal static class AccountEndpoints
 
     private static async Task<EmptyHttpResult> DeleteGoogleIdentityAsync(
         string id,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var command = new DeleteGoogleCommand(user.GetAccountId(), id);
+        var command = new DeleteGoogleCommand(principal.GetAccountId(), id);
         await sender.Send(command, ct);
 
         return TypedResults.Empty;
@@ -172,11 +172,11 @@ internal static class AccountEndpoints
 
     private static async Task<EmptyHttpResult> DeleteMicrosoftIdentityAsync(
         string id,
-        ClaimsPrincipal user,
+        ClaimsPrincipal principal,
         ISender sender,
         CancellationToken ct)
     {
-        var command = new DeleteMicrosoftCommand(user.GetAccountId(), id);
+        var command = new DeleteMicrosoftCommand(principal.GetAccountId(), id);
         await sender.Send(command, ct);
 
         return TypedResults.Empty;

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using People.Kafka;
 using People.Webhooks.Infrastructure;
 using People.Webhooks.IntegrationEvents.EventHandling;
@@ -13,10 +14,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddDbContext<WebhookDbContext>(options =>
     {
-        options.UseNpgsql(builder.Configuration.GetConnectionString("Postgresql")!, optionsBuilder =>
+        var postgresql = new NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("Postgresql"))
         {
-            optionsBuilder.EnableRetryOnFailure(5);
-            optionsBuilder.CommandTimeout(60);
+            ApplicationName = appName
+        };
+        
+        options.UseNpgsql(postgresql.ToString(), npgsql =>
+        {
+            npgsql.EnableRetryOnFailure(5);
+            npgsql.CommandTimeout(60);
         });
         options.EnableDetailedErrors(builder.Environment.IsDevelopment());
         options.EnableSensitiveDataLogging(builder.Environment.IsDevelopment());
@@ -59,9 +65,9 @@ builder.Host
 var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
-    await scope.ServiceProvider
-        .GetRequiredService<WebhookDbContext>()
-        .Database
-        .MigrateAsync();
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<WebhookDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 app.Run();

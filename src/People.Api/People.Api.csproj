@@ -9,13 +9,13 @@
     <Protobuf Include="Protos\notification.proto" GrpcServices="Client"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageReference Include="Fluid.Core" Version="2.5.0"/>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.59.0"/>
-    <PackageReference Include="Grpc.Tools" Version="2.59.0" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0"/>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.60.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.60.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
     <PackageReference Include="MinimalApis.LiquidViews" Version="2.5.0"/>
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0"/>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj"/>

@@ -26,6 +26,7 @@ public class WebhookSubscriptionEntityTypeConfiguration : IEntityTypeConfigurati
             .IsRequired();
 
         builder.Property(x => x.Token)
+            .HasColumnName("token")
             .HasMaxLength(256);
     }
 }

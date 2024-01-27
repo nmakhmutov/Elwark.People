@@ -19,7 +19,7 @@ namespace People.Webhooks.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     type = table.Column<int>(type: "integer", nullable: false),
                     destination_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
-                    Token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
+                    token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
                 },
                 constraints: table =>
                 {

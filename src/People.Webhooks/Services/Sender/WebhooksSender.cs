@@ -22,33 +22,36 @@ internal sealed class WebhooksSender : IWebhooksSender
         _logger = logger;
     }
 
-    public async Task SendAll(IEnumerable<WebhookSubscription> receivers, WebhookData data)
+    public async Task SendAll(IEnumerable<WebhookSubscription> subscriptions, WebhookData data)
     {
         var json = JsonSerializer.Serialize(data, Options);
-        var tasks = receivers.Select(x => OnSendData(x, json));
+        var tasks = subscriptions.Select(async x =>
+        {
+            _logger.LogInformation("Initiating webhook transmission to {Url}. Payload: {Json}", x.DestinationUrl, data);
+
+            var response = await SendDataAsync(x, json);
+
+            _logger.LogInformation("Webhook transmission to {Url} completed with Status Code: {StatusCode}",
+                x.DestinationUrl, response.StatusCode);
+
+            return response;
+        });
 
         await Task.WhenAll(tasks);
     }
 
-    private async Task<HttpResponseMessage> OnSendData(WebhookSubscription subs, string json)
+    private async Task<HttpResponseMessage> SendDataAsync(WebhookSubscription subscription, string json)
     {
         var request = new HttpRequestMessage
         {
-            RequestUri = new Uri(subs.DestinationUrl, UriKind.Absolute),
+            RequestUri = new Uri(subscription.DestinationUrl, UriKind.Absolute),
             Method = HttpMethod.Post,
             Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
 
-        if (!string.IsNullOrWhiteSpace(subs.Token))
-            request.Headers.TryAddWithoutValidation("X-Elwark-People-Token", subs.Token);
+        if (!string.IsNullOrWhiteSpace(subscription.Token))
+            request.Headers.TryAddWithoutValidation("X-Elwark-People-Token", subscription.Token);
 
-        _logger.LogInformation("Sending hook to {Method} {Uri} {json}", request.Method, subs.DestinationUrl, json);
-
-        var response = await _httpClient.SendAsync(request);
-
-        _logger.LogInformation("Hook to {Method} {Uri} sent {StatusCode}", request.Method, subs.DestinationUrl,
-            (int)response.StatusCode);
-
-        return response;
+        return await _httpClient.SendAsync(request);
     }
 }

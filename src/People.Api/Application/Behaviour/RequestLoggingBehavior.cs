@@ -3,19 +3,9 @@ using MediatR;
 
 namespace People.Api.Application.Behaviour;
 
-internal sealed class RequestLoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed partial class RequestLoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
-    private static readonly Action<ILogger, string, TRequest, Exception?> Before =
-        LoggerMessage.Define<string, TRequest>(LogLevel.Information, new EventId(1, "RequestLogging"),
-            "Handling command {CommandName} ({@Request})"
-        );
-
-    private static readonly Action<ILogger, string, TResponse, Exception?> After =
-        LoggerMessage.Define<string, TResponse>(LogLevel.Information, new EventId(2, "ResponseLogging"),
-            "Command {CommandName} handled - response: {@Response}"
-        );
-
     private readonly ILogger<RequestLoggingBehavior<TRequest, TResponse>> _logger;
 
     [DebuggerStepThrough]
@@ -25,15 +15,20 @@ internal sealed class RequestLoggingBehavior<TRequest, TResponse> : IPipelineBeh
     [DebuggerStepThrough]
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
-        var name = request.GetType()
-            .Name;
+        var name = request.GetType().Name;
 
-        Before(_logger, name, request, null);
+        Handling(_logger, name, request);
 
         var response = await next();
 
-        After(_logger, name, response, null);
+        Handled(_logger, name, response);
 
         return response;
     }
+
+    [LoggerMessage(LogLevel.Information, "Executing {Command} {@Request}")]
+    private static partial void Handling(ILogger logger, string command, TRequest request);
+
+    [LoggerMessage(LogLevel.Debug, "Executed {Command} {@Response}")]
+    private static partial void Handled(ILogger logger, string command, TResponse response);
 }

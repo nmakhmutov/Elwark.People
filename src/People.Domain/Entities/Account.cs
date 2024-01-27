@@ -14,7 +14,7 @@ public sealed class Account : Entity<AccountId>,
     IAggregateRoot
 {
     private const string DefaultPicture =
-        "https://res.cloudinary.com/elwark/image/upload/v1660058875/People/default.svg";
+        "https://res.cloudinary.com/elwark/image/upload/v1/People/default.svg";
 
     private readonly HashSet<EmailAccount> _emails;
     private readonly HashSet<ExternalConnection> _externals;
