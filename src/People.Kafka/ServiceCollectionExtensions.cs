@@ -59,8 +59,7 @@ public static class ServiceCollectionExtensions
                 var logger = sp.GetRequiredService<ILoggerFactory>();
 
                 return new KafkaConsumer<E, H>(configuration.Build(builder.Brokers), factory, logger);
-            })
-            .AddHostedService<KafkaConsumer<E, H>>();
+            });
 
         return builder;
     }

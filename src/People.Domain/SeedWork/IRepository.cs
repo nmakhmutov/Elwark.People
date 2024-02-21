@@ -6,5 +6,7 @@ public interface IRepository<T> where T : IAggregateRoot
 
     Task<T> AddAsync(T entity, CancellationToken ct = default);
 
-    void Update(T account);
+    void Update(T entity);
+
+    void Delete(T entity);
 }

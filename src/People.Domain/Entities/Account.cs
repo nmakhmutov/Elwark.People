@@ -239,6 +239,9 @@ public sealed class Account : Entity<AccountId>,
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
+    public void Delete() =>
+        AddDomainEvent(new AccountDeletedDomainEvent(Id));
+
     private void UpdateActivation() =>
         IsActivated = _externals.Count > 0 || _emails.Any(x => x is { IsPrimary: true, IsConfirmed: true });
 }

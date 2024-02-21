@@ -6,6 +6,7 @@ using People.Api.Application.Commands.AppendEmail;
 using People.Api.Application.Commands.ChangePrimaryEmail;
 using People.Api.Application.Commands.ConfirmEmail;
 using People.Api.Application.Commands.ConfirmingEmail;
+using People.Api.Application.Commands.DeleteAccount;
 using People.Api.Application.Commands.DeleteEmail;
 using People.Api.Application.Commands.DeleteGoogle;
 using People.Api.Application.Commands.DeleteMicrosoft;
@@ -35,6 +36,9 @@ internal static class AccountEndpoints
         group.MapPut("/me", UpdateAccountAsync)
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
             .AddEndpointFilter<ValidatorFilter<UpdateRequest>>();
+
+        group.MapDelete("/me", DeleteAccountAsync)
+            .RequireAuthorization(Policy.RequireProfileAccess.Name);
 
         group.MapPost("/me/emails", AppendEmailAsync)
             .RequireAuthorization(Policy.RequireProfileAccess.Name)
@@ -93,6 +97,15 @@ internal static class AccountEndpoints
         var result = await sender.Send(command, ct);
 
         return AccountDetailsModel.Map(result);
+    }
+
+    private static async Task<EmptyHttpResult> DeleteAccountAsync(ClaimsPrincipal principal, ISender sender,
+        CancellationToken ct)
+    {
+        var command = new DeleteAccountCommand(principal.GetAccountId());
+        await sender.Send(command, ct);
+
+        return TypedResults.Empty;
     }
 
     private static async Task<EmailModel> AppendEmailAsync(

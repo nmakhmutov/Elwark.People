@@ -39,4 +39,7 @@ internal sealed class AccountRepository : IAccountRepository
 
     public void Update(Account account) =>
         _dbContext.Entry(account).State = EntityState.Modified;
+
+    public void Delete(Account entity) =>
+        _dbContext.Remove(entity);
 }

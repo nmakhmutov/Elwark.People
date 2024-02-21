@@ -4,5 +4,4 @@ using People.Domain.Entities;
 
 namespace People.Domain.DomainEvents;
 
-public sealed record AccountCreatedDomainEvent(Account Account, IPAddress IpAddress)
-    : INotification;
+public sealed record AccountCreatedDomainEvent(Account Account, IPAddress IpAddress) : INotification;
