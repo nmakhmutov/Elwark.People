@@ -6,22 +6,25 @@ public readonly struct DateFormat : IEquatable<DateFormat>
 
     private static readonly IReadOnlyCollection<string> List = new[]
     {
+        "MM.dd.yyyy",
         "dd.MM.yyyy",
         "dd.MM.yy",
         "d.M.yyyy",
         "d.M.yy",
+        
+        "MM-dd-yyyy",
         "dd-MM-yyyy",
         "dd-MM-yy",
         "d-M-yyyy",
         "d-M-yy",
+        
+        "MM/dd/yyyy",
         "dd/MM/yyyy",
         "dd/MM/yy",
         "d/M/yyyy",
         "d/M/yy",
-        "yyyy-MM-dd",
-        "MM.dd.yyyy",
-        "MM-dd-yyyy",
-        "MM/dd/yyyy"
+        
+        "yyyy-MM-dd"
     };
 
     private readonly string _value;
@@ -40,9 +43,9 @@ public readonly struct DateFormat : IEquatable<DateFormat>
         return new DateFormat(value);
     }
 
-    public static bool TryParse(string? value, out DateFormat dateFormat)
+    public static bool TryParse(string? value, out DateFormat format)
     {
-        dateFormat = Default;
+        format = Default;
 
         if (string.IsNullOrWhiteSpace(value))
             return false;
@@ -50,7 +53,7 @@ public readonly struct DateFormat : IEquatable<DateFormat>
         if (!List.Contains(value))
             return false;
 
-        dateFormat = new DateFormat(value);
+        format = new DateFormat(value);
         return true;
     }
 

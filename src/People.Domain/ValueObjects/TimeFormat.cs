@@ -29,17 +29,15 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
         return new TimeFormat(value);
     }
 
-    public static bool TryParse(string? value, out TimeFormat timeFormat)
+    public static bool TryParse(string? value, out TimeFormat format)
     {
-        timeFormat = Default;
-
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value) || !List.Contains(value))
+        {
+            format = Default;
             return false;
-
-        if (!List.Contains(value))
-            return false;
-
-        timeFormat = new TimeFormat(value);
+        }
+        
+        format = new TimeFormat(value);
         return true;
     }
 

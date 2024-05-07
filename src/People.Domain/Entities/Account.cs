@@ -14,7 +14,7 @@ public sealed class Account : Entity<AccountId>,
     IAggregateRoot
 {
     private const string DefaultPicture =
-        "https://res.cloudinary.com/elwark/image/upload/v1/People/default.svg";
+        "https://res.cloudinary.com/elwark/image/upload/v1/People/default.jpg";
 
     private readonly HashSet<EmailAccount> _emails;
     private readonly HashSet<ExternalConnection> _externals;
@@ -107,6 +107,7 @@ public sealed class Account : Entity<AccountId>,
         _emails.Add(new EmailAccount(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
 
         UpdateActivation();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public MailAddress GetPrimaryEmail() =>
@@ -123,6 +124,7 @@ public sealed class Account : Entity<AccountId>,
             item.RemovePrimary();
 
         result.SetPrimary();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void ConfirmEmail(MailAddress email, TimeProvider timeProvider)
@@ -131,7 +133,7 @@ public sealed class Account : Entity<AccountId>,
         result.Confirm(timeProvider.UtcNow());
 
         UpdateActivation();
-        AddDomainEvent(new EmailConfirmedDomainEvent(Id, email));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void DeleteEmail(MailAddress email)
@@ -146,6 +148,7 @@ public sealed class Account : Entity<AccountId>,
         _emails.Remove(result);
 
         UpdateActivation();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void AddGoogle(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
@@ -162,6 +165,7 @@ public sealed class Account : Entity<AccountId>,
         _externals.RemoveWhere(x => x.Type == ExternalService.Google && x.Identity == identity);
 
         UpdateActivation();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
     public void AddMicrosoft(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
@@ -178,13 +182,20 @@ public sealed class Account : Entity<AccountId>,
         _externals.RemoveWhere(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
 
         UpdateActivation();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }
 
-    public void AddRole(string role) =>
+    public void AddRole(string role)
+    {
         _roles = _roles.Append(role).Distinct().ToArray();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+    }
 
-    public void DeleteRole(string role) =>
+    public void DeleteRole(string role)
+    {
         _roles = _roles.Where(x => x != role).ToArray();
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+    }
 
     public void Ban(string reason, DateTime expiredAt, TimeProvider timeProvider)
     {
