@@ -18,7 +18,7 @@ namespace People.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -142,10 +142,8 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Domain.Entities.EmailAccount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnName("id");
 
                     b.Property<long>("AccountId")
                         .HasColumnType("bigint")
@@ -183,10 +181,8 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Domain.Entities.ExternalConnection", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnName("id");
 
                     b.Property<string>("FirstName")
                         .HasMaxLength(256)
@@ -230,10 +226,8 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Infrastructure.Confirmations.Confirmation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnName("id");
 
                     b.Property<long>("AccountId")
                         .HasColumnType("bigint")

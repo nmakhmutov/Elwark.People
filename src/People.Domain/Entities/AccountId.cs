@@ -1,11 +1,14 @@
 namespace People.Domain.Entities;
 
-public readonly struct AccountId(long userId) :
+public readonly struct AccountId :
     IComparable,
     IComparable<AccountId>,
     IEquatable<AccountId>
 {
-    private readonly long _value = userId;
+    private readonly long _value;
+
+    public AccountId(long userId) =>
+        _value = userId;
 
     public int CompareTo(AccountId other) =>
         _value.CompareTo(other._value);

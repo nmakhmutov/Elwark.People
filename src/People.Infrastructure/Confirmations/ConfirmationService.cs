@@ -64,7 +64,7 @@ internal sealed class ConfirmationService : IConfirmationService
         try
         {
             var bytes = Decrypt(Convert.FromBase64String(token));
-            var id = new Guid(bytes[..16]);
+            var id = new Ulid(bytes[..16]);
             var email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
 
             var accountId = await DecodeAsync(id, "EmailVerify", code, ct);
@@ -121,10 +121,9 @@ internal sealed class ConfirmationService : IConfirmationService
             return confirmation;
 
         var now = _timeProvider.UtcNow();
-        var guid = CreateSortedGuid(id, now);
         var code = CreateCode(ConfirmationLength);
 
-        var entity = new Confirmation(guid, id, code, type, now, CodeTtl);
+        var entity = new Confirmation(id, code, type, now, CodeTtl);
         await _dbContext.AddAsync(entity, ct);
 
         await _dbContext.SaveChangesAsync(ct);
@@ -134,7 +133,7 @@ internal sealed class ConfirmationService : IConfirmationService
         return entity;
     }
 
-    private async Task<AccountId> DecodeAsync(Guid id, string type, string code, CancellationToken ct)
+    private async Task<AccountId> DecodeAsync(Ulid id, string type, string code, CancellationToken ct)
     {
         var confirmation = await _dbContext.Set<Confirmation>()
             .FirstOrDefaultAsync(x => x.Id == id, ct) ?? throw ConfirmationException.NotFound();
@@ -148,20 +147,11 @@ internal sealed class ConfirmationService : IConfirmationService
         return confirmation.AccountId;
     }
 
-    private static Guid CreateSortedGuid(AccountId id, DateTime time)
-    {
-        Span<byte> bytes = stackalloc byte[16];
-        BitConverter.GetBytes(time.Ticks).CopyTo(bytes[..8]);
-        BitConverter.GetBytes(id).CopyTo(bytes[8..]);
-
-        return new Guid(bytes);
-    }
-
-    private static Guid ConventToGuid(string token)
+    private static Ulid ConventToGuid(string token)
     {
         try
         {
-            return new Guid(Convert.FromBase64String(token));
+            return new Ulid(Convert.FromBase64String(token));
         }
         catch
         {

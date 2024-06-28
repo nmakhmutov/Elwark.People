@@ -26,16 +26,16 @@ namespace People.Infrastructure.Migrations
                     picture = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     region_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
                     country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
-                    time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     language = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
+                    time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     date_format = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     time_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     start_of_week = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     is_activated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    roles = table.Column<string[]>(type: "text[]", nullable: false),
                     ban = table.Column<Ban>(type: "json", nullable: true),
                     reg_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     reg_ip = table.Column<byte[]>(type: "bytea", nullable: false),
+                    roles = table.Column<string[]>(type: "text[]", nullable: false),
                     last_log_in = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
@@ -50,7 +50,7 @@ namespace People.Infrastructure.Migrations
                 name: "confirmations",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     account_id = table.Column<long>(type: "bigint", nullable: false),
                     code = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
@@ -66,7 +66,7 @@ namespace People.Infrastructure.Migrations
                 name: "connections",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     account_id = table.Column<long>(type: "bigint", nullable: false),
                     type = table.Column<byte>(type: "smallint", nullable: false),
                     identity = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -90,7 +90,7 @@ namespace People.Infrastructure.Migrations
                 name: "emails",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "gen_random_uuid()"),
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
                     account_id = table.Column<long>(type: "bigint", nullable: false),
                     email = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     is_primary = table.Column<bool>(type: "boolean", nullable: false),

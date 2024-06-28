@@ -4,24 +4,24 @@ using People.Domain.SeedWork;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 namespace People.Domain.Entities;
 
-public enum ExternalService : byte
-{
-    Unknown = 0,
-    Google = 1,
-    Microsoft = 2
-}
-
-public sealed class ExternalConnection : Entity<Guid>
+public sealed class ExternalConnection : Entity<Ulid>
 {
     private DateTime _createdAt;
 
-    private ExternalConnection(ExternalService type, string identity, string? firstName, string? lastName,
-        DateTime createdAt)
+    private ExternalConnection(
+        ExternalService type,
+        string identity,
+        string? firstName,
+        string? lastName,
+        DateTime createdAt
+    )
     {
+        Id = Ulid.NewUlid();
         Type = type;
         Identity = identity;
         FirstName = firstName;
         LastName = lastName;
+
         _createdAt = createdAt;
     }
 

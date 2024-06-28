@@ -13,9 +13,9 @@ public sealed class Confirmation
         Type = string.Empty;
     }
 
-    public Confirmation(Guid id, AccountId accountId, string code, string type, DateTime createdAt, TimeSpan ttl)
+    public Confirmation(AccountId accountId, string code, string type, DateTime createdAt, TimeSpan ttl)
     {
-        Id = id;
+        Id = Ulid.NewUlid();
         AccountId = accountId;
         Code = code;
         Type = type;
@@ -23,7 +23,7 @@ public sealed class Confirmation
         ExpiresAt = createdAt + ttl;
     }
 
-    public Guid Id { get; private set; }
+    public Ulid Id { get; private set; }
 
     public AccountId AccountId { get; private set; }
 

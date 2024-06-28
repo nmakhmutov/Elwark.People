@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using People.Domain.Entities;
+using People.Infrastructure.ValueConverters;
 
 namespace People.Infrastructure.EntityConfigurations;
 
@@ -18,7 +19,7 @@ internal sealed class EmailEntityTypeConfiguration : IEntityTypeConfiguration<Em
 
         builder.Property(x => x.Id)
             .HasColumnName("id")
-            .HasDefaultValueSql("gen_random_uuid()");
+            .HasConversion<UlidConverter>();
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")

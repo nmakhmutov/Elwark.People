@@ -4,13 +4,14 @@ using People.Domain.SeedWork;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 namespace People.Domain.Entities;
 
-public sealed class EmailAccount : Entity<Guid>
+public sealed class EmailAccount : Entity<Ulid>
 {
     private DateTime? _confirmedAt;
     private DateTime _createdAt;
 
     public EmailAccount(AccountId accountId, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt)
     {
+        Id = Ulid.NewUlid();
         AccountId = accountId;
         Email = email;
         IsPrimary = isPrimary;

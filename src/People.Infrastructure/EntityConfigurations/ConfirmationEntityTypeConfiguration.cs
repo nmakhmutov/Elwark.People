@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using People.Domain.Entities;
 using People.Infrastructure.Confirmations;
+using People.Infrastructure.ValueConverters;
 
 namespace People.Infrastructure.EntityConfigurations;
 
@@ -17,7 +18,7 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.Property(x => x.Id)
             .HasColumnName("id")
-            .HasDefaultValueSql("gen_random_uuid()");
+            .HasConversion<UlidConverter>();
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")
