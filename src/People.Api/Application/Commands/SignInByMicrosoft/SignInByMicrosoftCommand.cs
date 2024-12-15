@@ -19,15 +19,16 @@ internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInBy
     private readonly IIntegrationEventBus _bus;
     private readonly PeopleDbContext _dbContext;
     private readonly IMicrosoftApiService _microsoft;
-    private readonly TimeProvider _timeProvider;
 
-    public SignInByMicrosoftCommandHandler(IIntegrationEventBus bus, PeopleDbContext dbContext,
-        IMicrosoftApiService microsoft, TimeProvider timeProvider)
+    public SignInByMicrosoftCommandHandler(
+        IIntegrationEventBus bus,
+        PeopleDbContext dbContext,
+        IMicrosoftApiService microsoft
+    )
     {
         _bus = bus;
         _dbContext = dbContext;
         _microsoft = microsoft;
-        _timeProvider = timeProvider;
     }
 
     public async Task<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
@@ -41,7 +42,7 @@ internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInBy
                 .FirstOrDefaultAsync(ct)
             ?? throw ExternalAccountException.NotFound(ExternalService.Microsoft, microsoft.Identity);
 
-        var evt = new AccountActivity.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
+        var evt = new AccountActivity.LoggedInIntegrationEvent(result.Id);
         await _bus.PublishAsync(evt, ct);
 
         return result;

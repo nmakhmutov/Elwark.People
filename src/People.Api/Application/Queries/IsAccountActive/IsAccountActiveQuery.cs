@@ -13,14 +13,11 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
 {
     private readonly IIntegrationEventBus _bus;
     private readonly INpgsqlDataProvider _dataProvider;
-    private readonly TimeProvider _timeProvider;
 
-    public IsAccountActiveQueryHandler(IIntegrationEventBus bus, INpgsqlDataProvider dataProvider,
-        TimeProvider timeProvider)
+    public IsAccountActiveQueryHandler(IIntegrationEventBus bus, INpgsqlDataProvider dataProvider)
     {
         _bus = bus;
         _dataProvider = dataProvider;
-        _timeProvider = timeProvider;
     }
 
     public async Task<bool> Handle(IsAccountActiveQuery request, CancellationToken ct)
@@ -37,11 +34,7 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
         if (data is null)
             return false;
 
-        var evt = new AccountActivity.InspectedIntegrationEvent(
-            Guid.NewGuid(),
-            _timeProvider.UtcNow(),
-            request.Id
-        );
+        var evt = new AccountActivity.InspectedIntegrationEvent(request.Id);
 
         await _bus.PublishAsync(evt, ct);
 

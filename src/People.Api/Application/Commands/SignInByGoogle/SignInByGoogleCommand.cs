@@ -19,15 +19,12 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
     private readonly IIntegrationEventBus _bus;
     private readonly PeopleDbContext _dbContext;
     private readonly IGoogleApiService _google;
-    private readonly TimeProvider _timeProvider;
 
-    public SignInByGoogleCommandHandler(IIntegrationEventBus bus, PeopleDbContext dbContext, IGoogleApiService google,
-        TimeProvider timeProvider)
+    public SignInByGoogleCommandHandler(IIntegrationEventBus bus, PeopleDbContext dbContext, IGoogleApiService google)
     {
         _bus = bus;
         _dbContext = dbContext;
         _google = google;
-        _timeProvider = timeProvider;
     }
 
     public async Task<SignInResult> Handle(SignInByGoogleCommand request, CancellationToken ct)
@@ -41,7 +38,7 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
                 .FirstOrDefaultAsync(ct)
             ?? throw ExternalAccountException.NotFound(ExternalService.Google, google.Identity);
 
-        var evt = new AccountActivity.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
+        var evt = new AccountActivity.LoggedInIntegrationEvent(result.Id);
         await _bus.PublishAsync(evt, ct);
 
         return result;

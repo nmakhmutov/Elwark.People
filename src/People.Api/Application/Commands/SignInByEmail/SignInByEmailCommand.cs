@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
-using People.Domain;
 using People.Domain.Exceptions;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
@@ -19,15 +18,16 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
     private readonly IIntegrationEventBus _bus;
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
-    private readonly TimeProvider _timeProvider;
 
-    public SignInByEmailCommandHandler(IIntegrationEventBus bus, IConfirmationService confirmation,
-        PeopleDbContext dbContext, TimeProvider timeProvider)
+    public SignInByEmailCommandHandler(
+        IIntegrationEventBus bus,
+        IConfirmationService confirmation,
+        PeopleDbContext dbContext
+    )
     {
         _bus = bus;
         _confirmation = confirmation;
         _dbContext = dbContext;
-        _timeProvider = timeProvider;
     }
 
     public async Task<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
@@ -40,7 +40,7 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
             .Select(x => new SignInResult(x.Id, x.Name.FullName()))
             .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(id);
 
-        var evt = new AccountActivity.LoggedInIntegrationEvent(Guid.NewGuid(), _timeProvider.UtcNow(), result.Id);
+        var evt = new AccountActivity.LoggedInIntegrationEvent(result.Id);
         await _bus.PublishAsync(evt, ct);
 
         return result;
