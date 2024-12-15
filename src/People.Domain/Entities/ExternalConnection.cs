@@ -4,7 +4,7 @@ using People.Domain.SeedWork;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 namespace People.Domain.Entities;
 
-public sealed class ExternalConnection : Entity<Ulid>
+public sealed class ExternalConnection : Entity<Guid>
 {
     private DateTime _createdAt;
 
@@ -16,7 +16,7 @@ public sealed class ExternalConnection : Entity<Ulid>
         DateTime createdAt
     )
     {
-        Id = Ulid.NewUlid();
+        Id = Guid.CreateVersion7();
         Type = type;
         Identity = identity;
         FirstName = firstName;

@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using People.Domain.Entities;
 using People.Infrastructure.Confirmations;
-using People.Infrastructure.ValueConverters;
 
 namespace People.Infrastructure.EntityConfigurations;
 
@@ -14,11 +13,14 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.HasKey(x => x.Id);
 
-        builder.HasIndex(x => new { x.AccountId, x.Type });
+        builder.HasIndex(x => new
+        {
+            x.AccountId,
+            x.Type
+        });
 
         builder.Property(x => x.Id)
-            .HasColumnName("id")
-            .HasConversion<UlidConverter>();
+            .HasColumnName("id");
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")

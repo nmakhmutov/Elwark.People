@@ -50,8 +50,12 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
 
         var meta = new Metadata
         {
-            { "ex-name", ex.Name },
-            { "ex-code", ex.Code },
+            {
+                "ex-name", ex.Name
+            },
+            {
+                "ex-code", ex.Code
+            },
             {
                 "ex-id", ex switch
                 {
@@ -73,8 +77,12 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
 
         var meta = new Metadata
         {
-            { "ex-name", name },
-            { "ex-code", "InvalidModel" }
+            {
+                "ex-name", name
+            },
+            {
+                "ex-code", "InvalidModel"
+            }
         };
 
         var result = ex.Errors.GroupBy(x => x.PropertyName)
@@ -93,9 +101,15 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
 
         var meta = new Metadata
         {
-            { "ex-name", name },
-            { "ex-code", "InvalidModel" },
-            { $"ex-field-{ex.ParamName}", ex.Message }
+            {
+                "ex-name", name
+            },
+            {
+                "ex-code", "InvalidModel"
+            },
+            {
+                $"ex-field-{ex.ParamName}", ex.Message
+            }
         };
 
         throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message), meta);
@@ -108,8 +122,12 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
 
         var meta = new Metadata
         {
-            { "ex-name", name },
-            { "ex-code", "Unhandled" }
+            {
+                "ex-name", name
+            },
+            {
+                "ex-code", "Unhandled"
+            }
         };
 
         throw new RpcException(new Status(StatusCode.Internal, ex.Message), meta);

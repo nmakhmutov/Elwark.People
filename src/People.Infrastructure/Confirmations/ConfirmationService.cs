@@ -64,7 +64,7 @@ internal sealed class ConfirmationService : IConfirmationService
         try
         {
             var bytes = Decrypt(Convert.FromBase64String(token));
-            var id = new Ulid(bytes[..16]);
+            var id = new Guid(bytes[..16]);
             var email = new MailAddress(Encoding.UTF8.GetString(bytes[16..]));
 
             var accountId = await DecodeAsync(id, "EmailVerify", code, ct);
@@ -133,7 +133,7 @@ internal sealed class ConfirmationService : IConfirmationService
         return entity;
     }
 
-    private async Task<AccountId> DecodeAsync(Ulid id, string type, string code, CancellationToken ct)
+    private async Task<AccountId> DecodeAsync(Guid id, string type, string code, CancellationToken ct)
     {
         var confirmation = await _dbContext.Set<Confirmation>()
             .FirstOrDefaultAsync(x => x.Id == id, ct) ?? throw ConfirmationException.NotFound();
@@ -147,11 +147,11 @@ internal sealed class ConfirmationService : IConfirmationService
         return confirmation.AccountId;
     }
 
-    private static Ulid ConventToGuid(string token)
+    private static Guid ConventToGuid(string token)
     {
         try
         {
-            return new Ulid(Convert.FromBase64String(token));
+            return new Guid(Convert.FromBase64String(token));
         }
         catch
         {

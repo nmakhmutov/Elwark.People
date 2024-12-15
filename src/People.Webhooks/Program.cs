@@ -18,7 +18,7 @@ builder.Services
         {
             ApplicationName = appName
         };
-        
+
         options.UseNpgsql(postgresql.ToString(), npgsql =>
         {
             npgsql.EnableRetryOnFailure(5);

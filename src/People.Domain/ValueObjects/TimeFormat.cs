@@ -36,7 +36,7 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
             format = Default;
             return false;
         }
-        
+
         format = new TimeFormat(value);
         return true;
     }

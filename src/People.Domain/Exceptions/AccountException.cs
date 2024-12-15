@@ -14,5 +14,5 @@ public sealed class AccountException : PeopleException
         new(nameof(NotFound), id, $"Account '{id}' not found");
 
     public static AccountException PrimaryEmailCannotBeRemoved(AccountId id) =>
-        new(nameof(PrimaryEmailCannotBeRemoved), id, $"Primary email for account {id} cannot be removed");
+        new(nameof(PrimaryEmailCannotBeRemoved), id, $"The primary email address for account {id} cannot be removed");
 }

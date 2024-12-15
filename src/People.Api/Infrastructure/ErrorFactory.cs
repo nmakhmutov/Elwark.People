@@ -22,7 +22,10 @@ internal static class ErrorFactory
         ValidationProblemDetails(GetValidationErrors(ex));
 
     private static ValidationProblemDetails ToProblem(this ArgumentException ex) =>
-        ValidationProblemDetails(new Dictionary<string, string[]> { [ex.ParamName ?? "@"] = new[] { ex.Message } });
+        ValidationProblemDetails(new Dictionary<string, string[]>
+        {
+            [ex.ParamName ?? "@"] = [ex.Message]
+        });
 
     private static ProblemDetails ToProblem(this PeopleException exception)
     {

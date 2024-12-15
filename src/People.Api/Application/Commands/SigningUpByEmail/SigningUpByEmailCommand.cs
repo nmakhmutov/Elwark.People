@@ -40,7 +40,12 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
     {
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)
-            .Select(x => new { x.AccountId, Email = new MailAddress(x.Email), x.IsConfirmed })
+            .Select(x => new
+            {
+                x.AccountId,
+                Email = new MailAddress(x.Email),
+                x.IsConfirmed
+            })
             .FirstOrDefaultAsync(ct);
 
         if (email is not null)

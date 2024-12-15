@@ -29,7 +29,12 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
     {
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)
-            .Select(x => new { x.AccountId, Email = new MailAddress(x.Email), x.IsConfirmed })
+            .Select(x => new
+            {
+                x.AccountId,
+                Email = new MailAddress(x.Email),
+                x.IsConfirmed
+            })
             .FirstOrDefaultAsync(ct) ?? throw EmailException.NotFound(request.Email);
 
         if (!email.IsConfirmed)

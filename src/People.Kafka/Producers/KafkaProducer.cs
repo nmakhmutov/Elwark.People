@@ -38,8 +38,12 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
             Timestamp = new Timestamp(message.CreatedAt),
             Headers = new Headers
             {
-                { nameof(Activity.TraceId), Encoding.UTF8.GetBytes(Activity.Current.TraceId.ToHexString()) },
-                { nameof(Activity.SpanId), Encoding.UTF8.GetBytes(Activity.Current.SpanId.ToHexString()) }
+                {
+                    nameof(Activity.TraceId), Encoding.UTF8.GetBytes(Activity.Current.TraceId.ToHexString())
+                },
+                {
+                    nameof(Activity.SpanId), Encoding.UTF8.GetBytes(Activity.Current.SpanId.ToHexString())
+                }
             }
         };
 

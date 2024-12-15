@@ -80,7 +80,7 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
         );
 
         var producer = provider.GetRequiredService(handlerType) as IKafkaProducer
-                       ?? throw CreateException($"{type.Name}'s producer not found");
+            ?? throw CreateException($"{type.Name}'s producer not found");
 
         _logger.MessageSending(message);
 

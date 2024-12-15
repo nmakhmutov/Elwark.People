@@ -65,8 +65,10 @@ public readonly struct RegionCode :
             return Regions.ContainsKey(value) ? new RegionCode(value) : Empty;
 
         foreach (var (code, name) in Regions)
+        {
             if (name.Equals(value, StringComparison.OrdinalIgnoreCase))
                 return new RegionCode(code);
+        }
 
         return Empty;
     }

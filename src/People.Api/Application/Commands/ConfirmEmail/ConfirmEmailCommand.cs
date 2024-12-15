@@ -27,7 +27,7 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
         var confirmation = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct);
 
         var account = await _repository.GetAsync(confirmation.AccountId, ct)
-                      ?? throw AccountException.NotFound(confirmation.AccountId);
+            ?? throw AccountException.NotFound(confirmation.AccountId);
 
         account.ConfirmEmail(confirmation.Email, _timeProvider);
 

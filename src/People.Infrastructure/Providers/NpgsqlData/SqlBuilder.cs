@@ -23,12 +23,20 @@ public sealed class SqlBuilder
 
     public SqlBuilder AddParameter(object value)
     {
-        _parameters.Add(new NpgsqlParameter { Value = value });
+        _parameters.Add(new NpgsqlParameter
+        {
+            Value = value
+        });
+
         return this;
     }
 
-    public SqlReader<T> Select<T>(Func<NpgsqlDataReader, T> mapper) =>
-        new(_connection, _sql, _parameters, mapper ?? throw new ArgumentNullException(nameof(mapper)));
+    public SqlReader<T> Select<T>(Func<NpgsqlDataReader, T> mapper)
+    {
+        ArgumentNullException.ThrowIfNull(mapper);
+
+        return new SqlReader<T>(_connection, _sql, _parameters, mapper);
+    }
 
     public async Task<int> ExecuteAsync(CancellationToken ct = default)
     {

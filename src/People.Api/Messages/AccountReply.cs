@@ -19,7 +19,10 @@ public partial class AccountReply
             TimeZone = account.TimeZone.ToString(),
             Language = Language.Create(account.Language),
             Ban = Types.Ban.Map(account.Ban),
-            Roles = { account.Roles }
+            Roles =
+            {
+                account.Roles
+            }
         };
 
     public partial class Types
@@ -29,7 +32,11 @@ public partial class AccountReply
             public static Ban? Map(Domain.ValueObjects.Ban? ban) =>
                 ban switch
                 {
-                    not null => new Ban { Reason = ban.Reason, ExpiresAt = ban.ExpiredAt.ToTimestamp() },
+                    not null => new Ban
+                    {
+                        Reason = ban.Reason,
+                        ExpiresAt = ban.ExpiredAt.ToTimestamp()
+                    },
                     _ => null
                 };
         }

@@ -15,7 +15,8 @@ internal sealed record UpdateRequest(
     string TimeZone,
     string DateFormat,
     string TimeFormat,
-    DayOfWeek StartOfWeek)
+    DayOfWeek StartOfWeek
+)
 {
     public UpdateAccountCommand ToCommand(AccountId id) =>
         new(

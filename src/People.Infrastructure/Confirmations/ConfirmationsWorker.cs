@@ -19,6 +19,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (await _timer.WaitForNextTickAsync(stoppingToken))
+        {
             try
             {
                 var result = await DeleteAsync(stoppingToken);
@@ -29,6 +30,7 @@ internal sealed class ConfirmationsWorker : BackgroundService
             {
                 _logger.LogWarning(ex, "Exception occured in {service}", nameof(ConfirmationsWorker));
             }
+        }
     }
 
     private async Task<int> DeleteAsync(CancellationToken ct)

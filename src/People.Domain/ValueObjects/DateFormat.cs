@@ -11,19 +11,19 @@ public readonly struct DateFormat : IEquatable<DateFormat>
         "dd.MM.yy",
         "d.M.yyyy",
         "d.M.yy",
-        
+
         "MM-dd-yyyy",
         "dd-MM-yyyy",
         "dd-MM-yy",
         "d-M-yyyy",
         "d-M-yy",
-        
+
         "MM/dd/yyyy",
         "dd/MM/yyyy",
         "dd/MM/yy",
         "d/M/yyyy",
         "d/M/yy",
-        
+
         "yyyy-MM-dd"
     };
 

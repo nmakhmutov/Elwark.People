@@ -37,7 +37,10 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var query = new IsAccountActiveQuery(request.Id);
         var result = await _mediator.Send(query, context.CancellationToken);
 
-        return new BoolValue { Value = result };
+        return new BoolValue
+        {
+            Value = result
+        };
     }
 
     public override async Task<EmailSigningUpReply> SigningUpByEmail(EmailSigningUpRequest request,

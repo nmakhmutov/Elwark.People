@@ -81,7 +81,11 @@ builder.Services
         options.SupportedUICultures = cultures;
         options.RequestCultureProviders = new List<IRequestCultureProvider>
         {
-            new QueryStringRequestCultureProvider { QueryStringKey = "language", UIQueryStringKey = "language" },
+            new QueryStringRequestCultureProvider
+            {
+                QueryStringKey = "language",
+                UIQueryStringKey = "language"
+            },
             new AcceptLanguageHeaderRequestCultureProvider()
         };
     });
@@ -148,14 +152,20 @@ builder.Services
                 {
                     new MethodConfig
                     {
-                        Names = { MethodName.Default },
+                        Names =
+                        {
+                            MethodName.Default
+                        },
                         RetryPolicy = new RetryPolicy
                         {
                             MaxAttempts = 5,
                             InitialBackoff = TimeSpan.FromSeconds(1),
                             MaxBackoff = TimeSpan.FromSeconds(3),
                             BackoffMultiplier = 1,
-                            RetryableStatusCodes = { StatusCode.Unavailable }
+                            RetryableStatusCodes =
+                            {
+                                StatusCode.Unavailable
+                            }
                         }
                     }
                 }
@@ -236,8 +246,16 @@ builder.Host
         .Destructure.AsScalar<DateFormat>()
         .Destructure.AsScalar<TimeFormat>()
         .Destructure.AsScalar<IPAddress>()
-        .Destructure.ByTransforming<Account>(x => new { x.Id, x.Name.Nickname })
-        .Destructure.ByTransforming<AccountSummary>(x => new { x.Id, x.Name.Nickname })
+        .Destructure.ByTransforming<Account>(x => new
+        {
+            x.Id,
+            x.Name.Nickname
+        })
+        .Destructure.ByTransforming<AccountSummary>(x => new
+        {
+            x.Id,
+            x.Name.Nickname
+        })
         .ReadFrom.Configuration(context.Configuration)
     );
 

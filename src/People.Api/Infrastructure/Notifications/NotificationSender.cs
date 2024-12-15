@@ -22,7 +22,12 @@ internal sealed class NotificationSender : INotificationSender
         var template = $"Confirmation.{language}.liquid";
         var (subject, body) = await _emailBuilder.CreateEmailAsync(template, new ConfirmationCodeModel(code));
 
-        var message = new SendRequest { Email = email.Address, Subject = subject, Body = body };
+        var message = new SendRequest
+        {
+            Email = email.Address,
+            Subject = subject,
+            Body = body
+        };
         await _notification.SendEmailAsync(message, cancellationToken: ct);
     }
 }
