@@ -17,8 +17,11 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
     private readonly PeopleDbContext _dbContext;
     private readonly INotificationSender _notification;
 
-    public SigningInByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        INotificationSender notification)
+    public SigningInByEmailCommandHandler(
+        IConfirmationService confirmation,
+        PeopleDbContext dbContext,
+        INotificationSender notification
+    )
     {
         _confirmation = confirmation;
         _dbContext = dbContext;

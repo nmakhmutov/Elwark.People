@@ -14,8 +14,11 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public ConfirmEmailCommandHandler(IConfirmationService confirmation, TimeProvider timeProvider,
-        IAccountRepository repository)
+    public ConfirmEmailCommandHandler(
+        IConfirmationService confirmation,
+        TimeProvider timeProvider,
+        IAccountRepository repository
+    )
     {
         _confirmation = confirmation;
         _timeProvider = timeProvider;

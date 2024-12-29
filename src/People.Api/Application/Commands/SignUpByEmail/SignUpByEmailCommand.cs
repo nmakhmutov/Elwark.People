@@ -16,8 +16,11 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public SignUpByEmailCommandHandler(IConfirmationService confirmation, IAccountRepository repository,
-        TimeProvider timeProvider)
+    public SignUpByEmailCommandHandler(
+        IConfirmationService confirmation,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
     {
         _confirmation = confirmation;
         _repository = repository;

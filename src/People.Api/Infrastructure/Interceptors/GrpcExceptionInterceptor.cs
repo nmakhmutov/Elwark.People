@@ -12,8 +12,11 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
     public GrpcExceptionInterceptor(ILoggerFactory factory) =>
         _logger = factory.CreateLogger<GrpcExceptionInterceptor>();
 
-    public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request,
-        ServerCallContext context, UnaryServerMethod<TRequest, TResponse> continuation)
+    public override async Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
+        TRequest request,
+        ServerCallContext context,
+        UnaryServerMethod<TRequest, TResponse> continuation
+    )
     {
         try
         {

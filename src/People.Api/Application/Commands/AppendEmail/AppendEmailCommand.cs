@@ -15,8 +15,11 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public AppendEmailCommandHandler(PeopleDbContext dbContext, TimeProvider timeProvider,
-        IAccountRepository repository)
+    public AppendEmailCommandHandler(
+        PeopleDbContext dbContext,
+        TimeProvider timeProvider,
+        IAccountRepository repository
+    )
     {
         _dbContext = dbContext;
         _timeProvider = timeProvider;

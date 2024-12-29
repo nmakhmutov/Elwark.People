@@ -79,7 +79,8 @@ internal static class AccountEndpoints
     private static async Task<AccountDetailsModel> GetMyAccountAsync(
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var query = new GetAccountDetailsQuery(principal.GetAccountId());
         var result = await sender.Send(query, ct);
@@ -91,7 +92,8 @@ internal static class AccountEndpoints
         UpdateRequest request,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = request.ToCommand(principal.GetAccountId());
         var result = await sender.Send(command, ct);
@@ -99,8 +101,11 @@ internal static class AccountEndpoints
         return AccountDetailsModel.Map(result);
     }
 
-    private static async Task<EmptyHttpResult> DeleteAccountAsync(ClaimsPrincipal principal, ISender sender,
-        CancellationToken ct)
+    private static async Task<EmptyHttpResult> DeleteAccountAsync(
+        ClaimsPrincipal principal,
+        ISender sender,
+        CancellationToken ct
+    )
     {
         var command = new DeleteAccountCommand(principal.GetAccountId());
         await sender.Send(command, ct);
@@ -112,7 +117,8 @@ internal static class AccountEndpoints
         EmailRequest request,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = new AppendEmailCommand(principal.GetAccountId(), new MailAddress(request.Email));
         var result = await sender.Send(command, ct);
@@ -124,7 +130,8 @@ internal static class AccountEndpoints
         string email,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = new DeleteEmailCommand(principal.GetAccountId(), new MailAddress(email));
         await sender.Send(command, ct);
@@ -136,7 +143,8 @@ internal static class AccountEndpoints
         EmailRequest request,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var id = principal.GetAccountId();
         var command = new ChangePrimaryEmailCommand(id, new MailAddress(request.Email));
@@ -152,7 +160,8 @@ internal static class AccountEndpoints
         EmailRequest request,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = new ConfirmingEmailCommand(principal.GetAccountId(), new MailAddress(request.Email));
         var token = await sender.Send(command, ct);
@@ -163,7 +172,8 @@ internal static class AccountEndpoints
     private static async Task<EmailModel> ConfirmEmailAsync(
         VerifyRequest request,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = new ConfirmEmailCommand(request.Token, request.Code);
         var result = await sender.Send(command, ct);
@@ -175,7 +185,8 @@ internal static class AccountEndpoints
         string id,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = new DeleteGoogleCommand(principal.GetAccountId(), id);
         await sender.Send(command, ct);
@@ -187,7 +198,8 @@ internal static class AccountEndpoints
         string id,
         ClaimsPrincipal principal,
         ISender sender,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var command = new DeleteMicrosoftCommand(principal.GetAccountId(), id);
         await sender.Send(command, ct);

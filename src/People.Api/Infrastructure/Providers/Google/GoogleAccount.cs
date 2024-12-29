@@ -5,8 +5,15 @@ namespace People.Api.Infrastructure.Providers.Google;
 
 internal sealed class GoogleAccount
 {
-    public GoogleAccount(string identity, MailAddress email, bool isEmailVerified, string? firstName,
-        string? lastName, Uri? picture, CultureInfo? locale)
+    public GoogleAccount(
+        string identity,
+        MailAddress email,
+        bool isEmailVerified,
+        string? firstName,
+        string? lastName,
+        Uri? picture,
+        CultureInfo? locale
+    )
     {
         Identity = identity;
         Email = email;

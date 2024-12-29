@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using People.Kafka;
 using People.Kafka.Configurations;
@@ -7,6 +6,7 @@ using People.Kafka.Integration;
 using People.Kafka.Producers;
 
 // ReSharper disable once CheckNamespace
+
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
@@ -16,49 +16,49 @@ public static class ServiceCollectionExtensions
         var builder = new KafkaBuilder(services, servers);
 
         builder.Services
-            .Configure<HostOptions>(options =>
-            {
-                options.ServicesStartConcurrently = true;
-                options.ServicesStopConcurrently = true;
-            })
             .AddSingleton<IIntegrationEventBus, KafkaEventBus>();
 
         return builder;
     }
 
-    public static IKafkaBuilder AddProducer<T>(this IKafkaBuilder builder,
-        Action<ProducerConfigurationBuilder> producer)
+    public static IKafkaBuilder AddProducer<T>(
+        this IKafkaBuilder builder,
+        Action<ProducerConfigurationBuilder> producer
+    )
         where T : IIntegrationEvent
     {
-        var configuration = new ProducerConfigurationBuilder();
-        producer.Invoke(configuration);
-
         builder.Services
             .AddSingleton<IKafkaProducer<T>>(sp =>
             {
+                var configuration = new ProducerConfigurationBuilder();
+                producer.Invoke(configuration);
+
                 var logger = sp.GetRequiredService<ILogger<IKafkaProducer<T>>>();
+
                 return new KafkaProducer<T>(configuration.Build(builder.Brokers), logger);
             });
 
         return builder;
     }
 
-    public static IKafkaBuilder AddConsumer<E, H>(this IKafkaBuilder builder,
-        Action<ConsumerConfigurationBuilder> consumer)
-        where E : IIntegrationEvent
-        where H : class, IIntegrationEventHandler<E>
+    public static IKafkaBuilder AddConsumer<TEvent, THandler>(
+        this IKafkaBuilder builder,
+        Action<ConsumerConfigurationBuilder> consumer
+    )
+        where TEvent : IIntegrationEvent
+        where THandler : class, IIntegrationEventHandler<TEvent>
     {
-        var configuration = new ConsumerConfigurationBuilder();
-        consumer.Invoke(configuration);
-
         builder.Services
-            .AddTransient<IIntegrationEventHandler<E>, H>()
-            .AddHostedService(sp =>
+            .AddTransient<IIntegrationEventHandler<TEvent>, THandler>()
+            .AddHostedService<KafkaConsumer<TEvent, THandler>>(sp =>
             {
+                var configuration = new ConsumerConfigurationBuilder();
+                consumer.Invoke(configuration);
+
                 var factory = sp.GetRequiredService<IServiceScopeFactory>();
                 var logger = sp.GetRequiredService<ILoggerFactory>();
 
-                return new KafkaConsumer<E, H>(configuration.Build(builder.Brokers), factory, logger);
+                return new KafkaConsumer<TEvent, THandler>(configuration.Build(builder.Brokers), factory, logger);
             });
 
         return builder;

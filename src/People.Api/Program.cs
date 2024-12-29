@@ -25,9 +25,9 @@ using People.Api.Infrastructure;
 using People.Api.Infrastructure.EmailBuilder;
 using People.Api.Infrastructure.Interceptors;
 using People.Api.Infrastructure.Notifications;
+using People.Api.Infrastructure.Providers;
 using People.Api.Infrastructure.Providers.Google;
 using People.Api.Infrastructure.Providers.Gravatar;
-using People.Api.Infrastructure.Providers.IpApi;
 using People.Api.Infrastructure.Providers.Microsoft;
 using People.Api.Infrastructure.Providers.World;
 using People.Domain.Entities;
@@ -112,11 +112,30 @@ builder.Services
     });
 
 builder.Services
+    .Configure<HostOptions>(options =>
+    {
+        options.ServicesStartConcurrently = true;
+        options.ServicesStopConcurrently = true;
+    });
+
+builder.Services
     .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
-    .AddProducer<AccountCreatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Created))
-    .AddProducer<AccountUpdatedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Updated))
-    .AddProducer<AccountDeletedIntegrationEvent>(producer => producer.WithTopic(KafkaTopic.Deleted))
-    .AddProducer<AccountActivity>(producer => producer.WithTopic(KafkaTopic.Activity))
+    .AddProducer<AccountCreatedIntegrationEvent>(producer =>
+        producer.WithTopic(KafkaTopic.Created)
+            .WithClientId(appName)
+    )
+    .AddProducer<AccountUpdatedIntegrationEvent>(producer =>
+        producer.WithTopic(KafkaTopic.Updated)
+            .WithClientId(appName)
+    )
+    .AddProducer<AccountDeletedIntegrationEvent>(producer =>
+        producer.WithTopic(KafkaTopic.Deleted)
+            .WithClientId(appName)
+    )
+    .AddProducer<AccountActivity>(producer =>
+        producer.WithTopic(KafkaTopic.Activity)
+            .WithClientId(appName)
+    )
     .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
         consumer.WithTopic(KafkaTopic.Created)
             .WithGroupId(appName)
@@ -196,9 +215,20 @@ builder.Services
     );
 
 builder.Services
-    .AddHttpClient<IIpApiService, IpApiService>(client =>
+    .AddHttpClient<IIpService, IpApiService>(client =>
     {
-        client.BaseAddress = new Uri(builder.Configuration["Urls:Ip.Api"]!);
+        client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
+    });
+
+builder.Services
+    .AddHttpClient<IIpService, GeoPluginService>(client =>
+    {
+        client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
+    });
+
+builder.Services
+    .AddHttpClient<IIpService, IpQueryService>(client =>
+    {
         client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
     });
 

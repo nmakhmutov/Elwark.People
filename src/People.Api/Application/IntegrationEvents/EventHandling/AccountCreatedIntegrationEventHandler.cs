@@ -1,6 +1,7 @@
 using People.Api.Application.IntegrationEvents.Events;
+using People.Api.Infrastructure.Providers;
 using People.Api.Infrastructure.Providers.Gravatar;
-using People.Api.Infrastructure.Providers.IpApi;
+using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.ValueObjects;
 using People.Infrastructure.Confirmations;
@@ -13,16 +14,20 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
 {
     private readonly IConfirmationService _confirmation;
     private readonly IGravatarService _gravatar;
-    private readonly IIpApiService _ipService;
+    private readonly IEnumerable<IIpService> _ipServices;
     private readonly IAccountRepository _repository;
 
-    public AccountCreatedIntegrationEventHandler(IConfirmationService confirmation, IGravatarService gravatar,
-        IIpApiService ipService, IAccountRepository repository)
+    public AccountCreatedIntegrationEventHandler(
+        IConfirmationService confirmation,
+        IGravatarService gravatar,
+        IEnumerable<IIpService> ipServices,
+        IAccountRepository repository
+    )
     {
         _confirmation = confirmation;
         _gravatar = gravatar;
-        _ipService = ipService;
         _repository = repository;
+        _ipServices = ipServices;
     }
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message, CancellationToken ct)
@@ -32,13 +37,13 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         if (account is null)
             return;
 
-        var ipInformation = await _ipService.GetAsync(message.Ip, account.Language.ToString());
+        var ipInformation = await GetIpInformation(message.Ip, account.Language);
 
         if (ipInformation is not null)
         {
-            RegionCode.TryParse(ipInformation.ContinentCode, out var region);
-            CountryCode.TryParse(ipInformation.CountryCode, out var country);
-            TimeZone.TryParse(ipInformation.TimeZone, out var timeZone);
+            _ = RegionCode.TryParse(ipInformation.Region, out var region);
+            _ = CountryCode.TryParse(ipInformation.CountryCode, out var country);
+            _ = TimeZone.TryParse(ipInformation.TimeZone, out var timeZone);
 
             account.Update(account.Language, region, country, timeZone);
         }
@@ -60,5 +65,18 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);
 
         await _confirmation.DeleteAsync(message.AccountId, ct);
+    }
+
+    private async Task<IpInformation?> GetIpInformation(string ip, Language language)
+    {
+        foreach (var ipService in _ipServices)
+        {
+            var result = await ipService.GetAsync(ip, language.ToString());
+
+            if (result is not null)
+                return result;
+        }
+
+        return null;
     }
 }

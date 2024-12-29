@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
 using People.Api.Infrastructure.Providers.Google;
-using People.Domain;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Infrastructure;

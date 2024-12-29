@@ -10,8 +10,8 @@ using People.Kafka.Integration;
 
 namespace People.Api.Application.Commands.SignInByEmail;
 
-internal sealed record SignInByEmailCommand(string Token, string Code, IPAddress Ip, string? UserAgent) :
-    IRequest<SignInResult>;
+internal sealed record SignInByEmailCommand(string Token, string Code, IPAddress Ip, string? UserAgent)
+    : IRequest<SignInResult>;
 
 internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmailCommand, SignInResult>
 {

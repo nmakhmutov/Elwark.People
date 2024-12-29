@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Runtime.CompilerServices;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using People.Domain.Entities;
@@ -64,12 +65,23 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
 
     private sealed class NoMediator : IMediator
     {
-        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request,
-            CancellationToken ct) =>
-            default!;
+        public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+            IStreamRequest<TResponse> request,
+            [EnumeratorCancellation] CancellationToken ct
+        )
+        {
+            await Task.Yield();
+            yield break;
+        }
 
-        public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken ct) =>
-            default!;
+        public async IAsyncEnumerable<object?> CreateStream(
+            object request,
+            [EnumeratorCancellation] CancellationToken ct
+        )
+        {
+            await Task.Yield();
+            yield break;
+        }
 
         public Task Publish<TNotification>(TNotification notification, CancellationToken ct)
             where TNotification : INotification =>

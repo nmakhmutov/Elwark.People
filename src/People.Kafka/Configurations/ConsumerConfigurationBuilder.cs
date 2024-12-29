@@ -5,63 +5,57 @@ namespace People.Kafka.Configurations;
 
 public sealed class ConsumerConfigurationBuilder
 {
+    private const byte RetryCount = 8;
+    private readonly TimeSpan _retryInterval = TimeSpan.FromSeconds(15);
     private string? _groupId;
-    private byte _retryCount = 8;
-    private TimeSpan _retryInterval = TimeSpan.FromSeconds(15);
     private string? _topic;
     private TopicSpecification? _topicSpecification;
     private byte _workers = 1;
 
     public ConsumerConfigurationBuilder WithTopic(string topic)
     {
+        ArgumentException.ThrowIfNullOrEmpty(topic);
+
         _topic = topic;
         return this;
     }
 
     public ConsumerConfigurationBuilder WithGroupId(string groupId)
     {
+        ArgumentException.ThrowIfNullOrEmpty(groupId);
+
         _groupId = groupId;
         return this;
     }
 
     public ConsumerConfigurationBuilder WithWorkers(byte workers)
     {
-        if (workers <= 0)
-            throw new ArgumentOutOfRangeException(nameof(workers));
+        ArgumentOutOfRangeException.ThrowIfZero(workers);
 
         _workers = workers;
         return this;
     }
 
-    public ConsumerConfigurationBuilder WithRetryCount(byte count)
-    {
-        if (count <= 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
+    public ConsumerConfigurationBuilder CreateTopicIfNotExists() =>
+        CreateTopicIfNotExists(8, TimeSpan.FromDays(7));
 
-        _retryCount = count;
-        return this;
-    }
+    public ConsumerConfigurationBuilder CreateTopicIfNotExists(int partitions, short replicas = 1) =>
+        CreateTopicIfNotExists(partitions, TimeSpan.FromDays(7), replicas);
 
-    public ConsumerConfigurationBuilder WithRetryInterval(TimeSpan interval)
-    {
-        _retryInterval = interval;
-        return this;
-    }
-
-    public ConsumerConfigurationBuilder CreateTopicIfNotExists(int numPartitions, short replicationFactor = 1)
+    public ConsumerConfigurationBuilder CreateTopicIfNotExists(int partitions, TimeSpan retention, short replicas = 1)
     {
         if (string.IsNullOrEmpty(_topic))
-            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka topic not specified"));
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka topic not specified", true));
 
         _topicSpecification = new TopicSpecification
         {
             Name = _topic,
-            NumPartitions = numPartitions,
-            ReplicationFactor = replicationFactor,
+            NumPartitions = partitions,
+            ReplicationFactor = replicas,
             Configs = new Dictionary<string, string>
             {
                 ["cleanup.policy"] = "delete",
-                ["retention.ms"] = TimeSpan.FromDays(14).TotalMilliseconds.ToString("0000")
+                ["retention.ms"] = retention.TotalMilliseconds.ToString("0000")
             }
         };
 
@@ -71,26 +65,21 @@ public sealed class ConsumerConfigurationBuilder
     internal ConsumerConfiguration Build(string brokers)
     {
         if (string.IsNullOrEmpty(_topic))
-            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka topic not specified"));
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka topic not specified", true));
 
         if (string.IsNullOrEmpty(_groupId))
-            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka group id is not specified"));
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka group id is not specified", true));
 
-        return new ConsumerConfiguration(
-            _topic,
-            _workers,
-            _retryCount,
-            _retryInterval,
-            _topicSpecification,
-            new ConsumerConfig
-            {
-                BootstrapServers = brokers,
-                GroupId = _groupId,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
-                EnableAutoCommit = false,
-                EnablePartitionEof = false,
-                EnableAutoOffsetStore = false
-            }
-        );
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = brokers,
+            GroupId = _groupId,
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoCommit = false,
+            EnablePartitionEof = false,
+            EnableAutoOffsetStore = false
+        };
+
+        return new ConsumerConfiguration(_topic, _workers, RetryCount, _retryInterval, _topicSpecification, config);
     }
 }

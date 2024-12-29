@@ -43,8 +43,10 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         };
     }
 
-    public override async Task<EmailSigningUpReply> SigningUpByEmail(EmailSigningUpRequest request,
-        ServerCallContext context)
+    public override async Task<EmailSigningUpReply> SigningUpByEmail(
+        EmailSigningUpRequest request,
+        ServerCallContext context
+    )
     {
         var command = new SigningUpByEmailCommand(
             request.Email.ToMailAddress(),
@@ -72,8 +74,10 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         return SignUpReply.Map(result);
     }
 
-    public override async Task<EmailSigningInReply> SigningInByEmail(EmailSigningInRequest request,
-        ServerCallContext context)
+    public override async Task<EmailSigningInReply> SigningInByEmail(
+        EmailSigningInRequest request,
+        ServerCallContext context
+    )
     {
         var command = new SigningInByEmailCommand(
             request.Email.ToMailAddress(),

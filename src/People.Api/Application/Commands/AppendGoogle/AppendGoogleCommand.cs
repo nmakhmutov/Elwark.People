@@ -16,8 +16,12 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public AppendGoogleCommandHandler(PeopleDbContext dbContext, IGoogleApiService google,
-        IAccountRepository repository, TimeProvider timeProvider)
+    public AppendGoogleCommandHandler(
+        PeopleDbContext dbContext,
+        IGoogleApiService google,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
     {
         _dbContext = dbContext;
         _google = google;

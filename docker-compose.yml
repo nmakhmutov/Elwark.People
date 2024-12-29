@@ -1,4 +1,3 @@
-version: '3.9'
 name: people
 
 services:
@@ -7,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: src/People.Api/Dockerfile
-  
+
   people.webhooks:
     image: "elwark/people/webhooks:${TAG:-latest}"
     build:

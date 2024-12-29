@@ -6,10 +6,7 @@ internal sealed class KafkaKeyConverter :
     ISerializer<Guid>,
     IDeserializer<Guid>
 {
-    private static readonly Lazy<KafkaKeyConverter> Lazy = new(() => new KafkaKeyConverter());
-
-    public static readonly KafkaKeyConverter Instance =
-        Lazy.Value;
+    public static readonly KafkaKeyConverter Instance = new();
 
     private KafkaKeyConverter()
     {

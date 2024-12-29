@@ -25,8 +25,14 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public SigningUpByEmailCommandHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        IIpHasher hasher, INotificationSender notification, IAccountRepository repository, TimeProvider timeProvider)
+    public SigningUpByEmailCommandHandler(
+        IConfirmationService confirmation,
+        PeopleDbContext dbContext,
+        IIpHasher hasher,
+        INotificationSender notification,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
     {
         _confirmation = confirmation;
         _dbContext = dbContext;
@@ -67,8 +73,12 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
         return await SendConfirmationAsync(account.Id, account.GetPrimaryEmail(), request.Language, ct);
     }
 
-    private async Task<string> SendConfirmationAsync(AccountId id, MailAddress email, Language language,
-        CancellationToken ct)
+    private async Task<string> SendConfirmationAsync(
+        AccountId id,
+        MailAddress email,
+        Language language,
+        CancellationToken ct
+    )
     {
         var confirmation = await _confirmation.SignUpAsync(id, ct);
 

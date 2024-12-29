@@ -21,8 +21,12 @@ internal sealed class ConfirmationService : IConfirmationService
     private readonly IDatabaseAsync _redis;
     private readonly TimeProvider _timeProvider;
 
-    public ConfirmationService(PeopleDbContext dbContext, IConnectionMultiplexer multiplexer,
-        IOptions<AppSecurityOptions> options, TimeProvider timeProvider)
+    public ConfirmationService(
+        PeopleDbContext dbContext,
+        IConnectionMultiplexer multiplexer,
+        IOptions<AppSecurityOptions> options,
+        TimeProvider timeProvider
+    )
     {
         _dbContext = dbContext;
         _timeProvider = timeProvider;

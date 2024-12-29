@@ -20,6 +20,10 @@ public class WebhookSubscriptionEntityTypeConfiguration : IEntityTypeConfigurati
             .HasColumnName("type")
             .IsRequired();
 
+        builder.Property(x => x.Method)
+            .HasColumnName("method")
+            .IsRequired();
+
         builder.Property(x => x.DestinationUrl)
             .HasColumnName("destination_url")
             .HasMaxLength(2048)

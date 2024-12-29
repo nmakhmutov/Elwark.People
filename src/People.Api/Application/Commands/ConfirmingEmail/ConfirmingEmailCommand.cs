@@ -16,8 +16,11 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
     private readonly INotificationSender _notification;
     private readonly IAccountRepository _repository;
 
-    public ConfirmingEmailCommandHandler(IConfirmationService confirmation, INotificationSender notification,
-        IAccountRepository repository)
+    public ConfirmingEmailCommandHandler(
+        IConfirmationService confirmation,
+        INotificationSender notification,
+        IAccountRepository repository
+    )
     {
         _confirmation = confirmation;
         _notification = notification;

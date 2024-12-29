@@ -1,5 +1,3 @@
-version: '3.9'
-
 networks:
   elwarknetwork:
     name: elwark_network
@@ -31,7 +29,7 @@ services:
       - "5002:81"
     networks:
       - elwarknetwork
-  
+
   people.webhooks:
     container_name: "people_webhooks"
     restart: always

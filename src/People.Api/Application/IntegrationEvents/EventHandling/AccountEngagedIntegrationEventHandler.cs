@@ -12,8 +12,11 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
     private readonly PeopleDbContext _dbContext;
     private readonly ILogger<AccountEngagedIntegrationEventHandler> _logger;
 
-    public AccountEngagedIntegrationEventHandler(IConfirmationService confirmation, PeopleDbContext dbContext,
-        ILogger<AccountEngagedIntegrationEventHandler> logger)
+    public AccountEngagedIntegrationEventHandler(
+        IConfirmationService confirmation,
+        PeopleDbContext dbContext,
+        ILogger<AccountEngagedIntegrationEventHandler> logger
+    )
     {
         _confirmation = confirmation;
         _dbContext = dbContext;

@@ -16,8 +16,12 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public AppendMicrosoftCommandHandler(PeopleDbContext dbContext, IMicrosoftApiService microsoft,
-        IAccountRepository repository, TimeProvider timeProvider)
+    public AppendMicrosoftCommandHandler(
+        PeopleDbContext dbContext,
+        IMicrosoftApiService microsoft,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
     {
         _dbContext = dbContext;
         _microsoft = microsoft;

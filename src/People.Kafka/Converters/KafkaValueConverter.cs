@@ -25,10 +25,7 @@ internal sealed class KafkaValueConverter<T> :
     IDeserializer<T>
     where T : IIntegrationEvent
 {
-    private static readonly Lazy<KafkaValueConverter<T>> Lazy = new(() => new KafkaValueConverter<T>());
-
-    public static readonly KafkaValueConverter<T> Instance =
-        Lazy.Value;
+    public static readonly KafkaValueConverter<T> Instance = new();
 
     private KafkaValueConverter()
     {
@@ -38,5 +35,5 @@ internal sealed class KafkaValueConverter<T> :
         JsonSerializer.Deserialize<T>(data, Options)!;
 
     public byte[] Serialize(T data, SerializationContext context) =>
-        JsonSerializer.SerializeToUtf8Bytes(data, data.GetType().BaseType ?? typeof(object), Options);
+        JsonSerializer.SerializeToUtf8Bytes<object>(data, Options);
 }

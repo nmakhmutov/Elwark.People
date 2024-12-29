@@ -10,8 +10,12 @@ public sealed class SqlReader<T>
     private readonly IEnumerable<NpgsqlParameter> _parameters;
     private readonly string _sql;
 
-    public SqlReader(string connection, string sql, IEnumerable<NpgsqlParameter> parameters,
-        Func<NpgsqlDataReader, T> mapper)
+    public SqlReader(
+        string connection,
+        string sql,
+        IEnumerable<NpgsqlParameter> parameters,
+        Func<NpgsqlDataReader, T> mapper
+    )
     {
         _connection = connection;
         _sql = sql;

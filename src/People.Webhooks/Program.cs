@@ -36,6 +36,13 @@ builder.Services
     .AddStandardResilienceHandler();
 
 builder.Services
+    .Configure<HostOptions>(options =>
+    {
+        options.ServicesStartConcurrently = true;
+        options.ServicesStopConcurrently = true;
+    });
+
+builder.Services
     .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
     .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
         consumer.WithTopic(KafkaTopic.Created)

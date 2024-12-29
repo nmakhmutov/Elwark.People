@@ -12,8 +12,10 @@ internal sealed class WebhooksRetriever : IWebhooksRetriever
     public WebhooksRetriever(WebhookDbContext dbContext) =>
         _dbContext = dbContext;
 
-    public async IAsyncEnumerable<WebhookSubscription> GetSubscribersAsync(WebhookType type,
-        [EnumeratorCancellation] CancellationToken ct)
+    public async IAsyncEnumerable<WebhookSubscription> GetSubscribersAsync(
+        WebhookType type,
+        [EnumeratorCancellation] CancellationToken ct
+    )
     {
         var query = _dbContext.Subscriptions
             .Where(x => x.Type == type)

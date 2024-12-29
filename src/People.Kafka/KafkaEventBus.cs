@@ -63,12 +63,15 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
 
         await using var scope = _factory.CreateAsyncScope();
 
-        await Parallel.ForEachAsync(messages, ct, async (message, token) =>
+        var options = new ParallelOptions
         {
-            token.ThrowIfCancellationRequested();
+            MaxDegreeOfParallelism = 8,
+            CancellationToken = ct
+        };
 
-            await PublishAsync(scope.ServiceProvider, message, token);
-        });
+        await Parallel.ForEachAsync(messages, options, async (message, token) =>
+            await PublishAsync(scope.ServiceProvider, message, token)
+        );
     }
 
     private async Task PublishAsync<T>(IServiceProvider provider, T message, CancellationToken ct)
@@ -82,11 +85,11 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
         var producer = provider.GetRequiredService(handlerType) as IKafkaProducer
             ?? throw CreateException($"{type.Name}'s producer not found");
 
-        _logger.MessageSending(message);
+        _logger.DispatchingMessage(message);
 
         await _policy.ExecuteAsync(async token => await producer.ProduceAsync(message, token), ct);
 
-        _logger.MessageSent(message);
+        _logger.DispatchedMessage(message);
     }
 
     private static Type? GetProducerType(IServiceProvider provider, Type type)

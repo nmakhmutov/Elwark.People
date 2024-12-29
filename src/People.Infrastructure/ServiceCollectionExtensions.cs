@@ -14,8 +14,10 @@ namespace People.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
-        Action<InfrastructureOptions> configure)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        Action<InfrastructureOptions> configure
+    )
     {
         var options = new InfrastructureOptions();
         configure.Invoke(options);

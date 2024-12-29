@@ -9,7 +9,8 @@ public static class EntityFrameworkExtensions
     public static Task<bool> IsEmailExistsAsync(
         this IQueryable<EmailAccount> emails,
         MailAddress email,
-        CancellationToken ct = default)
+        CancellationToken ct = default
+    )
     {
         ArgumentNullException.ThrowIfNull(email);
 
@@ -19,7 +20,8 @@ public static class EntityFrameworkExtensions
     public static Task<bool> IsGoogleExistsAsync(
         this IQueryable<ExternalConnection> accounts,
         string identity,
-        CancellationToken ct = default)
+        CancellationToken ct = default
+    )
     {
         ArgumentException.ThrowIfNullOrEmpty(identity);
 
@@ -29,7 +31,8 @@ public static class EntityFrameworkExtensions
     public static Task<bool> IsMicrosoftExistsAsync(
         this IQueryable<ExternalConnection> accounts,
         string identity,
-        CancellationToken ct = default)
+        CancellationToken ct = default
+    )
     {
         ArgumentException.ThrowIfNullOrEmpty(identity);
 

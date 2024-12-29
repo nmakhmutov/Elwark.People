@@ -4,7 +4,7 @@ namespace People.Kafka;
 
 public interface IKafkaBuilder
 {
-    public IServiceCollection Services { get; }
+    IServiceCollection Services { get; }
 
     internal string Brokers { get; }
 }

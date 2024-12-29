@@ -22,8 +22,13 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public SignUpByGoogleCommandHandler(PeopleDbContext dbContext, IGoogleApiService google, IIpHasher hasher,
-        IAccountRepository repository, TimeProvider timeProvider)
+    public SignUpByGoogleCommandHandler(
+        PeopleDbContext dbContext,
+        IGoogleApiService google,
+        IIpHasher hasher,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
     {
         _dbContext = dbContext;
         _google = google;

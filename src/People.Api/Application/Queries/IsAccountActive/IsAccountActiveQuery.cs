@@ -1,6 +1,5 @@
 using MediatR;
 using People.Api.Application.IntegrationEvents.Events;
-using People.Domain;
 using People.Domain.Entities;
 using People.Infrastructure.Providers.NpgsqlData;
 using People.Kafka.Integration;

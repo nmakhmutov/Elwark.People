@@ -22,8 +22,13 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public SignUpByMicrosoftCommandHandler(PeopleDbContext dbContext, IMicrosoftApiService microsoft, IIpHasher hasher,
-        IAccountRepository repository, TimeProvider timeProvider)
+    public SignUpByMicrosoftCommandHandler(
+        PeopleDbContext dbContext,
+        IMicrosoftApiService microsoft,
+        IIpHasher hasher,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
     {
         _dbContext = dbContext;
         _microsoft = microsoft;

@@ -24,7 +24,7 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         await foreach (var subscription in _retriever.GetSubscribersAsync(WebhookType.Created, ct))
             subscriptions.Add(subscription);
 
-        var data = new WebhookData(message.AccountId, WebhookType.Created, message.CreatedAt);
+        var data = new WebhookData(message.AccountId, message.CreatedAt);
         await _sender.SendAll(subscriptions, data);
     }
 }
