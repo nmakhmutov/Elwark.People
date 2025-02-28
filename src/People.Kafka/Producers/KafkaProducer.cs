@@ -11,7 +11,7 @@ namespace People.Kafka.Producers;
 internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegrationEvent
 {
     private readonly byte[] _clientId;
-    private readonly IProducer<Guid, T> _producer;
+    private readonly IProducer<string, T> _producer;
     private readonly string _topic;
 
     public KafkaProducer(ProducerConfiguration configuration, ILogger logger)
@@ -19,12 +19,12 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
         _topic = configuration.Topic;
         _clientId = Encoding.UTF8.GetBytes(configuration.Config.ClientId);
 
-        _producer = new ProducerBuilder<Guid, T>(configuration.Config)
+        _producer = new ProducerBuilder<string, T>(configuration.Config)
             .SetLogHandler((_, message) =>
             {
                 var level = (LogLevel)message.LevelAs(LogLevelType.MicrosoftExtensionsLogging);
 
-                logger.Log(level, $"{message.Message}. {{@Message}}", message);
+                logger.Log(level, "Producer exception {Name} with message {Message}", message.Name, message.Message);
             })
             .SetErrorHandler((_, error) => logger.PublisherException(error.Reason, error))
             .SetKeySerializer(KafkaKeyConverter.Instance)
@@ -39,9 +39,13 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
     {
         Activity.Current ??= new Activity(nameof(KafkaProducer<T>)).Start();
 
-        var kafkaMessage = new Message<Guid, T>
+        var kafkaMessage = new Message<string, T>
         {
-            Key = message.MessageId,
+            Key = message switch
+            {
+                IKafkaMessage msg => msg.GetTopicKey(),
+                var x => x.MessageId.ToString("N")
+            },
             Value = message,
             Timestamp = new Timestamp(message.CreatedAt),
             Headers =

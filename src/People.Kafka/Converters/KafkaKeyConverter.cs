@@ -3,8 +3,8 @@ using Confluent.Kafka;
 namespace People.Kafka.Converters;
 
 internal sealed class KafkaKeyConverter :
-    ISerializer<Guid>,
-    IDeserializer<Guid>
+    ISerializer<string>,
+    IDeserializer<string>
 {
     public static readonly KafkaKeyConverter Instance = new();
 
@@ -12,9 +12,9 @@ internal sealed class KafkaKeyConverter :
     {
     }
 
-    public Guid Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context) =>
-        isNull ? Guid.Empty : new Guid(data);
+    public string Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context) =>
+        Deserializers.Utf8.Deserialize(data, isNull, context);
 
-    public byte[] Serialize(Guid data, SerializationContext context) =>
-        data.ToByteArray();
+    public byte[] Serialize(string data, SerializationContext context) =>
+        Serializers.Utf8.Serialize(data, context);
 }

@@ -5,7 +5,7 @@ networks:
 
 services:
   people.api:
-    container_name: "people_api"
+    container_name: "elwark_people_api"
     restart: always
     deploy:
       resources:
@@ -14,11 +14,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Serilog__WriteTo__0__Name=Console
-      - "Serilog__WriteTo__0__Args__outputTemplate=[{Timestamp:HH:mm:ss} {Level:u3}] {Message}{NewLine}{Exception}"
-      #      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
+      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Kestrel__EndPoints__Grpc__Url=http://+:81
-      - Urls__Identity=http://identity_api
+      - Urls__Identity=http://elwark_identity_api
       - Urls__Notification.Api=http://notification_api
       - Urls__World.Api=http://world_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=people;Username=master_account;Password=master_password
@@ -31,7 +30,7 @@ services:
       - elwarknetwork
 
   people.webhooks:
-    container_name: "people_webhooks"
+    container_name: "elwark_people_webhooks"
     restart: always
     deploy:
       resources:
@@ -40,10 +39,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Serilog__WriteTo__0__Name=Console
-      - "Serilog__WriteTo__0__Args__outputTemplate=[{Timestamp:HH:mm:ss} {Level:u3}] {Message}{NewLine}{Exception}"
-      #      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
+      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
       - Kestrel__EndPoints__Http__Url=http://+:80
-      - Urls__Identity=http://identity_api
+      - Urls__Identity=http://elwark_identity_api
       - Urls__Notification.Api=http://notification_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=people;Username=master_account;Password=master_password
       - ConnectionStrings__Redis=redis:6379,resolveDns=True,defaultDatabase=15

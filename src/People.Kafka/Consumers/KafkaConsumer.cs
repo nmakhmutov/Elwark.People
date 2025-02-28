@@ -73,12 +73,12 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
 
     private async Task CreateConsumer(CancellationToken ct)
     {
-        using var consumer = new ConsumerBuilder<Guid, TEvent>(_configuration.Config)
+        using var consumer = new ConsumerBuilder<string, TEvent>(_configuration.Config)
             .SetLogHandler((_, message) =>
             {
                 var level = (LogLevel)message.LevelAs(LogLevelType.MicrosoftExtensionsLogging);
 
-                _logger.Log(level, $"{message.Message}. {{@Message}}", message);
+                _logger.Log(level, "Consumer exception {Name} with message {Message}", message.Name, message.Message);
             })
             .SetErrorHandler((_, error) => _logger.ConsumerException(error.Reason, error))
             .SetKeyDeserializer(KafkaKeyConverter.Instance)
@@ -122,7 +122,7 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
         }
     }
 
-    private async Task HandleMessageAsync(Message<Guid, TEvent> message, CancellationToken ct)
+    private async Task HandleMessageAsync(Message<string, TEvent> message, CancellationToken ct)
     {
         var clientId = message.Headers.GetClientId();
         _logger.MessageReceived(message.Value, _configuration.Topic, clientId);
