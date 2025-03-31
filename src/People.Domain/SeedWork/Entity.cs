@@ -4,7 +4,7 @@ namespace People.Domain.SeedWork;
 
 public abstract class Entity
 {
-    private readonly HashSet<INotification> _domainEvents = new();
+    private readonly HashSet<INotification> _domainEvents = [];
 
     public IReadOnlyCollection<INotification> DomainEvents =>
         _domainEvents;

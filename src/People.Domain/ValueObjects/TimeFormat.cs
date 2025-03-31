@@ -4,14 +4,14 @@ public readonly struct TimeFormat : IEquatable<TimeFormat>
 {
     public static readonly TimeFormat Default = new("HH:mm");
 
-    private static readonly IReadOnlyCollection<string> List = new[]
-    {
+    private static readonly IReadOnlyCollection<string> List =
+    [
         "H:mm",
         "HH:mm",
         "HH:mm:ss",
         "h:mm tt",
         "hh:mm tt"
-    };
+    ];
 
     private readonly string _value;
 

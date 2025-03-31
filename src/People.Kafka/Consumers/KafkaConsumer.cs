@@ -99,10 +99,7 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
                 if (result.IsPartitionEOF)
                     continue;
 
-                using var activity = KafkaExtensions.ActivitySource
-                    .StartActivity(ActivityKind.Consumer, CreateActivityContext(result.Message.Headers));
-
-                await HandleMessageAsync(result.Message, ct);
+                await HandleMessageAsync(result, ct);
 
                 consumer.Commit(result);
             }
@@ -114,6 +111,7 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
         catch (Exception ex)
         {
             _logger.ConsumerException(ex, consumer.MemberId, _configuration.Topic);
+
             throw;
         }
         finally
@@ -122,36 +120,66 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
         }
     }
 
-    private async Task HandleMessageAsync(Message<string, TEvent> message, CancellationToken ct)
+    private async Task HandleMessageAsync(ConsumeResult<string, TEvent> result, CancellationToken ct)
     {
-        var clientId = message.Headers.GetClientId();
-        _logger.MessageReceived(message.Value, _configuration.Topic, clientId);
+        var context = new ActivityContext(
+            result.Message.Headers.GetTraceId(),
+            result.Message.Headers.GetSpanId(),
+            ActivityTraceFlags.Recorded,
+            null,
+            true
+        );
 
-        await using var scope = _serviceFactory.CreateAsyncScope();
-        var handler = scope.ServiceProvider.GetRequiredService<IIntegrationEventHandler<TEvent>>();
+        var clientId = result.Message.Headers.GetClientId();
 
+        using var activity = KafkaTelemetry.StartConsumerActivity(result.Topic, context);
+
+        activity?.AddTag("kafka.consumer.group.id", _configuration.Config.GroupId)
+            .AddTag("kafka.consumer.topic.key", result.Message.Key)
+            .AddTag("kafka.producer.client.id", clientId);
+
+        _logger.MessageReceived(result.Message.Value, _configuration.Topic, clientId);
+
+        var outcome = await HandleEventAsync(result.Message.Value, ct);
+
+        if (outcome.Exception is null)
+        {
+            _logger.MessageHandled(result.Message.Value, _configuration.Topic, clientId);
+
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        else
+        {
+            _logger.MessageFailed(outcome.Exception, result.Message.Value, _configuration.Topic, clientId);
+
+            activity?.AddException(outcome.Exception);
+            activity?.SetStatus(ActivityStatusCode.Error);
+        }
+    }
+
+    private async Task<Outcome<bool>> HandleEventAsync(TEvent message, CancellationToken ct)
+    {
         var context = ResilienceContextPool.Shared.Get(ct);
+
         var result = await _policy.ExecuteOutcomeAsync(
             async (ctx, state) =>
             {
-                await handler.HandleAsync(state, ctx.CancellationToken);
+                await using var scope = _serviceFactory.CreateAsyncScope();
+
+                await scope.ServiceProvider
+                    .GetRequiredService<IIntegrationEventHandler<TEvent>>()
+                    .HandleAsync(state, ctx.CancellationToken);
 
                 return Outcome.FromResult(true);
             },
             context,
-            message.Value
+            message
         );
 
         ResilienceContextPool.Shared.Return(context);
 
-        if (result.Exception is null)
-            _logger.MessageHandled(message.Value, _configuration.Topic, clientId);
-        else
-            _logger.MessageFailed(result.Exception, message.Value, _configuration.Topic, clientId);
+        return result;
     }
-
-    private static ActivityContext CreateActivityContext(Headers headers) =>
-        new(headers.GetTraceId(), headers.GetSpanId(), ActivityTraceFlags.Recorded, null, true);
 
     private async Task CreateTopicIfNotExistsAsync(TopicSpecification specification)
     {

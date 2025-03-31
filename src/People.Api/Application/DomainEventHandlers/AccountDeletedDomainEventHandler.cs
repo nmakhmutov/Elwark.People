@@ -12,10 +12,10 @@ internal sealed class AccountDeletedDomainEventHandler : INotificationHandler<Ac
     public AccountDeletedDomainEventHandler(IIntegrationEventBus bus) =>
         _bus = bus;
 
-    public Task Handle(AccountDeletedDomainEvent notification, CancellationToken ct)
+    public async Task Handle(AccountDeletedDomainEvent notification, CancellationToken ct)
     {
         var evt = new AccountDeletedIntegrationEvent(notification.Id);
 
-        return _bus.PublishAsync(evt, ct);
+        await _bus.PublishAsync(evt, ct);
     }
 }

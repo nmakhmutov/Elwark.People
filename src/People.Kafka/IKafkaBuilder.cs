@@ -6,5 +6,5 @@ public interface IKafkaBuilder
 {
     IServiceCollection Services { get; }
 
-    internal string Brokers { get; }
+    string Brokers { get; }
 }

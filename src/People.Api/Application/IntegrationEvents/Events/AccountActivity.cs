@@ -4,7 +4,7 @@ using People.Kafka.Integration;
 
 namespace People.Api.Application.IntegrationEvents.Events;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type"),
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "_t"),
  JsonDerivedType(typeof(InspectedIntegrationEvent), "inspected"),
  JsonDerivedType(typeof(LoggedInIntegrationEvent), "logged-in")]
 public abstract record AccountActivity(long AccountId) : IntegrationEvent, IKafkaMessage

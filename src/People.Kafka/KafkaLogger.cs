@@ -12,11 +12,19 @@ internal static partial class KafkaLogger
     [LoggerMessage(LogLevel.Information, "Message received: {@Message} from topic {Topic}, via publisher {Client}")]
     internal static partial void MessageReceived(this ILogger logger, object message, string topic, string client);
 
-    [LoggerMessage(LogLevel.Debug, "Successfully handled message: {@Message} from topic {Topic}, via publisher {Client}")]
+    [LoggerMessage(LogLevel.Debug,
+        "Successfully handled message: {@Message} from topic {Topic}, via publisher {Client}")]
     internal static partial void MessageHandled(this ILogger logger, object message, string topic, string client);
 
-    [LoggerMessage(LogLevel.Error, "Message {@Message} could not be processed from topic {Topic} via publisher {Client}")]
-    public static partial void MessageFailed(this ILogger logger, Exception exception, object message, string topic, string client);
+    [LoggerMessage(LogLevel.Error,
+        "Message {@Message} could not be processed from topic {Topic} via publisher {Client}")]
+    public static partial void MessageFailed(
+        this ILogger logger,
+        Exception exception,
+        object message,
+        string topic,
+        string client
+    );
 
     [LoggerMessage(LogLevel.Error, "Error occurred while handling message from topic {Topic}. Retry {Retry}")]
     internal static partial void MessageFailed(this ILogger logger, Exception? ex, string topic, int retry);

@@ -4,30 +4,27 @@ namespace People.Infrastructure.Providers.NpgsqlData;
 
 public sealed class SqlBuilder
 {
-    private readonly string _connection;
+    private readonly NpgsqlDataSource _dataSource;
     private readonly List<NpgsqlParameter> _parameters;
     private readonly string _sql;
 
-    public SqlBuilder(string connection, string sql)
+    public SqlBuilder(NpgsqlDataSource dataSource, string sql)
     {
-        _connection = connection;
+        _dataSource = dataSource;
         _sql = sql;
-        _parameters = new List<NpgsqlParameter>();
+        _parameters = [];
     }
 
-    public SqlBuilder AddParameter(NpgsqlParameter parameter)
-    {
-        _parameters.Add(parameter);
-        return this;
-    }
-
-    public SqlBuilder AddParameter(object value)
-    {
-        _parameters.Add(new NpgsqlParameter
+    public SqlBuilder AddParameter<T>(string parameterName, T? value) =>
+        AddParameter(new NpgsqlParameter
         {
+            ParameterName = parameterName,
             Value = value
         });
 
+    private SqlBuilder AddParameter(NpgsqlParameter parameter)
+    {
+        _parameters.Add(parameter);
         return this;
     }
 
@@ -35,13 +32,19 @@ public sealed class SqlBuilder
     {
         ArgumentNullException.ThrowIfNull(mapper);
 
-        return new SqlReader<T>(_connection, _sql, _parameters, mapper);
+        return new SqlReader<T>(_dataSource, _sql, mapper, _parameters);
+    }
+
+    public SqlReader<T> Aggregate<T>(Action<Dictionary<Guid, T>, NpgsqlDataReader> mapper)
+    {
+        ArgumentNullException.ThrowIfNull(mapper);
+
+        return new SqlReader<T>(_dataSource, _sql, mapper, _parameters);
     }
 
     public async Task<int> ExecuteAsync(CancellationToken ct = default)
     {
-        await using var source = NpgsqlDataSource.Create(_connection);
-        await using var command = source.CreateCommand(_sql);
+        await using var command = _dataSource.CreateCommand(_sql);
 
         foreach (var parameter in _parameters)
             command.Parameters.Add(parameter);

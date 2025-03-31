@@ -5,6 +5,7 @@ namespace People.Kafka.Configurations;
 public sealed class ProducerConfigurationBuilder
 {
     private string? _clientId;
+    private string? _servers;
     private string? _topic;
 
     public ProducerConfigurationBuilder WithTopic(string topic)
@@ -19,21 +20,31 @@ public sealed class ProducerConfigurationBuilder
         return this;
     }
 
-    internal ProducerConfiguration Build(string brokers)
+    internal ProducerConfigurationBuilder WithServers(string servers)
     {
+        _servers = servers;
+        return this;
+    }
+
+    internal ProducerConfiguration Build()
+    {
+        if (string.IsNullOrEmpty(_servers))
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka servers not specified", true));
+
         if (string.IsNullOrEmpty(_topic))
-            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka topic not specified"));
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka topic not specified", true));
 
         if (string.IsNullOrEmpty(_clientId))
-            throw new KafkaException(ErrorCode.InvalidConfig, new Exception("Kafka client id not specified"));
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka client id is not specified", true));
 
         var config = new ProducerConfig
         {
-            BootstrapServers = brokers,
+            BootstrapServers = _servers,
             ClientId = _clientId,
             Acks = Acks.Leader,
             EnableDeliveryReports = true,
-            AllowAutoCreateTopics = false
+            AllowAutoCreateTopics = false,
+            LingerMs = 10
         };
 
         return new ProducerConfiguration(_topic, config);

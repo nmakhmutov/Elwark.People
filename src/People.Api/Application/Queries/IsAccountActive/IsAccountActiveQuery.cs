@@ -11,18 +11,18 @@ internal sealed record IsAccountActiveQuery(AccountId Id) : IRequest<bool>;
 internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountActiveQuery, bool>
 {
     private readonly IIntegrationEventBus _bus;
-    private readonly INpgsqlDataProvider _dataProvider;
+    private readonly INpgsqlAccessor _accessor;
 
-    public IsAccountActiveQueryHandler(IIntegrationEventBus bus, INpgsqlDataProvider dataProvider)
+    public IsAccountActiveQueryHandler(IIntegrationEventBus bus, INpgsqlAccessor accessor)
     {
         _bus = bus;
-        _dataProvider = dataProvider;
+        _accessor = accessor;
     }
 
     public async Task<bool> Handle(IsAccountActiveQuery request, CancellationToken ct)
     {
-        var data = await _dataProvider
-            .Sql($"SELECT is_activated, ban IS NOT NULL FROM accounts WHERE id = {request.Id} LIMIT 1")
+        var data = await _accessor.Sql("SELECT is_activated, ban IS NOT NULL FROM accounts WHERE id = @p0 LIMIT 1")
+            .AddParameter("@p0", (long)request.Id)
             .Select(x => new
             {
                 IsActivated = x.GetBoolean(0),

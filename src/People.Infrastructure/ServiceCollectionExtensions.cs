@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
@@ -28,7 +29,11 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAccountRepository, AccountRepository>()
             .AddScoped<IConfirmationService, ConfirmationService>()
             .AddSingleton<IIpHasher, IpHasher>()
-            .AddSingleton<INpgsqlDataProvider>(_ => new NpgsqlDataProvider(options.PostgresqlConnectionString))
+            .AddSingleton<INpgsqlAccessor>(provider => new NpgsqlAccessor(
+                    options.PostgresqlConnectionString,
+                    provider.GetRequiredService<ILoggerFactory>()
+                )
+            )
             .AddSingleton<IConnectionMultiplexer>(_ =>
                 ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(options.RedisConnectionString, true))
             )

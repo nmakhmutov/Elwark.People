@@ -1,6 +1,6 @@
 namespace People.Infrastructure.Providers.NpgsqlData;
 
-public interface INpgsqlDataProvider
+public interface INpgsqlAccessor
 {
     SqlBuilder Sql(string sql);
 }

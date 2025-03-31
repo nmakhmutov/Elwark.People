@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using OpenTelemetry.Trace;
 using People.Kafka;
 using People.Webhooks.Infrastructure;
 using People.Webhooks.IntegrationEvents.EventHandling;
 using People.Webhooks.IntegrationEvents.Events;
 using People.Webhooks.Services.Retriever;
 using People.Webhooks.Services.Sender;
-using Serilog;
 
 const string appName = "People.Webhooks";
 var builder = WebApplication.CreateBuilder(args);
@@ -63,11 +63,16 @@ builder.Services
             .CreateTopicIfNotExists(8)
     );
 
-builder.Host
-    .UseSerilog((context, configuration) => configuration
-        .Enrich.WithProperty("ApplicationName", appName)
-        .ReadFrom.Configuration(context.Configuration)
-    );
+builder.AddOpenTelemetry(options =>
+{
+    options.AppName = appName;
+
+    options.Traces = provider => provider
+        .AddKafkaInstrumentation()
+        .AddNpgsql();
+});
+
+builder.AddSerilog(appName);
 
 var app = builder.Build();
 

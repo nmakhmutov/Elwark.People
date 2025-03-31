@@ -8,6 +8,7 @@ public sealed class ConsumerConfigurationBuilder
     private const byte RetryCount = 8;
     private readonly TimeSpan _retryInterval = TimeSpan.FromSeconds(15);
     private string? _groupId;
+    private string? _servers;
     private string? _topic;
     private TopicSpecification? _topicSpecification;
     private byte _workers = 1;
@@ -37,10 +38,10 @@ public sealed class ConsumerConfigurationBuilder
     }
 
     public ConsumerConfigurationBuilder CreateTopicIfNotExists() =>
-        CreateTopicIfNotExists(8, TimeSpan.FromDays(7));
+        CreateTopicIfNotExists(8, TimeSpan.FromDays(4));
 
     public ConsumerConfigurationBuilder CreateTopicIfNotExists(int partitions, short replicas = 1) =>
-        CreateTopicIfNotExists(partitions, TimeSpan.FromDays(7), replicas);
+        CreateTopicIfNotExists(partitions, TimeSpan.FromDays(4), replicas);
 
     public ConsumerConfigurationBuilder CreateTopicIfNotExists(int partitions, TimeSpan retention, short replicas = 1)
     {
@@ -62,8 +63,18 @@ public sealed class ConsumerConfigurationBuilder
         return this;
     }
 
-    internal ConsumerConfiguration Build(string brokers)
+    internal ConsumerConfigurationBuilder WithServers(string servers)
     {
+        _servers = servers;
+
+        return this;
+    }
+
+    internal ConsumerConfiguration Build()
+    {
+        if (string.IsNullOrEmpty(_servers))
+            throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka servers not specified", true));
+
         if (string.IsNullOrEmpty(_topic))
             throw new KafkaException(new Error(ErrorCode.InvalidConfig, "Kafka topic not specified", true));
 
@@ -72,7 +83,7 @@ public sealed class ConsumerConfigurationBuilder
 
         var config = new ConsumerConfig
         {
-            BootstrapServers = brokers,
+            BootstrapServers = _servers,
             GroupId = _groupId,
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false,

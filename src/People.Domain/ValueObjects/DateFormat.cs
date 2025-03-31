@@ -4,8 +4,8 @@ public readonly struct DateFormat : IEquatable<DateFormat>
 {
     public static readonly DateFormat Default = new("yyyy-MM-dd");
 
-    private static readonly IReadOnlyCollection<string> List = new[]
-    {
+    private static readonly IReadOnlyCollection<string> List =
+    [
         "MM.dd.yyyy",
         "dd.MM.yyyy",
         "dd.MM.yy",
@@ -25,7 +25,7 @@ public readonly struct DateFormat : IEquatable<DateFormat>
         "d/M/yy",
 
         "yyyy-MM-dd"
-    };
+    ];
 
     private readonly string _value;
 

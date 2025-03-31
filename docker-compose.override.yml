@@ -12,9 +12,8 @@ services:
         limits:
           memory: 128M
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - Serilog__WriteTo__0__Name=Console
-      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://agent:7021
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Kestrel__EndPoints__Grpc__Url=http://+:81
       - Urls__Identity=http://elwark_identity_api
@@ -37,14 +36,12 @@ services:
         limits:
           memory: 128M
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - Serilog__WriteTo__0__Name=Console
-      - Serilog__WriteTo__0__Args__formatter=Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://agent:7021
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Urls__Identity=http://elwark_identity_api
       - Urls__Notification.Api=http://notification_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=people;Username=master_account;Password=master_password
-      - ConnectionStrings__Redis=redis:6379,resolveDns=True,defaultDatabase=15
       - ConnectionStrings__Kafka=broker:29092
     ports:
       - "5003:80"

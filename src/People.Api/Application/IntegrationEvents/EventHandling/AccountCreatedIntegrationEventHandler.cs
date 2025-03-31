@@ -1,7 +1,6 @@
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Infrastructure.Providers;
 using People.Api.Infrastructure.Providers.Gravatar;
-using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.ValueObjects;
 using People.Infrastructure.Confirmations;

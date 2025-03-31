@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Notification.Grpc;
 using Npgsql;
+using OpenTelemetry.Trace;
 using People.Api.Application.Behaviour;
 using People.Api.Application.IntegrationEvents.EventHandling;
 using People.Api.Application.IntegrationEvents.Events;
@@ -34,7 +35,7 @@ using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.Kafka;
-using Serilog;
+using StatusCode = Grpc.Core.StatusCode;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
@@ -265,29 +266,28 @@ builder.Services
 builder.Services
     .AddGrpc(options => options.Interceptors.Add<GrpcExceptionInterceptor>());
 
-builder.Host
-    .UseSerilog((context, configuration) => configuration
-        .Enrich.WithProperty("ApplicationName", appName)
-        .Destructure.AsScalar<AccountId>()
-        .Destructure.AsScalar<Language>()
-        .Destructure.AsScalar<RegionCode>()
-        .Destructure.AsScalar<CountryCode>()
-        .Destructure.AsScalar<TimeZone>()
-        .Destructure.AsScalar<DateFormat>()
-        .Destructure.AsScalar<TimeFormat>()
-        .Destructure.AsScalar<IPAddress>()
-        .Destructure.ByTransforming<Account>(x => new
-        {
-            x.Id,
-            x.Name.Nickname
-        })
-        .Destructure.ByTransforming<AccountSummary>(x => new
-        {
-            x.Id,
-            x.Name.Nickname
-        })
-        .ReadFrom.Configuration(context.Configuration)
-    );
+builder.AddOpenTelemetry(options =>
+{
+    options.AppName = appName;
+
+    options.Traces = provider => provider
+        .AddNpgsql()
+        .AddKafkaInstrumentation()
+        .AddRedisInstrumentation();
+});
+
+builder.AddSerilog(appName, configuration => configuration
+    .Destructure.AsScalar<AccountId>()
+    .Destructure.AsScalar<Language>()
+    .Destructure.AsScalar<RegionCode>()
+    .Destructure.AsScalar<CountryCode>()
+    .Destructure.AsScalar<TimeZone>()
+    .Destructure.AsScalar<DateFormat>()
+    .Destructure.AsScalar<TimeFormat>()
+    .Destructure.AsScalar<IPAddress>()
+    .Destructure.ByTransforming<Account>(x => new { x.Id, x.Name.Nickname })
+    .Destructure.ByTransforming<AccountSummary>(x => new { x.Id, x.Name.Nickname })
+);
 
 await using var app = builder.Build();
 

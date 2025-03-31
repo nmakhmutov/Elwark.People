@@ -6,8 +6,6 @@ namespace People.Kafka;
 
 internal static class KafkaExtensions
 {
-    internal static readonly ActivitySource ActivitySource = new("EventBus.Kafka", "1.0.0");
-
     internal static ActivityTraceId GetTraceId(this Headers headers) =>
         headers.TryGetLastBytes(nameof(Activity.TraceId), out var value)
             ? ActivityTraceId.CreateFromBytes(value)

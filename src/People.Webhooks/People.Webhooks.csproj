@@ -5,14 +5,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0"/>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0"/>
-    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0"/>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.3"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.3.0"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
+    <PackageReference Include="Npgsql.OpenTelemetry" Version="9.0.3"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\People.Kafka\People.Kafka.csproj"/>
+    <ProjectReference Include="..\People.Telemetry\People.Telemetry.csproj" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ namespace People.Kafka;
 internal sealed class KafkaEventBus : IIntegrationEventBus
 {
     private static readonly ConcurrentDictionary<Type, Type> Types = [];
+
     private readonly IServiceScopeFactory _factory;
     private readonly ILogger<KafkaEventBus> _logger;
     private readonly ResiliencePipeline _policy;
@@ -49,14 +50,14 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
             .Build();
     }
 
-    public async Task PublishAsync<T>(T message, CancellationToken ct) where T : IIntegrationEvent
+    public async ValueTask PublishAsync<T>(T message, CancellationToken ct) where T : IIntegrationEvent
     {
         await using var scope = _factory.CreateAsyncScope();
 
         await PublishAsync(scope.ServiceProvider, message, ct);
     }
 
-    public async Task PublishAsync<T>(ICollection<T> messages, CancellationToken ct) where T : IIntegrationEvent
+    public async ValueTask PublishAsync<T>(ICollection<T> messages, CancellationToken ct) where T : IIntegrationEvent
     {
         if (messages.Count == 0)
             return;
@@ -69,12 +70,12 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
             CancellationToken = ct
         };
 
-        await Parallel.ForEachAsync(messages, options, async (message, token) =>
-            await PublishAsync(scope.ServiceProvider, message, token)
+        await Parallel.ForEachAsync(messages, options, (message, token) =>
+            PublishAsync(scope.ServiceProvider, message, token)
         );
     }
 
-    private async Task PublishAsync<T>(IServiceProvider provider, T message, CancellationToken ct)
+    private async ValueTask PublishAsync<T>(IServiceProvider provider, T message, CancellationToken ct)
         where T : IIntegrationEvent
     {
         var type = message.GetType();
@@ -87,7 +88,7 @@ internal sealed class KafkaEventBus : IIntegrationEventBus
 
         _logger.DispatchingMessage(message);
 
-        await _policy.ExecuteAsync(async token => await producer.ProduceAsync(message, token), ct);
+        await _policy.ExecuteAsync(token => producer.ProduceAsync(message, token), ct);
 
         _logger.DispatchedMessage(message);
     }

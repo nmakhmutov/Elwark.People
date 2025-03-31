@@ -8,14 +8,14 @@ internal sealed record GetEmailsQuery(AccountId Id) : IRequest<IReadOnlyCollecti
 
 internal sealed class GetEmailsQueryHandler : IRequestHandler<GetEmailsQuery, IReadOnlyCollection<UserEmail>>
 {
-    private readonly INpgsqlDataProvider _dataProvider;
+    private readonly INpgsqlAccessor _accessor;
 
-    public GetEmailsQueryHandler(INpgsqlDataProvider dataProvider) =>
-        _dataProvider = dataProvider;
+    public GetEmailsQueryHandler(INpgsqlAccessor accessor) =>
+        _accessor = accessor;
 
     public async Task<IReadOnlyCollection<UserEmail>> Handle(GetEmailsQuery request, CancellationToken ct) =>
-        await _dataProvider
-            .Sql($"SELECT email, is_primary, confirmed_at IS NOT NULL FROM emails WHERE account_id = {request.Id};")
+        await _accessor.Sql("SELECT email, is_primary, confirmed_at IS NOT NULL FROM emails WHERE account_id = @p0")
+            .AddParameter("@p0", (long)request.Id)
             .Select(x => new UserEmail(x.GetString(0), x.GetBoolean(1), x.GetBoolean(2)))
             .ToListAsync(ct);
 }

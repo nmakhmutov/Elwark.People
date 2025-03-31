@@ -12,10 +12,10 @@ internal sealed class AccountCreatedDomainEventHandler : INotificationHandler<Ac
     public AccountCreatedDomainEventHandler(IIntegrationEventBus bus) =>
         _bus = bus;
 
-    public Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct)
+    public async Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct)
     {
         var evt = new AccountCreatedIntegrationEvent(notification.Account.Id, notification.IpAddress.ToString());
 
-        return _bus.PublishAsync(evt, ct);
+        await _bus.PublishAsync(evt, ct);
     }
 }

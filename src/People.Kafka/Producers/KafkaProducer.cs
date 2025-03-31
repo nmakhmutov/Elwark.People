@@ -10,14 +10,14 @@ namespace People.Kafka.Producers;
 
 internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegrationEvent
 {
-    private readonly byte[] _clientId;
+    private readonly string _clientId;
     private readonly IProducer<string, T> _producer;
     private readonly string _topic;
 
     public KafkaProducer(ProducerConfiguration configuration, ILogger logger)
     {
         _topic = configuration.Topic;
-        _clientId = Encoding.UTF8.GetBytes(configuration.Config.ClientId);
+        _clientId = configuration.Config.ClientId;
 
         _producer = new ProducerBuilder<string, T>(configuration.Config)
             .SetLogHandler((_, message) =>
@@ -32,31 +32,49 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
             .Build();
     }
 
-    public Task ProduceAsync(object message, CancellationToken ct) =>
+    public ValueTask ProduceAsync(object message, CancellationToken ct) =>
         ProduceAsync((T)message, ct);
 
-    public Task ProduceAsync(T message, CancellationToken ct)
+    public ValueTask ProduceAsync(T message, CancellationToken ct)
     {
         Activity.Current ??= new Activity(nameof(KafkaProducer<T>)).Start();
 
+        var topicKey = message switch
+        {
+            IKafkaMessage msg => msg.GetTopicKey(),
+            var x => x.MessageId.ToString("N")
+        };
+
         var kafkaMessage = new Message<string, T>
         {
-            Key = message switch
-            {
-                IKafkaMessage msg => msg.GetTopicKey(),
-                var x => x.MessageId.ToString("N")
-            },
+            Key = topicKey,
             Value = message,
             Timestamp = new Timestamp(message.CreatedAt),
             Headers =
             [
                 new Header(nameof(Activity.TraceId), Convert.FromHexString(Activity.Current.TraceId.ToHexString())),
                 new Header(nameof(Activity.SpanId), Convert.FromHexString(Activity.Current.SpanId.ToHexString())),
-                new Header("ClientId", _clientId)
+                new Header("ClientId", Encoding.UTF8.GetBytes(_clientId))
             ]
         };
 
-        return _producer.ProduceAsync(_topic, kafkaMessage, ct);
+        using var activity = KafkaTelemetry.StartProducerActivity(_topic, Activity.Current.Context);
+
+        activity?.AddTag("kafka.producer.client.id", _clientId)
+            .AddTag("kafka.producer.topic.key", topicKey);
+
+        try
+        {
+            _producer.Produce(_topic, kafkaMessage);
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            activity?.AddException(ex);
+            activity?.SetStatus(ActivityStatusCode.Error);
+        }
+
+        return ValueTask.CompletedTask;
     }
 
     public void Dispose()
