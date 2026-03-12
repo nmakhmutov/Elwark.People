@@ -42,7 +42,7 @@ public sealed class IpApiService : IIpService
             if (data is null)
                 return null;
 
-            if (data.Status == Status.Fail)
+            if (data.Status.Equals("Fail", StringComparison.OrdinalIgnoreCase))
                 return null;
 
             _logger.LogInformation("Received ip information {@Information}", data);
@@ -57,16 +57,10 @@ public sealed class IpApiService : IIpService
     }
 
     private sealed record IpApiResponse(
-        Status Status,
+        string Status,
         string CountryCode,
         string ContinentCode,
         string? City,
         string TimeZone
     );
-
-    private enum Status
-    {
-        Success = 1,
-        Fail = 2
-    }
 }
