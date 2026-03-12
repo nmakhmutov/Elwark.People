@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Api.Infrastructure.Providers.World;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
@@ -33,7 +33,7 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         _worldClient = worldClient;
     }
 
-    public async Task<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
+    public async ValueTask<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 

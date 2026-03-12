@@ -1,5 +1,5 @@
 using System.Net.Mail;
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -26,7 +26,7 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
         _repository = repository;
     }
 
-    public async Task<EmailAccount> Handle(AppendEmailCommand request, CancellationToken ct)
+    public async ValueTask<EmailAccount> Handle(AppendEmailCommand request, CancellationToken ct)
     {
         if (await _dbContext.Emails.IsEmailExistsAsync(request.Email, ct))
             throw EmailException.AlreadyCreated(request.Email);

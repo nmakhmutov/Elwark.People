@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Api.Infrastructure.Providers.Microsoft;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
@@ -29,7 +29,7 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
         _timeProvider = timeProvider;
     }
 
-    public async Task Handle(AppendMicrosoftCommand request, CancellationToken ct)
+    public async ValueTask<Unit> Handle(AppendMicrosoftCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
@@ -45,5 +45,7 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
 
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
+
+        return Unit.Value;
     }
 }

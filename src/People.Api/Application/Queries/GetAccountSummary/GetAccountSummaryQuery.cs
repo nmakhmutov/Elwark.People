@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.ValueObjects;
@@ -16,7 +16,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
     public GetAccountSummaryQueryHandler(INpgsqlAccessor accessor) =>
         _accessor = accessor;
 
-    public async Task<AccountSummary> Handle(GetAccountSummaryQuery request, CancellationToken ct) =>
+    public async ValueTask<AccountSummary> Handle(GetAccountSummaryQuery request, CancellationToken ct) =>
         await _accessor.Sql(
                 """
                 SELECT a.id,

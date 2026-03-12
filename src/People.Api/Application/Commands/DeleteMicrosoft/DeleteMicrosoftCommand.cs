@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -14,7 +14,7 @@ internal sealed class DeleteMicrosoftCommandHandler : IRequestHandler<DeleteMicr
     public DeleteMicrosoftCommandHandler(IAccountRepository repository) =>
         _repository = repository;
 
-    public async Task Handle(DeleteMicrosoftCommand request, CancellationToken ct)
+    public async ValueTask<Unit> Handle(DeleteMicrosoftCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
@@ -24,5 +24,7 @@ internal sealed class DeleteMicrosoftCommandHandler : IRequestHandler<DeleteMicr
 
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
+
+        return Unit.Value;
     }
 }

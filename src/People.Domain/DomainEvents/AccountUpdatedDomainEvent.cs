@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 
 namespace People.Domain.DomainEvents;

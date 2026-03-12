@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -25,7 +25,7 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
         _repository = repository;
     }
 
-    public async Task<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
+    public async ValueTask<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
     {
         var confirmation = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct);
 

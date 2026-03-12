@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Entities;
@@ -42,7 +42,7 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
         _timeProvider = timeProvider;
     }
 
-    public async Task<string> Handle(SigningUpByEmailCommand request, CancellationToken ct)
+    public async ValueTask<string> Handle(SigningUpByEmailCommand request, CancellationToken ct)
     {
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)

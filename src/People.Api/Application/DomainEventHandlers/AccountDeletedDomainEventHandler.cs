@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.DomainEvents;
 using People.Kafka.Integration;
@@ -12,7 +12,7 @@ internal sealed class AccountDeletedDomainEventHandler : INotificationHandler<Ac
     public AccountDeletedDomainEventHandler(IIntegrationEventBus bus) =>
         _bus = bus;
 
-    public async Task Handle(AccountDeletedDomainEvent notification, CancellationToken ct)
+    public async ValueTask Handle(AccountDeletedDomainEvent notification, CancellationToken ct)
     {
         var evt = new AccountDeletedIntegrationEvent(notification.Id);
 

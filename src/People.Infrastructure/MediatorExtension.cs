@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Domain.SeedWork;
 
 namespace People.Infrastructure;

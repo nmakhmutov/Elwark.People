@@ -1,6 +1,6 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using MediatR;
+using Mediator;
 using People.Api.Application.Commands.AppendGoogle;
 using People.Api.Application.Commands.AppendMicrosoft;
 using People.Api.Application.Commands.SignInByEmail;

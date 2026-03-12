@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.Entities;
 using People.Infrastructure.Providers.NpgsqlData;
@@ -19,7 +19,7 @@ internal sealed class IsAccountActiveQueryHandler : IRequestHandler<IsAccountAct
         _accessor = accessor;
     }
 
-    public async Task<bool> Handle(IsAccountActiveQuery request, CancellationToken ct)
+    public async ValueTask<bool> Handle(IsAccountActiveQuery request, CancellationToken ct)
     {
         var data = await _accessor.Sql("SELECT is_activated, ban IS NOT NULL FROM accounts WHERE id = @p0 LIMIT 1")
             .AddParameter("@p0", (long)request.Id)

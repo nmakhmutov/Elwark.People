@@ -39,7 +39,6 @@ using StatusCode = Grpc.Core.StatusCode;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
-var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -92,13 +91,16 @@ builder.Services
     });
 
 builder.Services
-    .AddMediatR(configuration =>
+    .AddMediator(options =>
     {
-        configuration.RegisterServicesFromAssemblies(assemblies);
-        configuration.AddOpenBehavior(typeof(RequestLoggingBehavior<,>));
-        configuration.AddOpenBehavior(typeof(RequestValidatorBehavior<,>));
+        options.ServiceLifetime = ServiceLifetime.Scoped;
+        options.PipelineBehaviors =
+        [
+            typeof(RequestLoggingBehavior<,>),
+            typeof(RequestValidatorBehavior<,>)
+        ];
     })
-    .AddValidatorsFromAssemblies(assemblies, ServiceLifetime.Scoped, null, true)
+    .AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), ServiceLifetime.Scoped, null, true)
     .AddInfrastructure(options =>
     {
         var postgresql = new NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("Postgresql"))

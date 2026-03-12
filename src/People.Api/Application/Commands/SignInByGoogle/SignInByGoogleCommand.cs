@@ -1,5 +1,5 @@
 using System.Net;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
@@ -26,7 +26,7 @@ internal sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoo
         _google = google;
     }
 
-    public async Task<SignInResult> Handle(SignInByGoogleCommand request, CancellationToken ct)
+    public async ValueTask<SignInResult> Handle(SignInByGoogleCommand request, CancellationToken ct)
     {
         var google = await _google.GetAsync(request.Token, ct);
 

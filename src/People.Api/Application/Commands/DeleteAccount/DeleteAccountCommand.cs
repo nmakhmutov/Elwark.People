@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 
@@ -13,16 +13,18 @@ internal sealed class DeleteAccountCommandHandler : IRequestHandler<DeleteAccoun
     public DeleteAccountCommandHandler(IAccountRepository repository) =>
         _repository = repository;
 
-    public async Task Handle(DeleteAccountCommand request, CancellationToken ct)
+    public async ValueTask<Unit> Handle(DeleteAccountCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct);
         if (account is null)
-            return;
+            return Unit.Value;
 
         account.Delete();
 
         _repository.Delete(account);
 
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+
+        return Unit.Value;
     }
 }

@@ -1,5 +1,5 @@
 using System.Net;
-using MediatR;
+using Mediator;
 using People.Api.Application.Models;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -27,7 +27,7 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
         _timeProvider = timeProvider;
     }
 
-    public async Task<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
+    public async ValueTask<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
     {
         var id = await _confirmation.SignUpAsync(request.Token, request.Code, ct);
 

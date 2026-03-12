@@ -1,4 +1,4 @@
-using MediatR;
+using Mediator;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Domain.DomainEvents;
 using People.Kafka.Integration;
@@ -12,7 +12,7 @@ internal sealed class AccountCreatedDomainEventHandler : INotificationHandler<Ac
     public AccountCreatedDomainEventHandler(IIntegrationEventBus bus) =>
         _bus = bus;
 
-    public async Task Handle(AccountCreatedDomainEvent notification, CancellationToken ct)
+    public async ValueTask Handle(AccountCreatedDomainEvent notification, CancellationToken ct)
     {
         var evt = new AccountCreatedIntegrationEvent(notification.Account.Id, notification.IpAddress.ToString());
 

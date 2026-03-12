@@ -1,5 +1,5 @@
 using System.Net;
-using MediatR;
+using Mediator;
 using People.Api.Application.Models;
 using People.Api.Infrastructure.Providers.Microsoft;
 using People.Domain.Entities;
@@ -37,7 +37,7 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
         _timeProvider = timeProvider;
     }
 
-    public async Task<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
+    public async ValueTask<SignUpResult> Handle(SignUpByMicrosoftCommand request, CancellationToken ct)
     {
         var microsoft = await _microsoft.GetAsync(request.Token, ct);
 

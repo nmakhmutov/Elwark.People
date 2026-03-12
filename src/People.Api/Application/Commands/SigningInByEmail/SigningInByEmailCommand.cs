@@ -1,5 +1,5 @@
 using System.Net.Mail;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Exceptions;
@@ -28,7 +28,7 @@ internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningIn
         _notification = notification;
     }
 
-    public async Task<string> Handle(SigningInByEmailCommand request, CancellationToken ct)
+    public async ValueTask<string> Handle(SigningInByEmailCommand request, CancellationToken ct)
     {
         var email = await _dbContext.Emails
             .Where(x => x.Email == request.Email.Address)

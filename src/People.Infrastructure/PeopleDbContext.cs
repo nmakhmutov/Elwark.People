@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using People.Domain.Entities;
@@ -83,21 +83,41 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
             yield break;
         }
 
-        public Task Publish<TNotification>(TNotification notification, CancellationToken ct)
+        public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+            IStreamQuery<TResponse> query,
+            [EnumeratorCancellation] CancellationToken ct
+        )
+        {
+            await Task.Yield();
+            yield break;
+        }
+
+        public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+            IStreamCommand<TResponse> command,
+            [EnumeratorCancellation] CancellationToken ct
+        )
+        {
+            await Task.Yield();
+            yield break;
+        }
+
+        public ValueTask Publish<TNotification>(TNotification notification, CancellationToken ct)
             where TNotification : INotification =>
-            Task.CompletedTask;
+            ValueTask.CompletedTask;
 
-        public Task Publish(object notification, CancellationToken ct) =>
-            Task.CompletedTask;
+        public ValueTask Publish(object notification, CancellationToken ct) =>
+            ValueTask.CompletedTask;
 
-        public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken ct) =>
-            Task.FromResult<TResponse>(default!);
+        public ValueTask<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken ct) =>
+            ValueTask.FromResult<TResponse>(default!);
 
-        public Task Send<TRequest>(TRequest request, CancellationToken ct)
-            where TRequest : IRequest =>
-            Task.CompletedTask;
+        public ValueTask<TResponse> Send<TResponse>(ICommand<TResponse> command, CancellationToken ct) =>
+            ValueTask.FromResult<TResponse>(default!);
 
-        public Task<object?> Send(object request, CancellationToken ct) =>
-            Task.FromResult<object?>(null);
+        public ValueTask<TResponse> Send<TResponse>(IQuery<TResponse> query, CancellationToken ct) =>
+            ValueTask.FromResult<TResponse>(default!);
+
+        public ValueTask<object?> Send(object request, CancellationToken ct) =>
+            ValueTask.FromResult<object?>(null);
     }
 }

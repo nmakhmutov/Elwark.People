@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using MediatR;
+using Mediator;
 
 namespace People.Api.Application.Behaviour;
 
 internal sealed partial class RequestLoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : notnull
+    where TRequest : IMessage
 {
     private readonly ILogger<RequestLoggingBehavior<TRequest, TResponse>> _logger;
 
@@ -13,13 +13,17 @@ internal sealed partial class RequestLoggingBehavior<TRequest, TResponse> : IPip
         _logger = logger;
 
     [DebuggerStepThrough]
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    public async ValueTask<TResponse> Handle(
+        TRequest request,
+        MessageHandlerDelegate<TRequest, TResponse> next,
+        CancellationToken ct
+    )
     {
         var name = request.GetType().Name;
 
         Handling(_logger, name, request);
 
-        var response = await next();
+        var response = await next(request, ct);
 
         Handled(_logger, name, response);
 

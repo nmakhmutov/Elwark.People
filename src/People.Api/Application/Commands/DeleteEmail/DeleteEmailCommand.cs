@@ -1,5 +1,5 @@
 using System.Net.Mail;
-using MediatR;
+using Mediator;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -15,7 +15,7 @@ internal sealed class DeleteEmailCommandHandler : IRequestHandler<DeleteEmailCom
     public DeleteEmailCommandHandler(IAccountRepository repository) =>
         _repository = repository;
 
-    public async Task Handle(DeleteEmailCommand request, CancellationToken ct)
+    public async ValueTask<Unit> Handle(DeleteEmailCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
@@ -25,5 +25,7 @@ internal sealed class DeleteEmailCommandHandler : IRequestHandler<DeleteEmailCom
 
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
+
+        return Unit.Value;
     }
 }

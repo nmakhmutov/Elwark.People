@@ -1,5 +1,5 @@
 using System.Net.Mail;
-using MediatR;
+using Mediator;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
@@ -27,7 +27,7 @@ internal sealed class ConfirmingEmailCommandHandler : IRequestHandler<Confirming
         _repository = repository;
     }
 
-    public async Task<ConfirmingTokenModel> Handle(ConfirmingEmailCommand request, CancellationToken ct)
+    public async ValueTask<ConfirmingTokenModel> Handle(ConfirmingEmailCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 

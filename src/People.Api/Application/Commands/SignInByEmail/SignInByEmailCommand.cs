@@ -1,5 +1,5 @@
 using System.Net;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
@@ -30,7 +30,7 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
         _dbContext = dbContext;
     }
 
-    public async Task<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
+    public async ValueTask<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
     {
         var id = await _confirmation.SignInAsync(request.Token, request.Code, ct);
 

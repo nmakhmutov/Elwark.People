@@ -1,5 +1,5 @@
 using System.Net;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
@@ -30,7 +30,7 @@ internal sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInBy
         _microsoft = microsoft;
     }
 
-    public async Task<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
+    public async ValueTask<SignInResult> Handle(SignInByMicrosoftCommand request, CancellationToken ct)
     {
         var microsoft = await _microsoft.GetAsync(request.Token, ct);
 

@@ -1,6 +1,6 @@
 using System.Net.Mail;
 using System.Security.Claims;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http.HttpResults;
 using People.Api.Application.Commands.AppendEmail;
 using People.Api.Application.Commands.ChangePrimaryEmail;
