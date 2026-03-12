@@ -1,0 +1,22 @@
+<Solution>
+    <Folder Name="/config/">
+        <File Path="Directory.Build.props"/>
+        <File Path="Directory.Packages.props"/>
+    </Folder>
+    <Folder Name="/actions/">
+        <File Path=".github/workflows/people.yml"/>
+        <File Path=".github/workflows/webhooks.yml"/>
+    </Folder>
+    <Folder Name="/actions/composite/"/>
+    <Folder Name="/actions/composite/build/">
+        <File Path=".github/workflows/composite/build/action.yml"/>
+    </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/People.Api/People.Api.csproj"/>
+        <Project Path="src/People.Domain/People.Domain.csproj"/>
+        <Project Path="src/People.Infrastructure/People.Infrastructure.csproj"/>
+        <Project Path="src/People.Kafka/People.Kafka.csproj"/>
+        <Project Path="src/People.Webhooks/People.Webhooks.csproj"/>
+    </Folder>
+    <Project Path="docker-compose.dcproj"/>
+</Solution>

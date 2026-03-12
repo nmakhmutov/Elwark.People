@@ -1,8 +1,9 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /
+COPY "Directory.Build.props" "Directory.Packages.props" "./"
 COPY "src" "src/"
 WORKDIR /src/People.Api
 RUN dotnet publish People.Api.csproj -c Release -o /app
