@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using OpenTelemetry.Trace;
 using People.Kafka;
 using People.Webhooks.Infrastructure;
 using People.Webhooks.IntegrationEvents.EventHandling;
@@ -62,15 +61,6 @@ builder.Services
             .WithWorkers(2)
             .CreateTopicIfNotExists(8)
     );
-
-builder.AddOpenTelemetry(options =>
-{
-    options.AppName = appName;
-
-    options.Traces = provider => provider
-        .AddKafkaInstrumentation()
-        .AddNpgsql();
-});
 
 builder.AddSerilog(appName);
 

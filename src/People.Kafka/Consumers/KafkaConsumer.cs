@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Microsoft.Extensions.DependencyInjection;
@@ -122,21 +121,7 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
 
     private async Task HandleMessageAsync(ConsumeResult<string, TEvent> result, CancellationToken ct)
     {
-        var context = new ActivityContext(
-            result.Message.Headers.GetTraceId(),
-            result.Message.Headers.GetSpanId(),
-            ActivityTraceFlags.Recorded,
-            null,
-            true
-        );
-
         var clientId = result.Message.Headers.GetClientId();
-
-        using var activity = KafkaTelemetry.StartConsumerActivity(result.Topic, context);
-
-        activity?.AddTag("kafka.consumer.group.id", _configuration.Config.GroupId)
-            .AddTag("kafka.consumer.topic.key", result.Message.Key)
-            .AddTag("kafka.producer.client.id", clientId);
 
         _logger.MessageReceived(result.Message.Value, _configuration.Topic, clientId);
 
@@ -145,15 +130,10 @@ internal sealed class KafkaConsumer<TEvent, THandler> : IHostedLifecycleService
         if (outcome.Exception is null)
         {
             _logger.MessageHandled(result.Message.Value, _configuration.Topic, clientId);
-
-            activity?.SetStatus(ActivityStatusCode.Ok);
         }
         else
         {
             _logger.MessageFailed(outcome.Exception, result.Message.Value, _configuration.Topic, clientId);
-
-            activity?.AddException(outcome.Exception);
-            activity?.SetStatus(ActivityStatusCode.Error);
         }
     }
 

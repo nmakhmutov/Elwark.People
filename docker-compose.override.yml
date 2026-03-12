@@ -13,7 +13,6 @@ services:
           memory: 128M
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://agent:7021
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Kestrel__EndPoints__Grpc__Url=http://+:81
       - Urls__Identity=http://elwark_identity_api
@@ -37,7 +36,6 @@ services:
           memory: 128M
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://agent:7021
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Urls__Identity=http://elwark_identity_api
       - Urls__Notification.Api=http://notification_api

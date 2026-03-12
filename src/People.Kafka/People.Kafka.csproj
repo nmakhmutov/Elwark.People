@@ -1,16 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.Kafka" Version="9.0.0"/>
-    <PackageReference Include="Confluent.Kafka" Version="2.8.0"/>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.3" />
-    <PackageReference Include="Polly.Core" Version="8.5.2" />
-    <PackageReference Include="OpenTelemetry.Api" Version="1.11.2"/>
+    <PackageReference Include="AspNetCore.HealthChecks.Kafka" />
+    <PackageReference Include="Confluent.Kafka" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Polly.Core" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
@@ -37,8 +36,6 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
 
     public ValueTask ProduceAsync(T message, CancellationToken ct)
     {
-        Activity.Current ??= new Activity(nameof(KafkaProducer<T>)).Start();
-
         var topicKey = message switch
         {
             IKafkaMessage msg => msg.GetTopicKey(),
@@ -52,27 +49,11 @@ internal sealed class KafkaProducer<T> : IKafkaProducer<T> where T : IIntegratio
             Timestamp = new Timestamp(message.CreatedAt),
             Headers =
             [
-                new Header(nameof(Activity.TraceId), Convert.FromHexString(Activity.Current.TraceId.ToHexString())),
-                new Header(nameof(Activity.SpanId), Convert.FromHexString(Activity.Current.SpanId.ToHexString())),
                 new Header("ClientId", Encoding.UTF8.GetBytes(_clientId))
             ]
         };
 
-        using var activity = KafkaTelemetry.StartProducerActivity(_topic, Activity.Current.Context);
-
-        activity?.AddTag("kafka.producer.client.id", _clientId)
-            .AddTag("kafka.producer.topic.key", topicKey);
-
-        try
-        {
-            _producer.Produce(_topic, kafkaMessage);
-            activity?.SetStatus(ActivityStatusCode.Ok);
-        }
-        catch (Exception ex)
-        {
-            activity?.AddException(ex);
-            activity?.SetStatus(ActivityStatusCode.Error);
-        }
+        _producer.Produce(_topic, kafkaMessage);
 
         return ValueTask.CompletedTask;
     }

@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Notification.Grpc;
 using Npgsql;
-using OpenTelemetry.Trace;
 using People.Api.Application.Behaviour;
 using People.Api.Application.IntegrationEvents.EventHandling;
 using People.Api.Application.IntegrationEvents.Events;
@@ -267,16 +266,6 @@ builder.Services
 
 builder.Services
     .AddGrpc(options => options.Interceptors.Add<GrpcExceptionInterceptor>());
-
-builder.AddOpenTelemetry(options =>
-{
-    options.AppName = appName;
-
-    options.Traces = provider => provider
-        .AddNpgsql()
-        .AddKafkaInstrumentation()
-        .AddRedisInstrumentation();
-});
 
 builder.AddSerilog(appName, configuration => configuration
     .Destructure.AsScalar<AccountId>()
