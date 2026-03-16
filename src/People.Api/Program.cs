@@ -47,8 +47,8 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration.GetRequiredUri("Authentication:Authority").AbsoluteUri;
-        options.Audience = builder.Configuration.GetRequiredString("Authentication:Audience");
+        options.Authority = builder.Configuration.GetUri("Authentication:Authority").AbsoluteUri;
+        options.Audience = builder.Configuration.GetString("Authentication:Audience");
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -67,17 +67,6 @@ builder.Services
     .AddPolicy(Policy.RequireCommonAccess.Name, Policy.RequireCommonAccess.Policy)
     .AddPolicy(Policy.RequireProfileAccess.Name, Policy.RequireProfileAccess.Policy)
     .AddPolicy(Policy.RequireManagementAccess.Name, Policy.RequireManagementAccess.Policy);
-
-builder.Services
-    .AddClientCredentialsTokenManagement()
-    .AddClient(ClientCredentialsClientName.Parse("notification"), client =>
-    {
-        client.TokenEndpoint =
-            new Uri(builder.Configuration.GetRequiredUri("Authentication:Authority"), "connect/token");
-        client.ClientId = ClientId.Parse(builder.Configuration.GetRequiredString("Notification:ClientId"));
-        client.ClientSecret = ClientSecret.Parse(builder.Configuration.GetRequiredString("Notification:ClientSecret"));
-        client.Scope = Scope.Parse(builder.Configuration.GetRequiredString("Notification:Scope"));
-    });
 
 builder.Services
     .AddOpenApi()
@@ -170,6 +159,17 @@ builder.Services
     {
         options.ViewsFileProvider = builder.Environment.ContentRootFileProvider;
         options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
+    });
+
+
+builder.Services
+    .AddClientCredentialsTokenManagement()
+    .AddClient(ClientCredentialsClientName.Parse("notification"), client =>
+    {
+        client.TokenEndpoint = builder.Configuration.GetUri("Authentication:Authority", "connect/token");
+        client.ClientId = ClientId.Parse(builder.Configuration.GetString("Notification:ClientId"));
+        client.ClientSecret = ClientSecret.Parse(builder.Configuration.GetString("Notification:ClientSecret"));
+        client.Scope = Scope.Parse(builder.Configuration.GetString("Notification:Scope"));
     });
 
 builder.Services
