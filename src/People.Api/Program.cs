@@ -48,6 +48,7 @@ builder.Services
     .AddJwtBearer(options =>
     {
         options.Authority = builder.Configuration.GetRequiredUri("Authentication:Authority").AbsoluteUri;
+        options.Audience = builder.Configuration.GetRequiredString("Authentication:Audience");
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
