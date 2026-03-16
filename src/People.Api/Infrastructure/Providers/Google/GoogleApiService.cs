@@ -48,7 +48,7 @@ internal sealed class GoogleApiService : IGoogleApiService
         );
     }
 
-    private record Dto
+    private sealed record Dto
     {
         [JsonPropertyName("id")]
         public string? Id { get; init; }
