@@ -1,11 +1,11 @@
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using People.Domain;
 using People.Domain.Entities;
-using StackExchange.Redis;
 
 namespace People.Infrastructure.Confirmations;
 
@@ -13,24 +13,24 @@ internal sealed class ConfirmationService : IConfirmationService
 {
     private const int ConfirmationLength = 6;
 
-    private static readonly TimeSpan CodeTtl = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan CodeTtl = TimeSpan.FromMinutes(30);
     private static readonly TimeSpan LockTtl = TimeSpan.FromMinutes(1);
 
+    private readonly HybridCache _cache;
     private readonly PeopleDbContext _dbContext;
     private readonly AppSecurityOptions _options;
-    private readonly IDatabaseAsync _redis;
     private readonly TimeProvider _timeProvider;
 
     public ConfirmationService(
         PeopleDbContext dbContext,
-        IConnectionMultiplexer multiplexer,
+        HybridCache cache,
         IOptions<AppSecurityOptions> options,
         TimeProvider timeProvider
     )
     {
+        _cache = cache;
         _dbContext = dbContext;
         _timeProvider = timeProvider;
-        _redis = multiplexer.GetDatabase();
         _options = options.Value;
     }
 
@@ -113,26 +113,35 @@ internal sealed class ConfirmationService : IConfirmationService
 
     private async Task<Confirmation> EncodeAsync(AccountId id, string type, CancellationToken ct)
     {
-        var key = $"ppl-conf-lk-{id}";
+        var now = _timeProvider.UtcNow();
 
-        if (await _redis.KeyExistsAsync(key))
+        var ttl = await _cache.GetOrCreateAsync(
+            $"ppl-conf-lk-{type}-{id}",
+            _ => ValueTask.FromResult(now),
+            new HybridCacheEntryOptions
+            {
+                Expiration = LockTtl,
+                LocalCacheExpiration = LockTtl,
+            },
+            null,
+            ct
+        );
+
+        if (now != ttl)
             throw ConfirmationException.AlreadySent();
 
-        var confirmation = await _dbContext.Set<Confirmation>()
-            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
+        var db = _dbContext.Set<Confirmation>();
+        var confirmation = await db.FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
 
         if (confirmation is not null)
             return confirmation;
 
-        var now = _timeProvider.UtcNow();
         var code = CreateCode(ConfirmationLength);
 
         var entity = new Confirmation(id, code, type, now, CodeTtl);
-        await _dbContext.AddAsync(entity, ct);
+        await db.AddAsync(entity, ct);
 
         await _dbContext.SaveChangesAsync(ct);
-
-        await _redis.StringSetAsync(key, true, LockTtl);
 
         return entity;
     }

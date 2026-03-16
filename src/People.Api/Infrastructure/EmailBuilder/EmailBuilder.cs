@@ -7,12 +7,18 @@ namespace People.Api.Infrastructure.EmailBuilder;
 internal sealed partial class EmailBuilder : IEmailBuilder
 {
     private readonly IFluidViewRenderer _rendering;
+    private readonly ILogger<EmailBuilder> _logger;
 
-    public EmailBuilder(IFluidViewRenderer rendering) =>
+    public EmailBuilder(IFluidViewRenderer rendering, ILogger<EmailBuilder> logger)
+    {
         _rendering = rendering;
+        _logger = logger;
+    }
 
     public async Task<EmailTemplateResult> CreateEmailAsync(string templateName, ITemplateModel model)
     {
+        LogCreatingEmail(templateName);
+
         await using var writer = new StringWriter();
         await _rendering.RenderViewAsync(writer, $"Email/Views/{templateName}", new TemplateContext(model));
 
@@ -21,9 +27,17 @@ internal sealed partial class EmailBuilder : IEmailBuilder
         var body = writer.ToString();
         var subject = GetHtmlTitleRegex().Match(body).Value.Trim();
 
+        LogCreatedEmail(templateName, subject);
+
         return new EmailTemplateResult(subject, body);
     }
 
-    [GeneratedRegex("(?<=<title.*>)([\\s\\S]*)(?=</title>)", RegexOptions.NonBacktracking)]
+    [GeneratedRegex("(?<=<title.*>)([\\s\\S]*)(?=</title>)")]
     private static partial Regex GetHtmlTitleRegex();
+
+    [LoggerMessage(LogLevel.Information, "Creating email template {template}")]
+    partial void LogCreatingEmail(string template);
+
+    [LoggerMessage(LogLevel.Information, "Created email template {template} with subject {subject}")]
+    partial void LogCreatedEmail(string template, string subject);
 }

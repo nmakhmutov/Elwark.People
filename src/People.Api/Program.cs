@@ -3,17 +3,15 @@ using System.IO.Compression;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Duende.AccessTokenManagement;
 using FluentValidation;
 using Fluid;
-using Grpc.Core;
-using Grpc.Net.Client.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Notification.Grpc;
 using Npgsql;
 using People.Api.Application.Behaviour;
 using People.Api.Application.IntegrationEvents.EventHandling;
@@ -34,7 +32,8 @@ using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.Kafka;
-using StatusCode = Grpc.Core.StatusCode;
+using Scalar.AspNetCore;
+using Scope = Duende.AccessTokenManagement.Scope;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
@@ -48,13 +47,16 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["Urls:Identity"];
+        options.Authority = builder.Configuration.GetRequiredUri("Authentication:Authority").AbsoluteUri;
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = false,
-            ValidateLifetime = true
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            NameClaimType = "sub",
+            ClockSkew = TimeSpan.FromSeconds(10)
         };
     });
 
@@ -66,6 +68,18 @@ builder.Services
     .AddPolicy(Policy.RequireManagementAccess.Name, Policy.RequireManagementAccess.Policy);
 
 builder.Services
+    .AddClientCredentialsTokenManagement()
+    .AddClient(ClientCredentialsClientName.Parse("notification"), client =>
+    {
+        client.TokenEndpoint =
+            new Uri(builder.Configuration.GetRequiredUri("Authentication:Authority"), "connect/token");
+        client.ClientId = ClientId.Parse(builder.Configuration.GetRequiredString("Notification:ClientId"));
+        client.ClientSecret = ClientSecret.Parse(builder.Configuration.GetRequiredString("Notification:ClientSecret"));
+        client.Scope = Scope.Parse(builder.Configuration.GetRequiredString("Notification:Scope"));
+    });
+
+builder.Services
+    .AddOpenApi()
     .AddCors()
     .AddRequestLocalization(options =>
     {
@@ -93,11 +107,7 @@ builder.Services
     .AddMediator(options =>
     {
         options.ServiceLifetime = ServiceLifetime.Scoped;
-        options.PipelineBehaviors =
-        [
-            typeof(RequestLoggingBehavior<,>),
-            typeof(RequestValidatorBehavior<,>)
-        ];
+        options.PipelineBehaviors = [typeof(RequestLoggingBehavior<,>), typeof(RequestValidatorBehavior<,>)];
     })
     .AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), ServiceLifetime.Scoped, null, true)
     .AddInfrastructure(options =>
@@ -108,10 +118,12 @@ builder.Services
         };
 
         options.PostgresqlConnectionString = postgresql.ToString();
-        options.RedisConnectionString = builder.Configuration.GetConnectionString("Redis")!;
         options.AppKey = builder.Configuration["App:Key"]!;
         options.AppVector = builder.Configuration["App:Vector"]!;
     });
+
+builder.Services
+    .AddHybridCache();
 
 builder.Services
     .Configure<HostOptions>(options =>
@@ -152,7 +164,6 @@ builder.Services
     );
 
 builder.Services
-    .AddSingleton<INotificationSender, NotificationSender>()
     .AddSingleton<IEmailBuilder, EmailBuilder>()
     .AddFluid(options =>
     {
@@ -161,45 +172,10 @@ builder.Services
     });
 
 builder.Services
-    .AddGrpcClient<NotificationService.NotificationServiceClient>(options =>
-    {
-        options.Address = builder.Configuration.GetValue<Uri>("Urls:Notification.Api");
-        options.ChannelOptionsActions.Add(channel =>
-        {
-            channel.Credentials = ChannelCredentials.Insecure;
-            channel.ServiceConfig = new ServiceConfig
-            {
-                MethodConfigs =
-                {
-                    new MethodConfig
-                    {
-                        Names =
-                        {
-                            MethodName.Default
-                        },
-                        RetryPolicy = new RetryPolicy
-                        {
-                            MaxAttempts = 5,
-                            InitialBackoff = TimeSpan.FromSeconds(1),
-                            MaxBackoff = TimeSpan.FromSeconds(3),
-                            BackoffMultiplier = 1,
-                            RetryableStatusCodes =
-                            {
-                                StatusCode.Unavailable
-                            }
-                        }
-                    }
-                }
-            };
-            channel.HttpHandler = new HttpClientHandler
-            {
-                UseProxy = false,
-                AllowAutoRedirect = false,
-                ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-        });
-    });
+    .AddHttpClient<INotificationSender, NotificationSender>(client =>
+        client.BaseAddress = new Uri(builder.Configuration["Notification:Host"]!)
+    )
+    .AddClientCredentialsTokenHandler(ClientCredentialsClientName.Parse("notification"));
 
 builder.Services
     .AddHttpClient<IWorldClient, WorldClient>(client =>
@@ -306,6 +282,9 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 if (app.Environment.IsProduction())
     app.UseResponseCompression();
+
+app.MapOpenApi();
+app.MapScalarApiReference("/docs");
 
 app.MapAccountEndpoints();
 

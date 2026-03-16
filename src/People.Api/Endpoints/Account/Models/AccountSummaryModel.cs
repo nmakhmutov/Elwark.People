@@ -4,6 +4,7 @@ namespace People.Api.Endpoints.Account.Models;
 
 internal sealed record AccountSummaryModel(
     long Id,
+    string Email,
     string Nickname,
     string? FirstName,
     string? LastName,
@@ -22,6 +23,7 @@ internal sealed record AccountSummaryModel(
     internal static AccountSummaryModel Map(AccountSummary result) =>
         new(
             result.Id,
+            result.Email,
             result.Name.Nickname,
             result.Name.FirstName,
             result.Name.LastName,

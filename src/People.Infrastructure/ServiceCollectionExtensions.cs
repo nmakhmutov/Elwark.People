@@ -9,7 +9,6 @@ using People.Infrastructure.Confirmations;
 using People.Infrastructure.Cryptography;
 using People.Infrastructure.Providers.NpgsqlData;
 using People.Infrastructure.Repositories;
-using StackExchange.Redis;
 
 namespace People.Infrastructure;
 
@@ -34,9 +33,6 @@ public static class ServiceCollectionExtensions
                     provider.GetRequiredService<ILoggerFactory>()
                 )
             )
-            .AddSingleton<IConnectionMultiplexer>(_ =>
-                ConnectionMultiplexer.Connect(ConfigurationOptions.Parse(options.RedisConnectionString, true))
-            )
             .AddSingleton<IOptions<AppSecurityOptions>>(_ =>
                 new OptionsWrapper<AppSecurityOptions>(new AppSecurityOptions(options.AppKey, options.AppVector))
             )
@@ -49,8 +45,6 @@ public static class ServiceCollectionExtensions
 public sealed record InfrastructureOptions
 {
     public string PostgresqlConnectionString { get; set; } = string.Empty;
-
-    public string RedisConnectionString { get; set; } = string.Empty;
 
     public string AppKey { get; set; } = string.Empty;
 

@@ -20,6 +20,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
         await _accessor.Sql(
                 """
                 SELECT a.id,
+                       e.email,
                        a.nickname,
                        a.first_name,
                        a.last_name,
@@ -35,6 +36,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
                        a.roles,
                        a.ban
                 FROM accounts a
+                         INNER JOIN emails e ON a.id = e.account_id AND e.is_primary = TRUE
                 WHERE a.id = @p0
                 LIMIT 1
                 """
@@ -42,28 +44,30 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
             .AddParameter("@p0", (long)request.Id)
             .Select(x => new AccountSummary(
                 new AccountId(x.GetInt64(0)),
+                x.GetString(1),
                 new Name(
-                    x.GetString(1),
-                    x.IsDBNull(2) ? null : x.GetString(2),
+                    x.GetString(2),
                     x.IsDBNull(3) ? null : x.GetString(3),
-                    x.GetBoolean(4)
+                    x.IsDBNull(4) ? null : x.GetString(4),
+                    x.GetBoolean(5)
                 ),
-                x.GetString(5),
-                Language.Parse(x.GetString(6)),
-                RegionCode.Parse(x.GetString(7)),
-                CountryCode.Parse(x.GetString(8)),
-                TimeZone.Parse(x.GetString(9)),
-                DateFormat.Parse(x.GetString(10)),
-                TimeFormat.Parse(x.GetString(11)),
-                (DayOfWeek)x.GetInt32(12),
-                x.GetFieldValue<string[]>(13),
-                x.IsDBNull(14) ? null : x.GetFieldValue<Ban>(14)
+                x.GetString(6),
+                Language.Parse(x.GetString(7)),
+                RegionCode.Parse(x.GetString(8)),
+                CountryCode.Parse(x.GetString(9)),
+                TimeZone.Parse(x.GetString(10)),
+                DateFormat.Parse(x.GetString(11)),
+                TimeFormat.Parse(x.GetString(12)),
+                (DayOfWeek)x.GetInt32(13),
+                x.GetFieldValue<string[]>(14),
+                x.IsDBNull(15) ? null : x.GetFieldValue<Ban>(15)
             ))
             .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(request.Id);
 }
 
 internal sealed record AccountSummary(
     AccountId Id,
+    string Email,
     Name Name,
     string Picture,
     Language Language,
