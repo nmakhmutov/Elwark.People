@@ -6,31 +6,31 @@ internal sealed record PolicyRule(string Name, AuthorizationPolicy Policy);
 
 internal static class Policy
 {
-    public static PolicyRule RequireAuthenticatedUser = new(
+    public static readonly PolicyRule RequireAuthenticatedUser = new(
         nameof(RequireAuthenticatedUser),
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             .Build()
     );
 
-    public static PolicyRule RequireCommonAccess = new(
+    public static readonly PolicyRule RequireCommonAccess = new(
         nameof(RequireCommonAccess),
         new AuthorizationPolicyBuilder()
-            .RequireClaim("scope", "elwark.people")
+            .RequireAssertion(context => context.User.FindAll("scope").SelectMany(x => x.Value.Split(' ')).Contains("elwark.people"))
             .Build()
     );
 
-    public static PolicyRule RequireProfileAccess = new(
+    public static readonly PolicyRule RequireProfileAccess = new(
         nameof(RequireProfileAccess),
         new AuthorizationPolicyBuilder()
-            .RequireClaim("scope", "elwark.people.profile")
+            .RequireAssertion(context => context.User.FindAll("scope").SelectMany(x => x.Value.Split(' ')).Contains("elwark.people.profile"))
             .Build()
     );
 
-    public static PolicyRule RequireManagementAccess = new(
+    public static readonly PolicyRule RequireManagementAccess = new(
         nameof(RequireManagementAccess),
         new AuthorizationPolicyBuilder()
-            .RequireClaim("scope", "elwark.people.admin")
+            .RequireAssertion(context => context.User.FindAll("scope").SelectMany(x => x.Value.Split(' ')).Contains("elwark.people.admin"))
             .RequireRole("adm", "ppl.adm")
             .Build()
     );

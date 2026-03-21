@@ -161,7 +161,6 @@ builder.Services
         options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
     });
 
-
 builder.Services
     .AddClientCredentialsTokenManagement()
     .AddClient(ClientCredentialsClientName.Parse("notification"), client =>
