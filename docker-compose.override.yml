@@ -18,7 +18,6 @@ services:
       - Authentication__Authority=http://elwark_identity_api
       - Authentication__Audience=elwark.people.api
       - Notification__Host=http://elwark_notification_api
-      - Urls__World.Api=http://world_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=elwark_people;Username=master_account;Password=master_password
       - ConnectionStrings__Kafka=broker:29092
     ports:

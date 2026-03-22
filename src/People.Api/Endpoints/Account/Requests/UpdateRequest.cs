@@ -55,7 +55,6 @@ internal sealed record UpdateRequest(
 
             RuleFor(x => x.CountryCode)
                 .NotEmpty()
-                .Length(2)
                 .Must(x => Domain.ValueObjects.CountryCode.TryParse(x, out _));
 
             RuleFor(x => x.TimeZone)

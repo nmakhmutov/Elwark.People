@@ -17,6 +17,7 @@ using People.Api.Application.Behaviour;
 using People.Api.Application.IntegrationEvents.EventHandling;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Queries.GetAccountSummary;
+using People.Api.Endpoints;
 using People.Api.Endpoints.Account;
 using People.Api.Grpc;
 using People.Api.Infrastructure;
@@ -178,8 +179,8 @@ builder.Services
     .AddClientCredentialsTokenHandler(ClientCredentialsClientName.Parse("notification"));
 
 builder.Services
-    .AddHttpClient<IWorldClient, WorldClient>(client =>
-        client.BaseAddress = new Uri(builder.Configuration["Urls:World.Api"]!)
+    .AddHttpClient<ICountryClient, CountryClient>(client =>
+        client.BaseAddress = new Uri(builder.Configuration["Urls:Countries.Api"]!)
     );
 
 builder.Services
@@ -287,6 +288,8 @@ app.MapOpenApi();
 app.MapScalarApiReference("/docs");
 
 app.MapAccountEndpoints();
+app.MapCountriesEndpoints();
+app.MapTimezonesEndpoints();
 
 app.MapGrpcService<PeopleService>();
 

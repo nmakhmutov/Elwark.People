@@ -25,12 +25,12 @@ internal sealed record UpdateAccountCommand(
 internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, Account>
 {
     private readonly IAccountRepository _repository;
-    private readonly IWorldClient _worldClient;
+    private readonly ICountryClient _countryClient;
 
-    public UpdateAccountCommandHandler(IAccountRepository repository, IWorldClient worldClient)
+    public UpdateAccountCommandHandler(IAccountRepository repository, ICountryClient countryClient)
     {
         _repository = repository;
-        _worldClient = worldClient;
+        _countryClient = countryClient;
     }
 
     public async ValueTask<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
@@ -53,7 +53,7 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
 
     private async Task<RegionCode> GetRegionAsync(CountryCode country, CancellationToken ct)
     {
-        var result = await _worldClient.GetCountryAsync(country, ct);
-        return result is null ? RegionCode.Empty : RegionCode.Parse(result.Region);
+        var result = await _countryClient.GetAsync(country, ct);
+        return result?.Region ?? RegionCode.Empty;
     }
 }
