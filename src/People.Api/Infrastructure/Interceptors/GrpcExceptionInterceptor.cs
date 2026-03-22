@@ -2,6 +2,7 @@ using FluentValidation;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using People.Domain.Exceptions;
+using People.Infrastructure.Confirmations;
 
 namespace People.Api.Infrastructure.Interceptors;
 
@@ -22,6 +23,10 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
         {
             return await continuation(request, context);
         }
+        catch (ConfirmationException ex)
+        {
+            throw WrapConfirmationException(context, ex);
+        }
         catch (PeopleException ex)
         {
             throw WrapPeopleException(context, ex);
@@ -38,6 +43,21 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
         {
             throw WrapUnhandledException(context, ex);
         }
+    }
+
+    private RpcException WrapConfirmationException(ServerCallContext context, ConfirmationException ex)
+    {
+        _logger.LogWarning("Confirmation exception {Code} at the endpoint {Method}", ex.Code, context.Method);
+
+        var code = ex.Code switch
+        {
+            "NotFound" => StatusCode.NotFound,
+            "Mismatch" => StatusCode.InvalidArgument,
+            "AlreadySent" => StatusCode.ResourceExhausted,
+            _ => StatusCode.FailedPrecondition
+        };
+
+        throw new RpcException(new Status(code, $"Confirmation{ex.Code}"));
     }
 
     private RpcException WrapPeopleException(ServerCallContext context, PeopleException ex)
@@ -70,7 +90,8 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
             }
         };
 
-        throw new RpcException(new Status(code, ex.Message), meta);
+        var detail = $"{ex.Name.Replace("Exception", string.Empty)}{ex.Code}";
+        throw new RpcException(new Status(code, detail), meta);
     }
 
     private RpcException WrapValidationException(ServerCallContext context, ValidationException ex)

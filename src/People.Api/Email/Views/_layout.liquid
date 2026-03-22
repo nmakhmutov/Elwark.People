@@ -1,204 +1,289 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      style="width:100%;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;margin:0">
+<!doctype html>
+<html lang="{% rendersection lang %}" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office" dir="ltr">
 <head>
     <title>{% rendersection title %}</title>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <!--[if !mso]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/><!--<![endif]-->
+    <meta name="format-detection" content="telephone=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="x-apple-disable-message-reformatting"/>
     <meta content="script-src 'none'; connect-src 'none'; object-src 'none'; form-action 'none';"
-          http-equiv="Content-Security-Policy">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <meta name="x-apple-disable-message-reformatting">
-    <meta content="IE=edge" http-equiv="X-UA-Compatible">
-    <meta content="telephone=no" name="format-detection">
-    <meta content="{% rendersection title %}" property="og:title">
+          http-equiv="Content-Security-Policy"/>
+    <meta content="{% rendersection title %}" property="og:title"/>
     <meta content="https://res.cloudinary.com/elwark/image/upload/v1613019548/Elwark/white/60x60.png"
-          property="og:image">
-    <meta content="https://identity.elwark.com" property="og:url">
-</head>
-
-<body
-    style="width:100%;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;padding:0;margin:0">
-<div class="es-wrapper-color" style="background-color:#F4F4F4">
-    <!--[if gte mso 9]>
-    <v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
-        <v:fill type="tile" color="#f4f4f4"></v:fill>
-    </v:background>
+          property="og:image"/>
+    <meta content="https://identity.elwark.com" property="og:url"/>
+    <style type="text/css">
+        #outlook a { padding: 0; }
+        .ReadMsgBody { width: 100%; }
+        .ExternalClass { width: 100%; }
+        .ExternalClass * { line-height: 100%; }
+        body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
+        p { display: block; margin: 13px 0; }
+        .im { color: inherit !important; }
+    </style>
+    <!--[if mso]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+    </xml>
     <![endif]-->
-    <table width="100%" cellpadding="0" cellspacing="0" class="es-wrapper"
-           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;padding:0;margin:0;width:100%;height:100%;background-repeat:repeat;background-position:center top">
-        <tbody>
-        <tr class="gmail-fix" height="0" style="border-collapse:collapse">
-            <td style="padding:0;margin:0">
-                <table align="center" border="0" cellpadding="0" cellspacing="0"
-                       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;width:600px">
-                    <tbody>
-                    <tr style="border-collapse:collapse">
-                        <td border="0" cellpadding="0" cellspacing="0" height="0"
-                            style="padding:0;margin:0;line-height:1px;min-width:600px">
-                            <img alt width="600" height="1"
-                                 src="https://esputnik.com/repository/applications/images/blank.gif"
-                                 style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;max-height:0px;min-height:0px;min-width:600px;width:600px">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+    <!--[if lte mso 11]>
+    <style type="text/css">
+        .outlook-group-fix { width: 100% !important; }
+    </style>
+    <![endif]-->
+    <!--[if !mso]><!-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet" type="text/css"/>
+    <style type="text/css">
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600,700);
+    </style>
+    <!--<![endif]-->
+    <style type="text/css">
+        @media only screen and (min-width: 480px) {
+            .column-per-100 { width: 100% !important; max-width: 100%; }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .full-width-mobile { width: 100% !important; }
+            td.full-width-mobile { width: auto !important; }
+            .wrapper-padding { padding: 0 24px !important; }
+            .wrapper-margin { width: 24px !important; }
+            .center-on-mobile { text-align: center !important; }
+        }
+
+        @media only screen and (max-width: 648px) {
+            .wrapper-padding { padding: 0 24px !important; }
+            .wrapper-margin { width: 24px !important; }
+        }
+    </style>
+</head>
+<body id="body" style="background-color: #fafafa; margin: 0; padding: 0;">
+
+<span style="width:0;opacity:0;max-height:0;mso-hide:all;overflow:hidden;float:left;display:none !important;">{% rendersection title %}</span>
+<span style="display: none; max-height: 0px; overflow: hidden;">
+    &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;
+    &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;
+    &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;
+    &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;
+    &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847; &#8199;&#847;
+    &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;
+    &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;
+    &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy; &shy;
+    &nbsp;
+</span>
+
+<div style="background-color: #fafafa;">
+    <!--[if mso | IE]>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" class="wrapper-outlook"
+           style="width:600px;" width="600">
+        <tr>
+            <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+    <![endif]-->
+
+    <!-- Header -->
+    <div class="wrapper" style="margin: 0px auto; max-width: 600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+               style="width: 100%; background: linear-gradient(135deg, #005f90, #133b63); background-color: #005f90;">
+            <tbody>
+            <tr>
+                <td style="direction: ltr; font-size: 0px; padding: 20px 0; text-align: center; vertical-align: top;">
+                    <!--[if mso | IE]>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td style="vertical-align:top;width:600px;">
+                    <![endif]-->
+                    <div class="column-per-100 outlook-group-fix"
+                         style="direction: ltr; display: inline-block; font-size: 13px; text-align: left; vertical-align: top; width: 100%;">
+                        <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                            <tbody>
+                            <tr>
+                                <td style="padding: 10px 0; vertical-align: top; text-align: center;">
+                                    <img alt="Elwark" width="60" height="60"
+                                         src="https://res.cloudinary.com/elwark/image/upload/v1613019548/Elwark/white/60x60.png"
+                                         style="display: block; margin: 0 auto; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;"/>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--[if mso | IE]>
+                            </td>
+                        </tr>
+                    </table>
+                    <![endif]-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!--[if mso | IE]>
             </td>
         </tr>
-        <tr style="border-collapse:collapse">
-            <td style="padding:0;margin:0" valign="top">
-                <table align="center" cellpadding="0" cellspacing="0" class="es-header"
-                       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:#3f51b5;background-repeat:repeat;background-position:center top">
-                    <tbody>
-                    <tr style="border-collapse:collapse">
-                        <td align="center" style="padding:0;margin:0">
-                            <table align="center" cellpadding="0" cellspacing="0" class="es-header-body"
-                                   style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px">
-                                <tbody>
-                                <tr style="border-collapse:collapse">
-                                    <td align="left"
-                                        style="margin:0;padding-bottom:10px;padding-left:10px;padding-right:10px;padding-top:20px">
-                                        <table width="100%" cellpadding="0" cellspacing="0"
-                                               style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                                            <tbody>
-                                            <tr style="border-collapse:collapse">
-                                                <td align="center" style="padding:0;margin:0;width:580px" valign="top">
-                                                    <table width="100%" cellpadding="0" cellspacing="0"
-                                                           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                                                        <tbody>
-                                                        <tr style="border-collapse:collapse">
-                                                            <td align="center"
-                                                                style="margin:0;padding-left:10px;padding-right:10px;padding-top:25px;padding-bottom:25px;font-size:0">
-                                                                <img width="60" alt=""
-                                                                     src="https://res.cloudinary.com/elwark/image/upload/v1613019548/Elwark/white/60x60.png"
-                                                                     style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic">
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-                <table align="center" cellpadding="0" cellspacing="0" class="es-content"
-                       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-                    <tbody>
-                    <tr style="border-collapse:collapse">
-                        <td align="center" bgcolor="#3f51b5" style="padding:0;margin:0;background-color:#3f51b5">
-                            <table align="center"
-                                   cellpadding="0"
-                                   cellspacing="0" class="es-content-body"
-                                   style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px">
-                                <tbody>
-                                <tr style="border-collapse:collapse">
-                                    <td align="left" style="padding:0;margin:0">
-                                        <table cellpadding="0" cellspacing="0"
-                                               style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"
-                                               width="100%">
-                                            <tbody>
-                                            <tr style="border-collapse:collapse">
-                                                <td align="center" style="padding:0;margin:0;width:600px" valign="top">
-                                                    <table bgcolor="#ffffff"
-                                                           cellpadding="0" cellspacing="0"
-                                                           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:separate;border-spacing:0px;background-color:#FFFFFF;border-radius:4px"
-                                                           width="100%">
-                                                        <tbody>
-                                                        <tr style="border-collapse:collapse">
-                                                            <td align="center"
-                                                                style="margin:0;padding-bottom:5px;padding-left:30px;padding-right:30px;padding-top:35px">
-                                                                <h1 style="margin:0;line-height:58px;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;font-size:36px;font-style:normal;font-weight:normal;color:#111111">
-                                                                    {% rendersection title %}
-                                                                </h1>
-                                                            </td>
-                                                        </tr>
-                                                        <tr style="border-collapse:collapse">
-                                                            <td align="center" bgcolor="#ffffff"
-                                                                style="margin:0;padding-top:5px;padding-bottom:5px;padding-left:20px;padding-right:20px;font-size:0">
-                                                                <table border="0" cellpadding="0" cellspacing="0"
-                                                                       height="100%"
-                                                                       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"
-                                                                       width="100%">
-                                                                    <tbody>
-                                                                    <tr style="border-collapse:collapse">
-                                                                        <td style="padding:0;margin:0;border-bottom:1px solid #FFFFFF;background:#FFFFFF none repeat scroll 0% 0%;height:1px;width:100%;margin:0px"></td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                {% comment %} https://viewstripo.email/template/28a70e81-1a45-4784-977d-258baf229e2b {% endcomment %}
-                {% renderbody %}
-
-                <table align="center" cellpadding="0" cellspacing="0"
-                       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:transparent;background-repeat:repeat;background-position:center top">
-                    <tbody>
-                    <tr style="border-collapse:collapse">
-                        <td align="center" style="padding:0; margin:0">
-                            <table align="center" cellpadding="0" cellspacing="0"
-                                   style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px">
-                                <tbody>
-                                <tr style="border-collapse:collapse">
-                                    <td align="left"
-                                        style="margin:0;padding-top:30px;padding-bottom:30px;padding-left:30px;padding-right:30px">
-                                        <table cellpadding="0" cellspacing="0"
-                                               style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"
-                                               width="100%">
-                                            <tbody>
-                                            <tr style="border-collapse:collapse">
-                                                <td align="center" style="padding:0;margin:0;width:540px" valign="top">
-                                                    <table cellpadding="0" cellspacing="0"
-                                                           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"
-                                                           width="100%">
-                                                        <tbody>
-                                                        <tr style="border-collapse:collapse">
-                                                            <td align="center"
-                                                                style="margin:0; padding: 25px 0 0 0;">
-                                                                <p style="margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#666666">
-                                                                    &copy Elwark {{ "now" | date: "%Y" }}
-                                                                </p>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        </tbody>
     </table>
+    <![endif]-->
+
+    <!--[if mso | IE]>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" style="width:600px;" width="600">
+        <tr>
+            <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+    <![endif]-->
+
+    <!-- Title -->
+    <div style="background-color: #ffffff; margin: 0px auto; max-width: 600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+               style="background-color: #ffffff; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="direction: ltr; font-size: 0px; padding: 12px 0; text-align: center; vertical-align: top;">
+                    <!--[if mso | IE]>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td style="vertical-align:top;width:600px;">
+                    <![endif]-->
+                    <div class="column-per-100 outlook-group-fix"
+                         style="direction: ltr; display: inline-block; font-size: 13px; text-align: left; vertical-align: top; width: 100%;">
+                        <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                            <tbody>
+                            <tr>
+                                <td style="padding: 0; vertical-align: top;">
+                                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                                        <tr>
+                                            <td align="left" class="wrapper-padding"
+                                                style="font-size: 0px; padding: 25px 48px 8px 48px; word-break: break-word;">
+                                                <div style="color: #18181b; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 32px; font-weight: 700; letter-spacing: -0.1px; line-height: 130%; text-align: left;">
+                                                    <p style="margin-top: 0; margin-bottom: 0;">
+                                                            {% rendersection heading %}
+                                                    </p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left" class="wrapper-padding"
+                                                style="font-size: 0px; padding: 8px 48px 0 48px; word-break: break-word;">
+                                                <div style="color: #18181b; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 160%; text-align: left;">
+                                                    <p style="margin-top: 0; margin-bottom: 0;">
+                                                        {% rendersection description %}
+                                                    </p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--[if mso | IE]>
+                            </td>
+                        </tr>
+                    </table>
+                    <![endif]-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!--[if mso | IE]>
+            </td>
+        </tr>
+    </table>
+    <![endif]-->
+
+    <!-- Body -->
+    {% renderbody %}
+
+    <!--[if mso | IE]>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" style="width:600px;" width="600">
+        <tr>
+            <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+    <![endif]-->
+
+    <!-- Footer -->
+    <div style="background-color: #ffffff; margin: 0px auto; max-width: 600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+               style="background-color: #ffffff; width: 100%;">
+            <tbody>
+            <tr>
+                <td style="direction: ltr; font-size: 0px; padding: 0; text-align: center; vertical-align: top;">
+                    <table border="0" cellpadding="0" cellspacing="0" role="presentation"
+                           style="color: #18181b; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 22px; table-layout: auto; width: 100%;">
+                        <tr>
+                            <th class="wrapper-margin" width="48">&nbsp;</th>
+                            <th>
+                                <table border="0" cellpadding="0" cellspacing="0" role="presentation"
+                                       style="width: 100%;">
+                                    <tr>
+                                        <td style="border-bottom: 1px solid #e4e4e7; height: 24px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 24px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="center-on-mobile"
+                                            style="color: #71717a; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 14px; font-weight: 400; line-height: 160%; text-align: left;">
+                                            {% rendersection footer %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 24px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 0; vertical-align: top;">
+                                            <table border="0" cellpadding="0" cellspacing="0" role="presentation"
+                                                   style="width: 100%;">
+                                                <tr>
+                                                    <td style="width: 48px; vertical-align: middle; padding-right: 12px;" rowspan="2">
+                                                        <img alt="Elwark" width="48" height="48"
+                                                             src="https://res.cloudinary.com/elwark/image/upload/v1613019548/Elwark/primary/60x60.png"
+                                                             style="display: block; border: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;"/>
+                                                    </td>
+                                                    <td style="vertical-align: middle; text-align: left;">
+                                                        <span style="color: #a1a1aa; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 400; line-height: 160%;">
+                                                            {% rendersection disclaimer %}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 16px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            <span style="color: #a1a1aa; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 400; line-height: 160%;">
+                                                &copy; Elwark {{ "now" | date: "%Y" }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 32px;">&nbsp;</td>
+                                    </tr>
+                                </table>
+                            </th>
+                            <th class="wrapper-margin" width="48">&nbsp;</th>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!--[if mso | IE]>
+            </td>
+        </tr>
+    </table>
+    <![endif]-->
 </div>
 
 </body>

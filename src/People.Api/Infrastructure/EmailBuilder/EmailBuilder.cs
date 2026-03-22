@@ -8,19 +8,24 @@ internal sealed partial class EmailBuilder : IEmailBuilder
 {
     private readonly IFluidViewRenderer _rendering;
     private readonly ILogger<EmailBuilder> _logger;
+    private readonly string _host;
 
-    public EmailBuilder(IFluidViewRenderer rendering, ILogger<EmailBuilder> logger)
+    public EmailBuilder(IFluidViewRenderer rendering, IConfiguration configuration, ILogger<EmailBuilder> logger)
     {
         _rendering = rendering;
         _logger = logger;
+        _host = configuration["Authentication:Authority"] ?? "https://identity.elwark.com";
     }
 
     public async Task<EmailTemplateResult> CreateEmailAsync(string templateName, ITemplateModel model)
     {
         LogCreatingEmail(templateName);
 
+        var context = new TemplateContext(model);
+        context.SetValue("IdentityHost", _host);
+
         await using var writer = new StringWriter();
-        await _rendering.RenderViewAsync(writer, $"Email/Views/{templateName}", new TemplateContext(model));
+        await _rendering.RenderViewAsync(writer, $"Email/Views/{templateName}", context);
 
         await writer.FlushAsync();
 

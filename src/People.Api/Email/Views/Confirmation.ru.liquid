@@ -1,103 +1,72 @@
 {% layout '_layout.liquid' %}
 
-{% section title %}Код подтверждения{% endsection %}
+{% section lang %}ru{% endsection %}
+{% section title %}Код подтверждения {{ Code }}{% endsection %}
+{% section heading %}Код подтверждения{% endsection %}
+{% section description %}Введите этот код в течение 30 минут.{% endsection %}
 
-<table align="center" cellpadding="0" cellspacing="0" class="es-content"
-       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%">
-    <tbody>
-    <tr style="border-collapse:collapse">
-        <td align="center" style="padding:0;margin:0">
-            <table align="center"
-                   cellpadding="0"
-                   cellspacing="0"
-                   class="es-content-body"
-                   style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px">
-                <tbody>
-                <tr style="border-collapse:collapse">
-                    <td align="left" style="padding:0;margin:0">
-                        <table cellpadding="0" cellspacing="0"
-                               style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px"
-                               width="100%">
-                            <tbody>
-                            <tr style="border-collapse:collapse">
-                                <td align="center" style="padding:0;margin:0;width:600px" valign="top">
-                                    <table bgcolor="#ffffff"
-                                           cellpadding="0" cellspacing="0"
-                                           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:separate;border-spacing:0px;border-radius:4px;background-color:#FFFFFF"
-                                           width="100%">
-                                        <tbody>
-                                        <tr style="border-collapse:collapse">
-                                            <td align="center"
-                                                style="margin:0;padding-left:10px;padding-right:10px;padding-top:25px;padding-bottom:25px">
-                                                <h1 style="margin:0;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;font-size:48px;font-style:normal;font-weight:normal;color:#111111">
-                                                    {{ Code }}
-                                                </h1>
-                                            </td>
-                                        </tr>
-                                        <tr style="border-collapse:collapse">
-                                            <td align="left" class="es-m-txt-l"
-                                                style="margin:0;padding-top:20px;padding-left:30px;padding-right:30px;padding-bottom:40px">
-                                                <p style="margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:18px;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:27px;color:#666666">
-                                                    Все, что вам нужно сделать, это скопировать код подтверждения и
-                                                    вставить его в форму, чтобы завершить процесс проверки.
-                                                </p>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+{% section footer %}
+<span>Отправлено на почту, связанную с вашей учётной записью Elwark.</span>
+{% endsection %}
+
+{% section disclaimer %}
+Это сообщение создано автоматически. Пожалуйста, не отвечайте.
+<a href="{{ IdentityHost }}/TermOfUse" style="color: #3f3f46; text-decoration: underline;">Условия использования</a>
+&middot;
+<a href="{{ IdentityHost }}/Privacy" style="color: #3f3f46; text-decoration: underline;">Политика конфиденциальности</a>
+{% endsection %}
+
+<!--[if mso | IE]>
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="width:600px;" width="600">
+    <tr>
+        <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+<![endif]-->
+
+<div style="background-color: #ffffff; margin: 0px auto; max-width: 600px;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+           style="background-color: #ffffff; width: 100%;">
+        <tbody>
+        <tr>
+            <td style="direction: ltr; font-size: 0px; padding: 0; text-align: center; vertical-align: top;">
+                <!--[if mso | IE]>
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="vertical-align:top;width:600px;">
+                <![endif]-->
+                <div class="column-per-100 outlook-group-fix"
+                     style="direction: ltr; display: inline-block; font-size: 13px; text-align: left; vertical-align: top; width: 100%;">
+                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                        <tbody>
+                        <tr>
+                            <td style="background-color: #ffffff; padding: 0; vertical-align: top;">
+                                <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                                    <tr>
+                                        <td align="center" class="wrapper-padding"
+                                            style="font-size: 0px; padding: 12px 48px; word-break: break-word;">
+                                            <div style="color: #18181b; font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 700; letter-spacing: 8px; line-height: 130%; text-align: center;">
+                                                <p style="margin-top: 0; margin-bottom: 0;">{{ Code }}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--[if mso | IE]>
+                        </td>
+                    </tr>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--[if mso | IE]>
         </td>
     </tr>
-    </tbody>
 </table>
-
-<table align="center" cellpadding="0" cellspacing="0"
-       style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%;background-color:transparent;background-repeat:repeat;background-position:center top">
-    <tbody>
-    <tr style="border-collapse:collapse">
-        <td style="padding:0; margin:0">
-            <table align="center" cellpadding="0" cellspacing="0"
-                   style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:transparent;width:600px">
-                <tbody>
-                <tr style="border-collapse:collapse">
-                    <td align="left" style="margin:0;padding-left:30px;padding-right:30px">
-                        <table cellpadding="0" cellspacing="0" width="100%"
-                               style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                            <tbody>
-                            <tr style="border-collapse:collapse">
-                                <td style="padding:0;margin:0;width:540px" valign="top">
-                                    <table cellpadding="0" cellspacing="0" width="100%"
-                                           style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
-                                        <tbody>
-                                        <tr style="border-collapse:collapse">
-                                            <td style="margin:0; padding: 25px 0 0 0;">
-                                                <p style="margin:0; padding-bottom:10px; -webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#666666">
-                                                    Это уведомление было отправлено на адрес электронной почты,
-                                                    связанный с вашей учетной записью Elwark.
-                                                </p>
-                                                <p style="margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:14px;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;color:#666666">
-                                                    Это сообщение электронной почты было создано автоматически.
-                                                    Пожалуйста, не отвечайте.
-                                                </p>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<![endif]-->

@@ -6,7 +6,7 @@ using People.Kafka.Integration;
 
 namespace People.Api.Application.IntegrationEvents.EventHandling;
 
-internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventHandler<AccountActivity>
+internal sealed partial class AccountEngagedIntegrationEventHandler : IIntegrationEventHandler<AccountActivity>
 {
     private readonly IConfirmationService _confirmation;
     private readonly PeopleDbContext _dbContext;
@@ -37,10 +37,16 @@ internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventH
             .ExecuteUpdateAsync(x => x.SetProperty(p => EF.Property<DateTime>(p, property), message.CreatedAt), ct);
 
         if (result > 0)
-            _logger.LogInformation("Account {id} {property} updated successful", message.AccountId, property);
+            LogAccountUpdated(message.AccountId, property);
         else
-            _logger.LogWarning("Account {id} not found, engagement not updated", message.AccountId);
+            LogAccountNotFound(message.AccountId);
 
         await _confirmation.DeleteAsync(message.AccountId, ct);
     }
+
+    [LoggerMessage(LogLevel.Information, "Account {id} {property} updated successful")]
+    partial void LogAccountUpdated(long id, string property);
+
+    [LoggerMessage(LogLevel.Warning, "Account {id} not found, engagement not updated")]
+    partial void LogAccountNotFound(long id);
 }
