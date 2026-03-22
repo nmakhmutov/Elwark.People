@@ -13,7 +13,7 @@ using People.Infrastructure;
 namespace People.Infrastructure.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
-    [Migration("20240630111410_Init")]
+    [Migration("20260322203136_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -21,7 +21,7 @@ namespace People.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -93,6 +93,12 @@ namespace People.Infrastructure.Migrations
                         .HasColumnType("character varying(128)")
                         .HasColumnName("time_zone");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.Property<Ban>("_ban")
                         .HasColumnType("json")
                         .HasColumnName("ban");
@@ -120,7 +126,7 @@ namespace People.Infrastructure.Migrations
                         .HasColumnType("bytea")
                         .HasColumnName("reg_ip");
 
-                    b.Property<string[]>("_roles")
+                    b.PrimitiveCollection<string[]>("_roles")
                         .IsRequired()
                         .HasColumnType("text[]")
                         .HasColumnName("roles");
@@ -131,12 +137,6 @@ namespace People.Infrastructure.Migrations
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<uint>("version")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
                     b.HasKey("Id");
 
                     b.ToTable("accounts", (string)null);
@@ -145,6 +145,7 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Domain.Entities.EmailAccount", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -184,6 +185,7 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Domain.Entities.ExternalConnection", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -229,6 +231,7 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Infrastructure.Confirmations.Confirmation", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 

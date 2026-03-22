@@ -97,7 +97,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasDefaultValue(false)
             .IsRequired();
 
-        builder.Property("_roles")
+        builder.Property<string[]>("_roles")
             .HasColumnName("roles")
             .IsRequired();
 
@@ -132,7 +132,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property<uint>("version")
+        builder.Property<uint>("Version")
             .IsRowVersion();
 
         builder.HasMany(x => x.Emails)

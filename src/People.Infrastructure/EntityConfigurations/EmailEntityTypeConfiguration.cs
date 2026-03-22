@@ -17,7 +17,8 @@ internal sealed class EmailEntityTypeConfiguration : IEntityTypeConfiguration<Em
         builder.Ignore(x => x.IsConfirmed);
 
         builder.Property(x => x.Id)
-            .HasColumnName("id");
+            .HasColumnName("id")
+            .ValueGeneratedNever();
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")

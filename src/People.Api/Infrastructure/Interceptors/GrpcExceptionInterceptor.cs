@@ -110,7 +110,7 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
         };
 
         var result = ex.Errors.GroupBy(x => x.PropertyName)
-            .ToDictionary(x => $"ex-field-{x.Key}", x => x.Select(t => t.ErrorCode));
+            .ToDictionary(x => $"ex-field-{x.Key}", x => x.Select(t => t.ErrorMessage));
 
         foreach (var (field, errors) in result)
             meta.Add(field, string.Join("|", errors));

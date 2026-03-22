@@ -35,7 +35,6 @@ internal sealed class SignUpByEmailCommandHandler : IRequestHandler<SignUpByEmai
 
         account.ConfirmEmail(account.GetPrimaryEmail(), _timeProvider);
 
-        _repository.Update(account);
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

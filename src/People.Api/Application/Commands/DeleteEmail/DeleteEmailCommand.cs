@@ -21,8 +21,6 @@ internal sealed class DeleteEmailCommandHandler : IRequestHandler<DeleteEmailCom
 
         account.DeleteEmail(request.Email);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

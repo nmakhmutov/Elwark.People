@@ -21,8 +21,6 @@ internal sealed class ChangePrimaryEmailCommandHandler : IRequestHandler<ChangeP
 
         account.SetPrimaryEmail(request.Email);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

@@ -11,7 +11,7 @@ using People.Webhooks.Infrastructure;
 namespace People.Webhooks.Infrastructure.Migrations
 {
     [DbContext(typeof(WebhookDbContext))]
-    [Migration("20241227091555_Init")]
+    [Migration("20260322203533_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace People.Webhooks.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

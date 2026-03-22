@@ -15,31 +15,16 @@ internal sealed class AccountRepository : IAccountRepository
     public IUnitOfWork UnitOfWork =>
         _dbContext;
 
-    public async Task<Account?> GetAsync(AccountId id, CancellationToken ct)
-    {
-        var account = await _dbContext.Accounts
+    public Task<Account?> GetAsync(AccountId id, CancellationToken ct) =>
+        _dbContext.Accounts
+            .Include(x => x.Emails)
+            .Include(x => x.Externals)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == id, ct);
 
-        if (account is null)
-            return null;
-
-        await _dbContext.Entry(account)
-            .Collection(x => x.Emails)
-            .LoadAsync(ct);
-
-        await _dbContext.Entry(account)
-            .Collection(x => x.Externals)
-            .LoadAsync(ct);
-
-        return account;
-    }
-
     public async Task<Account> AddAsync(Account account, CancellationToken ct) =>
-        (await _dbContext.AddAsync(account, ct)).Entity;
-
-    public void Update(Account account) =>
-        _dbContext.Entry(account).State = EntityState.Modified;
+        (await _dbContext.Accounts.AddAsync(account, ct)).Entity;
 
     public void Delete(Account entity) =>
-        _dbContext.Remove(entity);
+        _dbContext.Accounts.Remove(entity);
 }

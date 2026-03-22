@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -9,8 +9,7 @@ using People.Infrastructure.EntityConfigurations;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 namespace People.Infrastructure;
 
-public sealed class PeopleDbContext : DbContext,
-    IUnitOfWork
+public sealed class PeopleDbContext : DbContext, IUnitOfWork
 {
     private readonly IMediator _mediator;
     private readonly TimeProvider _timeProvider;
@@ -34,7 +33,10 @@ public sealed class PeopleDbContext : DbContext,
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
     {
         foreach (var entry in ChangeTracker.Entries<IAggregateRoot>())
-            entry.Entity.SetAsUpdated(_timeProvider);
+        {
+            if (entry.State is EntityState.Added or EntityState.Modified)
+                entry.Entity.SetAsUpdated(_timeProvider);
+        }
 
         await SaveChangesAsync(cancellationToken);
 

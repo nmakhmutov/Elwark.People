@@ -34,8 +34,6 @@ internal sealed class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailC
 
         account.ConfirmEmail(confirmation.Email, _timeProvider);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

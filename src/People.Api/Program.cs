@@ -72,6 +72,7 @@ builder.Services
 builder.Services
     .AddOpenApi()
     .AddCors()
+    .AddLocalization(options => options.ResourcesPath = "Resources")
     .AddRequestLocalization(options =>
     {
         var cultures = new CultureInfo[]
@@ -231,6 +232,8 @@ builder.Services
     .AddExceptionHandler<GlobalExceptionHandler>()
     .AddProblemDetails();
 
+builder.Services.AddSingleton<IProblemDetailsFactory, ProblemDetailsFactory>();
+
 builder.Services
     .AddResponseCompression(options =>
     {
@@ -276,8 +279,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
         .AllowAnyHeader()
         .AllowCredentials()
     )
-    .UseExceptionHandler()
     .UseRequestLocalization()
+    .UseExceptionHandler()
     .UseAuthentication()
     .UseAuthorization();
 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Internal_ServerError_Title" xml:space="preserve">
+    <value>Server error</value>
+  </data>
+  <data name="Internal_ServerError_Detail" xml:space="preserve">
+    <value>An unexpected error occurred. Please try again later.</value>
+  </data>
+  <data name="Validation_InvalidModel_Title" xml:space="preserve">
+    <value>Validation failed</value>
+  </data>
+  <data name="Validation_InvalidModel_Detail" xml:space="preserve">
+    <value>One or more validation errors occurred.</value>
+  </data>
+  <data name="EmptyBody_Title" xml:space="preserve">
+    <value>Invalid request</value>
+  </data>
+  <data name="EmptyBody_Detail" xml:space="preserve">
+    <value>Request body is empty.</value>
+  </data>
+  <data name="Rpc_Generic_Detail" xml:space="preserve">
+    <value>The request could not be completed.</value>
+  </data>
+  <data name="AccountException_NotFound_Title" xml:space="preserve">
+    <value>Account not found</value>
+  </data>
+  <data name="AccountException_NotFound_Detail" xml:space="preserve">
+    <value>Account '{0}' was not found.</value>
+  </data>
+  <data name="AccountException_PrimaryEmailCannotBeRemoved_Title" xml:space="preserve">
+    <value>Primary email cannot be removed</value>
+  </data>
+  <data name="AccountException_PrimaryEmailCannotBeRemoved_Detail" xml:space="preserve">
+    <value>The primary email address for account {0} cannot be removed.</value>
+  </data>
+  <data name="EmailException_NotFound_Title" xml:space="preserve">
+    <value>Email not found</value>
+  </data>
+  <data name="EmailException_NotFound_Detail" xml:space="preserve">
+    <value>The email address '{0}' was not found.</value>
+  </data>
+  <data name="EmailException_AlreadyCreated_Title" xml:space="preserve">
+    <value>Email already registered</value>
+  </data>
+  <data name="EmailException_AlreadyCreated_Detail" xml:space="preserve">
+    <value>The email address '{0}' is already registered.</value>
+  </data>
+  <data name="EmailException_NotConfirmed_Title" xml:space="preserve">
+    <value>Email not confirmed</value>
+  </data>
+  <data name="EmailException_NotConfirmed_Detail" xml:space="preserve">
+    <value>The email address '{0}' is not confirmed.</value>
+  </data>
+  <data name="EmailException_AlreadyConfirmed_Title" xml:space="preserve">
+    <value>Email already confirmed</value>
+  </data>
+  <data name="EmailException_AlreadyConfirmed_Detail" xml:space="preserve">
+    <value>The email address '{0}' is already confirmed.</value>
+  </data>
+  <data name="ExternalAccountException_NotFound_Title" xml:space="preserve">
+    <value>External account not found</value>
+  </data>
+  <data name="ExternalAccountException_NotFound_Detail" xml:space="preserve">
+    <value>The external account for {0} ({1}) was not found.</value>
+  </data>
+  <data name="ExternalAccountException_AlreadyCreated_Title" xml:space="preserve">
+    <value>External account already linked</value>
+  </data>
+  <data name="ExternalAccountException_AlreadyCreated_Detail" xml:space="preserve">
+    <value>The external account for {0} ({1}) is already linked.</value>
+  </data>
+  <data name="ConfirmationException_NotFound_Title" xml:space="preserve">
+    <value>Confirmation not found</value>
+  </data>
+  <data name="ConfirmationException_NotFound_Detail" xml:space="preserve">
+    <value>No confirmation code was found or it has expired.</value>
+  </data>
+  <data name="ConfirmationException_Mismatch_Title" xml:space="preserve">
+    <value>Confirmation mismatch</value>
+  </data>
+  <data name="ConfirmationException_Mismatch_Detail" xml:space="preserve">
+    <value>The confirmation code does not match.</value>
+  </data>
+  <data name="ConfirmationException_AlreadySent_Title" xml:space="preserve">
+    <value>Confirmation already sent</value>
+  </data>
+  <data name="ConfirmationException_AlreadySent_Detail" xml:space="preserve">
+    <value>A confirmation has already been sent. Please wait before requesting again.</value>
+  </data>
+</root>

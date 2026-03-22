@@ -43,8 +43,6 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
         account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek);
         account.Update(request.Language, region, request.Country, request.TimeZone);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

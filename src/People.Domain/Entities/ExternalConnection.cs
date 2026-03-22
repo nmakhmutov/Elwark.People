@@ -9,6 +9,7 @@ public sealed class ExternalConnection : Entity<Guid>
     private DateTime _createdAt;
 
     private ExternalConnection(
+        Guid id,
         ExternalService type,
         string identity,
         string? firstName,
@@ -16,12 +17,11 @@ public sealed class ExternalConnection : Entity<Guid>
         DateTime createdAt
     )
     {
-        Id = Guid.CreateVersion7();
+        Id = id;
         Type = type;
         Identity = identity;
         FirstName = firstName;
         LastName = lastName;
-
         _createdAt = createdAt;
     }
 
@@ -34,8 +34,8 @@ public sealed class ExternalConnection : Entity<Guid>
     public string? LastName { get; private set; }
 
     public static ExternalConnection Google(string identity, string? firstName, string? lastName, DateTime now) =>
-        new(ExternalService.Google, identity, firstName, lastName, now);
+        new(Guid.CreateVersion7(), ExternalService.Google, identity, firstName, lastName, now);
 
     public static ExternalConnection Microsoft(string identity, string? firstName, string? lastName, DateTime now) =>
-        new(ExternalService.Microsoft, identity, firstName, lastName, now);
+        new(Guid.CreateVersion7(), ExternalService.Microsoft, identity, firstName, lastName, now);
 }

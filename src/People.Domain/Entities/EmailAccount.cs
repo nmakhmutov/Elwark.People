@@ -9,9 +9,12 @@ public sealed class EmailAccount : Entity<Guid>
     private DateTime? _confirmedAt;
     private DateTime _createdAt;
 
-    public EmailAccount(AccountId accountId, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt)
+    public static EmailAccount Create(AccountId id, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt) =>
+        new(Guid.CreateVersion7(), id, email, isPrimary, confirmedAt, createdAt);
+
+    private EmailAccount(Guid id, AccountId accountId, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt)
     {
-        Id = Guid.CreateVersion7();
+        Id = id;
         AccountId = accountId;
         Email = email;
         IsPrimary = isPrimary;

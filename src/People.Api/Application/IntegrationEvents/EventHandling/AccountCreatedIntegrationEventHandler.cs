@@ -59,8 +59,6 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
                 account.Update(image);
         }
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);
 
         await _confirmation.DeleteAsync(message.AccountId, ct);

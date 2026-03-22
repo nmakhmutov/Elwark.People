@@ -13,14 +13,11 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.HasKey(x => x.Id);
 
-        builder.HasIndex(x => new
-        {
-            x.AccountId,
-            x.Type
-        });
+        builder.HasIndex(x => new { x.AccountId, x.Type });
 
         builder.Property(x => x.Id)
-            .HasColumnName("id");
+            .HasColumnName("id")
+            .ValueGeneratedNever();
 
         builder.Property(x => x.AccountId)
             .HasColumnName("account_id")

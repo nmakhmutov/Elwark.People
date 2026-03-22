@@ -104,7 +104,7 @@ public sealed class Account : Entity<AccountId>,
             throw EmailException.NotConfirmed(new MailAddress(notConfirmed.Email));
 
         var now = timeProvider.UtcNow();
-        _emails.Add(new EmailAccount(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
+        _emails.Add(EmailAccount.Create(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
@@ -255,4 +255,7 @@ public sealed class Account : Entity<AccountId>,
 
     private void UpdateActivation() =>
         IsActivated = _externals.Count > 0 || _emails.Any(x => x is { IsPrimary: true, IsConfirmed: true });
+
+    public void LoggedIn(DateTime date) =>
+        _lastLogIn = date;
 }

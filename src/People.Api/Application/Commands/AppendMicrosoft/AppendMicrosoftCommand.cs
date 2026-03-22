@@ -41,8 +41,6 @@ internal sealed class AppendMicrosoftCommandHandler : IRequestHandler<AppendMicr
         if (!await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct))
             account.AddEmail(microsoft.Email, true, _timeProvider);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

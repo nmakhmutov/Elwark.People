@@ -41,8 +41,6 @@ internal sealed class AppendGoogleCommandHandler : IRequestHandler<AppendGoogleC
         if (!await _dbContext.Emails.IsEmailExistsAsync(google.Email, ct))
             account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

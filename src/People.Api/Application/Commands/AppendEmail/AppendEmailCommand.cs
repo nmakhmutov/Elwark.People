@@ -35,8 +35,6 @@ internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCom
 
         account.AddEmail(request.Email, false, _timeProvider);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 

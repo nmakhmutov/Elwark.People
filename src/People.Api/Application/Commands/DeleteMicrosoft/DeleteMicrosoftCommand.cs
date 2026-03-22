@@ -20,8 +20,6 @@ internal sealed class DeleteMicrosoftCommandHandler : IRequestHandler<DeleteMicr
 
         account.DeleteMicrosoft(request.Identity);
 
-        _repository.Update(account);
-
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 
