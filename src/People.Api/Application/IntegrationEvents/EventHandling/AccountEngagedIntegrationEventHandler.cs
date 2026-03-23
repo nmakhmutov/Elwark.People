@@ -1,48 +1,52 @@
+using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
-using People.Domain.Repositories;
+using People.Infrastructure;
 using People.Infrastructure.Confirmations;
 using People.Kafka.Integration;
 
 namespace People.Api.Application.IntegrationEvents.EventHandling;
 
-internal sealed class AccountEngagedIntegrationEventHandler : IIntegrationEventHandler<AccountActivity>
+internal sealed partial class AccountEngagedIntegrationEventHandler : IIntegrationEventHandler<AccountActivity>
 {
-    private readonly IAccountRepository _repository;
     private readonly IConfirmationService _confirmation;
-    private readonly TimeProvider _timeProvider;
+    private readonly PeopleDbContext _dbContext;
+    private readonly ILogger<AccountEngagedIntegrationEventHandler> _logger;
 
     public AccountEngagedIntegrationEventHandler(
-        IAccountRepository repository,
         IConfirmationService confirmation,
-        TimeProvider timeProvider
+        PeopleDbContext dbContext,
+        ILogger<AccountEngagedIntegrationEventHandler> logger
     )
     {
         _confirmation = confirmation;
-        _timeProvider = timeProvider;
-        _repository = repository;
+        _dbContext = dbContext;
+        _logger = logger;
     }
 
     public async Task HandleAsync(AccountActivity message, CancellationToken ct)
     {
-        var account = await _repository.GetAsync(message.AccountId, ct);
-        if (account == null)
-            return;
-
-        switch (message)
+        var property = message switch
         {
-            case AccountActivity.InspectedIntegrationEvent:
-                account.SetAsUpdated(_timeProvider);
-                break;
-            case AccountActivity.LoggedInIntegrationEvent:
-                account.LoggedIn(message.CreatedAt);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(message));
-        }
+            AccountActivity.InspectedIntegrationEvent _ => "_updatedAt",
+            AccountActivity.LoggedInIntegrationEvent _ => "_lastLogIn",
+            _ => throw new ArgumentOutOfRangeException(nameof(message))
+        };
 
-        await _repository.UnitOfWork
-            .SaveEntitiesAsync(ct);
+        var result = await _dbContext.Accounts
+            .Where(x => x.Id == message.AccountId)
+            .ExecuteUpdateAsync(x => x.SetProperty(p => EF.Property<DateTime>(p, property), message.CreatedAt), ct);
+
+        if (result > 0)
+            LogAccountUpdated(message.AccountId, property);
+        else
+            LogAccountNotFound(message.AccountId);
 
         await _confirmation.DeleteAsync(message.AccountId, ct);
     }
+
+    [LoggerMessage(LogLevel.Information, "Account {id} {property} updated successful")]
+    partial void LogAccountUpdated(long id, string property);
+
+    [LoggerMessage(LogLevel.Warning, "Account {id} not found, engagement not updated")]
+    partial void LogAccountNotFound(long id);
 }

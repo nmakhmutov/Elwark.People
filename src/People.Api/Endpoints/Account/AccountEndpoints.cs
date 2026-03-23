@@ -25,7 +25,7 @@ internal static class AccountEndpoints
     public static IEndpointRouteBuilder MapAccountEndpoints(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/accounts")
-            .WithTags("accounts", "me");
+            .WithTags("Accounts");
 
         group.MapGet("/{id:long}", GetAccountByIdAsync)
             .RequireAuthorization(Policy.RequireCommonAccess.Name);

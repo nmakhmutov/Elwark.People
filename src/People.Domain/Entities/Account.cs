@@ -255,7 +255,4 @@ public sealed class Account : Entity<AccountId>,
 
     private void UpdateActivation() =>
         IsActivated = _externals.Count > 0 || _emails.Any(x => x is { IsPrimary: true, IsConfirmed: true });
-
-    public void LoggedIn(DateTime date) =>
-        _lastLogIn = date;
 }
