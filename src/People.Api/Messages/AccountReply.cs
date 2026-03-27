@@ -10,6 +10,7 @@ public partial class AccountReply
         new()
         {
             Id = account.Id,
+            Email = account.Email,
             Nickname = account.Name.Nickname,
             FirstName = account.Name.FirstName,
             LastName = account.Name.LastName,

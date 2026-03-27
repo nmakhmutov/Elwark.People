@@ -62,16 +62,17 @@ message AccountReply {
   }
 
   int64 id = 1;
-  string nickname = 2;
-  google.protobuf.StringValue first_name = 3;
-  google.protobuf.StringValue last_name = 4;
-  string full_name = 5;
-  string picture = 6;
-  string country_code = 7;
-  string time_zone = 8;
-  Language language = 9;
-  Ban ban = 10;
-  repeated string roles = 11;
+  string email = 2;
+  string nickname = 3;
+  google.protobuf.StringValue first_name = 4;
+  google.protobuf.StringValue last_name = 5;
+  string full_name = 6;
+  string picture = 7;
+  string country_code = 8;
+  string time_zone = 9;
+  Language language = 10;
+  Ban ban = 11;
+  repeated string roles = 12;
 }
 
 message EmailSigningUpRequest {
