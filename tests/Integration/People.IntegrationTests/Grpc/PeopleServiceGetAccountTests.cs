@@ -59,7 +59,7 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
         var reply = await InterceptUnaryAsync(
             interceptor,
             service,
-            new AccountRequest { Id = (long)id },
+            new AccountRequest { Id = id },
             static (s, req, ctx) => s.GetAccount(req, ctx));
 
         Assert.Equal((long)id, reply.Id);

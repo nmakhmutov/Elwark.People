@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.IntegrationEvents.EventHandling;
@@ -25,7 +26,12 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
         IGravatarService gravatar,
         IConfirmationService confirmation
     ) =>
-        new(confirmation, gravatar, ipServices, repository);
+        new(
+            confirmation,
+            gravatar,
+            ipServices,
+            repository,
+            NullLogger<AccountCreatedIntegrationEventHandler>.Instance);
 
     [Fact]
     public async Task HandleAsync_FetchesAccount_CallsIpChain_Gravatar_SavesAndDeletesConfirmation()
@@ -193,5 +199,40 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
 
         await ip1.Received(1).GetAsync("1.1.1.1", "en");
         await ip2.DidNotReceive().GetAsync(Arg.Any<string>(), Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task HandleAsync_WhenIpServiceThrows_ContinuesWithNextProvider()
+    {
+        var accountId = new AccountId(1005L);
+        var time = EmailHandlerTestAccounts.FixedTime(Utc);
+        var account = EmailHandlerTestAccounts.AccountWithConfirmedPrimary(accountId, time);
+
+        var repository = Substitute.For<IAccountRepository>();
+        var uow = Substitute.For<IUnitOfWork>();
+        repository.UnitOfWork.Returns(uow);
+        repository.GetAsync(accountId, Arg.Any<CancellationToken>()).Returns(account);
+
+        var ip1 = Substitute.For<IIpService>();
+        ip1.GetAsync("5.5.5.5", "en")
+            .Returns(Task.FromException<IpInformation?>(new InvalidOperationException("provider down")));
+
+        var ip2 = Substitute.For<IIpService>();
+        ip2.GetAsync("5.5.5.5", "en")
+            .Returns(new IpInformation("CA", "NA", "Toronto", TimeZoneInfo.Utc.Id));
+
+        var gravatar = Substitute.For<IGravatarService>();
+        gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
+        var confirmation = Substitute.For<IConfirmationService>();
+
+        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation);
+
+        await sut.HandleAsync(new AccountCreatedIntegrationEvent(1005L, "5.5.5.5"), CancellationToken.None);
+
+        await ip2.Received(1).GetAsync("5.5.5.5", "en");
+        Assert.Equal(CountryCode.Parse("CA"), account.CountryCode);
+        Assert.Equal(RegionCode.Parse("NA"), account.RegionCode);
+        await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
+        await confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
     }
 }

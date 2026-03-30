@@ -14,19 +14,22 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
     private readonly IConfirmationService _confirmation;
     private readonly IGravatarService _gravatar;
     private readonly IEnumerable<IIpService> _ipServices;
+    private readonly ILogger<AccountCreatedIntegrationEventHandler> _logger;
     private readonly IAccountRepository _repository;
 
     public AccountCreatedIntegrationEventHandler(
         IConfirmationService confirmation,
         IGravatarService gravatar,
         IEnumerable<IIpService> ipServices,
-        IAccountRepository repository
+        IAccountRepository repository,
+        ILogger<AccountCreatedIntegrationEventHandler> logger
     )
     {
         _confirmation = confirmation;
         _gravatar = gravatar;
         _repository = repository;
         _ipServices = ipServices;
+        _logger = logger;
     }
 
     public async Task HandleAsync(AccountCreatedIntegrationEvent message, CancellationToken ct)
@@ -68,10 +71,17 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
     {
         foreach (var ipService in _ipServices)
         {
-            var result = await ipService.GetAsync(ip, language.ToString());
+            try
+            {
+                var result = await ipService.GetAsync(ip, language.ToString());
 
-            if (result is not null)
-                return result;
+                if (result is not null)
+                    return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "IP geolocation provider failed for {Ip}", ip);
+            }
         }
 
         return null;

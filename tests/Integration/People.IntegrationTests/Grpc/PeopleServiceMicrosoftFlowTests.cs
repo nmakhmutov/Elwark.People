@@ -64,7 +64,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByMicrosoftCommand("grpc-ms-signin-token", People.Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByMicrosoftCommand("grpc-ms-signin-token", Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback, null),
                 CancellationToken.None);
         }
 
@@ -122,7 +122,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             service,
             new ExternalAppendRequest
             {
-                Id = (long)id,
+                Id = id,
                 AccessToken = "grpc-ms-append-token"
             },
             static (s, req, ctx) => s.AppendMicrosoft(req, ctx));

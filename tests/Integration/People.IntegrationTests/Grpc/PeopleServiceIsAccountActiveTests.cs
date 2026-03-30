@@ -40,7 +40,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
         var reply = await InterceptUnaryAsync(
             interceptor,
             service,
-            new AccountRequest { Id = (long)id },
+            new AccountRequest { Id = id },
             static (s, req, ctx) => s.IsAccountActive(req, ctx));
 
         Assert.True(reply.Value);
@@ -77,7 +77,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
         var reply = await InterceptUnaryAsync(
             interceptor,
             service,
-            new AccountRequest { Id = (long)id },
+            new AccountRequest { Id = id },
             static (s, req, ctx) => s.IsAccountActive(req, ctx));
 
         Assert.False(reply.Value);
@@ -115,7 +115,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
         var reply = await InterceptUnaryAsync(
             interceptor,
             service,
-            new AccountRequest { Id = (long)id },
+            new AccountRequest { Id = id },
             static (s, req, ctx) => s.IsAccountActive(req, ctx));
 
         Assert.False(reply.Value);

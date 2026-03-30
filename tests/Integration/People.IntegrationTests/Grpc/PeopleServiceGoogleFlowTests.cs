@@ -78,7 +78,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByGoogleCommand("grpc-google-signin-token", People.Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByGoogleCommand("grpc-google-signin-token", Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback, null),
                 CancellationToken.None);
         }
 
@@ -139,7 +139,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
             service,
             new ExternalAppendRequest
             {
-                Id = (long)id,
+                Id = id,
                 AccessToken = "grpc-google-append-token"
             },
             static (s, req, ctx) => s.AppendGoogle(req, ctx));
