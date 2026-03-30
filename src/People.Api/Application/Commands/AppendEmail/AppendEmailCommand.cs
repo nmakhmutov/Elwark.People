@@ -3,7 +3,6 @@ using Mediator;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Infrastructure;
 
 namespace People.Api.Application.Commands.AppendEmail;
 
@@ -11,24 +10,18 @@ internal sealed record AppendEmailCommand(AccountId Id, MailAddress Email) : IRe
 
 internal sealed class AppendEmailCommandHandler : IRequestHandler<AppendEmailCommand, EmailAccount>
 {
-    private readonly PeopleDbContext _dbContext;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
-    public AppendEmailCommandHandler(
-        PeopleDbContext dbContext,
-        TimeProvider timeProvider,
-        IAccountRepository repository
-    )
+    public AppendEmailCommandHandler(TimeProvider timeProvider, IAccountRepository repository)
     {
-        _dbContext = dbContext;
         _timeProvider = timeProvider;
         _repository = repository;
     }
 
     public async ValueTask<EmailAccount> Handle(AppendEmailCommand request, CancellationToken ct)
     {
-        if (await _dbContext.Emails.IsEmailExistsAsync(request.Email, ct))
+        if (await _repository.IsExistsAsync(request.Email, ct))
             throw EmailException.AlreadyCreated(request.Email);
 
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);

@@ -85,6 +85,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         StartOfWeek = startOfWeek;
         IsActivated = isActivated;
         _regIp = regIp;
+        _regCountryCode = CountryCode.Empty;
         _emails = [];
         _externals = [];
         _roles = [];

@@ -3,4 +3,7 @@
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="Meziantou.Framework.StronglyTypedId" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="People.UnitTests" />
+  </ItemGroup>
 </Project>

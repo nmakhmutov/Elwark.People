@@ -7,7 +7,6 @@ using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using People.Infrastructure;
 
 namespace People.Api.Application.Commands.SignUpByMicrosoft;
 
@@ -16,21 +15,18 @@ internal sealed record SignUpByMicrosoftCommand(string Token, Language Language,
 
 internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMicrosoftCommand, SignUpResult>
 {
-    private readonly PeopleDbContext _dbContext;
     private readonly IIpHasher _hasher;
     private readonly IMicrosoftApiService _microsoft;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public SignUpByMicrosoftCommandHandler(
-        PeopleDbContext dbContext,
         IMicrosoftApiService microsoft,
         IIpHasher hasher,
         IAccountRepository repository,
         TimeProvider timeProvider
     )
     {
-        _dbContext = dbContext;
         _microsoft = microsoft;
         _hasher = hasher;
         _repository = repository;
@@ -41,10 +37,10 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
     {
         var microsoft = await _microsoft.GetAsync(request.Token, ct);
 
-        if (await _dbContext.Emails.IsEmailExistsAsync(microsoft.Email, ct))
+        if (await _repository.IsExistsAsync(microsoft.Email, ct))
             throw EmailException.AlreadyCreated(microsoft.Email);
 
-        if (await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct))
+        if (await _repository.IsExistsAsync(ExternalService.Microsoft, microsoft.Identity, ct))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
         var account = Account.Create(microsoft.Email.User, request.Language, request.Ip, _hasher);

@@ -18,5 +18,9 @@
         <Project Path="src/People.Kafka/People.Kafka.csproj"/>
         <Project Path="src/People.Webhooks/People.Webhooks.csproj"/>
     </Folder>
+    <Folder Name="/tests/">
+        <Project Path="tests/Unit/People.UnitTests/People.UnitTests.csproj"/>
+        <Project Path="tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj"/>
+    </Folder>
     <Project Path="docker-compose.dcproj"/>
 </Solution>

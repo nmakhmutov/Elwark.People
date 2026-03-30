@@ -101,7 +101,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("roles")
             .IsRequired();
 
-        builder.Property<Ban>("_ban")
+        builder.Property<Ban?>("_ban")
             .HasColumnName("ban")
             .HasColumnType("json");
 

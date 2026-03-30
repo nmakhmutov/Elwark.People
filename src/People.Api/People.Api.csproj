@@ -30,4 +30,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="People.UnitTests" />
+  </ItemGroup>
 </Project>
