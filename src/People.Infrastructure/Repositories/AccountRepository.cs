@@ -53,4 +53,31 @@ internal sealed class AccountRepository : IAccountRepository
             .Select(x => new ExternalSignInMatch(x.Id, x.Name))
             .FirstOrDefaultAsync(ct);
     }
+
+    public async Task<EmailSignupState?> GetEmailSignupStateAsync(MailAddress email, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(email);
+
+        var row = await _dbContext.Emails
+            .AsNoTracking()
+            .Where(x => x.Email == email.Address)
+            .Select(x => new
+            {
+                x.AccountId,
+                x.Email,
+                ConfirmedAt = EF.Property<DateTime?>(x, "_confirmedAt")
+            })
+            .FirstOrDefaultAsync(ct);
+
+        return row is null
+            ? null
+            : new EmailSignupState(row.AccountId, new MailAddress(row.Email), row.ConfirmedAt.HasValue);
+    }
+
+    public Task<ExternalSignInMatch?> GetSignInMatchAsync(AccountId id, CancellationToken ct) =>
+        _dbContext.Accounts
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new ExternalSignInMatch(x.Id, x.Name))
+            .FirstOrDefaultAsync(ct);
 }

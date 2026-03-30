@@ -3,7 +3,7 @@ using Npgsql;
 
 namespace People.Infrastructure.Providers.NpgsqlData;
 
-public sealed class SqlReader<T>
+public sealed class SqlReader<T> : ISqlReader<T>
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly NpgsqlParameter[] _parameters;
@@ -13,7 +13,7 @@ public sealed class SqlReader<T>
     public SqlReader(
         NpgsqlDataSource dataSource,
         string sql,
-        Func<NpgsqlDataReader, T> mapper,
+        Func<INpgsqlRow, T> mapper,
         IEnumerable<NpgsqlParameter> parameters
     )
     {
@@ -27,14 +27,14 @@ public sealed class SqlReader<T>
         async IAsyncEnumerable<T> Processor(NpgsqlDataReader reader)
         {
             while (await reader.ReadAsync())
-                yield return mapper(reader);
+                yield return mapper(new NpgsqlRowAdapter(reader));
         }
     }
 
     public SqlReader(
         NpgsqlDataSource dataSource,
         string sql,
-        Action<Dictionary<Guid, T>, NpgsqlDataReader> mapper,
+        Action<Dictionary<Guid, T>, INpgsqlRow> mapper,
         IEnumerable<NpgsqlParameter> parameters
     )
     {
@@ -50,7 +50,7 @@ public sealed class SqlReader<T>
             var state = new Dictionary<Guid, T>();
 
             while (await reader.ReadAsync())
-                mapper(state, reader);
+                mapper(state, new NpgsqlRowAdapter(reader));
 
             foreach (var result in state.Values)
                 yield return result;

@@ -1,10 +1,9 @@
 using System.Net.Mail;
 using Mediator;
-using Microsoft.EntityFrameworkCore;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Exceptions;
+using People.Domain.Repositories;
 using People.Domain.ValueObjects;
-using People.Infrastructure;
 using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SigningInByEmail;
@@ -14,31 +13,24 @@ internal sealed record SigningInByEmailCommand(MailAddress Email, Language Langu
 internal sealed class SigningInByEmailCommandHandler : IRequestHandler<SigningInByEmailCommand, string>
 {
     private readonly IConfirmationService _confirmation;
-    private readonly PeopleDbContext _dbContext;
     private readonly INotificationSender _notification;
+    private readonly IAccountRepository _repository;
 
     public SigningInByEmailCommandHandler(
         IConfirmationService confirmation,
-        PeopleDbContext dbContext,
-        INotificationSender notification
+        INotificationSender notification,
+        IAccountRepository repository
     )
     {
         _confirmation = confirmation;
-        _dbContext = dbContext;
         _notification = notification;
+        _repository = repository;
     }
 
     public async ValueTask<string> Handle(SigningInByEmailCommand request, CancellationToken ct)
     {
-        var email = await _dbContext.Emails
-            .Where(x => x.Email == request.Email.Address)
-            .Select(x => new
-            {
-                x.AccountId,
-                Email = new MailAddress(x.Email),
-                x.IsConfirmed
-            })
-            .FirstOrDefaultAsync(ct) ?? throw EmailException.NotFound(request.Email);
+        var email = await _repository.GetEmailSignupStateAsync(request.Email, ct)
+            ?? throw EmailException.NotFound(request.Email);
 
         if (!email.IsConfirmed)
             throw EmailException.NotConfirmed(email.Email);

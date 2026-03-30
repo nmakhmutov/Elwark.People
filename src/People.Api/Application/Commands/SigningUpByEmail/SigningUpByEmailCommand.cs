@@ -1,14 +1,12 @@
 using System.Net;
 using System.Net.Mail;
 using Mediator;
-using Microsoft.EntityFrameworkCore;
 using People.Api.Infrastructure.Notifications;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using People.Infrastructure;
 using People.Infrastructure.Confirmations;
 
 namespace People.Api.Application.Commands.SigningUpByEmail;
@@ -19,7 +17,6 @@ internal sealed record SigningUpByEmailCommand(MailAddress Email, Language Langu
 internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUpByEmailCommand, string>
 {
     private readonly IConfirmationService _confirmation;
-    private readonly PeopleDbContext _dbContext;
     private readonly IIpHasher _hasher;
     private readonly INotificationSender _notification;
     private readonly IAccountRepository _repository;
@@ -27,7 +24,6 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
 
     public SigningUpByEmailCommandHandler(
         IConfirmationService confirmation,
-        PeopleDbContext dbContext,
         IIpHasher hasher,
         INotificationSender notification,
         IAccountRepository repository,
@@ -35,7 +31,6 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
     )
     {
         _confirmation = confirmation;
-        _dbContext = dbContext;
         _hasher = hasher;
         _notification = notification;
         _repository = repository;
@@ -44,15 +39,7 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
 
     public async ValueTask<string> Handle(SigningUpByEmailCommand request, CancellationToken ct)
     {
-        var email = await _dbContext.Emails
-            .Where(x => x.Email == request.Email.Address)
-            .Select(x => new
-            {
-                x.AccountId,
-                Email = new MailAddress(x.Email),
-                x.IsConfirmed
-            })
-            .FirstOrDefaultAsync(ct);
+        var email = await _repository.GetEmailSignupStateAsync(request.Email, ct);
 
         if (email is not null)
         {

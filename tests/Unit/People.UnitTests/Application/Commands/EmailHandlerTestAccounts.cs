@@ -19,7 +19,7 @@ internal static class EmailHandlerTestAccounts
     }
 
     internal static void SetAccountId(Account account, AccountId id) =>
-        typeof(Entity<AccountId>).GetProperty(nameof(Entity<AccountId>.Id))!
+        typeof(Entity<AccountId>).GetProperty(nameof(Entity<>.Id))!
             .SetValue(account, id);
 
     internal static Account AccountWithConfirmedPrimary(
@@ -59,6 +59,21 @@ internal static class EmailHandlerTestAccounts
     {
         var account = AccountWithConfirmedPrimary(id, time, primary);
         account.AddEmail(new MailAddress(pending), false, time);
+        account.ClearDomainEvents();
+        return account;
+    }
+
+    internal static Account AccountWithUnconfirmedPrimary(
+        AccountId id,
+        TimeProvider time,
+        string email = "signup@test.com"
+    )
+    {
+        var hasher = Substitute.For<IIpHasher>();
+        hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1]);
+        var account = Account.Create(new MailAddress(email).User, Language.Parse("en"), Ip, hasher);
+        SetAccountId(account, id);
+        account.AddEmail(new MailAddress(email), false, time);
         account.ClearDomainEvents();
         return account;
     }

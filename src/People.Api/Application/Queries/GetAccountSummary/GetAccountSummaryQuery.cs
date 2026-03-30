@@ -47,8 +47,8 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
                 x.GetString(1),
                 Name.Create(
                     x.GetString(2),
-                    x.IsDBNull(3) ? null : x.GetString(3),
-                    x.IsDBNull(4) ? null : x.GetString(4),
+                    x.IsDbNull(3) ? null : x.GetString(3),
+                    x.IsDbNull(4) ? null : x.GetString(4),
                     x.GetBoolean(5)
                 ),
                 x.GetString(6),
@@ -60,7 +60,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
                 TimeFormat.Parse(x.GetString(12)),
                 (DayOfWeek)x.GetInt32(13),
                 x.GetFieldValue<string[]>(14),
-                x.IsDBNull(15) ? null : x.GetFieldValue<Ban>(15)
+                x.IsDbNull(15) ? null : x.GetFieldValue<Ban>(15)
             ))
             .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(request.Id);
 }

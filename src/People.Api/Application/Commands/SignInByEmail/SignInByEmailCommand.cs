@@ -1,10 +1,9 @@
 using System.Net;
 using Mediator;
-using Microsoft.EntityFrameworkCore;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Models;
 using People.Domain.Exceptions;
-using People.Infrastructure;
+using People.Domain.Repositories;
 using People.Infrastructure.Confirmations;
 using People.Kafka.Integration;
 
@@ -17,28 +16,26 @@ internal sealed class SignInByEmailCommandHandler : IRequestHandler<SignInByEmai
 {
     private readonly IIntegrationEventBus _bus;
     private readonly IConfirmationService _confirmation;
-    private readonly PeopleDbContext _dbContext;
+    private readonly IAccountRepository _repository;
 
     public SignInByEmailCommandHandler(
         IIntegrationEventBus bus,
         IConfirmationService confirmation,
-        PeopleDbContext dbContext
+        IAccountRepository repository
     )
     {
         _bus = bus;
         _confirmation = confirmation;
-        _dbContext = dbContext;
+        _repository = repository;
     }
 
     public async ValueTask<SignInResult> Handle(SignInByEmailCommand request, CancellationToken ct)
     {
         var id = await _confirmation.SignInAsync(request.Token, request.Code, ct);
 
-        var result = await _dbContext.Accounts
-            .AsNoTracking()
-            .Where(x => x.Id == id)
-            .Select(x => new SignInResult(x.Id, x.Name.FullName()))
-            .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(id);
+        var match = await _repository.GetSignInMatchAsync(id, ct) ?? throw AccountException.NotFound(id);
+
+        var result = new SignInResult(match.Id, match.Name.FullName());
 
         var evt = new AccountActivity.LoggedInIntegrationEvent(result.Id);
         await _bus.PublishAsync(evt, ct);

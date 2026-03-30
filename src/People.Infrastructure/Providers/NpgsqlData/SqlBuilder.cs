@@ -2,7 +2,7 @@ using Npgsql;
 
 namespace People.Infrastructure.Providers.NpgsqlData;
 
-public sealed class SqlBuilder
+public sealed class SqlBuilder : ISqlBuilder
 {
     private readonly NpgsqlDataSource _dataSource;
     private readonly List<NpgsqlParameter> _parameters;
@@ -15,7 +15,7 @@ public sealed class SqlBuilder
         _parameters = [];
     }
 
-    public SqlBuilder AddParameter<T>(string parameterName, T? value) =>
+    public ISqlBuilder AddParameter<T>(string parameterName, T? value) =>
         AddParameter(new NpgsqlParameter
         {
             ParameterName = parameterName,
@@ -28,18 +28,18 @@ public sealed class SqlBuilder
         return this;
     }
 
-    public SqlReader<T> Select<T>(Func<NpgsqlDataReader, T> mapper)
+    public ISqlReader<TResult> Select<TResult>(Func<INpgsqlRow, TResult> mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
 
-        return new SqlReader<T>(_dataSource, _sql, mapper, _parameters);
+        return new SqlReader<TResult>(_dataSource, _sql, mapper, _parameters);
     }
 
-    public SqlReader<T> Aggregate<T>(Action<Dictionary<Guid, T>, NpgsqlDataReader> mapper)
+    public ISqlReader<TResult> Aggregate<TResult>(Action<Dictionary<Guid, TResult>, INpgsqlRow> mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
 
-        return new SqlReader<T>(_dataSource, _sql, mapper, _parameters);
+        return new SqlReader<TResult>(_dataSource, _sql, mapper, _parameters);
     }
 
     public async Task<int> ExecuteAsync(CancellationToken ct = default)

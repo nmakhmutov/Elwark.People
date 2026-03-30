@@ -9,7 +9,7 @@ internal sealed class NpgsqlAccessor : INpgsqlAccessor, IAsyncDisposable
 
     public NpgsqlAccessor(string connection, ILoggerFactory loggerFactory)
     {
-        ArgumentException.ThrowIfNullOrEmpty(connection, nameof(connection));
+        ArgumentException.ThrowIfNullOrEmpty(connection);
 
         _dataSource = new NpgsqlDataSourceBuilder(connection)
             .UseLoggerFactory(loggerFactory)
@@ -17,8 +17,8 @@ internal sealed class NpgsqlAccessor : INpgsqlAccessor, IAsyncDisposable
             .Build();
     }
 
-    public SqlBuilder Sql(string sql) =>
-        new(_dataSource, sql);
+    public ISqlBuilder Sql(string sql) =>
+        new SqlBuilder(_dataSource, sql);
 
     public ValueTask DisposeAsync() =>
         _dataSource.DisposeAsync();
