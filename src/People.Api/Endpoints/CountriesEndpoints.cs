@@ -17,11 +17,11 @@ public static class DictionariesEndpoints
         routes.MapGet("/countries",
                 (ICountryClient client, CancellationToken ct) => client.GetAsync(CultureInfo.CurrentCulture, ct))
             .WithTags("Dictionaries")
-            .RequireAuthorization(Policy.RequireCommonAccess.Name);
+            .RequireAuthorization(Policy.RequireRead.Name);
 
         routes.MapGet("/timezones", () => TimeZones)
             .WithTags("Dictionaries")
-            .RequireAuthorization(Policy.RequireCommonAccess.Name);
+            .RequireAuthorization(Policy.RequireRead.Name);
 
         return routes;
     }

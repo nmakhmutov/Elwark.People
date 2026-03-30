@@ -6,31 +6,25 @@ internal sealed record PolicyRule(string Name, AuthorizationPolicy Policy);
 
 internal static class Policy
 {
-    public static readonly PolicyRule RequireAuthenticatedUser = new(
-        nameof(RequireAuthenticatedUser),
+    public static readonly PolicyRule RequireRead = new(
+        nameof(RequireRead),
+        new AuthorizationPolicyBuilder()
+            .RequireClaim("scope", "people:read")
+            .Build()
+    );
+
+    public static readonly PolicyRule RequireWrite = new(
+        nameof(RequireWrite),
         new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
+            .RequireClaim("scope", "people:write")
             .Build()
     );
 
-    public static readonly PolicyRule RequireCommonAccess = new(
-        nameof(RequireCommonAccess),
+    public static readonly PolicyRule RequireAdmin = new(
+        nameof(RequireAdmin),
         new AuthorizationPolicyBuilder()
-            .RequireClaim("scope", "elwark.people")
-            .Build()
-    );
-
-    public static readonly PolicyRule RequireProfileAccess = new(
-        nameof(RequireProfileAccess),
-        new AuthorizationPolicyBuilder()
-            .RequireClaim("scope", "elwark.people.profile")
-            .Build()
-    );
-
-    public static readonly PolicyRule RequireManagementAccess = new(
-        nameof(RequireManagementAccess),
-        new AuthorizationPolicyBuilder()
-            .RequireClaim("scope", "elwark.people.admin")
+            .RequireClaim("scope", "people:admin")
             .RequireRole("adm", "ppl.adm")
             .Build()
     );

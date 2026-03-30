@@ -16,7 +16,7 @@ services:
       - Kestrel__EndPoints__Http__Url=http://+:80
       - Kestrel__EndPoints__Grpc__Url=http://+:81
       - Authentication__Authority=http://elwark_identity_api
-      - Authentication__Audience=elwark.people.api
+      - Authentication__Audience=people-api
       - Notification__Host=http://elwark_notification_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=elwark_people;Username=master_account;Password=master_password
       - ConnectionStrings__Kafka=broker:29092

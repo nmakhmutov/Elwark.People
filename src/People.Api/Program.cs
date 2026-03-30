@@ -19,7 +19,6 @@ using People.Api.Application.IntegrationEvents.EventHandling;
 using People.Api.Application.IntegrationEvents.Events;
 using People.Api.Application.Queries.GetAccountSummary;
 using People.Api.Endpoints;
-using People.Api.Endpoints.Account;
 using People.Api.Grpc;
 using People.Api.Infrastructure;
 using People.Api.Infrastructure.EmailBuilder;
@@ -86,10 +85,9 @@ builder.Services
 
 builder.Services
     .AddAuthorizationBuilder()
-    .AddPolicy(Policy.RequireAuthenticatedUser.Name, Policy.RequireAuthenticatedUser.Policy)
-    .AddPolicy(Policy.RequireCommonAccess.Name, Policy.RequireCommonAccess.Policy)
-    .AddPolicy(Policy.RequireProfileAccess.Name, Policy.RequireProfileAccess.Policy)
-    .AddPolicy(Policy.RequireManagementAccess.Name, Policy.RequireManagementAccess.Policy);
+    .AddPolicy(Policy.RequireRead.Name, Policy.RequireRead.Policy)
+    .AddPolicy(Policy.RequireWrite.Name, Policy.RequireWrite.Policy)
+    .AddPolicy(Policy.RequireAdmin.Name, Policy.RequireAdmin.Policy);
 
 builder.Services
     .AddOpenApi()
