@@ -30,8 +30,7 @@ internal sealed class MicrosoftApiService : IMicrosoftApiService
 
     private static MicrosoftAccount Success(Dto? account)
     {
-        if (account is null)
-            throw new ArgumentNullException(nameof(account), "Microsoft account cannot be null");
+        ArgumentNullException.ThrowIfNull(account);
 
         return new MicrosoftAccount(
             account.Id,

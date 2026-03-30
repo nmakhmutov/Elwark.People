@@ -10,7 +10,10 @@
     <PackageReference Include="Grpc.AspNetCore.Server"/>
     <PackageReference Include="Grpc.Tools" PrivateAssets="all"/>
     <PackageReference Include="Mediator.Abstractions"/>
-    <PackageReference Include="Mediator.SourceGenerator"/>
+    <PackageReference Include="Mediator.SourceGenerator">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid"/>

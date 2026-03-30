@@ -34,8 +34,7 @@ internal sealed class GoogleApiService : IGoogleApiService
 
     private static GoogleAccount Success(Dto? account)
     {
-        if (account is null)
-            throw new ArgumentNullException(nameof(account), "Google account cannot be null");
+        ArgumentNullException.ThrowIfNull(account);
 
         return new GoogleAccount(
             account.Id ?? throw new InvalidOperationException("Google id not found"),

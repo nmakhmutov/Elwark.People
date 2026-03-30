@@ -47,7 +47,7 @@ internal sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpBy
         if (await _dbContext.Connections.IsMicrosoftExistsAsync(microsoft.Identity, ct))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
-        var account = new Account(microsoft.Email.User, request.Language, request.Ip, _hasher);
+        var account = Account.Create(microsoft.Email.User, request.Language, request.Ip, _hasher);
         account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _timeProvider);
         account.AddEmail(microsoft.Email, true, _timeProvider);
 

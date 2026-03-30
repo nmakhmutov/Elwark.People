@@ -9,29 +9,6 @@ public sealed class Name : ValueObject
     public const int FirstNameLength = 128;
     public const int LastNameLength = 128;
 
-    public Name(string nickname, string? firstName = null, string? lastName = null, bool preferNickname = false)
-    {
-        if (string.IsNullOrWhiteSpace(nickname))
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(nickname));
-
-        if (nickname.Length > NicknameLength)
-            throw new ArgumentOutOfRangeException(nameof(nickname), nickname,
-                $"Nickname cannot be more then {NicknameLength}");
-
-        if (firstName?.Length > FirstNameLength)
-            throw new ArgumentOutOfRangeException(nameof(firstName), firstName,
-                $"Nickname cannot be more then {FirstName}");
-
-        if (lastName?.Length > NicknameLength)
-            throw new ArgumentOutOfRangeException(nameof(lastName), lastName,
-                $"Nickname cannot be more then {LastNameLength}");
-
-        Nickname = nickname.Trim();
-        FirstName = Normalize(firstName);
-        LastName = Normalize(lastName);
-        PreferNickname = preferNickname;
-    }
-
     public string Nickname { get; private set; }
 
     public string? FirstName { get; private set; }
@@ -40,6 +17,33 @@ public sealed class Name : ValueObject
 
     public bool PreferNickname { get; private set; }
 
+    private Name(string nickname, string? firstName, string? lastName, bool preferNickname)
+    {
+        Nickname = nickname;
+        FirstName = firstName;
+        LastName = lastName;
+        PreferNickname = preferNickname;
+    }
+
+    public static Name Create(
+        string nickname,
+        string? firstName = null,
+        string? lastName = null,
+        bool preferNickname = true
+    )
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(nickname);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(nickname.Length, NicknameLength, nameof(nickname));
+
+        if (firstName is not null)
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(firstName.Length, FirstNameLength, nameof(firstName));
+
+        if (lastName is not null)
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(lastName.Length, LastNameLength, nameof(lastName));
+
+        return new Name(nickname.Trim(), firstName?.Trim(), lastName?.Trim(), preferNickname);
+    }
+
     public string FullName()
     {
         if (PreferNickname || (FirstName is null && LastName is null))
@@ -47,9 +51,6 @@ public sealed class Name : ValueObject
 
         return $"{FirstName} {LastName}".Trim();
     }
-
-    private static string? Normalize(string? value) =>
-        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {

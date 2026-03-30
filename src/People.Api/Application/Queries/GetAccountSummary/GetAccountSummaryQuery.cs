@@ -45,7 +45,7 @@ internal sealed class GetAccountSummaryQueryHandler : IRequestHandler<GetAccount
             .Select(x => new AccountSummary(
                 new AccountId(x.GetInt64(0)),
                 x.GetString(1),
-                new Name(
+                Name.Create(
                     x.GetString(2),
                     x.IsDBNull(3) ? null : x.GetString(3),
                     x.IsDBNull(4) ? null : x.GetString(4),

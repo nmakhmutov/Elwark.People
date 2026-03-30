@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO.Compression;
 using System.Net;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Duende.AccessTokenManagement;
@@ -59,6 +60,27 @@ builder.Services
             ValidateIssuerSigningKey = true,
             NameClaimType = "sub",
             ClockSkew = TimeSpan.FromSeconds(10)
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                if (context.Principal?.Identity is not ClaimsIdentity identity)
+                    return Task.CompletedTask;
+
+                var scope = identity.FindFirst("scope");
+                if (scope is null)
+                    return Task.CompletedTask;
+
+                identity.RemoveClaim(scope);
+
+                var claims = scope.Value.Split(" ")
+                    .Select(s => new Claim("scope", s));
+
+                identity.AddClaims(claims);
+
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -285,14 +307,17 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     .UseAuthorization();
 
 if (app.Environment.IsProduction())
+{
     app.UseResponseCompression();
-
-app.MapOpenApi();
-app.MapScalarApiReference("/docs");
+}
+else
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference("/docs");
+}
 
 app.MapAccountEndpoints();
-app.MapCountriesEndpoints();
-app.MapTimezonesEndpoints();
+app.MapDictionariesEndpoints();
 
 app.MapGrpcService<PeopleService>();
 

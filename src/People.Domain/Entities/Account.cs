@@ -6,18 +6,15 @@ using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
-// ReSharper disable NotAccessedField.Local
-
 namespace People.Domain.Entities;
 
-public sealed class Account : Entity<AccountId>,
-    IAggregateRoot
+// ReSharper disable NotAccessedField.Local
+public sealed class Account : Entity<AccountId>, IAggregateRoot
 {
-    private const string DefaultPicture =
-        "https://res.cloudinary.com/elwark/image/upload/v1/People/default.jpg";
+    private const string DefaultPicture = "https://res.cloudinary.com/elwark/image/upload/v1/People/default.jpg";
 
-    private readonly HashSet<EmailAccount> _emails;
-    private readonly HashSet<ExternalConnection> _externals;
+    private readonly List<EmailAccount> _emails;
+    private readonly List<ExternalConnection> _externals;
 
     private Ban? _ban;
     private DateTime _createdAt;
@@ -26,36 +23,6 @@ public sealed class Account : Entity<AccountId>,
     private byte[] _regIp;
     private string[] _roles;
     private DateTime _updatedAt;
-
-    private Account()
-    {
-        Name = default!;
-        Picture = DefaultPicture;
-        RegionCode = RegionCode.Empty;
-        CountryCode = CountryCode.Empty;
-        TimeZone = TimeZone.Utc;
-        TimeFormat = TimeFormat.Default;
-        DateFormat = DateFormat.Default;
-        StartOfWeek = DayOfWeek.Monday;
-        IsActivated = false;
-        _ban = null;
-        _roles = [];
-        _emails = [];
-        _externals = [];
-        _regIp = [];
-        _regCountryCode = CountryCode.Empty;
-        _createdAt = _updatedAt = _lastLogIn = DateTime.MinValue;
-    }
-
-    public Account(string nickname, Language language, IPAddress ip, IIpHasher hasher)
-        : this()
-    {
-        Name = new Name(nickname);
-        Language = language;
-        _regIp = hasher.CreateHash(ip);
-
-        AddDomainEvent(new AccountCreatedDomainEvent(this, ip));
-    }
 
     public Name Name { get; private set; }
 
@@ -86,12 +53,70 @@ public sealed class Account : Entity<AccountId>,
     public IReadOnlyCollection<ExternalConnection> Externals =>
         _externals.ToArray();
 
+#pragma warning disable CS8618
+    // ReSharper disable once UnusedMember.Local
+    private Account()
+    {
+    }
+#pragma warning restore CS8618
+
+    private Account(
+        Name name,
+        string picture,
+        RegionCode regionCode,
+        CountryCode countryCode,
+        Language language,
+        TimeZone timeZone,
+        DateFormat dateFormat,
+        TimeFormat timeFormat,
+        DayOfWeek startOfWeek,
+        bool isActivated,
+        byte[] regIp
+    )
+    {
+        Name = name;
+        Picture = picture;
+        RegionCode = regionCode;
+        CountryCode = countryCode;
+        Language = language;
+        TimeZone = timeZone;
+        DateFormat = dateFormat;
+        TimeFormat = timeFormat;
+        StartOfWeek = startOfWeek;
+        IsActivated = isActivated;
+        _regIp = regIp;
+        _emails = [];
+        _externals = [];
+        _roles = [];
+    }
+
     public void SetAsUpdated(TimeProvider provider)
     {
         if (_createdAt == DateTime.MinValue)
             _createdAt = provider.UtcNow();
 
         _updatedAt = provider.UtcNow();
+    }
+
+    public static Account Create(string nickname, Language language, IPAddress ip, IIpHasher hasher)
+    {
+        var account = new Account(
+            Name.Create(nickname),
+            DefaultPicture,
+            RegionCode.Empty,
+            CountryCode.Empty,
+            language,
+            TimeZone.Utc,
+            DateFormat.Default,
+            TimeFormat.Default,
+            DayOfWeek.Monday,
+            false,
+            hasher.CreateHash(ip)
+        );
+
+        account.AddDomainEvent(new AccountCreatedDomainEvent(account, ip));
+
+        return account;
     }
 
     public DateTime GetCreatedDateTime() =>
@@ -154,7 +179,7 @@ public sealed class Account : Entity<AccountId>,
     public void AddGoogle(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
     {
         _externals.Add(ExternalConnection.Google(identity, firstName, lastName, timeProvider.UtcNow()));
-        Name = new Name(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
+        Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
@@ -162,7 +187,7 @@ public sealed class Account : Entity<AccountId>,
 
     public void DeleteGoogle(string identity)
     {
-        _externals.RemoveWhere(x => x.Type == ExternalService.Google && x.Identity == identity);
+        _externals.RemoveAll(x => x.Type == ExternalService.Google && x.Identity == identity);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
@@ -171,7 +196,7 @@ public sealed class Account : Entity<AccountId>,
     public void AddMicrosoft(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
     {
         _externals.Add(ExternalConnection.Microsoft(identity, firstName, lastName, timeProvider.UtcNow()));
-        Name = new Name(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
+        Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
@@ -179,7 +204,7 @@ public sealed class Account : Entity<AccountId>,
 
     public void DeleteMicrosoft(string identity)
     {
-        _externals.RemoveWhere(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
+        _externals.RemoveAll(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
@@ -216,7 +241,7 @@ public sealed class Account : Entity<AccountId>,
 
     public void Update(string nickname, string? firstName, string? lastName, bool preferNickname)
     {
-        Name = new Name(nickname, firstName, lastName, preferNickname);
+        Name = Name.Create(nickname, firstName, lastName, preferNickname);
 
         AddDomainEvent(new AccountUpdatedDomainEvent(Id));
     }

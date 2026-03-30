@@ -4,16 +4,27 @@ using People.Api.Infrastructure.Providers.World;
 
 namespace People.Api.Endpoints;
 
-internal static class CountriesEndpoints
+// ReSharper disable NotAccessedPositionalProperty.Local
+public static class DictionariesEndpoints
 {
-    public static IEndpointRouteBuilder MapCountriesEndpoints(this IEndpointRouteBuilder routes)
+    private static readonly TimezoneOverview[] TimeZones = TimeZoneInfo.GetSystemTimeZones()
+        .Where(x => x.HasIanaId)
+        .Select(x => new TimezoneOverview(x.Id, x.DisplayName, x.BaseUtcOffset))
+        .ToArray();
+
+    public static IEndpointRouteBuilder MapDictionariesEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/countries")
-            .WithTags("Countries")
+        routes.MapGet("/countries",
+                (ICountryClient client, CancellationToken ct) => client.GetAsync(CultureInfo.CurrentCulture, ct))
+            .WithTags("Dictionaries")
             .RequireAuthorization(Policy.RequireCommonAccess.Name);
 
-        group.MapGet("/", (ICountryClient client, CancellationToken ct) => client.GetAsync(CultureInfo.CurrentCulture, ct));
+        routes.MapGet("/timezones", () => TimeZones)
+            .WithTags("Dictionaries")
+            .RequireAuthorization(Policy.RequireCommonAccess.Name);
 
-        return group;
+        return routes;
     }
+
+    private sealed record TimezoneOverview(string Id, string Name, TimeSpan Offset);
 }

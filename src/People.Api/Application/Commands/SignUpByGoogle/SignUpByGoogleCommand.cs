@@ -51,7 +51,7 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
             ? request.Language
             : Language.Parse(google.Locale.TwoLetterISOLanguageName);
 
-        var account = new Account(google.Email.User, language, request.Ip, _hasher);
+        var account = Account.Create(google.Email.User, language, request.Ip, _hasher);
         account.AddGoogle(google.Identity, google.FirstName, google.LastName, _timeProvider);
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
         account.Update(google.Picture);
