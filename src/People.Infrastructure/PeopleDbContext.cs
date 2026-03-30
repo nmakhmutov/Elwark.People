@@ -60,7 +60,10 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
     public PeopleDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<PeopleDbContext>()
-            .UseNpgsql("Host=_;Database=_;Username=_;Password=_");
+            .UseNpgsql(
+                "Host=_;Database=_;Username=_;Password=_",
+                npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
+            );
 
         return new PeopleDbContext(optionsBuilder.Options, new NoMediator(), TimeProvider.System);
     }

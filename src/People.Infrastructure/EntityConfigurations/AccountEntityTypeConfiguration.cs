@@ -103,7 +103,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property<Ban?>("_ban")
             .HasColumnName("ban")
-            .HasColumnType("json");
+            .HasColumnType("jsonb");
 
         builder.Property<byte[]>("_regIp")
             .HasColumnName("reg_ip")

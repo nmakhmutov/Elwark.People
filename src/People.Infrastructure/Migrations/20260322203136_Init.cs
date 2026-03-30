@@ -32,7 +32,7 @@ namespace People.Infrastructure.Migrations
                     time_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     start_of_week = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     is_activated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    ban = table.Column<Ban>(type: "json", nullable: true),
+                    ban = table.Column<Ban>(type: "jsonb", nullable: true),
                     reg_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     reg_ip = table.Column<byte[]>(type: "bytea", nullable: false),
                     roles = table.Column<string[]>(type: "text[]", nullable: false),

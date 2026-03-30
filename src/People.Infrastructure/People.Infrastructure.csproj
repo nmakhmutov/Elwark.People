@@ -13,6 +13,7 @@
     <PackageReference Include="Polly" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="People.IntegrationTests" />
     <InternalsVisibleTo Include="People.UnitTests" />
   </ItemGroup>
 </Project>

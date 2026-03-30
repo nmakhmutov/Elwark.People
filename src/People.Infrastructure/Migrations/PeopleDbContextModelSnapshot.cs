@@ -97,7 +97,7 @@ namespace People.Infrastructure.Migrations
                         .HasColumnName("xmin");
 
                     b.Property<Ban>("_ban")
-                        .HasColumnType("json")
+                        .HasColumnType("jsonb")
                         .HasColumnName("ban");
 
                     b.Property<DateTime>("_createdAt")

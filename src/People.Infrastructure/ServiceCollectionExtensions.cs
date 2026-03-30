@@ -24,7 +24,12 @@ public static class ServiceCollectionExtensions
 
         services
             .AddSingleton(TimeProvider.System)
-            .AddDbContext<PeopleDbContext>(builder => builder.UseNpgsql(options.PostgresqlConnectionString))
+            .AddDbContext<PeopleDbContext>(builder =>
+                builder.UseNpgsql(
+                    options.PostgresqlConnectionString,
+                    npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
+                )
+            )
             .AddScoped<IAccountRepository, AccountRepository>()
             .AddScoped<IConfirmationService, ConfirmationService>()
             .AddSingleton<IIpHasher, IpHasher>()
