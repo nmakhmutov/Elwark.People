@@ -68,6 +68,7 @@ internal sealed class GrpcExceptionInterceptor : Interceptor
         {
             "NotFound" => StatusCode.NotFound,
             "Forbidden" => StatusCode.PermissionDenied,
+            "AlreadyCreated" => StatusCode.AlreadyExists,
             _ => StatusCode.FailedPrecondition
         };
 

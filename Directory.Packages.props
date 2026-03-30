@@ -21,6 +21,7 @@
     <PackageVersion Include="Mediator.SourceGenerator" Version="3.0.2" />
   </ItemGroup>
   <ItemGroup Label="Validation">
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
   </ItemGroup>
   <ItemGroup Label="Kafka">
