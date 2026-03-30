@@ -26,9 +26,18 @@ public sealed class IpApiServiceTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.Contains("/json/203.0.113.5", req.RequestUri?.ToString());
-            Assert.Contains("lang=de", req.RequestUri?.Query);
-            var json = """{"status":"success","countryCode":"DE","continentCode":"EU","city":"Berlin","timeZone":"Europe/Berlin"}""";
+            var url = req.RequestUri?.ToString();
+            var query = req.RequestUri?.Query;
+            Assert.Contains("/json/203.0.113.5", url);
+            Assert.Contains("lang=de", query);
+            const string json =
+                """
+                {"status":"success",
+                "countryCode":"DE",
+                "continentCode":"EU",
+                "city":"Berlin",
+                "timeZone":"Europe/Berlin"}
+                """;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(json, Encoding.UTF8, "application/json")

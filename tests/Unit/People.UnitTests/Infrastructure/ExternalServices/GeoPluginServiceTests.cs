@@ -26,7 +26,8 @@ public sealed class GeoPluginServiceTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.Contains("ip=192.0.2.10", req.RequestUri?.Query);
+            var query = req.RequestUri?.Query;
+            Assert.Contains("ip=192.0.2.10", query);
             const string json =
                 """
                 {"geoplugin_city":"Austin",

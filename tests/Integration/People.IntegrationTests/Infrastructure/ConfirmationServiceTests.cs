@@ -1,7 +1,5 @@
 using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Hybrid;
 using People.Domain.Entities;
@@ -36,7 +34,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var sp = CreateServiceProviderWithHybridCache(out var cache);
+        await using var sp = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var accountId = new AccountId(10_001L);
@@ -57,7 +55,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var accountId = new AccountId(10_002L);
@@ -73,7 +71,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var accountId = new AccountId(10_003L);
@@ -90,7 +88,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var accountId = new AccountId(10_004L);
@@ -115,7 +113,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var accountId = new AccountId(20_001L);
@@ -130,7 +128,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var result = await sut.SignInAsync(new AccountId(20_002L), CancellationToken.None);
@@ -146,7 +144,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var accountId = new AccountId(30_001L);
@@ -164,7 +162,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var write = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(write, cache);
 
         var accountId = new AccountId(40_001L);
@@ -182,7 +180,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     {
         await using var db = fixture.CreateContext(new NoOpMediator());
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
-        using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
+        await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
 
         var freshId = new AccountId(50_001L);

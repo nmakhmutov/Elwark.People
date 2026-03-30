@@ -23,12 +23,14 @@ public sealed class GoogleApiServiceTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.Equal("/oauth2/v1/userinfo", req.RequestUri?.PathAndQuery);
-            var json = """
-                       {"id":"gid-1","email":"user@gmail.com","verified_email":true,
-                        "given_name":"Ann","family_name":"Lee","locale":"en-US",
-                        "picture":"https://cdn.example/p.png"}
-                       """;
+            var pathAndQuery = req.RequestUri?.PathAndQuery;
+            Assert.Equal("/oauth2/v1/userinfo", pathAndQuery);
+            const string json =
+                """
+                {"id":"gid-1","email":"user@gmail.com","verified_email":true,
+                 "given_name":"Ann","family_name":"Lee","locale":"en-US",
+                 "picture":"https://cdn.example/p.png"}
+                """;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")

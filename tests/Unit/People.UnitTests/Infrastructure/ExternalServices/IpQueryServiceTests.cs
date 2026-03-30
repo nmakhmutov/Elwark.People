@@ -26,10 +26,12 @@ public sealed class IpQueryServiceTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.Equal("https://ipquery.test/lookup/198.51.100.2?format=json", req.RequestUri?.ToString());
-            var json = """
-                       {"location":{"country_code":"FR","city":"Paris","timezone":"Europe/Paris"}}
-                       """;
+            var url = req.RequestUri?.ToString();
+            Assert.Equal("https://ipquery.test/lookup/198.51.100.2?format=json", url);
+            const string json =
+                """
+                {"location":{"country_code":"FR","city":"Paris","timezone":"Europe/Paris"}}
+                """;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(json, Encoding.UTF8, "application/json")

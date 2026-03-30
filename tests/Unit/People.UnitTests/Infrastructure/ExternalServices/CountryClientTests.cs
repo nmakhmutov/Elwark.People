@@ -43,7 +43,8 @@ public sealed class CountryClientTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.Equal("/all", req.RequestUri?.PathAndQuery.Split('?')[0]);
+            var path = req.RequestUri?.PathAndQuery.Split('?')[0];
+            Assert.Equal("/all", path);
             return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
                 Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")
@@ -106,7 +107,8 @@ public sealed class CountryClientTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.StartsWith("/alpha/FR", req.RequestUri?.PathAndQuery ?? "");
+            var pathAndQuery = req.RequestUri?.PathAndQuery ?? "";
+            Assert.StartsWith("/alpha/FR", pathAndQuery);
             return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)
             {
                 Content = new StringContent(json, System.Text.Encoding.UTF8, "application/json")

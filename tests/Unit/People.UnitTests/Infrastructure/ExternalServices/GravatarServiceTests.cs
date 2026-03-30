@@ -30,11 +30,13 @@ public sealed class GravatarServiceTests
         var handler = new MockHttpMessageHandler();
         handler.Configure((req, _) =>
         {
-            Assert.Equal($"/{hash}.json", req.RequestUri?.PathAndQuery);
-            var json = """
-                        {"entry":[{"preferredUsername":"pu","thumbnailUrl":"https://t.example/a.png",
-                         "aboutMe":"bio","name":[{"givenName":"F","familyName":"L"}]}]}
-                        """;
+            var pathAndQuery = req.RequestUri?.PathAndQuery;
+            Assert.Equal($"/{hash}.json", pathAndQuery);
+            const string json =
+                """
+                {"entry":[{"preferredUsername":"pu","thumbnailUrl":"https://t.example/a.png",
+                 "aboutMe":"bio","name":[{"givenName":"F","familyName":"L"}]}]}
+                """;
             return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StringContent(json, Encoding.UTF8, "application/json")
