@@ -44,7 +44,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public bool IsActivated { get; private set; }
 
-    public bool IsBaned =>
+    public bool IsBanned =>
         _ban is not null;
 
     public IReadOnlyCollection<EmailAccount> Emails =>
@@ -99,7 +99,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         _updatedAt = provider.UtcNow();
     }
 
-    public static Account Create(string nickname, Language language, IPAddress ip, IIpHasher hasher)
+    public static Account Create(string nickname, Language language, IPAddress ip, IIpHasher hasher, TimeProvider time)
     {
         var account = new Account(
             Name.Create(nickname),
@@ -115,7 +115,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
             hasher.CreateHash(ip)
         );
 
-        account.AddDomainEvent(new AccountCreatedDomainEvent(account, ip));
+        account.AddDomainEvent(new AccountCreatedDomainEvent(account, ip, time.UtcNow()));
 
         return account;
     }
@@ -133,13 +133,13 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         _emails.Add(EmailAccount.Create(Id, email.Address, _emails.Count == 0, isConfirmed ? now : null, now));
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
     }
 
     public MailAddress GetPrimaryEmail() =>
         new(_emails.First(x => x.IsPrimary).Email);
 
-    public void SetPrimaryEmail(MailAddress email)
+    public void SetPrimaryEmail(MailAddress email, TimeProvider timeProvider)
     {
         var result = _emails.FirstOrDefault(x => x.Email == email.Address) ?? throw EmailException.NotFound(email);
 
@@ -150,19 +150,20 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
             item.RemovePrimary();
 
         result.SetPrimary();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
     public void ConfirmEmail(MailAddress email, TimeProvider timeProvider)
     {
         var result = _emails.FirstOrDefault(x => x.Email == email.Address) ?? throw EmailException.NotFound(email);
-        result.Confirm(timeProvider.UtcNow());
+        var now = timeProvider.UtcNow();
+        result.Confirm(now);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
     }
 
-    public void DeleteEmail(MailAddress email)
+    public void DeleteEmail(MailAddress email, TimeProvider timeProvider)
     {
         var result = _emails.FirstOrDefault(x => x.Email == email.Address);
         if (result is null)
@@ -174,87 +175,90 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         _emails.Remove(result);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
     public void AddGoogle(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
     {
-        _externals.Add(ExternalConnection.Google(identity, firstName, lastName, timeProvider.UtcNow()));
+        var now = timeProvider.UtcNow();
+        _externals.Add(ExternalConnection.Google(identity, firstName, lastName, now));
         Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
     }
 
-    public void DeleteGoogle(string identity)
+    public void DeleteGoogle(string identity, TimeProvider timeProvider)
     {
         _externals.RemoveAll(x => x.Type == ExternalService.Google && x.Identity == identity);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
     public void AddMicrosoft(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
     {
-        _externals.Add(ExternalConnection.Microsoft(identity, firstName, lastName, timeProvider.UtcNow()));
+        var now = timeProvider.UtcNow();
+        _externals.Add(ExternalConnection.Microsoft(identity, firstName, lastName, now));
         Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
     }
 
-    public void DeleteMicrosoft(string identity)
+    public void DeleteMicrosoft(string identity, TimeProvider timeProvider)
     {
         _externals.RemoveAll(x => x.Type == ExternalService.Microsoft && x.Identity == identity);
 
         UpdateActivation();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void AddRole(string role)
+    public void AddRole(string role, TimeProvider timeProvider)
     {
         _roles = _roles.Append(role).Distinct().ToArray();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void DeleteRole(string role)
+    public void DeleteRole(string role, TimeProvider timeProvider)
     {
         _roles = _roles.Where(x => x != role).ToArray();
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
     public void Ban(string reason, DateTime expiredAt, TimeProvider timeProvider)
     {
-        _ban = new Ban(reason, expiredAt, timeProvider.UtcNow());
+        var now = timeProvider.UtcNow();
+        _ban = new Ban(reason, expiredAt, now);
 
-        AddDomainEvent(new AccountBannedDomainEvent(Id, reason, expiredAt));
+        AddDomainEvent(new AccountBannedDomainEvent(Id, reason, expiredAt, now));
     }
 
-    public void Unban()
+    public void Unban(TimeProvider timeProvider)
     {
         _ban = null;
 
-        AddDomainEvent(new AccountUnbannedDomainEvent(Id));
+        AddDomainEvent(new AccountUnbannedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void Update(string? firstName, string? lastName) =>
-        Update(Name.Nickname, firstName, lastName, Name.PreferNickname);
+    public void Update(string? firstName, string? lastName, TimeProvider timeProvider) =>
+        Update(Name.Nickname, firstName, lastName, Name.PreferNickname, timeProvider);
 
-    public void Update(string nickname, string? firstName, string? lastName, bool preferNickname)
+    public void Update(string nickname, string? firstName, string? lastName, bool preferNickname, TimeProvider timeProvider)
     {
         Name = Name.Create(nickname, firstName, lastName, preferNickname);
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void Update(Uri? picture)
+    public void Update(Uri? picture, TimeProvider timeProvider)
     {
         Picture = picture?.ToString() ?? DefaultPicture;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void Update(Language language, RegionCode region, CountryCode country, TimeZone timeZone)
+    public void Update(Language language, RegionCode region, CountryCode country, TimeZone timeZone, TimeProvider timeProvider)
     {
         RegionCode = region;
         CountryCode = country;
@@ -264,20 +268,20 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         if (_regCountryCode == CountryCode.Empty)
             _regCountryCode = CountryCode;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void Update(DateFormat dateFormat, TimeFormat timeFormat, DayOfWeek weekStart)
+    public void Update(DateFormat dateFormat, TimeFormat timeFormat, DayOfWeek weekStart, TimeProvider timeProvider)
     {
         DateFormat = dateFormat;
         TimeFormat = timeFormat;
         StartOfWeek = weekStart;
 
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id));
+        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void Delete() =>
-        AddDomainEvent(new AccountDeletedDomainEvent(Id));
+    public void Delete(TimeProvider timeProvider) =>
+        AddDomainEvent(new AccountDeletedDomainEvent(Id, timeProvider.UtcNow()));
 
     private void UpdateActivation() =>
         IsActivated = _externals.Count > 0 || _emails.Any(x => x is { IsPrimary: true, IsConfirmed: true });

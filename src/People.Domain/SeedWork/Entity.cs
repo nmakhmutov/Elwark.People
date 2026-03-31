@@ -1,15 +1,15 @@
-using Mediator;
+using People.Domain.Events;
 
 namespace People.Domain.SeedWork;
 
-public abstract class Entity
+public abstract class Entity : IHasDomainEvents
 {
-    private readonly HashSet<INotification> _domainEvents = [];
+    private readonly HashSet<IDomainEvent> _domainEvents = [];
 
-    public IReadOnlyCollection<INotification> DomainEvents =>
-        _domainEvents;
+    public IReadOnlyCollection<IDomainEvent> GetDomainEvents() =>
+        _domainEvents.ToArray();
 
-    protected void AddDomainEvent(INotification evt) =>
+    protected void AddDomainEvent(IDomainEvent evt) =>
         _domainEvents.Add(evt);
 
     public void ClearDomainEvents() =>

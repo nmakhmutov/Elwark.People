@@ -14,8 +14,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.HasKey(x => x.Id);
 
-        builder.Ignore(x => x.DomainEvents);
-        builder.Ignore(x => x.IsBaned);
+        builder.Ignore(x => x.IsBanned);
 
         builder.Property(x => x.Id)
             .HasColumnName("id")

@@ -114,7 +114,7 @@ public sealed class CommandTestFixture : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher);
+        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(email, true, time);
 

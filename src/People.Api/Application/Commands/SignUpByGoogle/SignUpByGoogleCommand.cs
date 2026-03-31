@@ -47,10 +47,10 @@ internal sealed class SignUpByGoogleCommandHandler : IRequestHandler<SignUpByGoo
             ? request.Language
             : Language.Parse(google.Locale.TwoLetterISOLanguageName);
 
-        var account = Account.Create(google.Email.User, language, request.Ip, _hasher);
+        var account = Account.Create(google.Email.User, language, request.Ip, _hasher, _timeProvider);
         account.AddGoogle(google.Identity, google.FirstName, google.LastName, _timeProvider);
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
-        account.Update(google.Picture);
+        account.Update(google.Picture, _timeProvider);
 
         await _repository.AddAsync(account, ct);
 

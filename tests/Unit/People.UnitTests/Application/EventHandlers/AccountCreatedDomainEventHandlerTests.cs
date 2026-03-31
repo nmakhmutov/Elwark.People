@@ -24,7 +24,7 @@ public sealed class AccountCreatedDomainEventHandlerTests
         var bus = Substitute.For<IIntegrationEventBus>();
 
         var sut = new AccountCreatedDomainEventHandler(bus);
-        await sut.Handle(new AccountCreatedDomainEvent(account, ip), CancellationToken.None);
+        await sut.Handle(new AccountCreatedDomainEvent(account, ip, utc), CancellationToken.None);
 
         await bus.Received(1).PublishAsync(
             Arg.Is<AccountCreatedIntegrationEvent>(e =>

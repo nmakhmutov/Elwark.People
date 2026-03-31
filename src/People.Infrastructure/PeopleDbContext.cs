@@ -40,8 +40,6 @@ public sealed class PeopleDbContext : DbContext, IUnitOfWork
 
         await SaveChangesAsync(cancellationToken);
 
-        await _mediator.DispatchDomainEventsAsync(this);
-
         return true;
     }
 

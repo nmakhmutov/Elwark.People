@@ -60,7 +60,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("inact", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("inact", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.AddEmail(new MailAddress("pending-grpc@example.com"), false, fixedTime);
 
@@ -97,7 +97,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("ban-grpc", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("ban-grpc", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.AddEmail(new MailAddress("banned-grpc@example.com"), true, fixedTime);
             account.Ban("policy", fixedTime.GetUtcNow().UtcDateTime.AddDays(7), fixedTime);

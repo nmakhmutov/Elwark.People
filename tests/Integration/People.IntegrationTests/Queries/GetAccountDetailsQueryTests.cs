@@ -34,16 +34,17 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("nick-base", Language.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("nick-base", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
-            account.Update("DisplayNick", "First", "Last", preferNickname: false);
-            account.Update(new Uri("https://example.com/avatar.png"));
+            account.Update("DisplayNick", "First", "Last", preferNickname: false, fixedTime);
+            account.Update(new Uri("https://example.com/avatar.png"), fixedTime);
             account.Update(
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("DE"),
-                TimeZone.Parse("Europe/Berlin"));
-            account.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("HH:mm"), DayOfWeek.Friday);
+                TimeZone.Parse("Europe/Berlin"),
+                fixedTime);
+            account.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("HH:mm"), DayOfWeek.Friday, fixedTime);
             account.AddEmail(primary, true, fixedTime);
             account.AddEmail(secondary, false, fixedTime);
             account.AddGoogle("google-sub-details", "G", "User", fixedTime);

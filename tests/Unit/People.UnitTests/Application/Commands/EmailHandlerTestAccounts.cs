@@ -30,7 +30,7 @@ internal static class EmailHandlerTestAccounts
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1]);
-        var account = Account.Create("nick", Language.Parse("en"), Ip, hasher);
+        var account = Account.Create("nick", Language.Parse("en"), Ip, hasher, time);
         SetAccountId(account, id);
         account.AddEmail(new MailAddress(primaryEmail), true, time);
         account.ClearDomainEvents();
@@ -71,7 +71,7 @@ internal static class EmailHandlerTestAccounts
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1]);
-        var account = Account.Create(new MailAddress(email).User, Language.Parse("en"), Ip, hasher);
+        var account = Account.Create(new MailAddress(email).User, Language.Parse("en"), Ip, hasher, time);
         SetAccountId(account, id);
         account.AddEmail(new MailAddress(email), false, time);
         account.ClearDomainEvents();

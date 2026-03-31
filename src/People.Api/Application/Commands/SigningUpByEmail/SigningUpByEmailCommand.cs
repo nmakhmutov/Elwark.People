@@ -49,7 +49,7 @@ internal sealed class SigningUpByEmailCommandHandler : IRequestHandler<SigningUp
             return await SendConfirmationAsync(email.AccountId, email.Email, request.Language, ct);
         }
 
-        var account = Account.Create(request.Email.User, request.Language, request.Ip, _hasher);
+        var account = Account.Create(request.Email.User, request.Language, request.Ip, _hasher, _timeProvider);
         account.AddEmail(request.Email, false, _timeProvider);
 
         await _repository.AddAsync(account, ct);

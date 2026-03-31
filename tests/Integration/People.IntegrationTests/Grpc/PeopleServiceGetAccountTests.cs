@@ -34,17 +34,27 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("grpc-nick", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create(
+                "grpc-nick",
+                DomainLanguage.Parse("en"),
+                IPAddress.Loopback,
+                hasher,
+                fixedTime
+            );
+
             account.ClearDomainEvents();
-            account.Update("GrpcNick", "G", "User", preferNickname: false);
-            account.Update(new Uri("https://grpc.example/p.png"));
+            account.Update("GrpcNick", "G", "User", preferNickname: false, fixedTime);
+            account.Update(new Uri("https://grpc.example/p.png"), fixedTime);
             account.Update(
                 DomainLanguage.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("AT"),
-                TimeZone.Parse("Europe/Vienna"));
+                TimeZone.Parse("Europe/Vienna"),
+                fixedTime
+            );
+
             account.AddEmail(primary, true, fixedTime);
-            account.AddRole("viewer");
+            account.AddRole("viewer", fixedTime);
 
             await repo.AddAsync(account, CancellationToken.None);
             await repo.UnitOfWork.SaveEntitiesAsync(CancellationToken.None);

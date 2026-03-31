@@ -24,13 +24,15 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
         IAccountRepository repository,
         IEnumerable<IIpService> ipServices,
         IGravatarService gravatar,
-        IConfirmationService confirmation
+        IConfirmationService confirmation,
+        TimeProvider timeProvider
     ) =>
         new(
             confirmation,
             gravatar,
             ipServices,
             repository,
+            timeProvider,
             NullLogger<AccountCreatedIntegrationEventHandler>.Instance);
 
     [Fact]
@@ -64,7 +66,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
 
         var confirmation = Substitute.For<IConfirmationService>();
 
-        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation);
+        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
         var message = new AccountCreatedIntegrationEvent(1001L, "10.0.0.1");
 
         await sut.HandleAsync(message, CancellationToken.None);
@@ -97,7 +99,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
         var gravatar = Substitute.For<IGravatarService>();
         var confirmation = Substitute.For<IConfirmationService>();
 
-        var sut = CreateSut(repository, [ip], gravatar, confirmation);
+        var sut = CreateSut(repository, [ip], gravatar, confirmation, TimeProvider.System);
 
         await sut.HandleAsync(new AccountCreatedIntegrationEvent(999L, "8.8.8.8"), CancellationToken.None);
 
@@ -130,7 +132,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
 
         var confirmation = Substitute.For<IConfirmationService>();
 
-        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation);
+        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
         await sut.HandleAsync(new AccountCreatedIntegrationEvent(1002L, "192.0.2.1"), CancellationToken.None);
 
@@ -164,7 +166,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
 
         var confirmation = Substitute.For<IConfirmationService>();
 
-        var sut = CreateSut(repository, [ip], gravatar, confirmation);
+        var sut = CreateSut(repository, [ip], gravatar, confirmation, time);
 
         await sut.HandleAsync(new AccountCreatedIntegrationEvent(1003L, "203.0.113.9"), CancellationToken.None);
 
@@ -193,7 +195,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
         gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
         var confirmation = Substitute.For<IConfirmationService>();
 
-        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation);
+        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
         await sut.HandleAsync(new AccountCreatedIntegrationEvent(1004L, "1.1.1.1"), CancellationToken.None);
 
@@ -225,7 +227,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests
         gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
         var confirmation = Substitute.For<IConfirmationService>();
 
-        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation);
+        var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
         await sut.HandleAsync(new AccountCreatedIntegrationEvent(1005L, "5.5.5.5"), CancellationToken.None);
 

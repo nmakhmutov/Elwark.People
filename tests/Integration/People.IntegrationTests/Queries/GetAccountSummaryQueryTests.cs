@@ -34,19 +34,20 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("sum-nick", Language.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("sum-nick", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
-            account.Update("SumNick", "Sum", "Mary", preferNickname: false);
-            account.Update(new Uri("https://summary.example/p.png"));
+            account.Update("SumNick", "Sum", "Mary", preferNickname: false, fixedTime);
+            account.Update(new Uri("https://summary.example/p.png"), fixedTime);
             account.Update(
                 Language.Parse("ru"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("FR"),
-                TimeZone.Parse("Europe/Paris"));
-            account.Update(DateFormat.Parse("yyyy-MM-dd"), TimeFormat.Parse("HH:mm"), DayOfWeek.Tuesday);
+                TimeZone.Parse("Europe/Paris"),
+                fixedTime);
+            account.Update(DateFormat.Parse("yyyy-MM-dd"), TimeFormat.Parse("HH:mm"), DayOfWeek.Tuesday, fixedTime);
             account.AddEmail(primary, true, fixedTime);
-            account.AddRole("member");
-            account.AddRole("admin");
+            account.AddRole("member", fixedTime);
+            account.AddRole("admin", fixedTime);
             account.Ban("policy", banExpires, fixedTime);
 
             await repo.AddAsync(account, CancellationToken.None);

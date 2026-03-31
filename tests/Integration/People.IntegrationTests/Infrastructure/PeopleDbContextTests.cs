@@ -18,7 +18,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         await using var write = fixture.CreateContext(mediator);
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
-        var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher());
+        var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System);
         write.Accounts.Add(account);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
@@ -40,13 +40,22 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         await using var write = fixture.CreateContext(mediator);
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
-        var account = Account.Create("evt", Language.Parse("en"), System.Net.IPAddress.Loopback, AccountTestFactory.FakeIpHasher());
+        var account = Account.Create(
+            "evt",
+            Language.Parse("en"),
+            System.Net.IPAddress.Loopback,
+            AccountTestFactory.FakeIpHasher(),
+            TimeProvider.System
+        );
+
         write.Accounts.Add(account);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
-        await mediator.Received(1).Publish(
-            Arg.Is<AccountCreatedDomainEvent>(e => e.Account.Id == account.Id),
-            Arg.Any<CancellationToken>());
+        await mediator.Received(1)
+            .Publish(
+                Arg.Is<AccountCreatedDomainEvent>(e => e.Account.Id == account.Id),
+                Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
@@ -56,7 +65,8 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         await using (var setup = fixture.CreateContext(mediator))
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(setup);
-            var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), "conc");
+            var account =
+                AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System, "conc");
             setup.Accounts.Add(account);
             await setup.SaveEntitiesAsync(CancellationToken.None);
         }
@@ -68,10 +78,10 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         var a1 = await ctx1.Accounts.FirstAsync(a => a.Id == id);
         var a2 = await ctx2.Accounts.FirstAsync(a => a.Id == id);
 
-        a1.Update("first-win", null, null, true);
+        a1.Update("first-win", null, null, true, TimeProvider.System);
         await ctx1.SaveEntitiesAsync(CancellationToken.None);
 
-        a2.Update("second-lose", null, null, true);
+        a2.Update("second-lose", null, null, true, TimeProvider.System);
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => ctx2.SaveEntitiesAsync(CancellationToken.None));
     }
 

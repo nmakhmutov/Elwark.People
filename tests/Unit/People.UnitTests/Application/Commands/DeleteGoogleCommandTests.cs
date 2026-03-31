@@ -26,7 +26,7 @@ public sealed class DeleteGoogleCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new DeleteGoogleCommandHandler(repo);
+        var handler = new DeleteGoogleCommandHandler(repo, time);
 
         await handler.Handle(new DeleteGoogleCommand(AccountId, "gid-remove"), CancellationToken.None);
 
@@ -40,7 +40,7 @@ public sealed class DeleteGoogleCommandTests
         var repo = Substitute.For<IAccountRepository>();
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var handler = new DeleteGoogleCommandHandler(repo);
+        var handler = new DeleteGoogleCommandHandler(repo, TimeProvider.System);
 
         await Assert.ThrowsAsync<AccountException>(async () =>
             await handler.Handle(new DeleteGoogleCommand(AccountId, "any"), CancellationToken.None));

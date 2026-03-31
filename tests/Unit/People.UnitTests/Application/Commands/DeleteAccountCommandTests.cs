@@ -25,13 +25,13 @@ public sealed class DeleteAccountCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new DeleteAccountCommandHandler(repo);
+        var handler = new DeleteAccountCommandHandler(repo, time);
 
         await handler.Handle(new DeleteAccountCommand(AccountId), CancellationToken.None);
 
         repo.Received(1).Delete(account);
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        Assert.Contains(account.DomainEvents, e => e is AccountDeletedDomainEvent d && d.Id == AccountId);
+        Assert.Contains(account.GetDomainEvents(), e => e is AccountDeletedDomainEvent d && d.Id == AccountId);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public sealed class DeleteAccountCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var handler = new DeleteAccountCommandHandler(repo);
+        var handler = new DeleteAccountCommandHandler(repo, TimeProvider.System);
 
         await handler.Handle(new DeleteAccountCommand(AccountId), CancellationToken.None);
 

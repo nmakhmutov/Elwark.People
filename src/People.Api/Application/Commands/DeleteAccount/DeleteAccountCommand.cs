@@ -9,9 +9,13 @@ internal sealed record DeleteAccountCommand(AccountId Id) : IRequest;
 internal sealed class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand>
 {
     private readonly IAccountRepository _repository;
+    private readonly TimeProvider _timeProvider;
 
-    public DeleteAccountCommandHandler(IAccountRepository repository) =>
+    public DeleteAccountCommandHandler(IAccountRepository repository, TimeProvider timeProvider)
+    {
         _repository = repository;
+        _timeProvider = timeProvider;
+    }
 
     public async ValueTask<Unit> Handle(DeleteAccountCommand request, CancellationToken ct)
     {
@@ -19,7 +23,7 @@ internal sealed class DeleteAccountCommandHandler : IRequestHandler<DeleteAccoun
         if (account is null)
             return Unit.Value;
 
-        account.Delete();
+        account.Delete(_timeProvider);
 
         _repository.Delete(account);
 

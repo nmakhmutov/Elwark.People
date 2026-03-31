@@ -33,7 +33,7 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("email-user", Language.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("email-user", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.AddEmail(primary, true, fixedTime);
             account.AddEmail(secondaryConfirmed, true, fixedTime);
@@ -74,7 +74,7 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("no-emails", Language.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("no-emails", Language.Parse("en"), IPAddress.Loopback, hasher, TimeProvider.System);
             account.ClearDomainEvents();
 
             await repo.AddAsync(account, CancellationToken.None);

@@ -26,7 +26,7 @@ public sealed class DeleteMicrosoftCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new DeleteMicrosoftCommandHandler(repo);
+        var handler = new DeleteMicrosoftCommandHandler(repo, time);
 
         await handler.Handle(new DeleteMicrosoftCommand(AccountId, "ms-remove"), CancellationToken.None);
 
@@ -40,7 +40,7 @@ public sealed class DeleteMicrosoftCommandTests
         var repo = Substitute.For<IAccountRepository>();
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var handler = new DeleteMicrosoftCommandHandler(repo);
+        var handler = new DeleteMicrosoftCommandHandler(repo, TimeProvider.System);
 
         await Assert.ThrowsAsync<AccountException>(async () =>
             await handler.Handle(new DeleteMicrosoftCommand(AccountId, "any"), CancellationToken.None));

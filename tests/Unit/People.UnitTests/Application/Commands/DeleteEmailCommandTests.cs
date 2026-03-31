@@ -29,7 +29,7 @@ public sealed class DeleteEmailCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new DeleteEmailCommandHandler(repo);
+        var handler = new DeleteEmailCommandHandler(repo, time);
 
         await handler.Handle(new DeleteEmailCommand(AccountId, new MailAddress("drop@test.com")), CancellationToken.None);
 
@@ -48,7 +48,7 @@ public sealed class DeleteEmailCommandTests
         repo.UnitOfWork.Returns(Substitute.For<IUnitOfWork>());
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new DeleteEmailCommandHandler(repo);
+        var handler = new DeleteEmailCommandHandler(repo, time);
 
         await Assert.ThrowsAsync<AccountException>(async () =>
             await handler.Handle(new DeleteEmailCommand(AccountId, new MailAddress("only@test.com")), CancellationToken.None));
@@ -63,7 +63,7 @@ public sealed class DeleteEmailCommandTests
         repo.UnitOfWork.Returns(Substitute.For<IUnitOfWork>());
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var handler = new DeleteEmailCommandHandler(repo);
+        var handler = new DeleteEmailCommandHandler(repo, TimeProvider.System);
 
         await Assert.ThrowsAsync<AccountException>(async () =>
             await handler.Handle(new DeleteEmailCommand(AccountId, new MailAddress("x@test.com")), CancellationToken.None));

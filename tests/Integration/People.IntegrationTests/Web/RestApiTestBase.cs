@@ -46,7 +46,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher);
+        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
 
@@ -69,7 +69,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher);
+        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
         account.AddGoogle(googleIdentity, "G", "User", time);
@@ -93,7 +93,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher);
+        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
         account.AddMicrosoft(msIdentity, "M", "User", time);

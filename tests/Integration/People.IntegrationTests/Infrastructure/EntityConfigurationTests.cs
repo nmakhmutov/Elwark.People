@@ -21,7 +21,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
-            var draft = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), "cfg");
+            var draft = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time, "cfg");
             write.Accounts.Add(draft);
             await write.SaveEntitiesAsync(CancellationToken.None);
 
@@ -32,10 +32,11 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("US"),
-                TimeZone.Parse("Europe/Berlin"));
-            draft.Update("nick", "Ada", "Lovelace", false);
-            draft.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("H:mm"), DayOfWeek.Friday);
-            draft.AddRole("admin");
+                TimeZone.Parse("Europe/Berlin"),
+                time);
+            draft.Update("nick", "Ada", "Lovelace", false, time);
+            draft.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("H:mm"), DayOfWeek.Friday, time);
+            draft.AddRole("admin", time);
             draft.Ban("reason", new DateTime(2035, 1, 1, 0, 0, 0, DateTimeKind.Utc), time);
             draft.AddGoogle("g-1", "G", "X", time);
             await write.SaveEntitiesAsync(CancellationToken.None);
@@ -93,7 +94,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
-            var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), "ms");
+            var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time, "ms");
             write.Accounts.Add(account);
             await write.SaveEntitiesAsync(CancellationToken.None);
 

@@ -29,7 +29,7 @@ public sealed class ChangePrimaryEmailCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new ChangePrimaryEmailCommandHandler(repo);
+        var handler = new ChangePrimaryEmailCommandHandler(repo, time);
 
         await handler.Handle(new ChangePrimaryEmailCommand(AccountId, new MailAddress("b@test.com")), CancellationToken.None);
 
@@ -46,7 +46,7 @@ public sealed class ChangePrimaryEmailCommandTests
         repo.UnitOfWork.Returns(Substitute.For<IUnitOfWork>());
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var handler = new ChangePrimaryEmailCommandHandler(repo);
+        var handler = new ChangePrimaryEmailCommandHandler(repo, TimeProvider.System);
 
         await Assert.ThrowsAsync<AccountException>(async () =>
             await handler.Handle(new ChangePrimaryEmailCommand(AccountId, new MailAddress("b@test.com")), CancellationToken.None));
@@ -61,7 +61,7 @@ public sealed class ChangePrimaryEmailCommandTests
         repo.UnitOfWork.Returns(Substitute.For<IUnitOfWork>());
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var handler = new ChangePrimaryEmailCommandHandler(repo);
+        var handler = new ChangePrimaryEmailCommandHandler(repo, time);
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(new ChangePrimaryEmailCommand(AccountId, new MailAddress("wait@test.com")), CancellationToken.None));

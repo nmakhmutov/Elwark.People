@@ -16,12 +16,14 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
     private readonly IEnumerable<IIpService> _ipServices;
     private readonly ILogger<AccountCreatedIntegrationEventHandler> _logger;
     private readonly IAccountRepository _repository;
+    private readonly TimeProvider _timeProvider;
 
     public AccountCreatedIntegrationEventHandler(
         IConfirmationService confirmation,
         IGravatarService gravatar,
         IEnumerable<IIpService> ipServices,
         IAccountRepository repository,
+        TimeProvider timeProvider,
         ILogger<AccountCreatedIntegrationEventHandler> logger
     )
     {
@@ -29,6 +31,7 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         _gravatar = gravatar;
         _repository = repository;
         _ipServices = ipServices;
+        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -47,7 +50,7 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
             _ = CountryCode.TryParse(ipInformation.CountryCode, out var country);
             _ = TimeZone.TryParse(ipInformation.TimeZone, out var timeZone);
 
-            account.Update(account.Language, region, country, timeZone);
+            account.Update(account.Language, region, country, timeZone, _timeProvider);
         }
 
         var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail());
@@ -56,10 +59,10 @@ internal sealed class AccountCreatedIntegrationEventHandler : IIntegrationEventH
         {
             var firstName = gravatar.Name?.FirstOrDefault()?.FirstName ?? account.Name.FirstName;
             var lastName = gravatar.Name?.FirstOrDefault()?.LastName ?? account.Name.LastName;
-            account.Update(firstName, lastName);
+            account.Update(firstName, lastName, _timeProvider);
 
             if (Uri.TryCreate(gravatar.ThumbnailUrl, UriKind.Absolute, out var image))
-                account.Update(image);
+                account.Update(image, _timeProvider);
         }
 
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);

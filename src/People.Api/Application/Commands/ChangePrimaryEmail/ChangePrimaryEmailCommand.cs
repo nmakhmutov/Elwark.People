@@ -11,15 +11,19 @@ internal sealed record ChangePrimaryEmailCommand(AccountId Id, MailAddress Email
 internal sealed class ChangePrimaryEmailCommandHandler : IRequestHandler<ChangePrimaryEmailCommand>
 {
     private readonly IAccountRepository _repository;
+    private readonly TimeProvider _timeProvider;
 
-    public ChangePrimaryEmailCommandHandler(IAccountRepository repository) =>
+    public ChangePrimaryEmailCommandHandler(IAccountRepository repository, TimeProvider timeProvider)
+    {
         _repository = repository;
+        _timeProvider = timeProvider;
+    }
 
     public async ValueTask<Unit> Handle(ChangePrimaryEmailCommand request, CancellationToken ct)
     {
         var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
 
-        account.SetPrimaryEmail(request.Email);
+        account.SetPrimaryEmail(request.Email, _timeProvider);
 
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);

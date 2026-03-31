@@ -26,11 +26,17 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
 {
     private readonly IAccountRepository _repository;
     private readonly ICountryClient _countryClient;
+    private readonly TimeProvider _timeProvider;
 
-    public UpdateAccountCommandHandler(IAccountRepository repository, ICountryClient countryClient)
+    public UpdateAccountCommandHandler(
+        IAccountRepository repository,
+        ICountryClient countryClient,
+        TimeProvider timeProvider
+    )
     {
         _repository = repository;
         _countryClient = countryClient;
+        _timeProvider = timeProvider;
     }
 
     public async ValueTask<Account> Handle(UpdateAccountCommand request, CancellationToken ct)
@@ -39,9 +45,9 @@ internal sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccoun
 
         var region = await GetRegionAsync(request.Country, ct);
 
-        account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname);
-        account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek);
-        account.Update(request.Language, region, request.Country, request.TimeZone);
+        account.Update(request.Nickname, request.FirstName, request.LastName, request.PreferNickname, _timeProvider);
+        account.Update(request.DateFormat, request.TimeFormat, request.StartOfWeek, _timeProvider);
+        account.Update(request.Language, region, request.Country, request.TimeZone, _timeProvider);
 
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);

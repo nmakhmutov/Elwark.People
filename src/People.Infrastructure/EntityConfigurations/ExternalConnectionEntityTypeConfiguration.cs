@@ -13,8 +13,6 @@ internal sealed class ExternalConnectionEntityTypeConfiguration : IEntityTypeCon
         builder.HasKey(x => x.Id);
         builder.HasAlternateKey(x => new { Name = x.Type, x.Identity });
 
-        builder.Ignore(x => x.DomainEvents);
-
         builder.Property(x => x.Id)
             .HasColumnName("id")
             .ValueGeneratedNever();

@@ -47,7 +47,7 @@ public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture p
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("unconfirmed-grpc", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher);
+            var account = Account.Create("unconfirmed-grpc", DomainLanguage.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.AddEmail(new MailAddress("not-confirmed-grpc@example.com"), false, fixedTime);
 

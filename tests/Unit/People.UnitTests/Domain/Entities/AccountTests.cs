@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
-using Mediator;
 using NSubstitute;
 using People.Domain.DomainEvents;
+using People.Domain.Events;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.SeedWork;
@@ -29,14 +29,15 @@ public sealed class AccountTests
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1, 2, 3]);
-        return Account.Create(nickname, language ?? Language.Parse("en"), IPAddress.Parse("127.0.0.1"), hasher);
+        var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+        return Account.Create(nickname, language ?? Language.Parse("en"), IPAddress.Parse("127.0.0.1"), hasher, time);
     }
 
     private static string[] GetRoles(Account account) =>
         (string[])typeof(Account).GetField("_roles", BindingFlags.Instance | BindingFlags.NonPublic)!
             .GetValue(account)!;
 
-    private static void AssertSingle<T>(IReadOnlyCollection<INotification> events) where T : class, INotification
+    private static void AssertSingle<T>(IReadOnlyCollection<IDomainEvent> events) where T : class, IDomainEvent
     {
         var matches = events.OfType<T>().ToList();
         Assert.Single(matches);
@@ -62,10 +63,11 @@ public sealed class AccountTests
     public void Create_RaisesCreatedEvent()
     {
         var account = CreateAccount();
-        AssertSingle<AccountCreatedDomainEvent>(account.DomainEvents);
-        var evt = account.DomainEvents.OfType<AccountCreatedDomainEvent>().Single();
+        AssertSingle<AccountCreatedDomainEvent>(account.GetDomainEvents());
+        var evt = account.GetDomainEvents().OfType<AccountCreatedDomainEvent>().Single();
         Assert.Same(account, evt.Account);
         Assert.Equal(IPAddress.Parse("127.0.0.1"), evt.IpAddress);
+        Assert.Equal(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc), evt.OccurredAt);
     }
 
     [Fact]
@@ -75,7 +77,8 @@ public sealed class AccountTests
         var ip = IPAddress.Parse("10.0.0.5");
         hasher.CreateHash(ip).Returns([9, 9, 9]);
 
-        _ = Account.Create("n", Language.Parse("en"), ip, hasher);
+        var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+        _ = Account.Create("n", Language.Parse("en"), ip, hasher, time);
 
         hasher.Received(1).CreateHash(ip);
     }
@@ -126,7 +129,7 @@ public sealed class AccountTests
         account.AddEmail(new MailAddress("b@x.com"), true, time);
         account.ClearDomainEvents();
 
-        account.SetPrimaryEmail(new MailAddress("b@x.com"));
+        account.SetPrimaryEmail(new MailAddress("b@x.com"), time);
 
         Assert.True(account.Emails.Single(e => e.Email == "b@x.com").IsPrimary);
         Assert.False(account.Emails.Single(e => e.Email == "a@x.com").IsPrimary);
@@ -140,7 +143,7 @@ public sealed class AccountTests
         account.AddEmail(new MailAddress("a@x.com"), true, time);
         account.AddEmail(new MailAddress("b@x.com"), false, time);
 
-        Assert.Throws<EmailException>(() => account.SetPrimaryEmail(new MailAddress("b@x.com")));
+        Assert.Throws<EmailException>(() => account.SetPrimaryEmail(new MailAddress("b@x.com"), time));
     }
 
     [Fact]
@@ -150,7 +153,7 @@ public sealed class AccountTests
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         account.AddEmail(new MailAddress("a@x.com"), true, time);
 
-        Assert.Throws<EmailException>(() => account.SetPrimaryEmail(new MailAddress("missing@x.com")));
+        Assert.Throws<EmailException>(() => account.SetPrimaryEmail(new MailAddress("missing@x.com"), time));
     }
 
     [Fact]
@@ -183,7 +186,7 @@ public sealed class AccountTests
         account.AddEmail(new MailAddress("primary@x.com"), true, time);
         account.AddEmail(new MailAddress("extra@x.com"), true, time);
 
-        account.DeleteEmail(new MailAddress("extra@x.com"));
+        account.DeleteEmail(new MailAddress("extra@x.com"), time);
 
         Assert.Single(account.Emails);
         Assert.Equal("primary@x.com", account.Emails.Single().Email);
@@ -196,7 +199,7 @@ public sealed class AccountTests
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         account.AddEmail(new MailAddress("only@x.com"), true, time);
 
-        Assert.Throws<AccountException>(() => account.DeleteEmail(new MailAddress("only@x.com")));
+        Assert.Throws<AccountException>(() => account.DeleteEmail(new MailAddress("only@x.com"), time));
     }
 
     [Fact]
@@ -207,9 +210,9 @@ public sealed class AccountTests
         account.AddEmail(new MailAddress("a@x.com"), true, time);
         account.ClearDomainEvents();
 
-        account.DeleteEmail(new MailAddress("ghost@x.com"));
+        account.DeleteEmail(new MailAddress("ghost@x.com"), time);
 
-        Assert.Empty(account.DomainEvents);
+        Assert.Empty(account.GetDomainEvents());
         Assert.Single(account.Emails);
     }
 
@@ -222,7 +225,7 @@ public sealed class AccountTests
 
         account.AddEmail(new MailAddress("a@x.com"), false, time);
 
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -259,7 +262,7 @@ public sealed class AccountTests
         account.AddGoogle("gid", null, null, time);
         Assert.True(account.IsActivated);
 
-        account.DeleteGoogle("gid");
+        account.DeleteGoogle("gid", time);
 
         Assert.False(account.IsActivated);
     }
@@ -288,7 +291,7 @@ public sealed class AccountTests
 
         account.AddGoogle("g1", null, null, time);
 
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -298,7 +301,7 @@ public sealed class AccountTests
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         account.AddGoogle("g1", null, null, time);
 
-        account.DeleteGoogle("g1");
+        account.DeleteGoogle("g1", time);
 
         Assert.Empty(account.Externals);
     }
@@ -311,7 +314,7 @@ public sealed class AccountTests
         account.AddGoogle("g1", null, null, time);
         var before = account.Externals.Count;
 
-        account.DeleteGoogle("unknown");
+        account.DeleteGoogle("unknown", time);
 
         Assert.Equal(before, account.Externals.Count);
     }
@@ -337,7 +340,7 @@ public sealed class AccountTests
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         account.AddMicrosoft("m1", null, null, time);
 
-        account.DeleteMicrosoft("m1");
+        account.DeleteMicrosoft("m1", time);
 
         Assert.Empty(account.Externals);
     }
@@ -349,7 +352,7 @@ public sealed class AccountTests
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         account.AddMicrosoft("m1", null, null, time);
 
-        account.DeleteMicrosoft("x");
+        account.DeleteMicrosoft("x", time);
 
         Assert.Single(account.Externals);
     }
@@ -359,13 +362,13 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
-        account.Update("John", "Doe");
+        account.Update("John", "Doe", TimeProvider.System);
 
         Assert.Equal("nick", account.Name.Nickname);
         Assert.Equal("John", account.Name.FirstName);
         Assert.Equal("Doe", account.Name.LastName);
         Assert.True(account.Name.PreferNickname);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -374,13 +377,13 @@ public sealed class AccountTests
         var account = CreateAccount();
         account.ClearDomainEvents();
 
-        account.Update("newnick", "A", "B", preferNickname: false);
+        account.Update("newnick", "A", "B", preferNickname: false, TimeProvider.System);
 
         Assert.Equal("newnick", account.Name.Nickname);
         Assert.Equal("A", account.Name.FirstName);
         Assert.Equal("B", account.Name.LastName);
         Assert.False(account.Name.PreferNickname);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -388,14 +391,14 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
-        account.Update(new Uri("https://example.com/p.png"));
+        account.Update(new Uri("https://example.com/p.png"), TimeProvider.System);
         Assert.Equal("https://example.com/p.png", account.Picture);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
 
         account.ClearDomainEvents();
-        account.Update(null);
+        account.Update(null, TimeProvider.System);
         Assert.Equal(ExpectedDefaultPicture, account.Picture);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -408,25 +411,27 @@ public sealed class AccountTests
             Language.Parse("ru"),
             RegionCode.Parse("EU"),
             CountryCode.Parse("DE"),
-            TimeZoneVo.Parse("UTC"));
+            TimeZoneVo.Parse("UTC"),
+            TimeProvider.System);
 
         Assert.Equal(Language.Parse("ru"), account.Language);
         Assert.Equal(RegionCode.Parse("EU"), account.RegionCode);
         Assert.Equal(CountryCode.Parse("DE"), account.CountryCode);
         Assert.Equal(TimeZoneVo.Parse("UTC"), account.TimeZone);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
 
         account.ClearDomainEvents();
         account.Update(
             Language.Parse("en"),
             RegionCode.Parse("NA"),
             CountryCode.Parse("US"),
-            TimeZoneVo.Parse("UTC"));
+            TimeZoneVo.Parse("UTC"),
+            TimeProvider.System);
 
         Assert.Equal(Language.Parse("en"), account.Language);
         Assert.Equal(RegionCode.Parse("NA"), account.RegionCode);
         Assert.Equal(CountryCode.Parse("US"), account.CountryCode);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -435,20 +440,20 @@ public sealed class AccountTests
         var account = CreateAccount();
         account.ClearDomainEvents();
 
-        account.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("H:mm"), DayOfWeek.Tuesday);
+        account.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("H:mm"), DayOfWeek.Tuesday, TimeProvider.System);
 
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);
         Assert.Equal(DayOfWeek.Tuesday, account.StartOfWeek);
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
     public void AddRole_Duplicate_Ignored()
     {
         var account = CreateAccount();
-        account.AddRole("adm");
-        account.AddRole("adm");
+        account.AddRole("adm", TimeProvider.System);
+        account.AddRole("adm", TimeProvider.System);
         var roles = GetRoles(account);
         Assert.Single(roles);
         Assert.Equal("adm", roles[0]);
@@ -459,22 +464,22 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
-        account.AddRole("r1");
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        account.AddRole("r1", TimeProvider.System);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
     public void DeleteRole_Known_Removes()
     {
         var account = CreateAccount();
-        account.AddRole("a");
-        account.AddRole("b");
+        account.AddRole("a", TimeProvider.System);
+        account.AddRole("b", TimeProvider.System);
         account.ClearDomainEvents();
 
-        account.DeleteRole("a");
+        account.DeleteRole("a", TimeProvider.System);
 
         Assert.Equal(["b"], GetRoles(account));
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -486,9 +491,9 @@ public sealed class AccountTests
 
         account.Ban("spam", expires, time);
 
-        Assert.True(account.IsBaned);
-        AssertSingle<AccountBannedDomainEvent>(account.DomainEvents);
-        var evt = account.DomainEvents.OfType<AccountBannedDomainEvent>().Single();
+        Assert.True(account.IsBanned);
+        AssertSingle<AccountBannedDomainEvent>(account.GetDomainEvents());
+        var evt = account.GetDomainEvents().OfType<AccountBannedDomainEvent>().Single();
         Assert.Equal("spam", evt.Reason);
         Assert.Equal(expires, evt.ExpiredAt);
     }
@@ -501,10 +506,10 @@ public sealed class AccountTests
         account.Ban("x", DateTime.UtcNow.AddDays(1), time);
         account.ClearDomainEvents();
 
-        account.Unban();
+        account.Unban(time);
 
-        Assert.False(account.IsBaned);
-        AssertSingle<AccountUnbannedDomainEvent>(account.DomainEvents);
+        Assert.False(account.IsBanned);
+        AssertSingle<AccountUnbannedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -513,20 +518,20 @@ public sealed class AccountTests
         var account = CreateAccount();
         account.ClearDomainEvents();
 
-        account.Delete();
+        account.Delete(TimeProvider.System);
 
-        AssertSingle<AccountDeletedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountDeletedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
     public void ClearDomainEvents_RemovesAll()
     {
         var account = CreateAccount();
-        Assert.NotEmpty(account.DomainEvents);
+        Assert.NotEmpty(account.GetDomainEvents());
 
         account.ClearDomainEvents();
 
-        Assert.Empty(account.DomainEvents);
+        Assert.Empty(account.GetDomainEvents());
     }
 
     [Fact]
@@ -539,7 +544,7 @@ public sealed class AccountTests
 
         account.ConfirmEmail(new MailAddress("a@x.com"), time);
 
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -551,9 +556,9 @@ public sealed class AccountTests
         account.AddEmail(new MailAddress("b@x.com"), true, time);
         account.ClearDomainEvents();
 
-        account.SetPrimaryEmail(new MailAddress("b@x.com"));
+        account.SetPrimaryEmail(new MailAddress("b@x.com"), time);
 
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
@@ -565,8 +570,8 @@ public sealed class AccountTests
         account.AddEmail(new MailAddress("x@x.com"), true, time);
         account.ClearDomainEvents();
 
-        account.DeleteEmail(new MailAddress("x@x.com"));
+        account.DeleteEmail(new MailAddress("x@x.com"), time);
 
-        AssertSingle<AccountUpdatedDomainEvent>(account.DomainEvents);
+        AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 }

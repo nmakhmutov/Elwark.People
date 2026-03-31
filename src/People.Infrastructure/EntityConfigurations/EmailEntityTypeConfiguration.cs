@@ -13,7 +13,6 @@ internal sealed class EmailEntityTypeConfiguration : IEntityTypeConfiguration<Em
         builder.HasKey(x => x.Id);
         builder.HasAlternateKey(x => x.Email);
 
-        builder.Ignore(x => x.DomainEvents);
         builder.Ignore(x => x.IsConfirmed);
 
         builder.Property(x => x.Id)

@@ -38,7 +38,7 @@ public sealed class UpdateAccountCommandTests
         countryClient.GetAsync(country, Arg.Any<CancellationToken>())
             .Returns(new CountryDetails("276", "DE", "DEU", regionEu));
 
-        var handler = new UpdateAccountCommandHandler(repo, countryClient);
+        var handler = new UpdateAccountCommandHandler(repo, countryClient, time);
 
         var cmd = new UpdateAccountCommand(
             AccountId,
@@ -87,7 +87,7 @@ public sealed class UpdateAccountCommandTests
         var countryClient = Substitute.For<ICountryClient>();
         countryClient.GetAsync(country, Arg.Any<CancellationToken>()).Returns((CountryDetails?)null);
 
-        var handler = new UpdateAccountCommandHandler(repo, countryClient);
+        var handler = new UpdateAccountCommandHandler(repo, countryClient, time);
 
         await handler.Handle(
             new UpdateAccountCommand(
@@ -113,7 +113,7 @@ public sealed class UpdateAccountCommandTests
         var repo = Substitute.For<IAccountRepository>();
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var handler = new UpdateAccountCommandHandler(repo, Substitute.For<ICountryClient>());
+        var handler = new UpdateAccountCommandHandler(repo, Substitute.For<ICountryClient>(), TimeProvider.System);
 
         await Assert.ThrowsAsync<AccountException>(async () =>
             await handler.Handle(
