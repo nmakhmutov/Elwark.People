@@ -74,7 +74,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
 
     private async Task<IpInformation?> GetIpInformation(string ip, Language language)
     {
-        if (IPAddress.TryParse(ip, out _))
+        if (!IPAddress.TryParse(ip, out _))
             return null;
 
         foreach (var ipService in _ipServices)
