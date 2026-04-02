@@ -1,0 +1,3 @@
+global using AccountCreatedIntegrationEvent = People.Domain.IntegrationEvents.AccountCreatedIntegrationEvent;
+global using AccountUpdatedIntegrationEvent = People.Domain.IntegrationEvents.AccountUpdatedIntegrationEvent;
+global using AccountDeletedIntegrationEvent = People.Domain.IntegrationEvents.AccountDeletedIntegrationEvent;
