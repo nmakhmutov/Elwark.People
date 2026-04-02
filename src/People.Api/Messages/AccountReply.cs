@@ -1,5 +1,5 @@
 using Google.Protobuf.WellKnownTypes;
-using People.Api.Application.Queries.GetAccountSummary;
+using People.Application.Queries.GetAccountSummary;
 
 // ReSharper disable CheckNamespace
 namespace People.Grpc.People;

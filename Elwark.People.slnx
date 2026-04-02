@@ -1,26 +1,26 @@
 <Solution>
     <Folder Name="/config/">
-        <File Path="Directory.Build.props"/>
-        <File Path="Directory.Packages.props"/>
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Packages.props" />
     </Folder>
     <Folder Name="/actions/">
-        <File Path=".github/workflows/people.yml"/>
-        <File Path=".github/workflows/webhooks.yml"/>
+        <File Path=".github/workflows/people.yml" />
+        <File Path=".github/workflows/people.worker.yml" />
     </Folder>
-    <Folder Name="/actions/composite/"/>
+    <Folder Name="/actions/composite/" />
     <Folder Name="/actions/composite/build/">
-        <File Path=".github/workflows/composite/build/action.yml"/>
+        <File Path=".github/workflows/composite/build/action.yml" />
     </Folder>
     <Folder Name="/src/">
-        <Project Path="src/People.Api/People.Api.csproj"/>
-        <Project Path="src/People.Domain/People.Domain.csproj"/>
-        <Project Path="src/People.Infrastructure/People.Infrastructure.csproj"/>
-        <Project Path="src/People.Kafka/People.Kafka.csproj"/>
-        <Project Path="src/People.Webhooks/People.Webhooks.csproj"/>
+        <Project Path="src/People.Api/People.Api.csproj" />
+        <Project Path="src/People.Application/People.Application.csproj" />
+        <Project Path="src/People.Domain/People.Domain.csproj" />
+        <Project Path="src/People.Infrastructure/People.Infrastructure.csproj" />
+        <Project Path="src/People.Worker/People.Worker.csproj" />
     </Folder>
     <Folder Name="/tests/">
-        <Project Path="tests/Unit/People.UnitTests/People.UnitTests.csproj"/>
-        <Project Path="tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj"/>
+        <Project Path="tests/Unit/People.UnitTests/People.UnitTests.csproj" />
+        <Project Path="tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj" />
     </Folder>
-    <Project Path="docker-compose.dcproj"/>
+    <Project Path="docker-compose.dcproj" />
 </Solution>

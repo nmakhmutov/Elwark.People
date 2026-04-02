@@ -1,19 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\People.Domain\People.Domain.csproj" />
+    <ProjectReference Include="..\People.Application\People.Application.csproj"/>
+    <ProjectReference Include="..\People.Domain\People.Domain.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" />
-    <PackageReference Include="Mediator.Abstractions" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-    <PackageReference Include="Polly" />
+    <PackageReference Include="Fluid.ViewEngine"/>
+    <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="Mediator.Abstractions"/>
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"/>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations"/>
+    <PackageReference Include="Duende.AccessTokenManagement"/>
+    <PackageReference Include="Polly"/>
+    <PackageReference Include="Serilog.AspNetCore"/>
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="People.IntegrationTests" />
-    <InternalsVisibleTo Include="People.UnitTests" />
+    <InternalsVisibleTo Include="People.IntegrationTests"/>
+    <InternalsVisibleTo Include="People.UnitTests"/>
+    <InternalsVisibleTo Include="People.Worker"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Email\Views\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

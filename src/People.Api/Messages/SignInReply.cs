@@ -1,4 +1,4 @@
-using People.Api.Application.Models;
+using People.Application.Models;
 
 // ReSharper disable CheckNamespace
 namespace People.Grpc.People;

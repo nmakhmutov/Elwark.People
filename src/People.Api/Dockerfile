@@ -6,7 +6,6 @@ WORKDIR /
 COPY "Directory.Build.props" "Directory.Packages.props" "./"
 COPY "src/People.Api/People.Api.csproj" "src/People.Api/"
 COPY "src/People.Infrastructure/People.Infrastructure.csproj" "src/People.Infrastructure/"
-COPY "src/People.Kafka/People.Kafka.csproj" "src/People.Kafka/"
 COPY "src/People.Domain/People.Domain.csproj" "src/People.Domain/"
 
 RUN dotnet restore "src/People.Api/People.Api.csproj"

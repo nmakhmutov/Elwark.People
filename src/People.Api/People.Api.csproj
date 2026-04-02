@@ -3,9 +3,7 @@
     <Protobuf Include="Protos\people.proto" GrpcServices="Server"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Duende.AccessTokenManagement"/>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
-    <PackageReference Include="Fluid.Core"/>
     <PackageReference Include="Google.Protobuf"/>
     <PackageReference Include="Grpc.AspNetCore.Server"/>
     <PackageReference Include="Grpc.Tools" PrivateAssets="all"/>
@@ -17,22 +15,17 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience"/>
     <PackageReference Include="MinimalApis.LiquidViews"/>
     <PackageReference Include="Scalar.AspNetCore"/>
-    <PackageReference Include="Serilog.AspNetCore"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj"/>
-    <ProjectReference Include="..\People.Kafka\People.Kafka.csproj"/>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Email\Views\*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="People.UnitTests" />
     <InternalsVisibleTo Include="People.IntegrationTests" />
+    <InternalsVisibleTo Include="People.Worker" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 </Project>

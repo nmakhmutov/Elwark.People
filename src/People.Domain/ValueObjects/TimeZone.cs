@@ -3,6 +3,8 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct TimeZone
 {
+    public const int MaxLength = 128;
+
     public static readonly TimeZone Utc =
         new(TimeZoneInfo.Utc.Id);
 
@@ -16,4 +18,7 @@ public readonly partial struct TimeZone
 
     public override string ToString() =>
         ValueAsString;
+
+    public static TimeZone ParseOrDefault(string? value) =>
+        TryParse(value, out var result) ? result : Utc;
 }

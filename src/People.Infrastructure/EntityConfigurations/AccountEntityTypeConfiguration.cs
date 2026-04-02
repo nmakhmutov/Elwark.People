@@ -51,39 +51,39 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(x => x.Language)
             .HasColumnName("language")
             .HasConversion(x => x.ToString(), x => Language.Parse(x))
-            .HasMaxLength(2)
+            .HasMaxLength(Language.MaxLength)
             .IsRequired();
 
-        builder.Property(x => x.RegionCode)
+        builder.Property(x => x.Region)
             .HasColumnName("region_code")
             .HasConversion(x => x.ToString(), x => RegionCode.Parse(x))
             .HasDefaultValue(RegionCode.Empty)
-            .HasMaxLength(2)
+            .HasMaxLength(RegionCode.MaxLength)
             .IsRequired();
 
-        builder.Property(x => x.CountryCode)
+        builder.Property(x => x.Country)
             .HasColumnName("country_code")
             .HasConversion(x => x.ToString(), x => CountryCode.Parse(x))
             .HasDefaultValue(CountryCode.Empty)
-            .HasMaxLength(2)
+            .HasMaxLength(CountryCode.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.TimeZone)
             .HasColumnName("time_zone")
             .HasConversion(x => x.ToString(), x => TimeZone.Parse(x))
-            .HasMaxLength(128)
+            .HasMaxLength(TimeZone.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.DateFormat)
             .HasColumnName("date_format")
             .HasConversion(x => x.ToString(), x => DateFormat.Parse(x))
-            .HasMaxLength(64)
+            .HasMaxLength(DateFormat.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.TimeFormat)
             .HasColumnName("time_format")
             .HasConversion(x => x.ToString(), x => TimeFormat.Parse(x))
-            .HasMaxLength(32)
+            .HasMaxLength(TimeFormat.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.StartOfWeek)
@@ -112,7 +112,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property<CountryCode>("_regCountryCode")
             .HasColumnName("reg_country_code")
             .HasConversion(x => x.ToString(), x => CountryCode.Parse(x))
-            .HasMaxLength(2)
+            .HasMaxLength(CountryCode.MaxLength)
             .IsRequired();
 
         builder.Property<DateTime>("_lastLogIn")

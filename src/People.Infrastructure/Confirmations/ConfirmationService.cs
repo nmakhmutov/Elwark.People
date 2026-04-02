@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using People.Application.Providers.Confirmation;
 using People.Domain;
 using People.Domain.Entities;
 
@@ -86,10 +87,7 @@ internal sealed class ConfirmationService : IConfirmationService
     }
 
     public Task<int> DeleteAsync(AccountId id, CancellationToken ct) =>
-        _dbContext.Set<Confirmation>().Where(x => x.AccountId == id).ExecuteDeleteAsync(ct);
-
-    public Task<int> CleanUpAsync(CancellationToken ct) =>
-        _dbContext.Set<Confirmation>().Where(x => x.ExpiresAt < DateTime.UtcNow).ExecuteDeleteAsync(ct);
+        _dbContext.Confirmations.Where(x => x.AccountId == id).ExecuteDeleteAsync(ct);
 
     private byte[] Encrypt(byte[] bytes)
     {
@@ -130,8 +128,8 @@ internal sealed class ConfirmationService : IConfirmationService
         if (now != ttl)
             throw ConfirmationException.AlreadySent();
 
-        var db = _dbContext.Set<Confirmation>();
-        var confirmation = await db.FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
+        var confirmation = await _dbContext.Confirmations
+            .FirstOrDefaultAsync(x => x.AccountId == id && x.Type == type, ct);
 
         if (confirmation is not null)
             return confirmation;
@@ -139,7 +137,7 @@ internal sealed class ConfirmationService : IConfirmationService
         var code = CreateCode(ConfirmationLength);
 
         var entity = new Confirmation(id, code, type, now, CodeTtl);
-        await db.AddAsync(entity, ct);
+        await _dbContext.Confirmations.AddAsync(entity, ct);
 
         await _dbContext.SaveChangesAsync(ct);
 
@@ -148,7 +146,7 @@ internal sealed class ConfirmationService : IConfirmationService
 
     private async Task<AccountId> DecodeAsync(Guid id, string type, string code, CancellationToken ct)
     {
-        var confirmation = await _dbContext.Set<Confirmation>()
+        var confirmation = await _dbContext.Confirmations
             .FirstOrDefaultAsync(x => x.Id == id, ct) ?? throw ConfirmationException.NotFound();
 
         if (!string.Equals(confirmation.Type, type, StringComparison.OrdinalIgnoreCase))

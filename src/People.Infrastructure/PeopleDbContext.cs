@@ -1,25 +1,16 @@
-using System.Runtime.CompilerServices;
-using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using People.Application.Providers.Webhooks;
 using People.Domain.Entities;
 using People.Domain.SeedWork;
-using People.Infrastructure.EntityConfigurations;
+using People.Infrastructure.Confirmations;
+using People.Infrastructure.Outbox;
 
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 namespace People.Infrastructure;
 
-public sealed class PeopleDbContext : DbContext, IUnitOfWork
+public sealed class PeopleDbContext : OutboxDbContext<PeopleDbContext>, IUnitOfWork
 {
-    private readonly IMediator _mediator;
     private readonly TimeProvider _timeProvider;
-
-    public PeopleDbContext(DbContextOptions<PeopleDbContext> options, IMediator mediator, TimeProvider timeProvider)
-        : base(options)
-    {
-        _mediator = mediator;
-        _timeProvider = timeProvider;
-    }
 
     public DbSet<Account> Accounts =>
         Set<Account>();
@@ -30,7 +21,27 @@ public sealed class PeopleDbContext : DbContext, IUnitOfWork
     public DbSet<ExternalConnection> Connections =>
         Set<ExternalConnection>();
 
+    public DbSet<Webhook> Webhooks =>
+        Set<Webhook>();
+
+    public DbSet<Confirmation> Confirmations =>
+        Set<Confirmation>();
+
+    public PeopleDbContext(
+        DbContextOptions<PeopleDbContext> options,
+        OutboxPipeline<PeopleDbContext> pipeline,
+        TimeProvider timeProvider
+    ) : base(options, pipeline) =>
+        _timeProvider = timeProvider;
+
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken)
+    {
+        await SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
         foreach (var entry in ChangeTracker.Entries<IAggregateRoot>())
         {
@@ -38,18 +49,13 @@ public sealed class PeopleDbContext : DbContext, IUnitOfWork
                 entry.Entity.SetAsUpdated(_timeProvider);
         }
 
-        await SaveChangesAsync(cancellationToken);
-
-        return true;
+        return await base.SaveChangesAsync(ct);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new AccountEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new EmailEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new ExternalConnectionEntityTypeConfiguration());
-
-        modelBuilder.ApplyConfiguration(new ConfirmationEntityTypeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PeopleDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
     }
 }
 
@@ -63,64 +69,7 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
                 npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
             );
 
-        return new PeopleDbContext(optionsBuilder.Options, new NoMediator(), TimeProvider.System);
-    }
-
-    private sealed class NoMediator : IMediator
-    {
-        public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
-            IStreamRequest<TResponse> request,
-            [EnumeratorCancellation] CancellationToken ct
-        )
-        {
-            await Task.Yield();
-            yield break;
-        }
-
-        public async IAsyncEnumerable<object?> CreateStream(
-            object request,
-            [EnumeratorCancellation] CancellationToken ct
-        )
-        {
-            await Task.Yield();
-            yield break;
-        }
-
-        public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
-            IStreamQuery<TResponse> query,
-            [EnumeratorCancellation] CancellationToken ct
-        )
-        {
-            await Task.Yield();
-            yield break;
-        }
-
-        public async IAsyncEnumerable<TResponse> CreateStream<TResponse>(
-            IStreamCommand<TResponse> command,
-            [EnumeratorCancellation] CancellationToken ct
-        )
-        {
-            await Task.Yield();
-            yield break;
-        }
-
-        public ValueTask Publish<TNotification>(TNotification notification, CancellationToken ct)
-            where TNotification : INotification =>
-            ValueTask.CompletedTask;
-
-        public ValueTask Publish(object notification, CancellationToken ct) =>
-            ValueTask.CompletedTask;
-
-        public ValueTask<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken ct) =>
-            ValueTask.FromResult<TResponse>(default!);
-
-        public ValueTask<TResponse> Send<TResponse>(ICommand<TResponse> command, CancellationToken ct) =>
-            ValueTask.FromResult<TResponse>(default!);
-
-        public ValueTask<TResponse> Send<TResponse>(IQuery<TResponse> query, CancellationToken ct) =>
-            ValueTask.FromResult<TResponse>(default!);
-
-        public ValueTask<object?> Send(object request, CancellationToken ct) =>
-            ValueTask.FromResult<object?>(null);
+        var pipeline = OutboxPipeline<PeopleDbContext>.Empty;
+        return new PeopleDbContext(optionsBuilder.Options, pipeline, TimeProvider.System);
     }
 }

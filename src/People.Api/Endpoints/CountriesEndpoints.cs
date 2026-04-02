@@ -1,6 +1,6 @@
 using System.Globalization;
 using People.Api.Infrastructure;
-using People.Api.Infrastructure.Providers.World;
+using People.Application.Providers.Country;
 
 namespace People.Api.Endpoints;
 

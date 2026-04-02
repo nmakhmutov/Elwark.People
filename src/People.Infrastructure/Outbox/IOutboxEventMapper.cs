@@ -1,10 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+using JetBrains.Annotations;
 using People.Domain.Events;
+using People.Infrastructure.Outbox.Entities;
 
 namespace People.Infrastructure.Outbox;
 
-public interface IOutboxEventMapper<TDbContext>
-    where TDbContext : DbContext
+[UsedImplicitly]
+public interface IOutboxEventMapper<in TDomainEvent>
+    where TDomainEvent : IDomainEvent
 {
-    OutboxMessage? Map(IDomainEvent domainEvent);
+    OutboxMessage Map(TDomainEvent evt);
 }

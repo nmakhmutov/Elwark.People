@@ -16,19 +16,6 @@ internal sealed class AccountRepository : IAccountRepository
     public AccountRepository(PeopleDbContext dbContext) =>
         _dbContext = dbContext;
 
-    public Task<Account?> GetAsync(AccountId id, CancellationToken ct) =>
-        _dbContext.Accounts
-            .Include(x => x.Emails)
-            .Include(x => x.Externals)
-            .AsSplitQuery()
-            .FirstOrDefaultAsync(x => x.Id == id, ct);
-
-    public async Task<Account> AddAsync(Account account, CancellationToken ct) =>
-        (await _dbContext.Accounts.AddAsync(account, ct)).Entity;
-
-    public void Delete(Account entity) =>
-        _dbContext.Accounts.Remove(entity);
-
     public Task<bool> IsExistsAsync(MailAddress email, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(email);
@@ -43,16 +30,30 @@ internal sealed class AccountRepository : IAccountRepository
         return _dbContext.Connections.AnyAsync(x => x.Type == service && x.Identity == identity, ct);
     }
 
-    public Task<ExternalSignInMatch?> GetAsync(ExternalService service, string identity, CancellationToken ct)
+    public Task<Account?> GetAsync(AccountId id, CancellationToken ct) =>
+        _dbContext.Accounts
+            .AsSplitQuery()
+            .Include(x => x.Emails)
+            .Include(x => x.Externals)
+            .FirstOrDefaultAsync(x => x.Id == id, ct);
+
+    public Task<Account?> GetAsync(ExternalService service, string identity, CancellationToken ct)
     {
         ArgumentException.ThrowIfNullOrEmpty(identity);
 
         return _dbContext.Accounts
-            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(x => x.Emails)
+            .Include(x => x.Externals)
             .Where(x => x.Externals.Any(e => e.Type == service && e.Identity == identity))
-            .Select(x => new ExternalSignInMatch(x.Id, x.Name))
             .FirstOrDefaultAsync(ct);
     }
+
+    public async Task<Account> AddAsync(Account account, CancellationToken ct) =>
+        (await _dbContext.Accounts.AddAsync(account, ct)).Entity;
+
+    public void Delete(Account entity) =>
+        _dbContext.Accounts.Remove(entity);
 
     public async Task<EmailSignupState?> GetEmailSignupStateAsync(MailAddress email, CancellationToken ct)
     {
@@ -73,11 +74,4 @@ internal sealed class AccountRepository : IAccountRepository
             ? null
             : new EmailSignupState(row.AccountId, new MailAddress(row.Email), row.ConfirmedAt.HasValue);
     }
-
-    public Task<ExternalSignInMatch?> GetSignInMatchAsync(AccountId id, CancellationToken ct) =>
-        _dbContext.Accounts
-            .AsNoTracking()
-            .Where(x => x.Id == id)
-            .Select(x => new ExternalSignInMatch(x.Id, x.Name))
-            .FirstOrDefaultAsync(ct);
 }

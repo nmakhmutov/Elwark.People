@@ -4,6 +4,9 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NSubstitute" />
@@ -14,10 +17,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Quartz" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../src/People.Domain/People.Domain.csproj" />
     <ProjectReference Include="../../../src/People.Api/People.Api.csproj" />
     <ProjectReference Include="../../../src/People.Infrastructure/People.Infrastructure.csproj" />
-    <ProjectReference Include="../../../src/People.Kafka/People.Kafka.csproj" />
+    <ProjectReference Include="../../../src/People.Worker/People.Worker.csproj" />
   </ItemGroup>
 </Project>

@@ -42,8 +42,8 @@ namespace People.Infrastructure.Migrations
 
                     b.Property<string>("DateFormat")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
                         .HasColumnName("date_format");
 
                     b.Property<bool>("IsActivated")
@@ -142,7 +142,6 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Domain.Entities.EmailAccount", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -182,7 +181,6 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Domain.Entities.ExternalConnection", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -228,7 +226,6 @@ namespace People.Infrastructure.Migrations
             modelBuilder.Entity("People.Infrastructure.Confirmations.Confirmation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
@@ -261,6 +258,105 @@ namespace People.Infrastructure.Migrations
                     b.HasIndex("AccountId", "Type");
 
                     b.ToTable("confirmations", (string)null);
+                });
+
+            modelBuilder.Entity("People.Infrastructure.Entities.WebhookSubscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DestinationUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("destination_url");
+
+                    b.Property<byte>("Method")
+                        .HasColumnType("smallint")
+                        .HasColumnName("method");
+
+                    b.Property<string>("Token")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("token");
+
+                    b.Property<byte>("Type")
+                        .HasColumnType("smallint")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("IX_webhook_subscriptions_type");
+
+                    b.ToTable("webhook_subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("People.Infrastructure.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTime?>("NextRetryAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_retry_at")
+                        .HasColumnOrder(6);
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at")
+                        .HasColumnOrder(8);
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at")
+                        .HasColumnOrder(7);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("_attempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempts")
+                        .HasColumnOrder(5);
+
+                    b.Property<string>("_error")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("error")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("_payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("_type")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("type")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessedAt", "OccurredAt")
+                        .HasFilter("processed_at IS NULL");
+
+                    b.HasIndex("ProcessedAt", "NextRetryAt", "OccurredAt")
+                        .HasFilter("processed_at IS NULL");
+
+                    b.ToTable("outbox_messages", (string)null);
                 });
 
             modelBuilder.Entity("People.Domain.Entities.Account", b =>

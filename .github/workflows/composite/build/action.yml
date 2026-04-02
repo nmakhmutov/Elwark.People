@@ -12,6 +12,5 @@ runs:
     - name: Compose build ${{ inputs.service }}
       shell: bash
       run: sudo -E docker compose build ${{ inputs.service }} --no-cache
-      working-directory: ./src
       env:
         TAG: ${{ github.sha }}

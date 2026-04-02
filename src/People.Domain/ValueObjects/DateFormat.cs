@@ -6,6 +6,8 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct DateFormat
 {
+    public const int MaxLength = 32;
+
     private static readonly FrozenSet<string> List =
     [
         "MM.dd.yyyy",

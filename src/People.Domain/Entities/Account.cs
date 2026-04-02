@@ -28,9 +28,9 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public string Picture { get; private set; }
 
-    public RegionCode RegionCode { get; private set; }
+    public RegionCode Region { get; private set; }
 
-    public CountryCode CountryCode { get; private set; }
+    public CountryCode Country { get; private set; }
 
     public Language Language { get; private set; }
 
@@ -63,8 +63,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     private Account(
         Name name,
         string picture,
-        RegionCode regionCode,
-        CountryCode countryCode,
+        RegionCode region,
+        CountryCode country,
         Language language,
         TimeZone timeZone,
         DateFormat dateFormat,
@@ -76,8 +76,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     {
         Name = name;
         Picture = picture;
-        RegionCode = regionCode;
-        CountryCode = countryCode;
+        Region = region;
+        Country = country;
         Language = language;
         TimeZone = timeZone;
         DateFormat = dateFormat;
@@ -178,11 +178,13 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void AddGoogle(string identity, string? firstName, string? lastName, TimeProvider timeProvider)
+    public void AddGoogle(string identity, string? firstName, string? lastName, Uri? picture, TimeProvider timeProvider)
     {
         var now = timeProvider.UtcNow();
         _externals.Add(ExternalConnection.Google(identity, firstName, lastName, now));
         Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
+        if (Picture == DefaultPicture)
+            Picture = picture?.ToString() ?? Picture;
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
@@ -241,41 +243,31 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         AddDomainEvent(new AccountUnbannedDomainEvent(Id, timeProvider.UtcNow()));
     }
 
-    public void Update(string? firstName, string? lastName, TimeProvider timeProvider) =>
-        Update(Name.Nickname, firstName, lastName, Name.PreferNickname, timeProvider);
-
-    public void Update(string nickname, string? firstName, string? lastName, bool preferNickname, TimeProvider timeProvider)
+    public void Update(
+        Name name,
+        string? picture,
+        Language language,
+        RegionCode region,
+        CountryCode country,
+        TimeZone timeZone,
+        DateFormat dateFormat,
+        TimeFormat timeFormat,
+        DayOfWeek startOfWeek,
+        TimeProvider timeProvider
+    )
     {
-        Name = Name.Create(nickname, firstName, lastName, preferNickname);
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
-    }
-
-    public void Update(Uri? picture, TimeProvider timeProvider)
-    {
-        Picture = picture?.ToString() ?? DefaultPicture;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
-    }
-
-    public void Update(Language language, RegionCode region, CountryCode country, TimeZone timeZone, TimeProvider timeProvider)
-    {
-        RegionCode = region;
-        CountryCode = country;
+        Name = name;
+        Picture = string.IsNullOrWhiteSpace(picture) ? DefaultPicture : picture;
+        Region = region;
+        Country = country;
         Language = language;
         TimeZone = timeZone;
-
-        if (_regCountryCode == CountryCode.Empty)
-            _regCountryCode = CountryCode;
-
-        AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
-    }
-
-    public void Update(DateFormat dateFormat, TimeFormat timeFormat, DayOfWeek weekStart, TimeProvider timeProvider)
-    {
         DateFormat = dateFormat;
         TimeFormat = timeFormat;
-        StartOfWeek = weekStart;
+        StartOfWeek = startOfWeek;
+
+        if (_regCountryCode == CountryCode.Empty)
+            _regCountryCode = country;
 
         AddDomainEvent(new AccountUpdatedDomainEvent(Id, timeProvider.UtcNow()));
     }
@@ -285,4 +277,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     private void UpdateActivation() =>
         IsActivated = _externals.Count > 0 || _emails.Any(x => x is { IsPrimary: true, IsConfirmed: true });
+
+    public void SignIn(TimeProvider timeProvider) =>
+        _lastLogIn = timeProvider.UtcNow();
 }

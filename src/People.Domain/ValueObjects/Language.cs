@@ -5,6 +5,8 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct Language
 {
+    public const int MaxLength = 2;
+
     public static Language Default =>
         new("en");
 
@@ -17,7 +19,9 @@ public readonly partial struct Language
     }
 
     public static bool IsValid([NotNullWhen(true)] string? value) =>
-        !string.IsNullOrWhiteSpace(value) && value.Length == 2 && !value.Equals("iv", StringComparison.CurrentCultureIgnoreCase);
+        !string.IsNullOrWhiteSpace(value)
+        && value.Length == MaxLength
+        && !value.Equals("iv", StringComparison.CurrentCultureIgnoreCase);
 
     public override string ToString() =>
         ValueAsString;

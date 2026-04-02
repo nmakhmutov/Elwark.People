@@ -1,0 +1,45 @@
+using Mediator;
+using People.Application.Providers.Google;
+using People.Domain.Entities;
+using People.Domain.Exceptions;
+using People.Domain.Repositories;
+
+namespace People.Application.Commands.AppendGoogle;
+
+public sealed record AppendGoogleCommand(AccountId Id, string Token) : ICommand;
+
+public sealed class AppendGoogleCommandHandler : ICommandHandler<AppendGoogleCommand>
+{
+    private readonly IGoogleApiService _google;
+    private readonly IAccountRepository _repository;
+    private readonly TimeProvider _timeProvider;
+
+    public AppendGoogleCommandHandler(
+        IGoogleApiService google,
+        IAccountRepository repository,
+        TimeProvider timeProvider
+    )
+    {
+        _google = google;
+        _repository = repository;
+        _timeProvider = timeProvider;
+    }
+
+    public async ValueTask<Unit> Handle(AppendGoogleCommand request, CancellationToken ct)
+    {
+        var account = await _repository.GetAsync(request.Id, ct) ?? throw AccountException.NotFound(request.Id);
+
+        var google = await _google.GetAsync(request.Token, ct);
+
+        if (!await _repository.IsExistsAsync(ExternalService.Google, google.Identity, ct))
+            account.AddGoogle(google.Identity, google.FirstName, google.LastName, google.Picture, _timeProvider);
+
+        if (!await _repository.IsExistsAsync(google.Email, ct))
+            account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
+
+        await _repository.UnitOfWork
+            .SaveEntitiesAsync(ct);
+
+        return Unit.Value;
+    }
+}

@@ -6,6 +6,8 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct TimeFormat
 {
+    public const int MaxLength = 32;
+
     private static readonly FrozenSet<string> List =
     [
         "H:mm",

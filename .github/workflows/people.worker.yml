@@ -1,0 +1,20 @@
+name: People worker
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  SERVICE: people.worker
+
+jobs:
+  BuildContainer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Github Action
+        uses: actions/checkout@master
+
+      - name: Build docker container
+        uses: ./.github/workflows/composite/build
+        with:
+          service: ${{ env.SERVICE }}

@@ -3,20 +3,20 @@ using System.Security.Claims;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Http.HttpResults;
-using People.Api.Application.Commands.AppendEmail;
-using People.Api.Application.Commands.ChangePrimaryEmail;
-using People.Api.Application.Commands.ConfirmEmail;
-using People.Api.Application.Commands.ConfirmingEmail;
-using People.Api.Application.Commands.DeleteAccount;
-using People.Api.Application.Commands.DeleteEmail;
-using People.Api.Application.Commands.DeleteGoogle;
-using People.Api.Application.Commands.DeleteMicrosoft;
-using People.Api.Application.Commands.UpdateAccount;
-using People.Api.Application.Queries.GetAccountDetails;
-using People.Api.Application.Queries.GetAccountSummary;
-using People.Api.Application.Queries.GetEmails;
 using People.Api.Infrastructure;
 using People.Api.Infrastructure.Filters;
+using People.Application.Commands.AppendEmail;
+using People.Application.Commands.ChangePrimaryEmail;
+using People.Application.Commands.ConfirmEmail;
+using People.Application.Commands.ConfirmingEmail;
+using People.Application.Commands.DeleteAccount;
+using People.Application.Commands.DeleteEmail;
+using People.Application.Commands.DeleteGoogle;
+using People.Application.Commands.DeleteMicrosoft;
+using People.Application.Commands.UpdateAccount;
+using People.Application.Queries.GetAccountDetails;
+using People.Application.Queries.GetAccountSummary;
+using People.Application.Queries.GetEmails;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 
@@ -277,8 +277,8 @@ internal static class AccountEndpoints
                 account.Name.FullName(),
                 account.Language.ToString(),
                 account.Picture,
-                account.RegionCode.IsEmpty() ? null : account.RegionCode.ToString(),
-                account.CountryCode.IsEmpty() ? null : account.CountryCode.ToString(),
+                account.Region.IsEmpty() ? null : account.Region.ToString(),
+                account.Country.IsEmpty() ? null : account.Country.ToString(),
                 account.TimeZone.ToString(),
                 account.DateFormat.ToString(),
                 account.TimeFormat.ToString(),
@@ -365,23 +365,27 @@ internal static class AccountEndpoints
 
                 RuleFor(x => x.Language)
                     .NotEmpty()
-                    .Length(2)
+                    .Length(Domain.ValueObjects.Language.MaxLength)
                     .Must(x => Domain.ValueObjects.Language.TryParse(x, out _));
 
                 RuleFor(x => x.CountryCode)
                     .NotEmpty()
+                    .Length(Domain.ValueObjects.CountryCode.MaxLength)
                     .Must(x => Domain.ValueObjects.CountryCode.TryParse(x, out _));
 
                 RuleFor(x => x.TimeZone)
                     .NotEmpty()
+                    .MaximumLength(Domain.ValueObjects.TimeZone.MaxLength)
                     .Must(x => Domain.ValueObjects.TimeZone.TryParse(x, out _));
 
                 RuleFor(x => x.DateFormat)
                     .NotEmpty()
+                    .MaximumLength(Domain.ValueObjects.DateFormat.MaxLength)
                     .Must(x => Domain.ValueObjects.DateFormat.TryParse(x, out _));
 
                 RuleFor(x => x.TimeFormat)
                     .NotEmpty()
+                    .MaximumLength(Domain.ValueObjects.TimeFormat.MaxLength)
                     .Must(x => Domain.ValueObjects.TimeFormat.TryParse(x, out _));
 
                 RuleFor(x => x.StartOfWeek)

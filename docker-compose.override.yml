@@ -19,15 +19,14 @@ services:
       - Authentication__Audience=people-api
       - Notification__Host=http://elwark_notification_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=elwark_people;Username=master_account;Password=master_password
-      - ConnectionStrings__Kafka=broker:29092
     ports:
       - "5001:80"
       - "5002:81"
     networks:
       - elwarknetwork
 
-  people.webhooks:
-    container_name: "elwark_people_webhooks"
+  people.worker:
+    container_name: "elwark_people_worker"
     restart: always
     deploy:
       resources:
@@ -35,12 +34,7 @@ services:
           memory: 128M
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - Kestrel__EndPoints__Http__Url=http://+:80
-      - Urls__Identity=http://elwark_identity_api
-      - Urls__Notification.Api=http://elwark_notification_api
       - ConnectionStrings__Postgresql=Host=postgresql;Database=elwark_people;Username=master_account;Password=master_password
-      - ConnectionStrings__Kafka=broker:29092
-    ports:
-      - "5003:80"
+      - Notification__Host=http://elwark_notification_api
     networks:
       - elwarknetwork

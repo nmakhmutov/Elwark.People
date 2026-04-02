@@ -6,6 +6,8 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct RegionCode
 {
+    public const int MaxLength = 2;
+
     private static readonly FrozenDictionary<string, string> Regions =
         new Dictionary<string, string>
             {
@@ -33,8 +35,13 @@ public readonly partial struct RegionCode
         this == Empty;
 
     public static bool IsValid([NotNullWhen(true)] string? value) =>
-        !string.IsNullOrWhiteSpace(value) && (value == "--" || Regions.ContainsKey(value));
+        !string.IsNullOrWhiteSpace(value)
+        && value.Length == MaxLength
+        && (value == "--" || Regions.ContainsKey(value));
 
     public override string ToString() =>
         ValueAsString;
+
+    public static RegionCode ParseOrDefault(string? value) =>
+        TryParse(value, out var result) ? result : Empty;
 }

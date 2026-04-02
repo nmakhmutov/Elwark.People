@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: src/People.Api/Dockerfile
 
-  people.webhooks:
-    image: "elwark/people/webhooks:${TAG:-latest}"
+  people.worker:
+    image: "elwark/people/worker:${TAG:-latest}"
     build:
       context: .
-      dockerfile: src/People.Webhooks/Dockerfile
+      dockerfile: src/People.Worker/Dockerfile

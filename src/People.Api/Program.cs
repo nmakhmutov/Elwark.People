@@ -4,7 +4,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Duende.AccessTokenManagement;
 using FluentValidation;
 using Fluid;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,28 +12,16 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Npgsql;
-using People.Api.Application.Behaviour;
-using People.Api.Application.IntegrationEvents.EventHandling;
-using People.Api.Application.IntegrationEvents.Events;
-using People.Api.Application.Queries.GetAccountSummary;
 using People.Api.Endpoints;
 using People.Api.Grpc;
 using People.Api.Infrastructure;
-using People.Api.Infrastructure.EmailBuilder;
 using People.Api.Infrastructure.Interceptors;
-using People.Api.Infrastructure.Notifications;
-using People.Api.Infrastructure.Providers;
-using People.Api.Infrastructure.Providers.Google;
-using People.Api.Infrastructure.Providers.Gravatar;
-using People.Api.Infrastructure.Providers.Microsoft;
-using People.Api.Infrastructure.Providers.World;
+using People.Application.Behaviour;
+using People.Application.Queries.GetAccountSummary;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using People.Kafka;
 using Scalar.AspNetCore;
-using Scope = Duende.AccessTokenManagement.Scope;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
@@ -121,123 +108,13 @@ builder.Services
         options.ServiceLifetime = ServiceLifetime.Scoped;
         options.PipelineBehaviors = [typeof(RequestLoggingBehavior<,>), typeof(RequestValidatorBehavior<,>)];
     })
-    .AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), ServiceLifetime.Scoped, null, true)
-    .AddInfrastructure(options =>
-    {
-        var postgresql = new NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("Postgresql"))
-        {
-            ApplicationName = appName
-        };
+    .AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies(), ServiceLifetime.Scoped, null, true);
 
-        options.PostgresqlConnectionString = postgresql.ToString();
-        options.AppKey = builder.Configuration["App:Key"]!;
-        options.AppVector = builder.Configuration["App:Vector"]!;
-    });
-
-builder.Services
-    .AddHybridCache();
-
-builder.Services
-    .Configure<HostOptions>(options =>
-    {
-        options.ServicesStartConcurrently = true;
-        options.ServicesStopConcurrently = true;
-    });
-
-builder.Services
-    .AddKafka(builder.Configuration.GetConnectionString("Kafka")!)
-    .AddProducer<AccountCreatedIntegrationEvent>(producer =>
-        producer.WithTopic(KafkaTopic.Created)
-            .WithClientId(appName)
-    )
-    .AddProducer<AccountUpdatedIntegrationEvent>(producer =>
-        producer.WithTopic(KafkaTopic.Updated)
-            .WithClientId(appName)
-    )
-    .AddProducer<AccountDeletedIntegrationEvent>(producer =>
-        producer.WithTopic(KafkaTopic.Deleted)
-            .WithClientId(appName)
-    )
-    .AddProducer<AccountActivity>(producer =>
-        producer.WithTopic(KafkaTopic.Activity)
-            .WithClientId(appName)
-    )
-    .AddConsumer<AccountCreatedIntegrationEvent, AccountCreatedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.Created)
-            .WithGroupId(appName)
-            .WithWorkers(2)
-            .CreateTopicIfNotExists(8)
-    )
-    .AddConsumer<AccountActivity, AccountEngagedIntegrationEventHandler>(consumer =>
-        consumer.WithTopic(KafkaTopic.Activity)
-            .WithGroupId(appName)
-            .WithWorkers(2)
-            .CreateTopicIfNotExists(8)
-    );
-
-builder.Services
-    .AddSingleton<IEmailBuilder, EmailBuilder>()
+builder.AddInfrastructure()
     .AddFluid(options =>
     {
         options.ViewsFileProvider = builder.Environment.ContentRootFileProvider;
         options.TemplateOptions.MemberAccessStrategy = UnsafeMemberAccessStrategy.Instance;
-    });
-
-builder.Services
-    .AddClientCredentialsTokenManagement()
-    .AddClient(ClientCredentialsClientName.Parse("notification"), client =>
-    {
-        client.TokenEndpoint = builder.Configuration.GetUri("Authentication:Authority", "connect/token");
-        client.ClientId = ClientId.Parse(builder.Configuration.GetString("Notification:ClientId"));
-        client.ClientSecret = ClientSecret.Parse(builder.Configuration.GetString("Notification:ClientSecret"));
-        client.Scope = Scope.Parse(builder.Configuration.GetString("Notification:Scope"));
-    });
-
-builder.Services
-    .AddHttpClient<INotificationSender, NotificationSender>(client =>
-        client.BaseAddress = new Uri(builder.Configuration["Notification:Host"]!)
-    )
-    .AddClientCredentialsTokenHandler(ClientCredentialsClientName.Parse("notification"));
-
-builder.Services
-    .AddHttpClient<ICountryClient, CountryClient>(client =>
-        client.BaseAddress = new Uri(builder.Configuration["Urls:Countries.Api"]!)
-    );
-
-builder.Services
-    .AddHttpClient<IGoogleApiService, GoogleApiService>(client =>
-        client.BaseAddress = new Uri(builder.Configuration["Urls:Google.Api"]!)
-    );
-
-builder.Services
-    .AddHttpClient<IMicrosoftApiService, MicrosoftApiService>(client =>
-        client.BaseAddress = new Uri(builder.Configuration["Urls:Microsoft.Api"]!)
-    );
-
-builder.Services
-    .AddHttpClient<IIpService, IpApiService>(client =>
-    {
-        client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
-    });
-
-builder.Services
-    .AddHttpClient<IIpService, GeoPluginService>(client =>
-    {
-        client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
-    });
-
-builder.Services
-    .AddHttpClient<IIpService, IpQueryService>(client =>
-    {
-        client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
-    });
-
-builder.Services
-    .AddHttpClient<IGravatarService, GravatarService>(client =>
-    {
-        client.BaseAddress = new Uri(builder.Configuration["Urls:Gravatar.Api"]!);
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-        client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
     });
 
 builder.Services
@@ -250,9 +127,8 @@ builder.Services
         options.SerializerOptions.PropertyNameCaseInsensitive = true;
     })
     .AddExceptionHandler<GlobalExceptionHandler>()
-    .AddProblemDetails();
-
-builder.Services.AddSingleton<IProblemDetailsFactory, ProblemDetailsFactory>();
+    .AddProblemDetails()
+    .AddSingleton<IProblemDetailsFactory, ProblemDetailsFactory>();
 
 builder.Services
     .AddResponseCompression(options =>
