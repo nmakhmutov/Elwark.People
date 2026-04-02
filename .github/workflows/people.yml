@@ -7,11 +7,14 @@ on:
       - 'src/**'
       - 'tests/**'
       - '.github/workflows/people.yml'
+      - 'coverage.runsettings'
   pull_request:
+    branches: [ master ]
     paths:
       - 'src/**'
       - 'tests/**'
       - '.github/workflows/people.yml'
+      - 'coverage.runsettings'
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -53,6 +56,9 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -70,9 +76,6 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Build
-        env:
-          DOTNET_NOLOGO: true
-          NUGET_XMLDOC_MODE: skip
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
       - name: Test
@@ -90,6 +93,8 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     env:
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
       Serilog__MinimumLevel__Default: Warning
       Serilog__MinimumLevel__Override__Microsoft: Warning
       Serilog__MinimumLevel__Override__Microsoft.Hosting: Information
@@ -110,9 +115,6 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Build
-        env:
-          DOTNET_NOLOGO: true
-          NUGET_XMLDOC_MODE: skip
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
       - name: Test
@@ -123,7 +125,7 @@ jobs:
         with:
           name: coverage-integration
           path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: ignore
+          if-no-files-found: error
           retention-days: 1
 
   coverage-report:
