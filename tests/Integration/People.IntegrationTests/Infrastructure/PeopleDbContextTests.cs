@@ -23,7 +23,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
 
         Assert.NotNull(loaded);
         Assert.Equal(account.Id, loaded.Id);
-        Assert.Equal("integration", loaded.Name.Nickname);
+        Assert.Equal(Nickname.Parse("integration"), loaded.Name.Nickname);
     }
 
     [Fact]
@@ -33,7 +33,6 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var account = Account.Create(
-            "evt",
             Language.Parse("en"),
             System.Net.IPAddress.Loopback,
             AccountTestFactory.FakeIpHasher(),
@@ -53,7 +52,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(setup);
             var account =
-                AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System, "conc");
+                AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System);
             setup.Accounts.Add(account);
             await setup.SaveEntitiesAsync(CancellationToken.None);
         }

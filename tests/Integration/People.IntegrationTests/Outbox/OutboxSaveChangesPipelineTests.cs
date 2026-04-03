@@ -18,7 +18,6 @@ public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var account = Account.Create(
-            "outbox-pipe",
             Language.Parse("en"),
             System.Net.IPAddress.Parse("198.51.100.50"),
             AccountTestFactory.FakeIpHasher(),
@@ -39,7 +38,6 @@ public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
 
         const string expectedIp = "198.51.100.51";
         var account = Account.Create(
-            "outbox-map",
             Language.Parse("en"),
             System.Net.IPAddress.Parse(expectedIp),
             AccountTestFactory.FakeIpHasher(),

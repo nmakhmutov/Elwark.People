@@ -12,7 +12,7 @@ public sealed record UpdateAccountCommand(
     AccountId Id,
     string? FirstName,
     string? LastName,
-    string Nickname,
+    Nickname Nickname,
     bool PreferNickname,
     Language Language,
     TimeZone TimeZone,

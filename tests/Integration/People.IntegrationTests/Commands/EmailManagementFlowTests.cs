@@ -31,8 +31,8 @@ public sealed class EmailManagementFlowTests(PostgreSqlFixture postgres) : Comma
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 primary,
-                "multi-email",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         string? appendConfirmCode = null;
@@ -65,7 +65,8 @@ public sealed class EmailManagementFlowTests(PostgreSqlFixture postgres) : Comma
 
         await using (var read2 = Commands.CreateReadOnlyContext())
         {
-            var row = await read2.Emails.AsNoTracking().SingleAsync(e => e.AccountId == id && e.Email == secondary.Address);
+            var row = await read2.Emails.AsNoTracking()
+                .SingleAsync(e => e.AccountId == id && e.Email == secondary.Address);
             Assert.True(row.IsConfirmed);
         }
 

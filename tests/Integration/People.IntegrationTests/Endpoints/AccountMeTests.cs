@@ -14,7 +14,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
     public async Task GetMe_WithAuth_Returns200()
     {
         await ResetAsync();
-        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-get@example.com"), "me-user");
+        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-get@example.com"));
 
         using var client = Factory.CreateAuthenticatedClient(id, "people:write");
         var response = await client.GetAsync("/accounts/me");
@@ -41,7 +41,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
     public async Task PutMe_WithValidBody_Returns200AndUpdatedNickname()
     {
         await ResetAsync();
-        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-put@example.com"), "before-put");
+        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-put@example.com"));
 
         using var client = Factory.CreateAuthenticatedClient(id, "people:write");
         var putBody =
@@ -60,7 +60,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
     public async Task PutMe_InvalidNickname_Returns400()
     {
         await ResetAsync();
-        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-bad@example.com"), "good-nick");
+        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-bad@example.com"));
 
         using var client = Factory.CreateAuthenticatedClient(id, "people:write");
         var putBody =
@@ -77,7 +77,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
     public async Task DeleteMe_Returns204AndAccountRemoved()
     {
         await ResetAsync();
-        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-del@example.com"), "del-user");
+        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-del@example.com"));
 
         using var client = Factory.CreateAuthenticatedClient(id, "people:write");
         var del = await client.DeleteAsync("/accounts/me");

@@ -24,8 +24,8 @@ public sealed class DeleteAccountFlowTests(PostgreSqlFixture postgres) : Command
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("gone@example.com"),
-                "gone",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         using var scope = Commands.CreateScope();

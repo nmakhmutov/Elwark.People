@@ -34,10 +34,10 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("sum-nick", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.Update(
-                Name.Create("SumNick", "Sum", "Mary", preferNickname: false),
+                Name.Create(Nickname.Parse("SumNick"), "Sum", "Mary", preferNickname: false),
                 Picture.Parse("https://summary.example/p.png"),
                 Language.Parse("ru"),
                 RegionCode.Parse("EU"),
@@ -64,12 +64,12 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
 
         Assert.Equal(id, result.Id);
         Assert.Equal(primary.Address, result.Email);
-        Assert.Equal("SumNick", result.Name.Nickname);
+        Assert.Equal(Nickname.Parse("SumNick"), result.Name.Nickname);
         Assert.Equal("Sum", result.Name.FirstName);
         Assert.Equal("Mary", result.Name.LastName);
         Assert.False(result.Name.PreferNickname);
         Assert.Equal("Sum Mary", result.Name.FullName());
-        Assert.Equal("https://summary.example/p.png", result.Picture);
+        Assert.Equal(Picture.Parse("https://summary.example/p.png"), result.Picture);
         Assert.Equal(Language.Parse("ru"), result.Language);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
         Assert.Equal(CountryCode.Parse("FR"), result.CountryCode);

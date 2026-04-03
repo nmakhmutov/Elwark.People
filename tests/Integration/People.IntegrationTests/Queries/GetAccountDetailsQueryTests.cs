@@ -34,10 +34,10 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create("nick-base", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.Update(
-                Name.Create("DisplayNick", "First", "Last", preferNickname: false),
+                Name.Create(Nickname.Parse("DisplayNick"), "First", "Last", preferNickname: false),
                 Picture.Parse("https://example.com/avatar.png"),
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
@@ -63,7 +63,7 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
         var result = await sender.Send(new GetAccountDetailsQuery(id), CancellationToken.None);
 
         Assert.Equal(id, result.Id);
-        Assert.Equal("DisplayNick", result.Name.Nickname);
+        Assert.Equal(Nickname.Parse("DisplayNick"), result.Name.Nickname);
         Assert.Equal("First", result.Name.FirstName);
         Assert.Equal("Last", result.Name.LastName);
         Assert.False(result.Name.PreferNickname);

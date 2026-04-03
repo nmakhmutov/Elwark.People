@@ -48,7 +48,7 @@ public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpBy
             return await SendAsync(email.AccountId, email.Email, request.Language, ct);
         }
 
-        var account = Account.Create(request.Email.User, request.Language, request.Ip, _hasher, _timeProvider);
+        var account = Account.Create(request.Language, request.Ip, _hasher, _timeProvider);
         account.AddEmail(request.Email, false, _timeProvider);
 
         await _repository.AddAsync(account, ct);

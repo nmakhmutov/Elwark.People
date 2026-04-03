@@ -25,12 +25,12 @@ public sealed class AccountTests
         return tp;
     }
 
-    private static Account CreateAccount(string nickname = "nick", Language? language = null)
+    private static Account CreateAccount(Language? language = null)
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1, 2, 3]);
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-        return Account.Create(nickname, language ?? Language.Parse("en"), IPAddress.Parse("127.0.0.1"), hasher, time);
+        return Account.Create(language ?? Language.Parse("en"), IPAddress.Parse("127.0.0.1"), hasher, time);
     }
 
     private static string[] GetRoles(Account account) =>
@@ -78,7 +78,7 @@ public sealed class AccountTests
         hasher.CreateHash(ip).Returns([9, 9, 9]);
 
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-        _ = Account.Create("n", Language.Parse("en"), ip, hasher, time);
+        _ = Account.Create(Language.Parse("en"), ip, hasher, time);
 
         hasher.Received(1).CreateHash(ip);
     }
@@ -374,7 +374,7 @@ public sealed class AccountTests
             account.StartOfWeek,
             TimeProvider.System);
 
-        Assert.Equal("nick", account.Name.Nickname);
+        Assert.Equal(Nickname.Parse("nick"), account.Name.Nickname);
         Assert.Equal("John", account.Name.FirstName);
         Assert.Equal("Doe", account.Name.LastName);
         Assert.True(account.Name.PreferNickname);
@@ -388,7 +388,7 @@ public sealed class AccountTests
         account.ClearDomainEvents();
 
         account.Update(
-            Name.Create("newnick", "A", "B", preferNickname: false),
+            Name.Create(Nickname.Parse("newnick"), "A", "B", preferNickname: false),
             account.Picture,
             account.Language,
             account.Region,
@@ -400,7 +400,7 @@ public sealed class AccountTests
             TimeProvider.System
         );
 
-        Assert.Equal("newnick", account.Name.Nickname);
+        Assert.Equal(Nickname.Parse("newnick"), account.Name.Nickname);
         Assert.Equal("A", account.Name.FirstName);
         Assert.Equal("B", account.Name.LastName);
         Assert.False(account.Name.PreferNickname);

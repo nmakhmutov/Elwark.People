@@ -11,9 +11,7 @@ public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAcco
             .NotNull();
 
         RuleFor(x => x.Nickname)
-            .NotEmpty()
-            .MinimumLength(3)
-            .MaximumLength(Name.NicknameLength);
+            .NotNull();
 
         RuleFor(x => x.FirstName)
             .MaximumLength(Name.FirstNameLength);

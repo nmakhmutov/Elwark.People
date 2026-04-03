@@ -37,7 +37,6 @@ public abstract class RestApiTestBase : IAsyncLifetime
     protected static async Task<long> SeedAccountWithConfirmedPrimaryAsync(
         PeopleApiFactory factory,
         MailAddress primaryEmail,
-        string nickname = "rest-user",
         CancellationToken ct = default
     )
     {
@@ -46,7 +45,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
+        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
 
@@ -60,7 +59,6 @@ public abstract class RestApiTestBase : IAsyncLifetime
         PeopleApiFactory factory,
         MailAddress primaryEmail,
         string googleIdentity,
-        string nickname = "google-user",
         CancellationToken ct = default
     )
     {
@@ -69,7 +67,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
+        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
         account.AddGoogle(googleIdentity, "G", "User", null, time);
@@ -93,7 +91,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
+        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
         account.AddMicrosoft(msIdentity, "M", "User", time);

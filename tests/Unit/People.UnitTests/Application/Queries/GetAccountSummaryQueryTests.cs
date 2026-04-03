@@ -39,11 +39,11 @@ public sealed class GetAccountSummaryQueryTests
 
         Assert.Equal(id, result.Id);
         Assert.Equal("sum@example.com", result.Email);
-        Assert.Equal("nick", result.Name.Nickname);
+        Assert.Equal(Nickname.Parse("nick"), result.Name.Nickname);
         Assert.Equal("First", result.Name.FirstName);
         Assert.Equal("Last", result.Name.LastName);
         Assert.False(result.Name.PreferNickname);
-        Assert.Equal("https://pic.example/id", result.Picture);
+        Assert.Equal(Picture.Parse("https://pic.example/id"), result.Picture);
         Assert.Equal(Language.Parse("en"), result.Language);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
         Assert.Equal(CountryCode.Parse("DE"), result.CountryCode);

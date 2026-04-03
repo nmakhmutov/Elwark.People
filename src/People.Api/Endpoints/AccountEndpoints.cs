@@ -19,6 +19,7 @@ using People.Application.Queries.GetAccountSummary;
 using People.Application.Queries.GetEmails;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
+using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Api.Endpoints;
 
@@ -212,17 +213,17 @@ internal static class AccountEndpoints
     internal sealed record AccountSummaryResponse(
         long Id,
         string Email,
-        string Nickname,
+        Nickname Nickname,
         string? FirstName,
         string? LastName,
         string FullName,
-        string Language,
-        string Picture,
-        string? RegionCode,
-        string? CountryCode,
-        string TimeZone,
-        string DateFormat,
-        string TimeFormat,
+        Language Language,
+        Picture Picture,
+        RegionCode? RegionCode,
+        CountryCode? CountryCode,
+        TimeZone TimeZone,
+        DateFormat DateFormat,
+        TimeFormat TimeFormat,
         DayOfWeek StartOfWeek,
         bool IsBanned
     )
@@ -235,13 +236,13 @@ internal static class AccountEndpoints
                 result.Name.FirstName,
                 result.Name.LastName,
                 result.Name.FullName(),
-                result.Language.ToString(),
+                result.Language,
                 result.Picture,
-                result.RegionCode.IsEmpty() ? null : result.RegionCode.ToString(),
-                result.CountryCode.IsEmpty() ? null : result.CountryCode.ToString(),
-                result.TimeZone.ToString(),
-                result.DateFormat.ToString(),
-                result.TimeFormat.ToString(),
+                result.RegionCode.IsEmpty() ? null : result.RegionCode,
+                result.CountryCode.IsEmpty() ? null : result.CountryCode,
+                result.TimeZone,
+                result.DateFormat,
+                result.TimeFormat,
                 result.StartOfWeek,
                 result.Ban is not null
             );
@@ -249,18 +250,18 @@ internal static class AccountEndpoints
 
     internal sealed record AccountDetailsResponse(
         long Id,
-        string Nickname,
+        Nickname Nickname,
         bool PreferNickname,
         string? FirstName,
         string? LastName,
         string FullName,
-        string Language,
-        string Picture,
-        string? RegionCode,
-        string? CountryCode,
-        string TimeZone,
-        string DateFormat,
-        string TimeFormat,
+        Language Language,
+        Picture Picture,
+        RegionCode? RegionCode,
+        CountryCode? CountryCode,
+        TimeZone TimeZone,
+        DateFormat DateFormat,
+        TimeFormat TimeFormat,
         DayOfWeek StartOfWeek,
         DateTime CreatedAt,
         IEnumerable<EmailResponse> Emails,
@@ -275,13 +276,13 @@ internal static class AccountEndpoints
                 account.Name.FirstName,
                 account.Name.LastName,
                 account.Name.FullName(),
-                account.Language.ToString(),
-                account.Picture.ToString(),
-                account.Region.IsEmpty() ? null : account.Region.ToString(),
-                account.Country.IsEmpty() ? null : account.Country.ToString(),
-                account.TimeZone.ToString(),
-                account.DateFormat.ToString(),
-                account.TimeFormat.ToString(),
+                account.Language,
+                account.Picture,
+                account.Region.IsEmpty() ? null : account.Region,
+                account.Country.IsEmpty() ? null : account.Country,
+                account.TimeZone,
+                account.DateFormat,
+                account.TimeFormat,
                 account.StartOfWeek,
                 account.GetCreatedDateTime(),
                 account.Emails.Select(x => EmailResponse.Map(x)),
@@ -338,7 +339,7 @@ internal static class AccountEndpoints
                 id,
                 FirstName,
                 LastName,
-                Nickname,
+                Domain.ValueObjects.Nickname.Parse(Nickname),
                 PreferNickname,
                 Domain.ValueObjects.Language.Parse(Language),
                 Domain.ValueObjects.TimeZone.Parse(TimeZone),
@@ -355,7 +356,7 @@ internal static class AccountEndpoints
                 RuleFor(x => x.Nickname)
                     .NotEmpty()
                     .MinimumLength(3)
-                    .MaximumLength(Name.NicknameLength);
+                    .MaximumLength(Domain.ValueObjects.Nickname.MaxLength);
 
                 RuleFor(x => x.FirstName)
                     .MaximumLength(Name.FirstNameLength);

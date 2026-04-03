@@ -25,7 +25,8 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         {
             navigationBuilder.Property(x => x.Nickname)
                 .HasColumnName("nickname")
-                .HasMaxLength(Name.NicknameLength)
+                .HasConversion(x => x.ToString(), x => Nickname.Parse(x))
+                .HasMaxLength(Nickname.MaxLength)
                 .IsRequired();
 
             navigationBuilder.Property(x => x.FirstName)

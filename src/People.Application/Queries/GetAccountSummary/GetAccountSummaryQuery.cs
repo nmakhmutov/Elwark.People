@@ -46,12 +46,12 @@ public sealed class GetAccountSummaryQueryHandler : IQueryHandler<GetAccountSumm
                 new AccountId(x.GetInt64(0)),
                 x.GetString(1),
                 Name.Create(
-                    x.GetString(2),
+                    Nickname.Parse(x.GetString(2)),
                     x.IsDbNull(3) ? null : x.GetString(3),
                     x.IsDbNull(4) ? null : x.GetString(4),
                     x.GetBoolean(5)
                 ),
-                x.GetString(6),
+                Picture.Parse(x.GetString(6)),
                 Language.Parse(x.GetString(7)),
                 RegionCode.Parse(x.GetString(8)),
                 CountryCode.Parse(x.GetString(9)),
@@ -69,7 +69,7 @@ public sealed record AccountSummary(
     AccountId Id,
     string Email,
     Name Name,
-    string Picture,
+    Picture Picture,
     Language Language,
     RegionCode RegionCode,
     CountryCode CountryCode,

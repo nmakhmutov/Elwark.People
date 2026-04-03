@@ -21,7 +21,8 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
         await CommandTestFixture.ResetDatabaseAsync(resetDb);
 
         Commands.Notification
-            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLanguage>(), Arg.Any<CancellationToken>())
+            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLanguage>(),
+                Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         using var scope = Commands.CreateScope();
@@ -104,8 +105,8 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             _ = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("grpc-signin@example.com"),
-                "grpc-signin-nick",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         string? signInCode = null;
@@ -148,8 +149,8 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             _ = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("grpc-login@example.com"),
-                "grpc-login-nick",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         string? signInCode = null;
@@ -306,12 +307,13 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             _ = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("grpc-bad-signin@example.com"),
-                "bad-signin-nick",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         Commands.Notification
-            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLanguage>(), Arg.Any<CancellationToken>())
+            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLanguage>(),
+                Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
         using var scope = Commands.CreateScope();

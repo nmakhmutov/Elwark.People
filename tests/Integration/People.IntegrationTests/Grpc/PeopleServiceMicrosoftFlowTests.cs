@@ -63,7 +63,8 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByMicrosoftCommand("grpc-ms-signin-token", Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback),
+                new SignUpByMicrosoftCommand("grpc-ms-signin-token", Domain.ValueObjects.Language.Parse("en"),
+                    IPAddress.Loopback),
                 CancellationToken.None);
         }
 
@@ -99,8 +100,8 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("append-ms-base@example.com"),
-                "append-ms-base",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         Commands.Microsoft.GetAsync("grpc-ms-append-token", Arg.Any<CancellationToken>())

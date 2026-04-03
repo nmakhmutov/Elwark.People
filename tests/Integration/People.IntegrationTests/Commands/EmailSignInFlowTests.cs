@@ -24,8 +24,8 @@ public sealed class EmailSignInFlowTests(PostgreSqlFixture postgres) : CommandIn
             _ = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("login@example.com"),
-                "login-user",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         string? signInCode = null;

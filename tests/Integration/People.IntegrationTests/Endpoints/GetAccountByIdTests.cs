@@ -13,7 +13,7 @@ public sealed class GetAccountByIdTests(PostgreSqlFixture postgres) : RestApiTes
     public async Task GetAccountById_WithPeopleReadScope_Returns200AndAccountSummaryShape()
     {
         await ResetAsync();
-        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("get-by-id@example.com"), "nick-one");
+        var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("get-by-id@example.com"));
 
         using var client = Factory.CreateAuthenticatedClient(id, "people:read");
         var response = await client.GetAsync($"/accounts/{id}");

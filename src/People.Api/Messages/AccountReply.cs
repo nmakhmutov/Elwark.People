@@ -11,11 +11,11 @@ public partial class AccountReply
         {
             Id = account.Id,
             Email = account.Email,
-            Nickname = account.Name.Nickname,
+            Nickname = account.Name.Nickname.ToString(),
             FirstName = account.Name.FirstName,
             LastName = account.Name.LastName,
             FullName = account.Name.FullName(),
-            Picture = account.Picture,
+            Picture = account.Picture.ToString(),
             CountryCode = account.CountryCode.ToString(),
             TimeZone = account.TimeZone.ToString(),
             Language = Language.Create(account.Language),

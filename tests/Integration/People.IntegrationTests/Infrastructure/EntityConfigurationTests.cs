@@ -20,7 +20,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
-            var draft = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time, "cfg");
+            var draft = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time);
             write.Accounts.Add(draft);
             await write.SaveEntitiesAsync(CancellationToken.None);
 
@@ -28,7 +28,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
             await write.SaveEntitiesAsync(CancellationToken.None);
 
             draft.Update(
-                Name.Create("nick", "Ada", "Lovelace", false),
+                Name.Create(Nickname.Parse("nick"), "Ada", "Lovelace", false),
                 null,
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
@@ -59,7 +59,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);
         Assert.Equal(DayOfWeek.Friday, account.StartOfWeek);
 
-        Assert.Equal("nick", account.Name.Nickname);
+        Assert.Equal(Nickname.Parse("nick"), account.Name.Nickname);
         Assert.Equal("Ada", account.Name.FirstName);
         Assert.Equal("Lovelace", account.Name.LastName);
         Assert.False(account.Name.PreferNickname);
@@ -95,7 +95,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
-            var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time, "ms");
+            var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time);
             write.Accounts.Add(account);
             await write.SaveEntitiesAsync(CancellationToken.None);
 

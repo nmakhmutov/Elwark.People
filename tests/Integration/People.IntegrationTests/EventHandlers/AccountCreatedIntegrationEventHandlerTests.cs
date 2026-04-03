@@ -47,8 +47,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
         {
             accountId = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
-                new MailAddress("created-handler@example.com"),
-                nickname: "nick"
+                new MailAddress("created-handler@example.com")
             );
         }
 
@@ -146,8 +145,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
         {
             accountId = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
-                new MailAddress("no-gravatar@example.com"),
-                nickname: "seed-nick"
+                new MailAddress("no-gravatar@example.com")
             );
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var seeded = await repo.GetAsync(accountId, CancellationToken.None);

@@ -44,7 +44,7 @@ public sealed class UpdateAccountCommandTests
             AccountId,
             FirstName: "Ada",
             LastName: "Lovelace",
-            Nickname: "ada",
+            Nickname: Nickname.Parse("ada"),
             PreferNickname: false,
             Language: language,
             TimeZone: tz,
@@ -56,7 +56,7 @@ public sealed class UpdateAccountCommandTests
         var result = await handler.Handle(cmd, CancellationToken.None);
 
         Assert.Same(account, result);
-        Assert.Equal("ada", result.Name.Nickname);
+        Assert.Equal(Nickname.Parse("ada"), result.Name.Nickname);
         Assert.Equal("Ada", result.Name.FirstName);
         Assert.Equal("Lovelace", result.Name.LastName);
         Assert.False(result.Name.PreferNickname);
@@ -94,7 +94,7 @@ public sealed class UpdateAccountCommandTests
                 AccountId,
                 null,
                 null,
-                "nick",
+                Nickname.Parse("nick"),
                 PreferNickname: true,
                 Language.Parse("en"),
                 TimeZone.Utc,
@@ -121,7 +121,7 @@ public sealed class UpdateAccountCommandTests
                     AccountId,
                     null,
                     null,
-                    "x",
+                    Nickname.Parse("x"),
                     true,
                     Language.Parse("en"),
                     TimeZone.Utc,

@@ -46,7 +46,7 @@ public sealed class SignUpByGoogleCommandHandler : ICommandHandler<SignUpByGoogl
             ? request.Language
             : Language.Parse(google.Locale.TwoLetterISOLanguageName);
 
-        var account = Account.Create(google.Email.User, language, request.Ip, _hasher, _timeProvider);
+        var account = Account.Create(language, request.Ip, _hasher, _timeProvider);
         account.AddGoogle(google.Identity, google.FirstName, google.LastName, google.Picture, _timeProvider);
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 

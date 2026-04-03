@@ -35,7 +35,6 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                "grpc-nick",
                 DomainLanguage.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
@@ -44,7 +43,7 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
 
             account.ClearDomainEvents();
             account.Update(
-                Name.Create("GrpcNick", "G", "User", preferNickname: false),
+                Name.Create(Nickname.Parse("GrpcNick"), "G", "User", preferNickname: false),
                 Picture.Parse("https://grpc.example/p.png"),
                 DomainLanguage.Parse("de"),
                 RegionCode.Parse("EU"),

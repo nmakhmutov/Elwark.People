@@ -30,8 +30,8 @@ public sealed class ExternalConnectionFlowTests(PostgreSqlFixture postgres) : Co
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("g-ext@example.com"),
-                "g-ext",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         var gEmail = new MailAddress("google-linked@example.com");
@@ -73,8 +73,8 @@ public sealed class ExternalConnectionFlowTests(PostgreSqlFixture postgres) : Co
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("m-ext@example.com"),
-                "m-ext",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         var mEmail = new MailAddress("ms-linked@example.com");

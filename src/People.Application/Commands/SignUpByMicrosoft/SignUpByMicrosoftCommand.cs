@@ -42,7 +42,7 @@ public sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMi
         if (await _repository.IsExistsAsync(ExternalService.Microsoft, microsoft.Identity, ct))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
-        var account = Account.Create(microsoft.Email.User, request.Language, request.Ip, _hasher, _timeProvider);
+        var account = Account.Create(request.Language, request.Ip, _hasher, _timeProvider);
         account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _timeProvider);
         account.AddEmail(microsoft.Email, true, _timeProvider);
 

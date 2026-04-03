@@ -15,9 +15,9 @@ internal static class AccountTestFactory
         return tp;
     }
 
-    internal static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock, string nickname = "integration")
+    internal static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock)
     {
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, clock);
+        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, clock);
         account.ClearDomainEvents();
         return account;
     }

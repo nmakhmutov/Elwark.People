@@ -28,8 +28,8 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("update@example.com"),
-                "before-nick",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         Commands.Country.GetAsync(CountryCode.Parse("DE"), Arg.Any<CancellationToken>())
@@ -43,7 +43,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
                 id,
                 FirstName: "Ann",
                 LastName: "Lee",
-                Nickname: "annlee",
+                Nickname: Nickname.Parse("annlee"),
                 PreferNickname: false,
                 Language: Language.Parse("ru"),
                 TimeZone: TimeZone.Parse("Europe/Berlin"),
@@ -56,7 +56,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
         await using var read = Commands.CreateReadOnlyContext();
         var account = await read.Accounts.AsNoTracking().SingleAsync(a => a.Id == id);
 
-        Assert.Equal("annlee", account.Name.Nickname);
+        Assert.Equal(Nickname.Parse("annlee"), account.Name.Nickname);
         Assert.False(account.Name.PreferNickname);
         Assert.Equal("Ann", account.Name.FirstName);
         Assert.Equal("Lee", account.Name.LastName);

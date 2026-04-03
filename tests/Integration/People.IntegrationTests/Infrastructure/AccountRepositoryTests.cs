@@ -17,7 +17,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
 
         var hasher = AccountTestFactory.FakeIpHasher();
         var time = AccountTestFactory.FixedUtc(new DateTime(2026, 4, 1, 8, 0, 0, DateTimeKind.Utc));
-        var account = AccountTestFactory.CreateNewAccount(hasher, time, "with-graph");
+        var account = AccountTestFactory.CreateNewAccount(hasher, time);
         write.Accounts.Add(account);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
@@ -55,7 +55,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var repo = new AccountRepository(write);
-        var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System, "new-id");
+        var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System);
         Assert.True(account.Id == default);
 
         await repo.AddAsync(account, CancellationToken.None);
@@ -76,7 +76,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
 
         var time = AccountTestFactory.FixedUtc(new DateTime(2026, 4, 2, 9, 0, 0, DateTimeKind.Utc));
         var repo = new AccountRepository(write);
-        var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time, "del");
+        var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), time);
         await repo.AddAsync(account, CancellationToken.None);
         await write.SaveEntitiesAsync(CancellationToken.None);
 

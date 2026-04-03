@@ -132,7 +132,6 @@ public sealed class CommandTestFixture : IAsyncLifetime
     public static async Task<AccountId> SeedAccountWithConfirmedEmailAsync(
         IServiceScope scope,
         MailAddress email,
-        string nickname = "seed-user",
         CancellationToken ct = default
     )
     {
@@ -140,7 +139,7 @@ public sealed class CommandTestFixture : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
+        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(email, true, time);
 

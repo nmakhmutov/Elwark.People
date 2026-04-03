@@ -76,7 +76,8 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByGoogleCommand("grpc-google-signin-token", Domain.ValueObjects.Language.Parse("en"), System.Net.IPAddress.Loopback),
+                new SignUpByGoogleCommand("grpc-google-signin-token", Domain.ValueObjects.Language.Parse("en"),
+                    System.Net.IPAddress.Loopback),
                 CancellationToken.None);
         }
 
@@ -112,8 +113,8 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
             id = await CommandTestFixture.SeedAccountWithConfirmedEmailAsync(
                 seedScope,
                 new MailAddress("append-google-base@example.com"),
-                "append-base",
-                CancellationToken.None);
+                CancellationToken.None
+            );
         }
 
         Commands.Google.GetAsync("grpc-google-append-token", Arg.Any<CancellationToken>())

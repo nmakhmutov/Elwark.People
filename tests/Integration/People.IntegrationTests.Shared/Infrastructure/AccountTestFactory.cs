@@ -15,9 +15,9 @@ public static class AccountTestFactory
         return tp;
     }
 
-    public static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock, string nickname = "integration")
+    public static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock)
     {
-        var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, clock);
+        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, clock);
         account.ClearDomainEvents();
         return account;
     }
@@ -25,7 +25,13 @@ public static class AccountTestFactory
     public static IIpHasher FakeIpHasher()
     {
         var hasher = Substitute.For<IIpHasher>();
-        hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1, 2, 3, 4]);
+        hasher.CreateHash(Arg.Any<IPAddress>())
+        .Returns([
+            1,
+            2,
+            3,
+            4
+        ]);
         return hasher;
     }
 }

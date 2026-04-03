@@ -59,7 +59,7 @@ public sealed class UpdateRequestValidatorTests
     [Fact]
     public void NicknameExceedingMaxLength_Fails()
     {
-        var r = ValidRequest() with { Nickname = new string('x', Name.NicknameLength + 1) };
+        var r = ValidRequest() with { Nickname = new string('x', Nickname.MaxLength + 1) };
 
         var result = Validator.Validate(r);
 
