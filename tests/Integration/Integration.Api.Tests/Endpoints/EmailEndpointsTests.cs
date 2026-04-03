@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using NSubstitute;
 using People.Domain.ValueObjects;
-using Integration.Shared.Tests.Infrastructure;
 using Integration.Api.Tests.Web;
 using Xunit;
 

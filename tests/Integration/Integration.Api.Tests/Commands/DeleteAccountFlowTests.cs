@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using People.Application.Commands.DeleteAccount;
 using People.Domain.Entities;
 using People.Infrastructure;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Commands;

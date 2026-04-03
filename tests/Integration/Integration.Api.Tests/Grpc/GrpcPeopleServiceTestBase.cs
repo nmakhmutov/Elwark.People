@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using People.Api.Grpc;
 using People.Api.Infrastructure.Interceptors;
-using Integration.Shared.Tests.Infrastructure;
 using Integration.Api.Tests.Queries;
 using GrpcPeopleBase = People.Grpc.People.PeopleService.PeopleServiceBase;
 

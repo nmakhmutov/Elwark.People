@@ -9,7 +9,7 @@ using People.Infrastructure;
 
 #nullable disable
 
-namespace People.Infrastructure.Migrations
+namespace People.Infrastructure.Migrations.People
 {
     [DbContext(typeof(PeopleDbContext))]
     partial class PeopleDbContextModelSnapshot : ModelSnapshot
@@ -22,42 +22,6 @@ namespace People.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("People.Application.Providers.Webhooks.Webhook", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DestinationUrl")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
-                        .HasColumnName("destination_url");
-
-                    b.Property<byte>("Method")
-                        .HasColumnType("smallint")
-                        .HasColumnName("method");
-
-                    b.Property<string>("Token")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("token");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("smallint")
-                        .HasColumnName("type");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Type")
-                        .HasDatabaseName("IX_webhook_subscriptions_type");
-
-                    b.ToTable("webhooks", (string)null);
-                });
 
             modelBuilder.Entity("People.Domain.Entities.Account", b =>
                 {
@@ -109,9 +73,7 @@ namespace People.Infrastructure.Migrations
                         .HasColumnName("region_code");
 
                     b.Property<int>("StartOfWeek")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(1)
                         .HasColumnName("start_of_week");
 
                     b.Property<string>("TimeFormat")

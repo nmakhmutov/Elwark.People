@@ -7,7 +7,6 @@ using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using Integration.Api.Tests.Commands;
-using Integration.Shared.Tests.Infrastructure;
 using People.Infrastructure;
 using Xunit;
 

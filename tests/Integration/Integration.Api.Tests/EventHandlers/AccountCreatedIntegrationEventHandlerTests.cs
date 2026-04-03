@@ -8,7 +8,6 @@ using People.Domain.Repositories;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
-using Integration.Shared.Tests.Infrastructure;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 using Xunit;
 

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="People.Api"/>
     <InternalsVisibleTo Include="Integration.Api.Tests"/>
     <InternalsVisibleTo Include="Unit.Api.Tests"/>
     <InternalsVisibleTo Include="People.Worker"/>

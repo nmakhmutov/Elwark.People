@@ -7,7 +7,6 @@ using People.Domain.Entities;
 using People.Application.Providers.Country;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using Integration.Shared.Tests.Infrastructure;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 using Xunit;
 

@@ -162,6 +162,10 @@ await using (var scope = app.Services.CreateAsyncScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
     await dbContext.Database.MigrateAsync();
+
+    var webhookDbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<WebhookDbContext>>();
+    await using var webhookDb = await webhookDbFactory.CreateDbContextAsync();
+    await webhookDb.Database.MigrateAsync();
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -192,6 +196,7 @@ else
 
 app.MapAccountEndpoints();
 app.MapDictionariesEndpoints();
+app.MapWebhookEndpoints();
 
 app.MapGrpcService<PeopleService>();
 

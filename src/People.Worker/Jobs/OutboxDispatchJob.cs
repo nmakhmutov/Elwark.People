@@ -1,13 +1,13 @@
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Application.Commands.EnrichAccount;
-using People.Application.Commands.SendWebhooks;
-using People.Application.Providers.Webhooks;
+using People.Application.Webhooks;
 using People.Domain.Events;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
 using People.Infrastructure.Outbox.Entities;
 using People.Infrastructure.Outbox.Extensions;
+using People.Worker.Commands;
 using Quartz;
 
 namespace People.Worker.Jobs;
@@ -92,15 +92,15 @@ public sealed partial class OutboxDispatchJob : IJob
             AccountCreatedIntegrationEvent x =>
             [
                 new EnrichAccountCommand(x.AccountId, x.IpAddress),
-                new SendWebhooksCommand(x.AccountId, WebhookType.Created, x.OccurredAt)
+                new CreateWebhookMessageCommand(x.AccountId, WebhookType.Created, x.OccurredAt)
             ],
             AccountUpdatedIntegrationEvent x =>
             [
-                new SendWebhooksCommand(x.AccountId, WebhookType.Updated, x.OccurredAt)
+                new CreateWebhookMessageCommand(x.AccountId, WebhookType.Updated, x.OccurredAt)
             ],
             AccountDeletedIntegrationEvent x =>
             [
-                new SendWebhooksCommand(x.AccountId, WebhookType.Deleted, x.OccurredAt)
+                new CreateWebhookMessageCommand(x.AccountId, WebhookType.Deleted, x.OccurredAt)
             ],
             _ => throw new ArgumentOutOfRangeException()
         };

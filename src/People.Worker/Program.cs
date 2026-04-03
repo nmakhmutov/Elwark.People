@@ -43,6 +43,12 @@ builder.Services.AddQuartz(options =>
             .WithSimpleSchedule(x => x.WithIntervalInSeconds(3).RepeatForever())
         );
 
+        options.ScheduleJob<WebhookDispatchJob>(trigger => trigger
+            .WithIdentity(nameof(WebhookDispatchJob))
+            .StartAt(DateBuilder.EvenMinuteDateAfterNow())
+            .WithSimpleSchedule(x => x.WithIntervalInSeconds(15).RepeatForever())
+        );
+
         options.ScheduleJob<OutboxCleanupJob>(trigger => trigger
             .WithIdentity(nameof(OutboxCleanupJob))
             .StartAt(DateBuilder.TodayAt(14, 0, 0))
@@ -75,6 +81,10 @@ await using (var scope = host.Services.CreateAsyncScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
     await dbContext.Database.MigrateAsync();
+
+    var webhookDbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<WebhookDbContext>>();
+    await using var webhookDb = await webhookDbFactory.CreateDbContextAsync();
+    await webhookDb.Database.MigrateAsync();
 }
 
 await host.RunAsync();

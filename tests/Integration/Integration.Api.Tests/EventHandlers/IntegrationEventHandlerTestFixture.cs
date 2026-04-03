@@ -19,7 +19,6 @@ using People.Infrastructure.Cryptography;
 using People.Infrastructure.Mappers;
 using People.Infrastructure.Outbox.Extensions;
 using People.Infrastructure.Repositories;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.EventHandlers;

@@ -1,23 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using People.Application.Providers.Webhooks;
+using People.Application.Webhooks;
 
 namespace People.Infrastructure.EntityConfigurations;
 
-internal sealed class WebhookSubscriptionEntityTypeConfiguration : IEntityTypeConfiguration<Webhook>
+internal sealed class WebhookConsumerEntityTypeConfiguration : IEntityTypeConfiguration<WebhookConsumer>
 {
-    public void Configure(EntityTypeBuilder<Webhook> builder)
+    public void Configure(EntityTypeBuilder<WebhookConsumer> builder)
     {
-        builder.ToTable("webhooks");
+        builder.ToTable("webhook_consumers");
 
         builder.HasKey(x => x.Id);
 
-        builder.HasIndex(x => x.Type)
-            .HasDatabaseName("IX_webhook_subscriptions_type");
+        builder.HasIndex(x => x.Type);
 
         builder.Property(x => x.Id)
             .HasColumnName("id")
-            .UseIdentityByDefaultColumn();
+            .ValueGeneratedOnAdd();
 
         builder.Property(x => x.Type)
             .HasColumnName("type")

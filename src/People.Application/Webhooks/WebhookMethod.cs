@@ -1,4 +1,4 @@
-namespace People.Application.Providers.Webhooks;
+namespace People.Application.Webhooks;
 
 public enum WebhookMethod : byte
 {

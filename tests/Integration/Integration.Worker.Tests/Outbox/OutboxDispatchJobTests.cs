@@ -1,17 +1,16 @@
-extern alias PeopleWorker;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using People.Application.Commands.EnrichAccount;
-using People.Application.Commands.SendWebhooks;
-using People.Application.Providers.Webhooks;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
 using People.Infrastructure.Outbox.Entities;
 using Integration.Shared.Tests.Infrastructure;
-using PeopleWorker::People.Worker.Jobs;
+using People.Application.Webhooks;
+using People.Worker.Commands;
+using People.Worker.Jobs;
 using Quartz;
 using Xunit;
 
@@ -58,7 +57,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
         var mediator = Substitute.For<IMediator>();
         mediator.Send(Arg.Any<EnrichAccountCommand>(), Arg.Any<CancellationToken>())
             .Returns(await ValueTask.FromResult(Unit.Value));
-        mediator.Send(Arg.Any<SendWebhooksCommand>(), Arg.Any<CancellationToken>())
+        mediator.Send(Arg.Any<CreateWebhookMessageCommand>(), Arg.Any<CancellationToken>())
             .Returns(await ValueTask.FromResult(Unit.Value));
 
         await using var root = CreateProvider(fixture, mediator);
@@ -85,7 +84,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
             Arg.Is<EnrichAccountCommand>(c => c.AccountId == 5001L && c.IpAddress == "198.51.100.10"),
             Arg.Any<CancellationToken>());
         await mediator.Received(1).Send(
-            Arg.Is<SendWebhooksCommand>(c =>
+            Arg.Is<CreateWebhookMessageCommand>(c =>
                 c.AccountId == 5001L && c.Type == WebhookType.Created),
             Arg.Any<CancellationToken>());
     }
@@ -137,7 +136,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
         var sender = Substitute.For<ISender>();
         sender.Send(Arg.Any<EnrichAccountCommand>(), Arg.Any<CancellationToken>())
             .Returns(ValueTask.FromResult(Unit.Value));
-        sender.Send(Arg.Any<SendWebhooksCommand>(), Arg.Any<CancellationToken>())
+        sender.Send(Arg.Any<CreateWebhookMessageCommand>(), Arg.Any<CancellationToken>())
             .Returns(ValueTask.FromResult(Unit.Value));
 
         await using var root = CreateProvider(fixture, sender);
@@ -160,7 +159,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
         }
 
         await sender.Received(1).Send(
-            Arg.Is<SendWebhooksCommand>(c => c.AccountId == 5003L && c.Type == WebhookType.Updated),
+            Arg.Is<CreateWebhookMessageCommand>(c => c.AccountId == 5003L && c.Type == WebhookType.Updated),
             Arg.Any<CancellationToken>());
     }
 
@@ -170,7 +169,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
         var sender = Substitute.For<ISender>();
         sender.Send(Arg.Any<EnrichAccountCommand>(), Arg.Any<CancellationToken>())
             .Returns(ValueTask.FromResult(Unit.Value));
-        sender.Send(Arg.Any<SendWebhooksCommand>(), Arg.Any<CancellationToken>())
+        sender.Send(Arg.Any<CreateWebhookMessageCommand>(), Arg.Any<CancellationToken>())
             .Returns(ValueTask.FromResult(Unit.Value));
 
         await using var root = CreateProvider(fixture, sender);

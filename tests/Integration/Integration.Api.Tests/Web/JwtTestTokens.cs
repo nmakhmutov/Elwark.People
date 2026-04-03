@@ -29,6 +29,18 @@ internal static class JwtTestTokens
         return CreateBearerCore(claims);
     }
 
+    internal static string CreateBearerWithRole(long accountId, string role, params string[] scopes)
+    {
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, accountId.ToString()),
+            new(ClaimTypes.Role, role),
+            new("scope", string.Join(' ', scopes))
+        };
+
+        return CreateBearerCore(claims);
+    }
+
     private static string CreateBearerCore(List<Claim> claims)
     {
         var creds = new SigningCredentials(SigningKey, SecurityAlgorithms.HmacSha256);
@@ -42,4 +54,3 @@ internal static class JwtTestTokens
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
-

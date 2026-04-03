@@ -15,7 +15,6 @@ using People.Application.Providers.Ip;
 using People.Application.Providers.Microsoft;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using Integration.Shared.Tests.Infrastructure;
 
 namespace Integration.Api.Tests.Web;
 
@@ -101,6 +100,15 @@ public sealed class PeopleApiFactory : WebApplicationFactory<Errors>
             ? JwtTestTokens.CreateBearerWithoutScope(accountId)
             : JwtTestTokens.CreateBearer(accountId, scopes);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return client;
+    }
+
+    public HttpClient CreateAdminClient(long accountId)
+    {
+        var client = CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            JwtTestTokens.CreateBearerWithRole(accountId, "adm", "people:admin"));
         return client;
     }
 

@@ -90,7 +90,6 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(x => x.StartOfWeek)
             .HasColumnName("start_of_week")
-            .HasDefaultValue(DayOfWeek.Monday)
             .IsRequired();
 
         builder.Property(x => x.IsActivated)

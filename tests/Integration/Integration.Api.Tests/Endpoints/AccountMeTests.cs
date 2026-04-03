@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Text.Json;
-using Integration.Shared.Tests.Infrastructure;
 using Integration.Api.Tests.Web;
 using Xunit;
 

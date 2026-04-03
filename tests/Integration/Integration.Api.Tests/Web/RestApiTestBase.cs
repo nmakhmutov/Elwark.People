@@ -4,7 +4,6 @@ using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Web;

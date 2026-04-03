@@ -27,7 +27,6 @@ using People.Infrastructure.Mappers;
 using People.Infrastructure.Outbox.Extensions;
 using People.Infrastructure.Providers.Postgres;
 using People.Infrastructure.Repositories;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Commands;
@@ -88,6 +87,9 @@ public sealed class CommandTestFixture : IAsyncLifetime
                 _postgres.ConnectionString,
                 npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
             )
+        );
+        services.AddDbContextFactory<WebhookDbContext>(options =>
+            options.UseNpgsql(_postgres.ConnectionString)
         );
 
         services.AddScoped<IAccountRepository, AccountRepository>();

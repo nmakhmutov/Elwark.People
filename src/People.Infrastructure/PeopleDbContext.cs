@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using People.Application.Providers.Webhooks;
 using People.Domain.Entities;
 using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
@@ -21,9 +20,6 @@ public sealed class PeopleDbContext : OutboxDbContext<PeopleDbContext>, IUnitOfW
 
     public DbSet<ExternalConnection> Connections =>
         Set<ExternalConnection>();
-
-    public DbSet<Webhook> Webhooks =>
-        Set<Webhook>();
 
     public DbSet<Confirmation> Confirmations =>
         Set<Confirmation>();
@@ -61,7 +57,6 @@ public sealed class PeopleDbContext : OutboxDbContext<PeopleDbContext>, IUnitOfW
         modelBuilder.ApplyConfiguration(new ExternalConnectionEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new OutboxConsumerEntityConfiguration());
         modelBuilder.ApplyConfiguration(new OutboxMessageEntityConfiguration());
-        modelBuilder.ApplyConfiguration(new WebhookSubscriptionEntityTypeConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

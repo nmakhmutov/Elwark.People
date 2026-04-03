@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using People.Domain.ValueObjects;
 
 #nullable disable
 
-namespace People.Infrastructure.Migrations
+namespace People.Infrastructure.Migrations.People
 {
     /// <inheritdoc />
     public partial class Init : Migration
@@ -30,16 +29,16 @@ namespace People.Infrastructure.Migrations
                     time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     date_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     time_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    start_of_week = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    start_of_week = table.Column<int>(type: "integer", nullable: false),
                     is_activated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     ban = table.Column<Ban>(type: "jsonb", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
+                    last_log_in = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     reg_country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     reg_ip = table.Column<byte[]>(type: "bytea", nullable: false),
                     roles = table.Column<string[]>(type: "text[]", nullable: false),
-                    last_log_in = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -54,8 +53,8 @@ namespace People.Infrastructure.Migrations
                     account_id = table.Column<long>(type: "bigint", nullable: false),
                     code = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,31 +94,15 @@ namespace People.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "webhooks",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    type = table.Column<byte>(type: "smallint", nullable: false),
-                    method = table.Column<byte>(type: "smallint", nullable: false),
-                    destination_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
-                    token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_webhooks", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "connections",
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    account_id = table.Column<long>(type: "bigint", nullable: false),
                     type = table.Column<byte>(type: "smallint", nullable: false),
                     identity = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     first_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     last_name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    account_id = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
@@ -183,11 +166,6 @@ namespace People.Infrastructure.Migrations
                 table: "outbox_messages",
                 columns: new[] { "processed_at", "occurred_at" },
                 filter: "processed_at IS NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_webhook_subscriptions_type",
-                table: "webhooks",
-                column: "type");
         }
 
         /// <inheritdoc />
@@ -207,9 +185,6 @@ namespace People.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "outbox_messages");
-
-            migrationBuilder.DropTable(
-                name: "webhooks");
 
             migrationBuilder.DropTable(
                 name: "accounts");

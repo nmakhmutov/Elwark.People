@@ -1,5 +1,4 @@
 using Integration.Api.Tests.Commands;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Queries;

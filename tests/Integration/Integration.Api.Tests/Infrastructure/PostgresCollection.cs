@@ -1,4 +1,3 @@
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Infrastructure;

@@ -10,7 +10,6 @@ using People.Application.Providers.Google;
 using People.Application.Providers.Microsoft;
 using People.Domain.Entities;
 using People.Infrastructure;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Commands;

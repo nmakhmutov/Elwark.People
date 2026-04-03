@@ -7,7 +7,6 @@ using People.Application.Providers.Google;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Commands;

@@ -15,7 +15,7 @@ using People.Application.Providers.Gravatar;
 using People.Application.Providers.Ip;
 using People.Application.Providers.Microsoft;
 using People.Application.Providers.Postgres;
-using People.Application.Providers.Webhooks;
+using People.Application.Webhooks;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
@@ -131,7 +131,10 @@ public static class HostingExtensions
                 });
 
             builder.Services
-                .AddScoped<IWebhookRetriever, WebhookRetriever>()
+                .AddDbContextFactory<WebhookDbContext>(options =>
+                    options.UseNpgsql(configuration.GetConnectionString("Postgresql"))
+                )
+                .AddScoped<IWebhookConsumerRepository, WebhookConsumerRepository>()
                 .AddHttpClient<IWebhookSender, WebhookSender>()
                 .AddStandardResilienceHandler();
 

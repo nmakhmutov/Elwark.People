@@ -5,7 +5,6 @@ using People.Application.Commands.SignInByEmail;
 using People.Application.Commands.SigningInByEmail;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using Integration.Shared.Tests.Infrastructure;
 using Xunit;
 
 namespace Integration.Api.Tests.Commands;

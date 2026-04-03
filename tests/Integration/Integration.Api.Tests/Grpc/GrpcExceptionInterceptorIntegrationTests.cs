@@ -11,7 +11,6 @@ using People.Domain.SeedWork;
 using DomainLanguage = People.Domain.ValueObjects.Language;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
-using Integration.Shared.Tests.Infrastructure;
 using People.Grpc.People;
 using Xunit;
 

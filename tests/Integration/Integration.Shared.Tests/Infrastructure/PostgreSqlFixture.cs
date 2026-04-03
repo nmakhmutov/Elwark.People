@@ -22,6 +22,9 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
 
         await using var ctx = CreateContext();
         await ctx.Database.MigrateAsync();
+
+        await using var webhookCtx = CreateWebhookContext();
+        await webhookCtx.Database.MigrateAsync();
     }
 
     public PeopleDbContext CreateContext(TimeProvider? timeProvider = null)
@@ -38,6 +41,15 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
         );
 
         return new PeopleDbContext(options, pipeline, timeProvider ?? TimeProvider.System);
+    }
+
+    public WebhookDbContext CreateWebhookContext()
+    {
+        var options = new DbContextOptionsBuilder<WebhookDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+
+        return new WebhookDbContext(options);
     }
 
     public async Task DisposeAsync() =>

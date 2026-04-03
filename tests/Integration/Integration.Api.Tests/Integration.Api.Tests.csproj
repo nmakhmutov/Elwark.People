@@ -12,6 +12,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
     <PackageReference Include="Microsoft.AspNetCore.TestHost"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="NSubstitute"/>
     <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio">
@@ -22,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../../../src/People.Api/People.Api.csproj"/>
-    <ProjectReference Include="../../../src/People.Infrastructure/People.Infrastructure.csproj"/>
     <ProjectReference Include="../Integration.Shared.Tests/Integration.Shared.Tests.csproj"/>
   </ItemGroup>
 </Project>

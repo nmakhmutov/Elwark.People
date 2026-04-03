@@ -5,15 +5,24 @@ namespace Integration.Shared.Tests.Infrastructure;
 
 public static class IntegrationDatabaseCleanup
 {
-    /// <summary>Removes all application rows (no FK from confirmations to accounts in migrations).</summary>
-    public static async Task DeleteAllAsync(PeopleDbContext ctx, CancellationToken ct = default)
+    /// <summary>Removes all application rows across both schemas in one PostgreSQL truncate.</summary>
+    public static Task DeleteAllAsync(PeopleDbContext ctx, CancellationToken ct = default)
     {
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM confirmations;", ct);
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM emails;", ct);
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM connections;", ct);
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM accounts;", ct);
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM outbox_consumers;", ct);
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM outbox_messages;", ct);
-        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM webhooks;", ct);
+        const string sql =
+            """
+            TRUNCATE TABLE
+                confirmations,
+                emails,
+                connections,
+                accounts,
+                outbox_consumers,
+                outbox_messages,
+                webhook_messages,
+                webhook_consumers
+            RESTART IDENTITY
+            CASCADE;
+            """;
+
+        return ctx.Database.ExecuteSqlRawAsync(sql, ct);
     }
 }

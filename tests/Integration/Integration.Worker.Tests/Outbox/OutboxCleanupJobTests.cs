@@ -1,11 +1,10 @@
-extern alias PeopleWorker;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
 using People.Infrastructure.Outbox.Entities;
 using Integration.Shared.Tests.Infrastructure;
-using PeopleWorker::People.Worker.Jobs;
+using People.Worker.Jobs;
 using Quartz;
 using Xunit;
 

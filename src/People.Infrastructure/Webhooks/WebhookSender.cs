@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using People.Application.Providers.Webhooks;
+using People.Application.Webhooks;
 
 namespace People.Infrastructure.Webhooks;
 
@@ -17,13 +17,13 @@ internal sealed partial class WebhookSender(HttpClient httpClient, ILogger<Webho
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    public Task SendAsync(long accountId, DateTime occurredAt, IEnumerable<Webhook> subscriptions, CancellationToken ct)
+    public Task SendAsync(long accountId, DateTime occurredAt, IEnumerable<WebhookConsumer> consumers, CancellationToken ct)
     {
         var json = JsonSerializer.Serialize(new WebhookPayload(accountId, occurredAt), Options);
-        return Task.WhenAll(subscriptions.Select(s => SendOneAsync(s, json, ct)));
+        return Task.WhenAll(consumers.Select(s => SendOneAsync(s, json, ct)));
     }
 
-    private async Task SendOneAsync(Webhook subscription, string json, CancellationToken ct)
+    private async Task SendOneAsync(WebhookConsumer subscription, string json, CancellationToken ct)
     {
         var request = new HttpRequestMessage
         {
@@ -44,6 +44,7 @@ internal sealed partial class WebhookSender(HttpClient httpClient, ILogger<Webho
         WebhookSending(request.Method, request.RequestUri);
 
         var response = await httpClient.SendAsync(request, ct);
+        response.EnsureSuccessStatusCode();
 
         WebhookSent(request.Method, request.RequestUri, response.StatusCode);
     }
