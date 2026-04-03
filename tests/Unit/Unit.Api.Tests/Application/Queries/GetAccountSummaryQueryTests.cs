@@ -42,7 +42,7 @@ public sealed class GetAccountSummaryQueryTests
         Assert.Equal(Nickname.Parse("nick"), result.Name.Nickname);
         Assert.Equal("First", result.Name.FirstName);
         Assert.Equal("Last", result.Name.LastName);
-        Assert.False(result.Name.PreferNickname);
+        Assert.False(result.Name.UseNickname);
         Assert.Equal(Picture.Parse("https://pic.example/id"), result.Picture);
         Assert.Equal(Language.Parse("en"), result.Language);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);

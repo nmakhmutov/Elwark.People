@@ -10,34 +10,39 @@ public sealed record ConfirmEmailCommand(string Token, string Code) : ICommand<E
 
 public sealed class ConfirmEmailCommandHandler : ICommandHandler<ConfirmEmailCommand, EmailAccount>
 {
-    private readonly IConfirmationService _confirmation;
+    private readonly IConfirmationChallengeService _confirmation;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
+    private readonly IEmailVerificationTokenService _tokens;
 
     public ConfirmEmailCommandHandler(
-        IConfirmationService confirmation,
+        IConfirmationChallengeService confirmation,
+        IEmailVerificationTokenService tokens,
         TimeProvider timeProvider,
         IAccountRepository repository
     )
     {
         _confirmation = confirmation;
+        _tokens = tokens;
         _timeProvider = timeProvider;
         _repository = repository;
     }
 
     public async ValueTask<EmailAccount> Handle(ConfirmEmailCommand request, CancellationToken ct)
     {
-        var confirmation = await _confirmation.VerifyEmailAsync(request.Token, request.Code, ct);
+        var payload = _tokens.ParseToken(request.Token);
+        var token = Convert.ToBase64String(payload.ConfirmationId.ToByteArray());
+        var accountId = await _confirmation.VerifyAsync(token, request.Code, ConfirmationType.EmailConfirmation, ct);
 
-        var account = await _repository.GetAsync(confirmation.AccountId, ct)
-            ?? throw AccountException.NotFound(confirmation.AccountId);
+        var account = await _repository.GetAsync(accountId, ct)
+            ?? throw AccountException.NotFound(accountId);
 
-        account.ConfirmEmail(confirmation.Email, _timeProvider);
+        account.ConfirmEmail(payload.Email, _timeProvider);
 
         await _repository.UnitOfWork
             .SaveEntitiesAsync(ct);
 
         return account.Emails
-            .First(x => x.Email == confirmation.Email.Address);
+            .First(x => x.Email == payload.Email.Address);
     }
 }

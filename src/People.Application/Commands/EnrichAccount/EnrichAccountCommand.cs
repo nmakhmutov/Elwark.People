@@ -13,7 +13,7 @@ public sealed record EnrichAccountCommand(long AccountId, string IpAddress) : IC
 
 public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountCommand>
 {
-    private readonly IConfirmationService _confirmation;
+    private readonly IConfirmationChallengeService _confirmation;
     private readonly IGravatarService _gravatar;
     private readonly IEnumerable<IIpService> _ipServices;
     private readonly ILogger<EnrichAccountCommandHandler> _logger;
@@ -21,7 +21,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
     private readonly TimeProvider _timeProvider;
 
     public EnrichAccountCommandHandler(
-        IConfirmationService confirmation,
+        IConfirmationChallengeService confirmation,
         IGravatarService gravatar,
         IEnumerable<IIpService> ipServices,
         IAccountRepository repository,
@@ -52,7 +52,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
                 account.Name.Nickname,
                 account.Name.FirstName ?? gravatar?.Name?.FirstOrDefault()?.FirstName,
                 account.Name.LastName ?? gravatar?.Name?.FirstOrDefault()?.LastName,
-                account.Name.PreferNickname
+                account.Name.UseNickname
             ),
             Picture.Parse(gravatar?.ThumbnailUrl ?? string.Empty),
             account.Language,
@@ -65,8 +65,8 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
             _timeProvider
         );
 
+        await _confirmation.DeleteByAccountAsync(request.AccountId, ct);
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);
-        await _confirmation.DeleteAsync(request.AccountId, ct);
 
         return Unit.Value;
     }

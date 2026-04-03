@@ -79,9 +79,9 @@ Replace string literals with an enum:
 ```csharp
 public enum ConfirmationKind
 {
-    SignIn = 1,
-    SignUp = 2,
-    EmailVerification = 3,
+    EmailSignIn = 1,
+    EmailSignUp = 2,
+    EmailConfirmation = 3,
 }
 ```
 
@@ -124,10 +124,10 @@ Rename existing concepts as follows:
 
 At the call sites:
 
-- `SignInAsync(accountId)` becomes `IssueAsync(accountId, ConfirmationKind.SignIn)`
-- `SignInAsync(token, code)` becomes `VerifyAsync(token, code, ConfirmationKind.SignIn)`
-- `SignUpAsync(accountId)` becomes `IssueAsync(accountId, ConfirmationKind.SignUp)`
-- `SignUpAsync(token, code)` becomes `VerifyAsync(token, code, ConfirmationKind.SignUp)`
+- `SignInAsync(accountId)` becomes `IssueAsync(accountId, ConfirmationKind.EmailSignIn)`
+- `SignInAsync(token, code)` becomes `VerifyAsync(token, code, ConfirmationKind.EmailSignIn)`
+- `SignUpAsync(accountId)` becomes `IssueAsync(accountId, ConfirmationKind.EmailSignUp)`
+- `SignUpAsync(token, code)` becomes `VerifyAsync(token, code, ConfirmationKind.EmailSignUp)`
 
 This removes overload ambiguity and makes intent visible in each caller.
 
@@ -186,11 +186,11 @@ If the confirmation model is intended to allow historical rows, the unique const
 
 Canonical persistence values:
 
-- `SignIn`
-- `SignUp`
-- `EmailVerification`
+- `EmailSignIn`
+- `EmailSignUp`
+- `EmailConfirmation`
 
-The existing `EmailVerify` string should be migrated to `EmailVerification` to align terminology.
+The existing `EmailVerify` string should be migrated to `EmailConfirmation` to align terminology.
 
 ## Call Site Updates
 
@@ -198,14 +198,14 @@ Affected consumers will move from flow-specific methods to explicit issue and ve
 
 Examples:
 
-- sign-in command handlers issue and verify `ConfirmationKind.SignIn`
-- sign-up command handlers issue and verify `ConfirmationKind.SignUp`
+- sign-in command handlers issue and verify `ConfirmationKind.EmailSignIn`
+- sign-up command handlers issue and verify `ConfirmationKind.EmailSignUp`
 - email confirmation flow uses:
   - `IConfirmationChallengeService.ThrottleEmailVerificationAsync`
-  - `IConfirmationChallengeService.IssueAsync(accountId, ConfirmationKind.EmailVerification, ct)`
+  - `IConfirmationChallengeService.IssueAsync(accountId, ConfirmationKind.EmailConfirmation, ct)`
   - `IEmailVerificationTokenService.CreateToken(confirmation.Id, email)`
   - `IEmailVerificationTokenService.ParseToken(token)`
-  - `IConfirmationChallengeService.VerifyAsync(confirmationToken, code, ConfirmationKind.EmailVerification, ct)`
+  - `IConfirmationChallengeService.VerifyAsync(confirmationToken, code, ConfirmationKind.EmailConfirmation, ct)`
 
 `VerifyEmailChallengeAsync` may remain as a temporary application-facing convenience method during migration if it reduces churn, but the target design is to keep email token parsing separate from challenge verification.
 
@@ -238,8 +238,8 @@ Update tests to match the new boundaries.
 
 ### Integration tests
 
-- sign-up issue + verify round trip
-- sign-in issue + verify round trip
+- email sign-up issue + verify round trip
+- email sign-in issue + verify round trip
 - email verification token creation + parse + confirmation verification
 - duplicate issuance under lock window returns `AlreadySent`
 - persistence uniqueness for `(AccountId, Type)` if a unique constraint is introduced

@@ -43,7 +43,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
                 FirstName: "Ann",
                 LastName: "Lee",
                 Nickname: Nickname.Parse("annlee"),
-                PreferNickname: false,
+                UseNickname: false,
                 Language: Language.Parse("ru"),
                 TimeZone: TimeZone.Parse("Europe/Berlin"),
                 DateFormat: DateFormat.Parse("dd.MM.yyyy"),
@@ -56,7 +56,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
         var account = await read.Accounts.AsNoTracking().SingleAsync(a => a.Id == id);
 
         Assert.Equal(Nickname.Parse("annlee"), account.Name.Nickname);
-        Assert.False(account.Name.PreferNickname);
+        Assert.False(account.Name.UseNickname);
         Assert.Equal("Ann", account.Name.FirstName);
         Assert.Equal("Lee", account.Name.LastName);
         Assert.Equal(Language.Parse("ru"), account.Language);

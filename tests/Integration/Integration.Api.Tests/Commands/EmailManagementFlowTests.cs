@@ -58,6 +58,7 @@ public sealed class EmailManagementFlowTests(PostgreSqlFixture postgres) : Comma
         }
 
         var confirming = await sender.Send(new ConfirmingEmailCommand(id, secondary), CancellationToken.None);
+        await EmailVerificationOutboxTestHelper.DispatchPendingAsync(scope.ServiceProvider);
 
         Assert.NotNull(appendConfirmCode);
         _ = await sender.Send(new ConfirmEmailCommand(confirming.Token, appendConfirmCode!), CancellationToken.None);

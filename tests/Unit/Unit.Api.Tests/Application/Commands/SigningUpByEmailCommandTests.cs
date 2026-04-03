@@ -34,10 +34,10 @@ public sealed class SigningUpByEmailCommandTests
         repo.AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>())
             .Returns(callInfo => callInfo.Arg<Account>());
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         confirmation
-            .SignUpAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>())
-            .Returns(new ConfirmationResult("tok-new", "CODE1"));
+            .IssueAsync(Arg.Any<AccountId>(), ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>())
+            .Returns(new ConfirmationChallenge(Guid.NewGuid(), "tok-new", "CODE1"));
 
         var notification = Substitute.For<INotificationSender>();
 
@@ -54,7 +54,7 @@ public sealed class SigningUpByEmailCommandTests
         await repo.Received(1).GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>());
         await repo.Received(1).AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.Received(1).SignUpAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>());
+        await confirmation.Received(1).IssueAsync(Arg.Any<AccountId>(), ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
         await notification.Received(1).SendConfirmationAsync(
             Arg.Is<MailAddress>(m => m.Address == email.Address),
             "CODE1",
@@ -75,10 +75,10 @@ public sealed class SigningUpByEmailCommandTests
         repo.GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>())
             .Returns(new EmailSignupState(existingId, email, IsConfirmed: false));
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         confirmation
-            .SignUpAsync(existingId, Arg.Any<CancellationToken>())
-            .Returns(new ConfirmationResult("tok-re", "CODE2"));
+            .IssueAsync(existingId, ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>())
+            .Returns(new ConfirmationChallenge(Guid.NewGuid(), "tok-re", "CODE2"));
 
         var notification = Substitute.For<INotificationSender>();
 
@@ -93,7 +93,7 @@ public sealed class SigningUpByEmailCommandTests
 
         Assert.Equal("tok-re", token);
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
-        await confirmation.Received(1).SignUpAsync(existingId, Arg.Any<CancellationToken>());
+        await confirmation.Received(1).IssueAsync(existingId, ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
         await notification.Received(1).SendConfirmationAsync(
             Arg.Is<MailAddress>(m => m.Address == email.Address),
             "CODE2",
@@ -110,7 +110,7 @@ public sealed class SigningUpByEmailCommandTests
             .Returns(new EmailSignupState(new AccountId(9L), email, IsConfirmed: true));
 
         var handler = new SigningUpByEmailCommandHandler(
-            Substitute.For<IConfirmationService>(),
+            Substitute.For<IConfirmationChallengeService>(),
             Substitute.For<IIpHasher>(),
             Substitute.For<INotificationSender>(),
             repo,

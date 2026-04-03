@@ -103,6 +103,7 @@ public sealed class EmailEndpointsTests(PostgreSqlFixture postgres) : RestApiTes
             "application/json");
         var postVerify = await client.PostAsync("/accounts/me/emails/verify", confirming);
         postVerify.EnsureSuccessStatusCode();
+        await EmailVerificationOutboxTestHelper.DispatchPendingAsync(Factory.Services);
         using (var tokenDoc = JsonDocument.Parse(await postVerify.Content.ReadAsStringAsync()))
         {
             var token = tokenDoc.RootElement.GetProperty("token").GetString();
@@ -169,6 +170,7 @@ public sealed class EmailEndpointsTests(PostgreSqlFixture postgres) : RestApiTes
             "application/json");
         var postRes = await client.PostAsync("/accounts/me/emails/verify", confirming);
         postRes.EnsureSuccessStatusCode();
+        await EmailVerificationOutboxTestHelper.DispatchPendingAsync(Factory.Services);
 
         using var postDoc = JsonDocument.Parse(await postRes.Content.ReadAsStringAsync());
         var token = postDoc.RootElement.GetProperty("token").GetString();

@@ -13,17 +13,17 @@ public sealed class Name : ValueObject
 
     public string? LastName { get; }
 
-    public bool PreferNickname { get; }
+    public bool UseNickname { get; }
 
-    private Name(Nickname nickname, string? firstName, string? lastName, bool preferNickname)
+    private Name(Nickname nickname, string? firstName, string? lastName, bool useNickname)
     {
         Nickname = nickname;
         FirstName = firstName;
         LastName = lastName;
-        PreferNickname = preferNickname;
+        UseNickname = useNickname;
     }
 
-    public static Name Create(Nickname nickname, string? firstName = null, string? lastName = null, bool preferNickname = true)
+    public static Name Create(Nickname nickname, string? firstName = null, string? lastName = null, bool useNickname = true)
     {
         firstName = firstName.TrimToNull();
         lastName = lastName.TrimToNull();
@@ -34,12 +34,12 @@ public sealed class Name : ValueObject
         if (lastName is not null)
             ArgumentOutOfRangeException.ThrowIfGreaterThan(lastName.Length, LastNameLength, nameof(lastName));
 
-        return new Name(nickname, firstName, lastName, preferNickname);
+        return new Name(nickname, firstName, lastName, useNickname);
     }
 
     public string FullName()
     {
-        if (PreferNickname || (FirstName is null && LastName is null))
+        if (UseNickname || (FirstName is null && LastName is null))
             return Nickname.ToString();
 
         return $"{FirstName} {LastName}".Trim();
@@ -50,6 +50,6 @@ public sealed class Name : ValueObject
         yield return Nickname;
         yield return FirstName;
         yield return LastName;
-        yield return PreferNickname;
+        yield return UseNickname;
     }
 }

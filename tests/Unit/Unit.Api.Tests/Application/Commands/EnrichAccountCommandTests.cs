@@ -25,7 +25,7 @@ public sealed class EnrichAccountCommandTests
         IAccountRepository repository,
         IEnumerable<IIpService> ipServices,
         IGravatarService gravatar,
-        IConfirmationService confirmation,
+        IConfirmationChallengeService confirmation,
         TimeProvider timeProvider
     ) =>
         new(
@@ -65,7 +65,7 @@ public sealed class EnrichAccountCommandTests
             ]
         });
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
 
         var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
@@ -84,7 +84,7 @@ public sealed class EnrichAccountCommandTests
         Assert.NotEqual(pictureBefore, account.Picture);
 
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public sealed class EnrichAccountCommandTests
 
         var ip = Substitute.For<IIpService>();
         var gravatar = Substitute.For<IGravatarService>();
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
 
         var sut = CreateSut(repository, [ip], gravatar, confirmation, TimeProvider.System);
 
@@ -106,7 +106,7 @@ public sealed class EnrichAccountCommandTests
         await ip.DidNotReceive().GetAsync(Arg.Any<string>(), Arg.Any<string>());
         await gravatar.DidNotReceive().GetAsync(Arg.Any<MailAddress>());
         await uow.DidNotReceive().SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.DidNotReceive().DeleteAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>());
+        await confirmation.DidNotReceive().DeleteByAccountAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class EnrichAccountCommandTests
         var gravatar = Substitute.For<IGravatarService>();
         gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
 
         var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
@@ -141,7 +141,7 @@ public sealed class EnrichAccountCommandTests
         await ip2.Received(1).GetAsync("192.0.2.1", "en");
         await gravatar.Received(1).GetAsync(Arg.Any<MailAddress>());
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public sealed class EnrichAccountCommandTests
         var gravatar = Substitute.For<IGravatarService>();
         gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
 
         var sut = CreateSut(repository, [ip], gravatar, confirmation, time);
 
@@ -193,7 +193,7 @@ public sealed class EnrichAccountCommandTests
 
         var gravatar = Substitute.For<IGravatarService>();
         gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
 
         var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
@@ -225,7 +225,7 @@ public sealed class EnrichAccountCommandTests
 
         var gravatar = Substitute.For<IGravatarService>();
         gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
 
         var sut = CreateSut(repository, [ip1, ip2], gravatar, confirmation, time);
 
@@ -235,6 +235,6 @@ public sealed class EnrichAccountCommandTests
         Assert.Equal(CountryCode.Parse("CA"), account.Country);
         Assert.Equal(RegionCode.Parse("NA"), account.Region);
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 }

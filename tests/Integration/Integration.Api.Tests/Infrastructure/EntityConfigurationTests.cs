@@ -62,7 +62,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         Assert.Equal(Nickname.Parse("nick"), account.Name.Nickname);
         Assert.Equal("Ada", account.Name.FirstName);
         Assert.Equal("Lovelace", account.Name.LastName);
-        Assert.False(account.Name.PreferNickname);
+        Assert.False(account.Name.UseNickname);
 
         var roles = AccountPrivateState.Roles(account);
         Assert.Contains("admin", roles);

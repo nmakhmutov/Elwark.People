@@ -76,6 +76,7 @@ public sealed class CommandTestFixture : IAsyncLifetime
             .AddMapper(new AccountCreatedMapper())
             .AddMapper(new AccountUpdatedMapper())
             .AddMapper(new AccountDeletedMapper())
+            .AddMapper(new EmailVerificationRequestedMapper())
         );
 
         services.AddSingleton<INpgsqlAccessor>(new NpgsqlAccessor(
@@ -93,7 +94,8 @@ public sealed class CommandTestFixture : IAsyncLifetime
         );
 
         services.AddScoped<IAccountRepository, AccountRepository>();
-        services.AddScoped<IConfirmationService, ConfirmationService>();
+        services.AddScoped<IConfirmationChallengeService, ConfirmationChallengeService>();
+        services.AddScoped<IEmailVerificationTokenService, EmailVerificationTokenService>();
 
         MediatorDependencyInjectionExtensions.AddMediator(
             services,

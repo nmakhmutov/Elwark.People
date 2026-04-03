@@ -6,9 +6,11 @@ using NSubstitute.ExceptionExtensions;
 using People.Application.Commands.EnrichAccount;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
+using People.Infrastructure.Commands;
 using People.Infrastructure.Outbox.Entities;
 using Integration.Shared.Tests.Infrastructure;
 using People.Application.Webhooks;
+using People.Domain.ValueObjects;
 using People.Worker.Commands;
 using People.Worker.Jobs;
 using Quartz;
@@ -80,13 +82,53 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
             await job.Execute(FakeContext());
         }
 
-        await mediator.Received(1).Send(
-            Arg.Is<EnrichAccountCommand>(c => c.AccountId == 5001L && c.IpAddress == "198.51.100.10"),
-            Arg.Any<CancellationToken>());
-        await mediator.Received(1).Send(
-            Arg.Is<CreateWebhookMessageCommand>(c =>
-                c.AccountId == 5001L && c.Type == WebhookType.Created),
-            Arg.Any<CancellationToken>());
+        await mediator.Received(1)
+            .Send(
+                Arg.Is<EnrichAccountCommand>(c => c.AccountId == 5001L && c.IpAddress == "198.51.100.10"),
+                Arg.Any<CancellationToken>());
+        await mediator.Received(1)
+            .Send(
+                Arg.Is<CreateWebhookMessageCommand>(c =>
+                    c.AccountId == 5001L && c.Type == WebhookType.Created),
+                Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Execute_DispatchesSendEmailVerification_ForEmailVerificationRequestedPayload()
+    {
+        var mediator = Substitute.For<IMediator>();
+        mediator.Send(Arg.Any<SendEmailVerificationCommand>(), Arg.Any<CancellationToken>())
+            .Returns(await ValueTask.FromResult(Unit.Value));
+
+        await using var root = CreateProvider(fixture, mediator);
+        await using (var seedScope = root.CreateAsyncScope())
+        {
+            var db = seedScope.ServiceProvider.GetRequiredService<PeopleDbContext>();
+            await IntegrationDatabaseCleanup.DeleteAllAsync(db);
+            var evt = new EmailVerificationRequestedIntegrationEvent(
+                Guid.CreateVersion7(),
+                5004L,
+                "verify@example.com",
+                Language.Default,
+                DateTime.UtcNow.AddMinutes(-10));
+            db.OutboxMessages.Add(OutboxMessage.Create(evt));
+            await db.SaveChangesAsync(CancellationToken.None);
+        }
+
+        await using (var runRoot = CreateProvider(fixture, mediator))
+        {
+            var job = CreateJob(runRoot);
+            await job.Execute(FakeContext());
+        }
+
+        await mediator.Received(1)
+            .Send(
+                Arg.Is<SendEmailVerificationCommand>(c =>
+                    c.AccountId == 5004L &&
+                    c.Email == "verify@example.com" &&
+                    c.Language == Language.Default
+                ),
+                Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -158,9 +200,10 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
             await job.Execute(FakeContext());
         }
 
-        await sender.Received(1).Send(
-            Arg.Is<CreateWebhookMessageCommand>(c => c.AccountId == 5003L && c.Type == WebhookType.Updated),
-            Arg.Any<CancellationToken>());
+        await sender.Received(1)
+            .Send(
+                Arg.Is<CreateWebhookMessageCommand>(c => c.AccountId == 5003L && c.Type == WebhookType.Updated),
+                Arg.Any<CancellationToken>());
     }
 
     [Fact]

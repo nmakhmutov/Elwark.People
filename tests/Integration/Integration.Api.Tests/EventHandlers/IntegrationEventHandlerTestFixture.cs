@@ -34,7 +34,7 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
     public IntegrationEventHandlerTestFixture(PostgreSqlFixture postgres) =>
         _postgres = postgres;
 
-    public IConfirmationService Confirmation { get; } = Substitute.For<IConfirmationService>();
+    public IConfirmationChallengeService Confirmation { get; } = Substitute.For<IConfirmationChallengeService>();
 
     public IGravatarService Gravatar { get; } = Substitute.For<IGravatarService>();
 
@@ -55,13 +55,13 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
 
         services.AddSingleton(TimeProvider.System);
         services.AddSingleton<IIpHasher, IpHasher>();
-        services.AddSingleton<IOptions<AppSecurityOptions>>(
-            Options.Create(new AppSecurityOptions(new string('K', 32), new string('V', 16))));
+        services.AddSingleton(Options.Create(new AppSecurityOptions(new string('K', 32), new string('V', 16))));
 
         services.AddOutbox<PeopleDbContext>(outbox => outbox
             .AddMapper(new AccountCreatedMapper())
             .AddMapper(new AccountUpdatedMapper())
             .AddMapper(new AccountDeletedMapper())
+            .AddMapper(new EmailVerificationRequestedMapper())
         );
 
         services.AddDbContextFactory<PeopleDbContext>(options =>
@@ -72,12 +72,13 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
         );
 
         services.AddScoped<IAccountRepository, AccountRepository>();
-        services.AddScoped<IConfirmationService, ConfirmationService>();
+        services.AddScoped<IConfirmationChallengeService, ConfirmationChallengeService>();
+        services.AddScoped<IEmailVerificationTokenService, EmailVerificationTokenService>();
 
-        foreach (var d in services.Where(d => d.ServiceType == typeof(IConfirmationService)).ToList())
+        foreach (var d in services.Where(d => d.ServiceType == typeof(IConfirmationChallengeService)).ToList())
             services.Remove(d);
 
-        services.AddScoped<IConfirmationService>(_ => Confirmation);
+        services.AddScoped<IConfirmationChallengeService>(_ => Confirmation);
 
         services.AddScoped<EnrichAccountCommandHandler>();
 
@@ -110,7 +111,7 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
         Ip1.GetAsync(Arg.Any<string>(), Arg.Any<string>()).Returns((IpInformation?)null);
         Ip2.GetAsync(Arg.Any<string>(), Arg.Any<string>()).Returns((IpInformation?)null);
         Gravatar.GetAsync(Arg.Any<MailAddress>()).Returns((GravatarProfile?)null);
-        Confirmation.DeleteAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>()).Returns(0);
+        Confirmation.DeleteByAccountAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>()).Returns(0);
     }
 
     public async Task DisposeAsync()

@@ -48,6 +48,7 @@ public static class HostingExtensions
                     .AddMapper(new AccountCreatedMapper())
                     .AddMapper(new AccountUpdatedMapper())
                     .AddMapper(new AccountDeletedMapper())
+                    .AddMapper(new EmailVerificationRequestedMapper())
                 );
 
             builder.Services
@@ -62,7 +63,8 @@ public static class HostingExtensions
                     )
                 )
                 .AddScoped<IAccountRepository, AccountRepository>()
-                .AddScoped<IConfirmationService, ConfirmationService>()
+                .AddScoped<IConfirmationChallengeService, ConfirmationChallengeService>()
+                .AddScoped<IEmailVerificationTokenService, EmailVerificationTokenService>()
                 .AddSingleton<IIpHasher, IpHasher>()
                 .AddSingleton<INpgsqlAccessor>(provider => new NpgsqlAccessor(
                         configuration.GetConnectionString("Postgresql")!,

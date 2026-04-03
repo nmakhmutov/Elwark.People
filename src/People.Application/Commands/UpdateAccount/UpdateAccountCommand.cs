@@ -13,7 +13,7 @@ public sealed record UpdateAccountCommand(
     string? FirstName,
     string? LastName,
     Nickname Nickname,
-    bool PreferNickname,
+    bool UseNickname,
     Language Language,
     TimeZone TimeZone,
     DateFormat DateFormat,
@@ -46,7 +46,7 @@ public sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountC
         var region = await GetRegionAsync(request.Country, ct);
 
         account.Update(
-            Name.Create(request.Nickname, request.FirstName, request.LastName, request.PreferNickname),
+            Name.Create(request.Nickname, request.FirstName, request.LastName, request.UseNickname),
             account.Picture,
             request.Language,
             region,

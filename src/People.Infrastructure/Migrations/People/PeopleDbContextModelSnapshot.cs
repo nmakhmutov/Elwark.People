@@ -245,15 +245,14 @@ namespace People.Infrastructure.Migrations.People
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId", "Type");
+                    b.HasIndex("AccountId", "Type")
+                        .IsUnique();
 
                     b.ToTable("confirmations", (string)null);
                 });
@@ -367,9 +366,9 @@ namespace People.Infrastructure.Migrations.People
                                 .HasColumnType("character varying(64)")
                                 .HasColumnName("nickname");
 
-                            b1.Property<bool>("PreferNickname")
+                            b1.Property<bool>("UseNickname")
                                 .HasColumnType("boolean")
-                                .HasColumnName("prefer_nickname");
+                                .HasColumnName("use_nickname");
 
                             b1.HasKey("AccountId");
 

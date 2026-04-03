@@ -37,8 +37,8 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
                 .HasColumnName("last_name")
                 .HasMaxLength(Name.LastNameLength);
 
-            navigationBuilder.Property(x => x.PreferNickname)
-                .HasColumnName("prefer_nickname")
+            navigationBuilder.Property(x => x.UseNickname)
+                .HasColumnName("use_nickname")
                 .IsRequired();
 
             navigationBuilder.WithOwner();

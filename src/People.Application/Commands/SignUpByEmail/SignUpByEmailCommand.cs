@@ -10,12 +10,12 @@ public sealed record SignUpByEmailCommand(string Token, string Code) : ICommand<
 
 public sealed class SignUpByEmailCommandHandler : ICommandHandler<SignUpByEmailCommand, SignUpResult>
 {
-    private readonly IConfirmationService _confirmation;
+    private readonly IConfirmationChallengeService _confirmation;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public SignUpByEmailCommandHandler(
-        IConfirmationService confirmation,
+        IConfirmationChallengeService confirmation,
         IAccountRepository repository,
         TimeProvider timeProvider
     )
@@ -27,7 +27,7 @@ public sealed class SignUpByEmailCommandHandler : ICommandHandler<SignUpByEmailC
 
     public async ValueTask<SignUpResult> Handle(SignUpByEmailCommand request, CancellationToken ct)
     {
-        var id = await _confirmation.SignUpAsync(request.Token, request.Code, ct);
+        var id = await _confirmation.VerifyAsync(request.Token, request.Code, ConfirmationType.EmailSignUp, ct);
         var account = await _repository.GetAsync(id, ct) ?? throw AccountException.NotFound(id);
 
         account.ConfirmEmail(account.GetPrimaryEmail(), _timeProvider);

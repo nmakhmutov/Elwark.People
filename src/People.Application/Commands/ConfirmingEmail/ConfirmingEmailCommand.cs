@@ -1,6 +1,5 @@
 using System.Net.Mail;
 using Mediator;
-using People.Application.Providers;
 using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
@@ -12,19 +11,22 @@ public sealed record ConfirmingEmailCommand(AccountId Id, MailAddress Email) : I
 
 public sealed class ConfirmingEmailCommandHandler : ICommandHandler<ConfirmingEmailCommand, ConfirmingTokenModel>
 {
-    private readonly IConfirmationService _confirmation;
-    private readonly INotificationSender _notification;
+    private readonly IConfirmationChallengeService _confirmation;
+    private readonly IEmailVerificationTokenService _tokens;
     private readonly IAccountRepository _repository;
+    private readonly TimeProvider _timeProvider;
 
     public ConfirmingEmailCommandHandler(
-        IConfirmationService confirmation,
-        INotificationSender notification,
-        IAccountRepository repository
+        IConfirmationChallengeService confirmation,
+        IEmailVerificationTokenService tokens,
+        IAccountRepository repository,
+        TimeProvider timeProvider
     )
     {
         _confirmation = confirmation;
-        _notification = notification;
+        _tokens = tokens;
         _repository = repository;
+        _timeProvider = timeProvider;
     }
 
     public async ValueTask<ConfirmingTokenModel> Handle(ConfirmingEmailCommand request, CancellationToken ct)
@@ -37,10 +39,13 @@ public sealed class ConfirmingEmailCommandHandler : ICommandHandler<ConfirmingEm
         if (emailAccount.IsConfirmed)
             throw EmailException.AlreadyConfirmed(request.Email);
 
-        var confirmation = await _confirmation.VerifyEmailAsync(account.Id, request.Email, ct);
+        var challenge = await _confirmation.IssueAsync(account.Id, ConfirmationType.EmailConfirmation, ct);
 
-        await _notification.SendConfirmationAsync(request.Email, confirmation.Code, account.Language, ct);
+        account.RequestEmailVerification(request.Email, _timeProvider);
+        var token = _tokens.CreateToken(challenge.Id, request.Email);
 
-        return new ConfirmingTokenModel(confirmation.Token);
+        await _repository.UnitOfWork.SaveEntitiesAsync(ct);
+
+        return new ConfirmingTokenModel(token);
     }
 }

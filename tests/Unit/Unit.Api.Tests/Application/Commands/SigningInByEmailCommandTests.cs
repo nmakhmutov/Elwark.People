@@ -24,10 +24,10 @@ public sealed class SigningInByEmailCommandTests
         repo.GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>())
             .Returns(new EmailSignupState(AccountId, email, IsConfirmed: true));
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         confirmation
-            .SignInAsync(AccountId, Arg.Any<CancellationToken>())
-            .Returns(new ConfirmationResult("signin-token", "PIN42"));
+            .IssueAsync(AccountId, ConfirmationType.EmailSignIn, Arg.Any<CancellationToken>())
+            .Returns(new ConfirmationChallenge(Guid.NewGuid(), "signin-token", "PIN42"));
 
         var notification = Substitute.For<INotificationSender>();
 
@@ -37,7 +37,7 @@ public sealed class SigningInByEmailCommandTests
 
         Assert.Equal("signin-token", token);
         await repo.Received(1).GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>());
-        await confirmation.Received(1).SignInAsync(AccountId, Arg.Any<CancellationToken>());
+        await confirmation.Received(1).IssueAsync(AccountId, ConfirmationType.EmailSignIn, Arg.Any<CancellationToken>());
         await notification.Received(1).SendConfirmationAsync(email, "PIN42", language, Arg.Any<CancellationToken>());
     }
 
@@ -48,7 +48,7 @@ public sealed class SigningInByEmailCommandTests
         var repo = Substitute.For<IAccountRepository>();
         repo.GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>()).Returns((EmailSignupState?)null);
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         var handler = new SigningInByEmailCommandHandler(
             confirmation,
             Substitute.For<INotificationSender>(),
@@ -58,7 +58,7 @@ public sealed class SigningInByEmailCommandTests
             await handler.Handle(new SigningInByEmailCommand(email, Language.Parse("en")), CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.NotFound), ex.Code);
-        await confirmation.DidNotReceive().SignInAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>());
+        await confirmation.DidNotReceive().IssueAsync(Arg.Any<AccountId>(), Arg.Any<ConfirmationType>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public sealed class SigningInByEmailCommandTests
         repo.GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>())
             .Returns(new EmailSignupState(AccountId, email, IsConfirmed: false));
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         var notification = Substitute.For<INotificationSender>();
 
         var handler = new SigningInByEmailCommandHandler(confirmation, notification, repo);
@@ -78,7 +78,7 @@ public sealed class SigningInByEmailCommandTests
             await handler.Handle(new SigningInByEmailCommand(email, Language.Parse("en")), CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.NotConfirmed), ex.Code);
-        await confirmation.DidNotReceive().SignInAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>());
+        await confirmation.DidNotReceive().IssueAsync(Arg.Any<AccountId>(), Arg.Any<ConfirmationType>(), Arg.Any<CancellationToken>());
         await notification.DidNotReceive()
             .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<Language>(), Arg.Any<CancellationToken>());
     }

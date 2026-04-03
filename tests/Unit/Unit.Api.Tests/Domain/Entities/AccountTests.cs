@@ -364,7 +364,7 @@ public sealed class AccountTests
         var originalNickname = account.Name.Nickname;
         account.ClearDomainEvents();
         account.Update(
-            Name.Create(account.Name.Nickname, "John", "Doe", account.Name.PreferNickname),
+            Name.Create(account.Name.Nickname, "John", "Doe", account.Name.UseNickname),
             account.Picture,
             account.Language,
             account.Region,
@@ -378,7 +378,7 @@ public sealed class AccountTests
         Assert.Equal(originalNickname, account.Name.Nickname);
         Assert.Equal("John", account.Name.FirstName);
         Assert.Equal("Doe", account.Name.LastName);
-        Assert.True(account.Name.PreferNickname);
+        Assert.True(account.Name.UseNickname);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
@@ -389,7 +389,7 @@ public sealed class AccountTests
         account.ClearDomainEvents();
 
         account.Update(
-            Name.Create(Nickname.Parse("newnick"), "A", "B", preferNickname: false),
+            Name.Create(Nickname.Parse("newnick"), "A", "B", useNickname: false),
             account.Picture,
             account.Language,
             account.Region,
@@ -404,7 +404,7 @@ public sealed class AccountTests
         Assert.Equal(Nickname.Parse("newnick"), account.Name.Nickname);
         Assert.Equal("A", account.Name.FirstName);
         Assert.Equal("B", account.Name.LastName);
-        Assert.False(account.Name.PreferNickname);
+        Assert.False(account.Name.UseNickname);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 

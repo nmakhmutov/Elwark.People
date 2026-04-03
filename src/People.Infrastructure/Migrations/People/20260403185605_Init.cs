@@ -21,7 +21,7 @@ namespace People.Infrastructure.Migrations.People
                     nickname = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     first_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     last_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    prefer_nickname = table.Column<bool>(type: "boolean", nullable: false),
+                    use_nickname = table.Column<bool>(type: "boolean", nullable: false),
                     picture = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     region_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
                     country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
@@ -51,10 +51,10 @@ namespace People.Infrastructure.Migrations.People
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     account_id = table.Column<long>(type: "bigint", nullable: false),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     code = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    type = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -143,7 +143,8 @@ namespace People.Infrastructure.Migrations.People
             migrationBuilder.CreateIndex(
                 name: "IX_confirmations_account_id_type",
                 table: "confirmations",
-                columns: new[] { "account_id", "type" });
+                columns: new[] { "account_id", "type" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_connections_account_id",

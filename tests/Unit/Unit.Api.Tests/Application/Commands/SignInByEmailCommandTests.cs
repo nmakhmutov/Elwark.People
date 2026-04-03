@@ -20,8 +20,9 @@ public sealed class SignInByEmailCommandTests
         var account = EmailHandlerTestAccounts.AccountWithConfirmedPrimary(TestAccountId,
             TimeProvider.System, "user@example.com");
 
-        var confirmation = Substitute.For<IConfirmationService>();
-        confirmation.SignInAsync("tok", "9999", Arg.Any<CancellationToken>()).Returns(TestAccountId);
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
+        confirmation.VerifyAsync("tok", "9999", ConfirmationType.EmailSignIn, Arg.Any<CancellationToken>())
+            .Returns(TestAccountId);
 
         var repo = Substitute.For<IAccountRepository>();
         var uow = Substitute.For<IUnitOfWork>();
@@ -33,14 +34,14 @@ public sealed class SignInByEmailCommandTests
 
         Assert.Equal(TestAccountId, result.Id);
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.Received(1).DeleteAsync(TestAccountId, Arg.Any<CancellationToken>());
+        await confirmation.Received(1).DeleteByAccountAsync(TestAccountId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task Handle_ConfirmationVerificationFails_Throws()
     {
-        var confirmation = Substitute.For<IConfirmationService>();
-        confirmation.SignInAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
+        confirmation.VerifyAsync(Arg.Any<string>(), Arg.Any<string>(), ConfirmationType.EmailSignIn, Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("invalid"));
 
         var repo = Substitute.For<IAccountRepository>();
@@ -59,8 +60,8 @@ public sealed class SignInByEmailCommandTests
     [Fact]
     public async Task Handle_AccountNotFound_ThrowsAccountException()
     {
-        var confirmation = Substitute.For<IConfirmationService>();
-        confirmation.SignInAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
+        confirmation.VerifyAsync(Arg.Any<string>(), Arg.Any<string>(), ConfirmationType.EmailSignIn, Arg.Any<CancellationToken>())
             .Returns(TestAccountId);
 
         var repo = Substitute.For<IAccountRepository>();

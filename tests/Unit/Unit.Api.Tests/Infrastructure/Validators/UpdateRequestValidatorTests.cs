@@ -15,7 +15,7 @@ public sealed class UpdateRequestValidatorTests
             FirstName: "Ann",
             LastName: "B",
             Nickname: "annb",
-            PreferNickname: false,
+            UseNickname: false,
             Language: "en",
             CountryCode: "DE",
             TimeZone: TimeZoneInfo.Utc.Id,

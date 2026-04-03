@@ -13,7 +13,7 @@ using People.Infrastructure;
 namespace People.Infrastructure.Migrations.People
 {
     [DbContext(typeof(PeopleDbContext))]
-    [Migration("20260403170733_Init")]
+    [Migration("20260403185605_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -248,15 +248,14 @@ namespace People.Infrastructure.Migrations.People
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId", "Type");
+                    b.HasIndex("AccountId", "Type")
+                        .IsUnique();
 
                     b.ToTable("confirmations", (string)null);
                 });

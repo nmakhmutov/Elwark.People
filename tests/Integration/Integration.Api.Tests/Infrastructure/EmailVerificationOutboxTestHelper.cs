@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using People.Application.Providers;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
-using People.Worker.Commands;
+using People.Infrastructure.Commands;
 
 namespace Integration.Api.Tests.Infrastructure;
 
@@ -30,14 +30,7 @@ internal static class EmailVerificationOutboxTestHelper
             if (message.GetPayload() is not EmailVerificationRequestedIntegrationEvent payload)
                 continue;
 
-            await handler.Handle(
-                new SendEmailVerificationCommand(
-                    payload.AccountId,
-                    payload.ConfirmationId,
-                    payload.Email,
-                    payload.Language,
-                    payload.OccurredAt),
-                ct);
+            await handler.Handle(new SendEmailVerificationCommand(payload.AccountId, payload.Email, payload.Language), ct);
 
             message.MarkProcessed(processedAt);
         }

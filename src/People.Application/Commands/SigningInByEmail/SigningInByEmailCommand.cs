@@ -12,12 +12,12 @@ public sealed record SigningInByEmailCommand(MailAddress Email, Language Languag
 
 public sealed class SigningInByEmailCommandHandler : ICommandHandler<SigningInByEmailCommand, string>
 {
-    private readonly IConfirmationService _confirmation;
+    private readonly IConfirmationChallengeService _confirmation;
     private readonly INotificationSender _notification;
     private readonly IAccountRepository _repository;
 
     public SigningInByEmailCommandHandler(
-        IConfirmationService confirmation,
+        IConfirmationChallengeService confirmation,
         INotificationSender notification,
         IAccountRepository repository
     )
@@ -35,7 +35,7 @@ public sealed class SigningInByEmailCommandHandler : ICommandHandler<SigningInBy
         if (!email.IsConfirmed)
             throw EmailException.NotConfirmed(email.Email);
 
-        var confirmation = await _confirmation.SignInAsync(email.AccountId, ct);
+        var confirmation = await _confirmation.IssueAsync(email.AccountId, ConfirmationType.EmailSignIn, ct);
 
         await _notification.SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct);
 

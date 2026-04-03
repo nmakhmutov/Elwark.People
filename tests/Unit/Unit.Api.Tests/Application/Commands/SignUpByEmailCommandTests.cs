@@ -20,9 +20,9 @@ public sealed class SignUpByEmailCommandTests
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
         var account = EmailHandlerTestAccounts.AccountWithUnconfirmedPrimary(AccountId, time, "finish@example.com");
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         confirmation
-            .SignUpAsync("token-b64", "123456", Arg.Any<CancellationToken>())
+            .VerifyAsync("token-b64", "123456", ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>())
             .Returns(AccountId);
 
         var repo = Substitute.For<IAccountRepository>();
@@ -40,7 +40,8 @@ public sealed class SignUpByEmailCommandTests
         Assert.Equal(AccountId, result.Id);
         Assert.Equal(account.Name.FullName(), result.FullName);
         Assert.True(account.Emails.Single(e => e.Email == "finish@example.com").IsConfirmed);
-        await confirmation.Received(1).SignUpAsync("token-b64", "123456", Arg.Any<CancellationToken>());
+        await confirmation.Received(1)
+            .VerifyAsync("token-b64", "123456", ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
         await repo.Received(1).GetAsync(AccountId, Arg.Any<CancellationToken>());
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
@@ -49,9 +50,9 @@ public sealed class SignUpByEmailCommandTests
     [Fact]
     public async Task Handle_ConfirmationVerificationFails_PropagatesException()
     {
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         confirmation
-            .SignUpAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .VerifyAsync(Arg.Any<string>(), Arg.Any<string>(), ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>())
             .Returns(Task.FromException<AccountId>(new InvalidOperationException("bad code")));
 
         var repo = Substitute.For<IAccountRepository>();
@@ -69,9 +70,9 @@ public sealed class SignUpByEmailCommandTests
     [Fact]
     public async Task Handle_AccountMissingAfterConfirmation_ThrowsNotFound()
     {
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
         confirmation
-            .SignUpAsync("ok", "ok", Arg.Any<CancellationToken>())
+            .VerifyAsync("ok", "ok", ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>())
             .Returns(AccountId);
 
         var repo = Substitute.For<IAccountRepository>();

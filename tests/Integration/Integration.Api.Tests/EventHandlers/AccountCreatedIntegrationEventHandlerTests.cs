@@ -69,7 +69,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.Equal(Picture.Parse("https://www.gravatar.com/avatar/test?s=80"), account.Picture);
         }
 
-        await Fx.Confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await Fx.Confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.Equal(expectedTz, account.TimeZone);
         }
 
-        await Fx.Confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await Fx.Confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.Equal(CountryCode.Parse("CA"), account.Country);
         }
 
-        await Fx.Confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await Fx.Confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -219,6 +219,6 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
         }
 
         await Fx.Ip2.Received(1).GetAsync("198.51.100.99", "en");
-        await Fx.Confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
+        await Fx.Confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());
     }
 }

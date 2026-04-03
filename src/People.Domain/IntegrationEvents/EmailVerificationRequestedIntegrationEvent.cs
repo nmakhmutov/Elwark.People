@@ -1,12 +1,12 @@
 using People.Domain.Events;
+using People.Domain.ValueObjects;
 
 namespace People.Domain.IntegrationEvents;
 
 public sealed record EmailVerificationRequestedIntegrationEvent(
     Guid Id,
     long AccountId,
-    Guid ConfirmationId,
     string Email,
-    string Language,
+    Language Language,
     DateTime OccurredAt
 ) : IIntegrationEvent;

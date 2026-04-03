@@ -36,7 +36,7 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
             var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.Update(
-                Name.Create(Nickname.Parse("DisplayNick"), "First", "Last", preferNickname: false),
+                Name.Create(Nickname.Parse("DisplayNick"), "First", "Last", useNickname: false),
                 Picture.Parse("https://example.com/avatar.png"),
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
@@ -65,7 +65,7 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
         Assert.Equal(Nickname.Parse("DisplayNick"), result.Name.Nickname);
         Assert.Equal("First", result.Name.FirstName);
         Assert.Equal("Last", result.Name.LastName);
-        Assert.False(result.Name.PreferNickname);
+        Assert.False(result.Name.UseNickname);
         Assert.Equal("First Last", result.Name.FullName());
         Assert.Equal(Language.Parse("de"), result.Language);
         Assert.Equal(TimeZone.Parse("Europe/Berlin"), result.TimeZone);

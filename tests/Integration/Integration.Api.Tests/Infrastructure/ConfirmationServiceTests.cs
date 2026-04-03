@@ -1,7 +1,8 @@
 using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Options;
+using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
@@ -26,24 +27,27 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         return provider;
     }
 
-    private static ConfirmationService CreateSut(PeopleDbContext db, HybridCache cache, TimeProvider? time = null) =>
-        new(db, cache, TestSecurityOptions(), time ?? TimeProvider.System);
+    private static ConfirmationChallengeService CreateChallengeSut(PeopleDbContext db, HybridCache cache, TimeProvider? time = null) =>
+        new(db, cache, time ?? TimeProvider.System);
+
+    private static EmailVerificationTokenService CreateTokenSut() =>
+        new(TestSecurityOptions());
 
     [Fact]
-    public async Task SignUpAsync_CreatesConfirmationRow_ReturnsTokenAndCode_VerifyReturnsAccountId()
+    public async Task IssueAsync_CreatesEmailSignUpConfirmationRow_ReturnsTokenAndCode_VerifyReturnsAccountId()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var sp = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
         var accountId = new AccountId(10_001L);
-        var result = await sut.SignUpAsync(accountId, CancellationToken.None);
+        var result = await sut.IssueAsync(accountId, ConfirmationType.EmailSignUp, CancellationToken.None);
 
         Assert.False(string.IsNullOrWhiteSpace(result.Token));
         Assert.Equal(6, result.Code.Length);
 
-        var decodedId = await sut.SignUpAsync(result.Token, result.Code, CancellationToken.None);
+        var decodedId = await sut.VerifyAsync(result.Token, result.Code, ConfirmationType.EmailSignUp, CancellationToken.None);
         Assert.Equal(accountId, decodedId);
 
         await using var read = fixture.CreateContext();
@@ -51,48 +55,49 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     }
 
     [Fact]
-    public async Task SignUpAsync_SecondCallWithinLockTtl_ThrowsAlreadySent()
+    public async Task IssueAsync_SecondCallWithinLockTtl_ThrowsAlreadySent()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
         var accountId = new AccountId(10_002L);
-        _ = await sut.SignUpAsync(accountId, CancellationToken.None);
+        _ = await sut.IssueAsync(accountId, ConfirmationType.EmailSignUp, CancellationToken.None);
 
-        var ex = await Assert.ThrowsAsync<ConfirmationException>(() => sut.SignUpAsync(accountId, CancellationToken.None));
+        var ex = await Assert.ThrowsAsync<ConfirmationException>(() =>
+            sut.IssueAsync(accountId, ConfirmationType.EmailSignUp, CancellationToken.None));
 
         Assert.Equal("AlreadySent", ex.Code);
     }
 
     [Fact]
-    public async Task SignUpAsync_VerifyWithWrongCode_ThrowsMismatch()
+    public async Task VerifyAsync_WithWrongEmailSignUpCode_ThrowsMismatch()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
         var accountId = new AccountId(10_003L);
-        var result = await sut.SignUpAsync(accountId, CancellationToken.None);
+        var result = await sut.IssueAsync(accountId, ConfirmationType.EmailSignUp, CancellationToken.None);
 
         var ex = await Assert.ThrowsAsync<ConfirmationException>(() =>
-            sut.SignUpAsync(result.Token, "ZZZZZZ", CancellationToken.None));
+            sut.VerifyAsync(result.Token, "ZZZZZZ", ConfirmationType.EmailSignUp, CancellationToken.None));
 
         Assert.Equal("Mismatch", ex.Code);
     }
 
     [Fact]
-    public async Task SignUpAsync_AfterCleanupOfExpiredRow_VerifyThrowsNotFound()
+    public async Task VerifyAsync_AfterCleanupOfExpiredRow_ThrowsNotFound()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
         var accountId = new AccountId(10_004L);
-        var result = await sut.SignUpAsync(accountId, CancellationToken.None);
+        var result = await sut.IssueAsync(accountId, ConfirmationType.EmailSignUp, CancellationToken.None);
         var confirmationId = new Guid(Convert.FromBase64String(result.Token));
 
         var past = DateTime.UtcNow.AddHours(-2);
@@ -105,72 +110,80 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         Assert.True(deleted >= 1);
 
         var ex = await Assert.ThrowsAsync<ConfirmationException>(() =>
-            sut.SignUpAsync(result.Token, result.Code, CancellationToken.None));
+            sut.VerifyAsync(result.Token, result.Code, ConfirmationType.EmailSignUp, CancellationToken.None));
 
         Assert.Equal("NotFound", ex.Code);
     }
 
     [Fact]
-    public async Task SignInAsync_CreatesConfirmation_VerifyReturnsAccountId()
+    public async Task IssueAsync_CreatesEmailSignInConfirmation_VerifyReturnsAccountId()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
         var accountId = new AccountId(20_001L);
-        var result = await sut.SignInAsync(accountId, CancellationToken.None);
+        var result = await sut.IssueAsync(accountId, ConfirmationType.EmailSignIn, CancellationToken.None);
 
-        var decoded = await sut.SignInAsync(result.Token, result.Code, CancellationToken.None);
+        var decoded = await sut.VerifyAsync(result.Token, result.Code, ConfirmationType.EmailSignIn, CancellationToken.None);
         Assert.Equal(accountId, decoded);
     }
 
     [Fact]
-    public async Task SignInAsync_VerifyWithWrongCode_ThrowsMismatch()
+    public async Task VerifyAsync_WithWrongEmailSignInCode_ThrowsMismatch()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
-        var result = await sut.SignInAsync(new AccountId(20_002L), CancellationToken.None);
+        var result = await sut.IssueAsync(new AccountId(20_002L), ConfirmationType.EmailSignIn, CancellationToken.None);
 
         var ex = await Assert.ThrowsAsync<ConfirmationException>(() =>
-            sut.SignInAsync(result.Token, "AAAAAA", CancellationToken.None));
+            sut.VerifyAsync(result.Token, "AAAAAA", ConfirmationType.EmailSignIn, CancellationToken.None));
 
         Assert.Equal("Mismatch", ex.Code);
     }
 
     [Fact]
-    public async Task VerifyEmailAsync_CreatesConfirmation_VerifyReturnsAccountIdAndEmail()
+    public async Task EmailVerificationTokenRoundTrip_WithCreatedTokenAndConfirmation_VerifyReturnsAccountIdAndEmail()
     {
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var challengeService = CreateChallengeSut(db, cache);
+        var tokenService = CreateTokenSut();
 
         var accountId = new AccountId(30_001L);
         var email = new MailAddress("verify@example.com");
-        var result = await sut.VerifyEmailAsync(accountId, email, CancellationToken.None);
+        var challenge = await challengeService.IssueAsync(accountId, ConfirmationType.EmailConfirmation, CancellationToken.None);
+        var token = tokenService.CreateToken(challenge.Id, email);
 
-        var confirmed = await sut.VerifyEmailAsync(result.Token, result.Code, CancellationToken.None);
+        var payload = tokenService.ParseToken(token);
+        var challengeToken = Convert.ToBase64String(payload.ConfirmationId.ToByteArray());
+        var confirmedAccountId = await challengeService.VerifyAsync(
+            challengeToken,
+            challenge.Code,
+            ConfirmationType.EmailConfirmation,
+            CancellationToken.None);
 
-        Assert.Equal(accountId, confirmed.AccountId);
-        Assert.Equal(email.Address, confirmed.Email.Address);
+        Assert.Equal(accountId, confirmedAccountId);
+        Assert.Equal(email.Address, payload.Email.Address);
     }
 
     [Fact]
-    public async Task DeleteAsync_RemovesConfirmationsForAccount()
+    public async Task DeleteByAccountAsync_RemovesConfirmationsForAccount()
     {
         await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(write, cache);
+        var sut = CreateChallengeSut(write, cache);
 
         var accountId = new AccountId(40_001L);
-        _ = await sut.SignUpAsync(accountId, CancellationToken.None);
+        _ = await sut.IssueAsync(accountId, ConfirmationType.EmailSignUp, CancellationToken.None);
 
-        var removed = await sut.DeleteAsync(accountId, CancellationToken.None);
+        var removed = await sut.DeleteByAccountAsync(accountId, CancellationToken.None);
         Assert.True(removed >= 1);
 
         await using var read = fixture.CreateContext();
@@ -183,13 +196,13 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
-        var sut = CreateSut(db, cache);
+        var sut = CreateChallengeSut(db, cache);
 
         var freshId = new AccountId(50_001L);
         var expiredId = new AccountId(50_002L);
 
-        var fresh = await sut.SignUpAsync(freshId, CancellationToken.None);
-        var expired = await sut.SignUpAsync(expiredId, CancellationToken.None);
+        var fresh = await sut.IssueAsync(freshId, ConfirmationType.EmailSignUp, CancellationToken.None);
+        var expired = await sut.IssueAsync(expiredId, ConfirmationType.EmailSignUp, CancellationToken.None);
 
         var expiredGuid = new Guid(Convert.FromBase64String(expired.Token));
         var past = DateTime.UtcNow.AddDays(-1);
@@ -205,6 +218,6 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         Assert.Equal(0, await read.Set<Confirmation>().CountAsync(c => c.AccountId == expiredId));
         Assert.Equal(1, await read.Set<Confirmation>().CountAsync(c => c.AccountId == freshId));
 
-        _ = await sut.SignUpAsync(fresh.Token, fresh.Code, CancellationToken.None);
+        _ = await sut.VerifyAsync(fresh.Token, fresh.Code, ConfirmationType.EmailSignUp, CancellationToken.None);
     }
 }

@@ -38,6 +38,7 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
                 .AddMapper(new AccountCreatedMapper())
                 .AddMapper(new AccountUpdatedMapper())
                 .AddMapper(new AccountDeletedMapper())
+                .AddMapper(new EmailVerificationRequestedMapper())
         );
 
         return new PeopleDbContext(options, pipeline, timeProvider ?? TimeProvider.System);

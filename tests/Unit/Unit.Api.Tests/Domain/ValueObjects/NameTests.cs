@@ -11,7 +11,7 @@ public sealed class NameTests
         var name = Name.Create(Nickname.Parse("nick"));
 
         Assert.Equal(Nickname.Parse("nick"), name.Nickname);
-        Assert.True(name.PreferNickname);
+        Assert.True(name.UseNickname);
     }
 
     [Theory]
@@ -47,7 +47,7 @@ public sealed class NameTests
     [Fact]
     public void Create_TrimmedFirstAndLastName_AreNormalized()
     {
-        var name = Name.Create(Nickname.Parse("nick"), "  John  ", "  Doe  ", preferNickname: false);
+        var name = Name.Create(Nickname.Parse("nick"), "  John  ", "  Doe  ", useNickname: false);
 
         Assert.Equal("John", name.FirstName);
         Assert.Equal("Doe", name.LastName);
@@ -57,7 +57,7 @@ public sealed class NameTests
     [Fact]
     public void Create_WhitespaceOnlyFirstAndLastName_AreStoredAsNull()
     {
-        var name = Name.Create(Nickname.Parse("nick"), "   ", "   ", preferNickname: false);
+        var name = Name.Create(Nickname.Parse("nick"), "   ", "   ", useNickname: false);
 
         Assert.Null(name.FirstName);
         Assert.Null(name.LastName);
@@ -65,37 +65,37 @@ public sealed class NameTests
     }
 
     [Fact]
-    public void FullName_PreferNickname_ReturnsNickname()
+    public void FullName_UseNickname_ReturnsNickname()
     {
-        var name = Name.Create(Nickname.Parse("nick"), "John", "Doe", preferNickname: true);
+        var name = Name.Create(Nickname.Parse("nick"), "John", "Doe", useNickname: true);
         Assert.Equal("nick", name.FullName());
     }
 
     [Fact]
     public void FullName_RealName_ReturnsFirstLast()
     {
-        var name = Name.Create(Nickname.Parse("nick"), "John", "Doe", preferNickname: false);
+        var name = Name.Create(Nickname.Parse("nick"), "John", "Doe", useNickname: false);
         Assert.Equal("John Doe", name.FullName());
     }
 
     [Fact]
     public void FullName_NoFirstLast_ReturnsNickname()
     {
-        var name = Name.Create(Nickname.Parse("nick"), preferNickname: false);
+        var name = Name.Create(Nickname.Parse("nick"), useNickname: false);
         Assert.Equal("nick", name.FullName());
     }
 
     [Fact]
     public void FullName_OnlyFirstName_ReturnsFirstName()
     {
-        var name = Name.Create(Nickname.Parse("nick"), "John", preferNickname: false);
+        var name = Name.Create(Nickname.Parse("nick"), "John", useNickname: false);
         Assert.Equal("John", name.FullName());
     }
 
     [Fact]
     public void FullName_OnlyLastName_ReturnsLastName()
     {
-        var name = Name.Create(Nickname.Parse("nick"), null, "Doe", preferNickname: false);
+        var name = Name.Create(Nickname.Parse("nick"), null, "Doe", useNickname: false);
         Assert.Equal("Doe", name.FullName());
     }
 

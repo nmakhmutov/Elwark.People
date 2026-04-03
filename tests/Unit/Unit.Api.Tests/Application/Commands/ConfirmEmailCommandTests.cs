@@ -26,18 +26,30 @@ public sealed class ConfirmEmailCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
+        var tokens = Substitute.For<IEmailVerificationTokenService>();
+        var confirmationId = Guid.Parse("11111111-1111-7111-8111-111111111111");
+        tokens.ParseToken("tok").Returns(new EmailVerificationTokenPayload(confirmationId, pendingAddr));
         confirmation
-            .VerifyEmailAsync("tok", "123456", Arg.Any<CancellationToken>())
-            .Returns(new EmailConfirmation(AccountId, pendingAddr));
+            .VerifyAsync(
+                Convert.ToBase64String(confirmationId.ToByteArray()),
+                "123456",
+                ConfirmationType.EmailConfirmation,
+                Arg.Any<CancellationToken>())
+            .Returns(AccountId);
 
-        var handler = new ConfirmEmailCommandHandler(confirmation, time, repo);
+        var handler = new ConfirmEmailCommandHandler(confirmation, tokens, time, repo);
 
         var result = await handler.Handle(new ConfirmEmailCommand("tok", "123456"), CancellationToken.None);
 
         Assert.Equal(pendingAddr.Address, result.Email);
         Assert.True(result.IsConfirmed);
-        await confirmation.Received(1).VerifyEmailAsync("tok", "123456", Arg.Any<CancellationToken>());
+        tokens.Received(1).ParseToken("tok");
+        await confirmation.Received(1).VerifyAsync(
+            Convert.ToBase64String(confirmationId.ToByteArray()),
+            "123456",
+            ConfirmationType.EmailConfirmation,
+            Arg.Any<CancellationToken>());
         await repo.Received(1).GetAsync(AccountId, Arg.Any<CancellationToken>());
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
     }
@@ -49,12 +61,14 @@ public sealed class ConfirmEmailCommandTests
         var repo = Substitute.For<IAccountRepository>();
         repo.UnitOfWork.Returns(Substitute.For<IUnitOfWork>());
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
+        var tokens = Substitute.For<IEmailVerificationTokenService>();
+        tokens.ParseToken(Arg.Any<string>()).Returns(new EmailVerificationTokenPayload(Guid.NewGuid(), new MailAddress("bad@test.com")));
         confirmation
-            .VerifyEmailAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromException<EmailConfirmation>(new InvalidOperationException("bad token")));
+            .VerifyAsync(Arg.Any<string>(), Arg.Any<string>(), ConfirmationType.EmailConfirmation, Arg.Any<CancellationToken>())
+            .Returns(Task.FromException<AccountId>(new InvalidOperationException("bad token")));
 
-        var handler = new ConfirmEmailCommandHandler(confirmation, time, repo);
+        var handler = new ConfirmEmailCommandHandler(confirmation, tokens, time, repo);
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await handler.Handle(new ConfirmEmailCommand("bad", "bad"), CancellationToken.None));
@@ -74,12 +88,19 @@ public sealed class ConfirmEmailCommandTests
         repo.UnitOfWork.Returns(uow);
         repo.GetAsync(AccountId, Arg.Any<CancellationToken>()).Returns(account);
 
-        var confirmation = Substitute.For<IConfirmationService>();
+        var confirmation = Substitute.For<IConfirmationChallengeService>();
+        var tokens = Substitute.For<IEmailVerificationTokenService>();
+        var confirmationId = Guid.Parse("22222222-2222-7222-8222-222222222222");
+        tokens.ParseToken(Arg.Any<string>()).Returns(new EmailVerificationTokenPayload(confirmationId, pendingAddr));
         confirmation
-            .VerifyEmailAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(new EmailConfirmation(AccountId, pendingAddr));
+            .VerifyAsync(
+                Convert.ToBase64String(confirmationId.ToByteArray()),
+                Arg.Any<string>(),
+                ConfirmationType.EmailConfirmation,
+                Arg.Any<CancellationToken>())
+            .Returns(AccountId);
 
-        var handler = new ConfirmEmailCommandHandler(confirmation, time, repo);
+        var handler = new ConfirmEmailCommandHandler(confirmation, tokens, time, repo);
 
         await handler.Handle(new ConfirmEmailCommand("t", "c"), CancellationToken.None);
 

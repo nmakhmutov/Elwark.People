@@ -12,7 +12,7 @@ using People.Infrastructure;
 namespace People.Infrastructure.Migrations.Webhooks
 {
     [DbContext(typeof(WebhookDbContext))]
-    [Migration("20260403153223_Init")]
+    [Migration("20260403185609_Init")]
     partial class Init
     {
         /// <inheritdoc />

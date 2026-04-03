@@ -42,7 +42,7 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
 
             account.ClearDomainEvents();
             account.Update(
-                Name.Create(Nickname.Parse("GrpcNick"), "G", "User", preferNickname: false),
+                Name.Create(Nickname.Parse("GrpcNick"), "G", "User", useNickname: false),
                 Picture.Parse("https://grpc.example/p.png"),
                 DomainLanguage.Parse("de"),
                 RegionCode.Parse("EU"),

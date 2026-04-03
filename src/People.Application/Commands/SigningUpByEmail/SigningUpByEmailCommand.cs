@@ -15,14 +15,14 @@ public sealed record SigningUpByEmailCommand(MailAddress Email, Language Languag
 
 public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpByEmailCommand, string>
 {
-    private readonly IConfirmationService _confirmation;
+    private readonly IConfirmationChallengeService _confirmation;
     private readonly IIpHasher _hasher;
     private readonly INotificationSender _notification;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public SigningUpByEmailCommandHandler(
-        IConfirmationService confirmation,
+        IConfirmationChallengeService confirmation,
         IIpHasher hasher,
         INotificationSender notification,
         IAccountRepository repository,
@@ -59,7 +59,7 @@ public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpBy
 
     private async Task<string> SendAsync(AccountId id, MailAddress email, Language language, CancellationToken ct)
     {
-        var confirmation = await _confirmation.SignUpAsync(id, ct);
+        var confirmation = await _confirmation.IssueAsync(id, ConfirmationType.EmailSignUp, ct);
         await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct);
 
         return confirmation.Token;

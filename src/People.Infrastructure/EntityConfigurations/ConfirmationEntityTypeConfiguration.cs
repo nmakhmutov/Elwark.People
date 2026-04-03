@@ -13,7 +13,8 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.HasKey(x => x.Id);
 
-        builder.HasIndex(x => new { x.AccountId, x.Type });
+        builder.HasIndex(x => new { x.AccountId, x.Type })
+            .IsUnique();
 
         builder.Property(x => x.Id)
             .HasColumnName("id")
@@ -31,15 +32,14 @@ internal sealed class ConfirmationEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.Property(x => x.Type)
             .HasColumnName("type")
-            .HasMaxLength(32)
-            .IsRequired();
-
-        builder.Property(x => x.CreatedAt)
-            .HasColumnName("created_at")
             .IsRequired();
 
         builder.Property(x => x.ExpiresAt)
             .HasColumnName("expires_at")
+            .IsRequired();
+
+        builder.Property(x => x.CreatedAt)
+            .HasColumnName("created_at")
             .IsRequired();
     }
 }

@@ -161,6 +161,17 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
     }
 
+    public void RequestEmailVerification(MailAddress email, TimeProvider timeProvider)
+    {
+        var emailAccount = _emails.FirstOrDefault(x => x.Email == email.Address)
+            ?? throw EmailException.NotFound(email);
+
+        if (emailAccount.IsConfirmed)
+            throw EmailException.AlreadyConfirmed(email);
+
+        AddDomainEvent(new EmailVerificationRequestedDomainEvent(Id, email, Language, timeProvider.UtcNow()));
+    }
+
     public void DeleteEmail(MailAddress email, TimeProvider timeProvider)
     {
         var result = _emails.FirstOrDefault(x => x.Email == email.Address);
@@ -180,7 +191,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     {
         var now = timeProvider.UtcNow();
         _externals.Add(ExternalConnection.Google(identity, firstName, lastName, now));
-        Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
+        Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.UseNickname);
         Picture = picture is null ? Picture : Picture.Parse(picture);
 
         UpdateActivation();
@@ -199,7 +210,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     {
         var now = timeProvider.UtcNow();
         _externals.Add(ExternalConnection.Microsoft(identity, firstName, lastName, now));
-        Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
+        Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.UseNickname);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));

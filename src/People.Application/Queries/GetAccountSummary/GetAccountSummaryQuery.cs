@@ -24,7 +24,7 @@ public sealed class GetAccountSummaryQueryHandler : IQueryHandler<GetAccountSumm
                        a.nickname,
                        a.first_name,
                        a.last_name,
-                       a.prefer_nickname,
+                       a.use_nickname,
                        a.picture,
                        a.language,
                        a.region_code,

@@ -12,9 +12,8 @@ public sealed class EmailVerificationRequestedMapper : IOutboxEventMapper<EmailV
         var payload = new EmailVerificationRequestedIntegrationEvent(
             Guid.CreateVersion7(),
             evt.Id,
-            evt.ConfirmationId,
             evt.Email.Address,
-            evt.Language.ToString(),
+            evt.Language,
             evt.OccurredAt
         );
 

@@ -45,7 +45,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
         using var client = Factory.CreateAuthenticatedClient(id, "people:write");
         var putBody =
             """
-            {"firstName":null,"lastName":null,"nickname":"after-put-nick","preferNickname":true,"language":"en","countryCode":"US","timeZone":"UTC","dateFormat":"yyyy-MM-dd","timeFormat":"HH:mm","startOfWeek":"monday"}
+            {"firstName":null,"lastName":null,"nickname":"after-put-nick","useNickname":true,"language":"en","countryCode":"US","timeZone":"UTC","dateFormat":"yyyy-MM-dd","timeFormat":"HH:mm","startOfWeek":"monday"}
             """;
         var content = new StringContent(putBody.Trim(), Encoding.UTF8, "application/json");
         var put = await client.PutAsync("/accounts/me", content);
@@ -64,7 +64,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
         using var client = Factory.CreateAuthenticatedClient(id, "people:write");
         var putBody =
             """
-            {"firstName":null,"lastName":null,"nickname":"ab","preferNickname":true,"language":"en","countryCode":"US","timeZone":"UTC","dateFormat":"yyyy-MM-dd","timeFormat":"HH:mm","startOfWeek":"monday"}
+            {"firstName":null,"lastName":null,"nickname":"ab","useNickname":true,"language":"en","countryCode":"US","timeZone":"UTC","dateFormat":"yyyy-MM-dd","timeFormat":"HH:mm","startOfWeek":"monday"}
             """;
         var content = new StringContent(putBody.Trim(), Encoding.UTF8, "application/json");
         var put = await client.PutAsync("/accounts/me", content);

@@ -36,7 +36,7 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
             var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
             account.Update(
-                Name.Create(Nickname.Parse("SumNick"), "Sum", "Mary", preferNickname: false),
+                Name.Create(Nickname.Parse("SumNick"), "Sum", "Mary", useNickname: false),
                 Picture.Parse("https://summary.example/p.png"),
                 Language.Parse("ru"),
                 RegionCode.Parse("EU"),
@@ -66,7 +66,7 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
         Assert.Equal(Nickname.Parse("SumNick"), result.Name.Nickname);
         Assert.Equal("Sum", result.Name.FirstName);
         Assert.Equal("Mary", result.Name.LastName);
-        Assert.False(result.Name.PreferNickname);
+        Assert.False(result.Name.UseNickname);
         Assert.Equal("Sum Mary", result.Name.FullName());
         Assert.Equal(Picture.Parse("https://summary.example/p.png"), result.Picture);
         Assert.Equal(Language.Parse("ru"), result.Language);

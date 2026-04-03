@@ -18,12 +18,10 @@ public sealed class AccountRequestEmailVerificationTests
         var account = EmailHandlerTestAccounts.AccountWithUnconfirmedExtra(AccountId, EmailHandlerTestAccounts.FixedTime(Utc));
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
 
-        var confirmationId = account.RequestEmailVerification(new MailAddress("pending@test.com"), time);
+        account.RequestEmailVerification(new MailAddress("pending@test.com"), time);
 
-        Assert.NotEqual(Guid.Empty, confirmationId);
         var evt = Assert.Single(account.GetDomainEvents().OfType<EmailVerificationRequestedDomainEvent>());
         Assert.Equal(AccountId, evt.Id);
-        Assert.Equal(confirmationId, evt.ConfirmationId);
         Assert.Equal("pending@test.com", evt.Email.Address);
         Assert.Equal(Utc, evt.OccurredAt);
     }
@@ -49,7 +47,7 @@ public sealed class AccountRequestEmailVerificationTests
     }
 
     [Fact]
-    public void RequestEmailVerification_ReturnedGuid_MatchesEventConfirmationId()
+    public void RequestEmailVerification_DoesNotCreateExternalConfirmationId()
     {
         var account = EmailHandlerTestAccounts.AccountWithUnconfirmedExtra(
             AccountId,
@@ -57,9 +55,10 @@ public sealed class AccountRequestEmailVerificationTests
             pending: "match@test.com");
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
 
-        var confirmationId = account.RequestEmailVerification(new MailAddress("match@test.com"), time);
+        account.RequestEmailVerification(new MailAddress("match@test.com"), time);
 
         var evt = Assert.Single(account.GetDomainEvents().OfType<EmailVerificationRequestedDomainEvent>());
-        Assert.Equal(confirmationId, evt.ConfirmationId);
+        Assert.Equal(AccountId, evt.Id);
+        Assert.Equal("match@test.com", evt.Email.Address);
     }
 }
