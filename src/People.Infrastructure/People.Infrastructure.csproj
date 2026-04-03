@@ -3,9 +3,10 @@
     <ProjectReference Include="..\People.Application\People.Application.csproj"/>
     <ProjectReference Include="..\People.Domain\People.Domain.csproj"/>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Fluid.ViewEngine"/>
-    <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="JetBrains.Annotations"/>
     <PackageReference Include="Mediator.Abstractions"/>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
@@ -18,11 +19,13 @@
     <PackageReference Include="Polly"/>
     <PackageReference Include="Serilog.AspNetCore"/>
   </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="People.IntegrationTests"/>
     <InternalsVisibleTo Include="People.UnitTests"/>
     <InternalsVisibleTo Include="People.Worker"/>
   </ItemGroup>
+  
   <ItemGroup>
     <None Update="Email\Views\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

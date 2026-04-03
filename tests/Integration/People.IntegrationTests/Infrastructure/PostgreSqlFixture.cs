@@ -1,6 +1,7 @@
-using Mediator;
 using Microsoft.EntityFrameworkCore;
 using People.Infrastructure;
+using People.Infrastructure.Mappers;
+using People.Infrastructure.Outbox;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -8,38 +9,37 @@ namespace People.IntegrationTests.Infrastructure;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {
-    private PostgreSqlContainer? _container;
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder("postgres:18")
+        .Build();
 
     public string ConnectionString =>
-        _container?.GetConnectionString()
+        _container.GetConnectionString()
         ?? throw new InvalidOperationException("PostgreSQL container is not started.");
 
     public async Task InitializeAsync()
     {
-        _container = new PostgreSqlBuilder()
-            .WithImage("postgres:18")
-            .Build();
-
         await _container.StartAsync();
 
-        await using var ctx = CreateContext(new NoOpMediator());
+        await using var ctx = CreateContext();
         await ctx.Database.MigrateAsync();
     }
 
-    public PeopleDbContext CreateContext(IMediator mediator, TimeProvider? timeProvider = null) =>
-        new(
-            new DbContextOptionsBuilder<PeopleDbContext>()
-                .UseNpgsql(
-                    ConnectionString,
-                    npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
-                )
-                .Options,
-            mediator,
-            timeProvider ?? TimeProvider.System);
-
-    public async Task DisposeAsync()
+    public PeopleDbContext CreateContext(TimeProvider? timeProvider = null)
     {
-        if (_container is not null)
-            await _container.DisposeAsync();
+        var options = new DbContextOptionsBuilder<PeopleDbContext>()
+            .UseNpgsql(ConnectionString, x => x.ConfigureDataSource(builder => builder.EnableDynamicJson()))
+            .Options;
+
+        var pipeline = new OutboxPipeline<PeopleDbContext>(
+            new OutboxMapperRegistry<PeopleDbContext>()
+                .AddMapper(new AccountCreatedMapper())
+                .AddMapper(new AccountUpdatedMapper())
+                .AddMapper(new AccountDeletedMapper())
+        );
+
+        return new PeopleDbContext(options, pipeline, timeProvider ?? TimeProvider.System);
     }
+
+    public async Task DisposeAsync() =>
+        await _container.DisposeAsync();
 }

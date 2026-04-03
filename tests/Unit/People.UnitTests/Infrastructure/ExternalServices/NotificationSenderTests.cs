@@ -3,9 +3,9 @@ using System.Net.Mime;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using People.Api.Email.Models;
-using People.Api.Infrastructure.EmailBuilder;
-using People.Api.Infrastructure.Notifications;
+using People.Infrastructure.Email.Models;
+using People.Infrastructure.EmailBuilder;
+using People.Infrastructure.Providers;
 using People.Domain.ValueObjects;
 using Xunit;
 

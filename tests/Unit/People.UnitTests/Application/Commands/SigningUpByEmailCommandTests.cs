@@ -1,14 +1,14 @@
 using System.Net;
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.SigningUpByEmail;
-using People.Api.Infrastructure.Notifications;
+using People.Application.Commands.SigningUpByEmail;
+using People.Application.Providers;
+using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using People.Infrastructure.Confirmations;
 using Xunit;
 
 namespace People.UnitTests.Application.Commands;
@@ -48,7 +48,7 @@ public sealed class SigningUpByEmailCommandTests
             repo,
             time);
 
-        var token = await handler.Handle(new SigningUpByEmailCommand(email, language, IPAddress.Loopback, null), CancellationToken.None);
+        var token = await handler.Handle(new SigningUpByEmailCommand(email, language, IPAddress.Loopback), CancellationToken.None);
 
         Assert.Equal("tok-new", token);
         await repo.Received(1).GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>());
@@ -89,7 +89,7 @@ public sealed class SigningUpByEmailCommandTests
             repo,
             time);
 
-        var token = await handler.Handle(new SigningUpByEmailCommand(email, language, IPAddress.Loopback, null), CancellationToken.None);
+        var token = await handler.Handle(new SigningUpByEmailCommand(email, language, IPAddress.Loopback), CancellationToken.None);
 
         Assert.Equal("tok-re", token);
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
@@ -118,7 +118,7 @@ public sealed class SigningUpByEmailCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SigningUpByEmailCommand(email, Language.Parse("en"), IPAddress.Loopback, null),
+                new SigningUpByEmailCommand(email, Language.Parse("en"), IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.AlreadyCreated), ex.Code);

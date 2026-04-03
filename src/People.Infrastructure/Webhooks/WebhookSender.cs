@@ -1,38 +1,15 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using People.Application.Providers.Webhooks;
 
 namespace People.Infrastructure.Webhooks;
 
-internal sealed class WebhookRetriever : IWebhookRetriever
-{
-    private readonly PeopleDbContext _dbContext;
-
-    public WebhookRetriever(PeopleDbContext dbContext) =>
-        _dbContext = dbContext;
-
-    public async IAsyncEnumerable<Webhook> RetrieveAsync(
-        WebhookType type,
-        [EnumeratorCancellation] CancellationToken ct
-    )
-    {
-        var query = _dbContext.Webhooks
-            .AsNoTracking()
-            .Where(w => w.Type == type)
-            .AsAsyncEnumerable();
-
-        await foreach (var webhook in query.WithCancellation(ct))
-            yield return webhook;
-    }
-}
-
-internal sealed class WebhookSender(HttpClient httpClient, ILogger<WebhookSender> logger) : IWebhookSender
+internal sealed partial class WebhookSender(HttpClient httpClient, ILogger<WebhookSender> logger) : IWebhookSender
 {
     private static readonly JsonSerializerOptions Options = new()
     {
@@ -64,17 +41,19 @@ internal sealed class WebhookSender(HttpClient httpClient, ILogger<WebhookSender
         if (!string.IsNullOrWhiteSpace(subscription.Token))
             request.Headers.TryAddWithoutValidation("X-Elwark-People-Token", subscription.Token);
 
-        logger.LogInformation("Initiating webhook transmission to {Method} {Url}", request.Method, request.RequestUri);
+        WebhookSending(request.Method, request.RequestUri);
 
         var response = await httpClient.SendAsync(request, ct);
 
-        logger.LogInformation(
-            "Webhook transmission to {Method} {Url} completed with Status Code: {StatusCode}",
-            request.Method,
-            request.RequestUri,
-            response.StatusCode);
+        WebhookSent(request.Method, request.RequestUri, response.StatusCode);
     }
 
     [UsedImplicitly]
     private readonly record struct WebhookPayload(long AccountId, DateTime CreatedAt);
+
+    [LoggerMessage(LogLevel.Information, "Webhook to {Method} {Url} completed with Status Code: {StatusCode}")]
+    private partial void WebhookSent(HttpMethod method, Uri url, HttpStatusCode statusCode);
+
+    [LoggerMessage(LogLevel.Information, "Initiating webhook to {Method} {Url}")]
+    partial void WebhookSending(HttpMethod method, Uri url);
 }

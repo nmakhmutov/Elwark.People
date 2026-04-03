@@ -1,9 +1,8 @@
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.IntegrationEvents.Events;
-using People.Api.Application.IntegrationEvents.EventHandling;
-using People.Api.Infrastructure.Providers;
-using People.Api.Infrastructure.Providers.Gravatar;
+using People.Application.Commands.EnrichAccount;
+using People.Application.Providers.Gravatar;
+using People.Application.Providers.Ip;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.ValueObjects;
@@ -55,8 +54,8 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
 
         using (var runScope = Fx.CreateScope())
         {
-            var handler = runScope.ServiceProvider.GetRequiredService<AccountCreatedIntegrationEventHandler>();
-            await handler.HandleAsync(new AccountCreatedIntegrationEvent(accountId, "203.0.113.10"), CancellationToken.None);
+            var handler = runScope.ServiceProvider.GetRequiredService<EnrichAccountCommandHandler>();
+            await handler.Handle(new EnrichAccountCommand(accountId, "203.0.113.10"), CancellationToken.None);
         }
 
         using (var readScope = Fx.CreateScope())
@@ -64,12 +63,12 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             var repo = readScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var account = await repo.GetAsync(accountId, CancellationToken.None);
             Assert.NotNull(account);
-            Assert.Equal(CountryCode.Parse("US"), account.CountryCode);
-            Assert.Equal(RegionCode.Parse("NA"), account.RegionCode);
+            Assert.Equal(CountryCode.Parse("US"), account.Country);
+            Assert.Equal(RegionCode.Parse("NA"), account.Region);
             Assert.Equal(TimeZone.Utc, account.TimeZone);
             Assert.Equal("Jane", account.Name.FirstName);
             Assert.Equal("Doe", account.Name.LastName);
-            Assert.Equal("https://www.gravatar.com/avatar/test?s=80", account.Picture);
+            Assert.Equal(Picture.Parse("https://www.gravatar.com/avatar/test?s=80"), account.Picture);
         }
 
         await Fx.Confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
@@ -100,15 +99,15 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var seeded = await repo.GetAsync(accountId, CancellationToken.None);
             Assert.NotNull(seeded);
-            expectedCountry = seeded.CountryCode;
-            expectedRegion = seeded.RegionCode;
+            expectedCountry = seeded.Country;
+            expectedRegion = seeded.Region;
             expectedTz = seeded.TimeZone;
         }
 
         using (var runScope = Fx.CreateScope())
         {
-            var handler = runScope.ServiceProvider.GetRequiredService<AccountCreatedIntegrationEventHandler>();
-            await handler.HandleAsync(new AccountCreatedIntegrationEvent(accountId, "198.51.100.1"), CancellationToken.None);
+            var handler = runScope.ServiceProvider.GetRequiredService<EnrichAccountCommandHandler>();
+            await handler.Handle(new EnrichAccountCommand(accountId, "198.51.100.1"), CancellationToken.None);
         }
 
         using (var readScope = Fx.CreateScope())
@@ -116,8 +115,8 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             var repo = readScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var account = await repo.GetAsync(accountId, CancellationToken.None);
             Assert.NotNull(account);
-            Assert.Equal(expectedCountry, account.CountryCode);
-            Assert.Equal(expectedRegion, account.RegionCode);
+            Assert.Equal(expectedCountry, account.Country);
+            Assert.Equal(expectedRegion, account.Region);
             Assert.Equal(expectedTz, account.TimeZone);
         }
 
@@ -139,7 +138,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             .Returns(new IpInformation("CA", "NA", "YYZ", TimeZoneInfo.Utc.Id));
 
         AccountId accountId;
-        string expectedPicture;
+        Picture expectedPicture;
         string? expectedFirst;
         string? expectedLast;
 
@@ -160,8 +159,8 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
 
         using (var runScope = Fx.CreateScope())
         {
-            var handler = runScope.ServiceProvider.GetRequiredService<AccountCreatedIntegrationEventHandler>();
-            await handler.HandleAsync(new AccountCreatedIntegrationEvent(accountId, "203.0.113.20"), CancellationToken.None);
+            var handler = runScope.ServiceProvider.GetRequiredService<EnrichAccountCommandHandler>();
+            await handler.Handle(new EnrichAccountCommand(accountId, "203.0.113.20"), CancellationToken.None);
         }
 
         using (var readScope = Fx.CreateScope())
@@ -172,7 +171,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.Equal(expectedPicture, account.Picture);
             Assert.Equal(expectedFirst, account.Name.FirstName);
             Assert.Equal(expectedLast, account.Name.LastName);
-            Assert.Equal(CountryCode.Parse("CA"), account.CountryCode);
+            Assert.Equal(CountryCode.Parse("CA"), account.Country);
         }
 
         await Fx.Confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
@@ -205,13 +204,13 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var seeded = await repo.GetAsync(accountId, CancellationToken.None);
             Assert.NotNull(seeded);
-            expectedCountry = seeded.CountryCode;
+            expectedCountry = seeded.Country;
         }
 
         using (var runScope = Fx.CreateScope())
         {
-            var handler = runScope.ServiceProvider.GetRequiredService<AccountCreatedIntegrationEventHandler>();
-            await handler.HandleAsync(new AccountCreatedIntegrationEvent(accountId, "198.51.100.99"), CancellationToken.None);
+            var handler = runScope.ServiceProvider.GetRequiredService<EnrichAccountCommandHandler>();
+            await handler.Handle(new EnrichAccountCommand(accountId, "198.51.100.99"), CancellationToken.None);
         }
 
         using (var readScope = Fx.CreateScope())
@@ -219,7 +218,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             var repo = readScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var account = await repo.GetAsync(accountId, CancellationToken.None);
             Assert.NotNull(account);
-            Assert.Equal(expectedCountry, account.CountryCode);
+            Assert.Equal(expectedCountry, account.Country);
         }
 
         await Fx.Ip2.Received(1).GetAsync("198.51.100.99", "en");

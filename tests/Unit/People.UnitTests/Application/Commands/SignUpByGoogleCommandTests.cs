@@ -2,8 +2,8 @@ using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.SignUpByGoogle;
-using People.Api.Infrastructure.Providers.Google;
+using People.Application.Commands.SignUpByGoogle;
+using People.Application.Providers.Google;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -58,11 +58,11 @@ public sealed class SignUpByGoogleCommandTests
         var handler = new SignUpByGoogleCommandHandler(google, hasher, repo, time);
 
         var result = await handler.Handle(
-            new SignUpByGoogleCommand("access-token", language, IPAddress.Loopback, null),
+            new SignUpByGoogleCommand("access-token", language, IPAddress.Loopback),
             CancellationToken.None);
 
         Assert.NotNull(added);
-        Assert.Equal("https://lh3.googleusercontent.com/a/photo.jpg", added!.Picture);
+        Assert.Equal(Picture.Parse("https://lh3.googleusercontent.com/a/photo.jpg"), added!.Picture);
         Assert.Equal(added.Name.FullName(), result.FullName);
         Assert.Equal(added.Id, result.Id);
         Assert.Contains(added.Emails, e => e.Email == "g@example.com" && e.IsConfirmed);
@@ -89,7 +89,7 @@ public sealed class SignUpByGoogleCommandTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await handler.Handle(
-                new SignUpByGoogleCommand("bad", Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByGoogleCommand("bad", Language.Parse("en"), IPAddress.Loopback),
                 CancellationToken.None));
 
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
@@ -114,7 +114,7 @@ public sealed class SignUpByGoogleCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SignUpByGoogleCommand("t", Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByGoogleCommand("t", Language.Parse("en"), IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.AlreadyCreated), ex.Code);
@@ -139,7 +139,7 @@ public sealed class SignUpByGoogleCommandTests
 
         var ex = await Assert.ThrowsAsync<ExternalAccountException>(async () =>
             await handler.Handle(
-                new SignUpByGoogleCommand("t", Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByGoogleCommand("t", Language.Parse("en"), IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(ExternalAccountException.AlreadyCreated), ex.Code);

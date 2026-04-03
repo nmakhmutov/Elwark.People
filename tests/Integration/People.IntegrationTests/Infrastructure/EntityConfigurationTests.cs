@@ -2,8 +2,8 @@ using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
-using Xunit;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
+using Xunit;
 
 namespace People.IntegrationTests.Infrastructure;
 
@@ -15,9 +15,8 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
     {
         var utc = new DateTime(2026, 5, 10, 12, 30, 0, DateTimeKind.Utc);
         var time = AccountTestFactory.FixedUtc(utc);
-        var mediator = new NoOpMediator();
 
-        await using (var write = fixture.CreateContext(mediator))
+        await using (var write = fixture.CreateContext())
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
@@ -29,20 +28,23 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
             await write.SaveEntitiesAsync(CancellationToken.None);
 
             draft.Update(
+                Name.Create("nick", "Ada", "Lovelace", false),
+                null,
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("US"),
                 TimeZone.Parse("Europe/Berlin"),
+                DateFormat.Parse("dd.MM.yyyy"),
+                TimeFormat.Parse("H:mm"),
+                DayOfWeek.Friday,
                 time);
-            draft.Update("nick", "Ada", "Lovelace", false, time);
-            draft.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("H:mm"), DayOfWeek.Friday, time);
             draft.AddRole("admin", time);
             draft.Ban("reason", new DateTime(2035, 1, 1, 0, 0, 0, DateTimeKind.Utc), time);
-            draft.AddGoogle("g-1", "G", "X", time);
+            draft.AddGoogle("g-1", "G", "X", null, time);
             await write.SaveEntitiesAsync(CancellationToken.None);
         }
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         var account = await read.Accounts
             .Include(a => a.Emails)
             .Include(a => a.Externals)
@@ -50,8 +52,8 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
             .SingleAsync();
 
         Assert.Equal(Language.Parse("de"), account.Language);
-        Assert.Equal(RegionCode.Parse("EU"), account.RegionCode);
-        Assert.Equal(CountryCode.Parse("US"), account.CountryCode);
+        Assert.Equal(RegionCode.Parse("EU"), account.Region);
+        Assert.Equal(CountryCode.Parse("US"), account.Country);
         Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.TimeZone);
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);
@@ -88,9 +90,8 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
     public async Task ExternalConnection_Microsoft_PersistsEnumByte()
     {
         var time = AccountTestFactory.FixedUtc(new DateTime(2026, 5, 11, 0, 0, 0, DateTimeKind.Utc));
-        var mediator = new NoOpMediator();
 
-        await using (var write = fixture.CreateContext(mediator))
+        await using (var write = fixture.CreateContext())
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
@@ -103,7 +104,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
             await write.SaveEntitiesAsync(CancellationToken.None);
         }
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         var ext = await read.Connections.SingleAsync();
 
         Assert.Equal(ExternalService.Microsoft, ext.Type);

@@ -1,5 +1,5 @@
 using System.Net;
-using People.Api.Infrastructure.Providers.Microsoft;
+using People.Infrastructure.Providers;
 using Xunit;
 
 namespace People.UnitTests.Infrastructure.ExternalServices;

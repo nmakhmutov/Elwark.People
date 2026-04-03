@@ -36,8 +36,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             {
                 Email = GrpcProtoTestData.Email("grpc-flow-user@example.com"),
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SigningUpByEmail(req, ctx));
 
@@ -72,8 +71,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             {
                 Email = GrpcProtoTestData.Email("signup-grpc@example.com"),
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SigningUpByEmail(req, ctx));
 
@@ -86,8 +84,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             {
                 Token = signingUp.Token,
                 Code = capturedCode!,
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByEmail(req, ctx));
 
@@ -131,7 +128,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningInRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-signin@example.com"),
-                Language = GrpcProtoTestData.EnLanguage()
+                Language = GrpcProtoTestData.EnLanguage(),
             },
             static (s, req, ctx) => s.SigningInByEmail(req, ctx));
 
@@ -175,7 +172,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningInRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-login@example.com"),
-                Language = GrpcProtoTestData.EnLanguage()
+                Language = GrpcProtoTestData.EnLanguage(),
             },
             static (s, req, ctx) => s.SigningInByEmail(req, ctx));
 
@@ -186,8 +183,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             {
                 Token = signingIn.Token,
                 Code = signInCode!,
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignInByEmail(req, ctx));
 
@@ -215,8 +211,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
                 {
                     Token = "not-a-real-signup-token",
                     Code = "123456",
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByEmail(req, ctx)));
 
@@ -251,8 +246,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             {
                 Email = GrpcProtoTestData.Email("wrong-code@example.com"),
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SigningUpByEmail(req, ctx));
 
@@ -266,8 +260,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
                 {
                     Token = signingUp.Token,
                     Code = "000000",
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByEmail(req, ctx)));
 
@@ -294,8 +287,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
                 {
                     Token = "not-a-real-signin-token",
                     Code = "123456",
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignInByEmail(req, ctx)));
 
@@ -333,7 +325,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningInRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-bad-signin@example.com"),
-                Language = GrpcProtoTestData.EnLanguage()
+                Language = GrpcProtoTestData.EnLanguage(),
             },
             static (s, req, ctx) => s.SigningInByEmail(req, ctx));
 
@@ -345,8 +337,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
                 {
                     Token = signingIn.Token,
                     Code = "wrong-code",
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignInByEmail(req, ctx)));
 

@@ -2,7 +2,7 @@ using System.Net;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
-using People.Api.Infrastructure.Providers;
+using People.Infrastructure.Providers.Ip;
 using Xunit;
 
 namespace People.UnitTests.Infrastructure.ExternalServices;

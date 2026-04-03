@@ -1,21 +1,20 @@
 using System.Globalization;
-using System.Net;
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.SignInByGoogle;
-using People.Api.Application.IntegrationEvents.Events;
-using People.Api.Infrastructure.Providers.Google;
+using People.Application.Commands.SignInByGoogle;
+using People.Application.Providers.Google;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
-using People.Domain.ValueObjects;
-using People.Kafka.Integration;
+using People.Domain.SeedWork;
 using Xunit;
 
 namespace People.UnitTests.Application.Commands;
 
 public sealed class SignInByGoogleCommandTests
 {
+    private static readonly DateTime Utc = new(2026, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+
     private static GoogleAccount GoogleProfile(string identity = "gid-99") =>
         new(
             identity,
@@ -26,31 +25,31 @@ public sealed class SignInByGoogleCommandTests
             picture: null,
             locale: new CultureInfo("en"));
 
-    private static ExternalSignInMatch Match(AccountId id) =>
-        new(id, Name.Create("g", "G", "User", preferNickname: false));
-
     [Fact]
-    public async Task Handle_LinkedGoogleIdentity_ReturnsSignInResultAndPublishesLoggedInEvent()
+    public async Task Handle_LinkedGoogleIdentity_ReturnsSignInResult()
     {
         var accountId = new AccountId(401L);
+        var time = EmailHandlerTestAccounts.FixedTime(Utc);
+        var account = EmailHandlerTestAccounts.AccountWithConfirmedPrimary(accountId, time);
+
         var google = Substitute.For<IGoogleApiService>();
         google.GetAsync("access", Arg.Any<CancellationToken>()).Returns(GoogleProfile());
 
+        var uow = Substitute.For<IUnitOfWork>();
+        uow.SaveEntitiesAsync(Arg.Any<CancellationToken>()).Returns(true);
+
         var repo = Substitute.For<IAccountRepository>();
-        repo.GetAsync(ExternalService.Google, "gid-99", Arg.Any<CancellationToken>()).Returns(Match(accountId));
+        repo.GetAsync(ExternalService.Google, "gid-99", Arg.Any<CancellationToken>()).Returns(account);
+        repo.UnitOfWork.Returns(uow);
 
-        var bus = Substitute.For<IIntegrationEventBus>();
+        var handler = new SignInByGoogleCommandHandler(repo, google, time);
 
-        var handler = new SignInByGoogleCommandHandler(bus, repo, google);
-
-        var result = await handler.Handle(new SignInByGoogleCommand("access", IPAddress.Loopback, null), CancellationToken.None);
+        var result = await handler.Handle(new SignInByGoogleCommand("access"), CancellationToken.None);
 
         Assert.Equal(accountId, result.Id);
-        Assert.Equal("G User", result.FullName);
         await google.Received(1).GetAsync("access", Arg.Any<CancellationToken>());
-        await bus.Received(1).PublishAsync(
-            Arg.Is<AccountActivity.LoggedInIntegrationEvent>(e => e.AccountId == (long)accountId),
-            Arg.Any<CancellationToken>());
+        await repo.Received(1).GetAsync(ExternalService.Google, "gid-99", Arg.Any<CancellationToken>());
+        await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -60,17 +59,13 @@ public sealed class SignInByGoogleCommandTests
         google.GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(GoogleProfile("orphan"));
 
         var repo = Substitute.For<IAccountRepository>();
-        repo.GetAsync(ExternalService.Google, "orphan", Arg.Any<CancellationToken>()).Returns((ExternalSignInMatch?)null);
+        repo.GetAsync(ExternalService.Google, "orphan", Arg.Any<CancellationToken>()).Returns((Account?)null);
 
-        var bus = Substitute.For<IIntegrationEventBus>();
-
-        var handler = new SignInByGoogleCommandHandler(bus, repo, google);
+        var handler = new SignInByGoogleCommandHandler(repo, google, TimeProvider.System);
 
         var ex = await Assert.ThrowsAsync<ExternalAccountException>(async () =>
-            await handler.Handle(new SignInByGoogleCommand("t", IPAddress.Loopback, null), CancellationToken.None));
+            await handler.Handle(new SignInByGoogleCommand("t"), CancellationToken.None));
 
         Assert.Equal(nameof(ExternalAccountException.NotFound), ex.Code);
-        await bus.DidNotReceive()
-            .PublishAsync(Arg.Any<AccountActivity.LoggedInIntegrationEvent>(), Arg.Any<CancellationToken>());
     }
 }

@@ -1,12 +1,7 @@
-using Mediator;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
-using People.Domain.DomainEvents;
 using People.Domain.Entities;
 using People.Domain.IntegrationEvents;
 using People.Domain.ValueObjects;
-using People.Infrastructure;
-using People.Infrastructure.Outbox;
 using People.IntegrationTests.Infrastructure;
 using AccountTestFactory = People.IntegrationTests.Infrastructure.AccountTestFactory;
 using Xunit;
@@ -14,16 +9,12 @@ using Xunit;
 namespace People.IntegrationTests.Outbox;
 
 [Collection(nameof(PostgresCollection))]
-public sealed class OutboxSaveChangesPipelineTests(PostgreSqlFixture fixture)
+public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
 {
     [Fact]
     public async Task SaveNewAccount_PersistsOutboxMessage_InSameTransaction_WithoutMediatorPublishingAccountCreated()
     {
-        var mediator = Substitute.For<IMediator>();
-        mediator.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-        mediator.Publish(Arg.Any<object>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var account = Account.Create(
@@ -38,19 +29,12 @@ public sealed class OutboxSaveChangesPipelineTests(PostgreSqlFixture fixture)
         await write.SaveEntitiesAsync(CancellationToken.None);
 
         Assert.Equal(1, await write.OutboxMessages.CountAsync());
-
-        await mediator.DidNotReceive()
-            .Publish(Arg.Any<AccountCreatedDomainEvent>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task SaveNewAccount_OutboxPayload_IsAccountCreatedIntegrationEvent_WithMatchingAccountIdAndIp()
     {
-        var mediator = Substitute.For<IMediator>();
-        mediator.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-        mediator.Publish(Arg.Any<object>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         const string expectedIp = "198.51.100.51";

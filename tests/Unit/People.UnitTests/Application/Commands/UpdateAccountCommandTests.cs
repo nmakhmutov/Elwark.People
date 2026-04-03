@@ -1,6 +1,6 @@
 using NSubstitute;
-using People.Api.Application.Commands.UpdateAccount;
-using People.Api.Infrastructure.Providers.World;
+using People.Application.Commands.UpdateAccount;
+using People.Application.Providers.Country;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -65,8 +65,8 @@ public sealed class UpdateAccountCommandTests
         Assert.Equal(dateFmt, result.DateFormat);
         Assert.Equal(timeFmt, result.TimeFormat);
         Assert.Equal(DayOfWeek.Monday, result.StartOfWeek);
-        Assert.Equal(country, result.CountryCode);
-        Assert.Equal(regionEu, result.RegionCode);
+        Assert.Equal(country, result.Country);
+        Assert.Equal(regionEu, result.Region);
         await countryClient.Received(1).GetAsync(country, Arg.Any<CancellationToken>());
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
     }
@@ -104,7 +104,7 @@ public sealed class UpdateAccountCommandTests
                 country),
             CancellationToken.None);
 
-        Assert.Equal(RegionCode.Empty, account.RegionCode);
+        Assert.Equal(RegionCode.Empty, account.Region);
     }
 
     [Fact]

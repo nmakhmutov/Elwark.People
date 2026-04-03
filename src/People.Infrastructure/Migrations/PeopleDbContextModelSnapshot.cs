@@ -23,6 +23,42 @@ namespace People.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("People.Application.Providers.Webhooks.Webhook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DestinationUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("destination_url");
+
+                    b.Property<byte>("Method")
+                        .HasColumnType("smallint")
+                        .HasColumnName("method");
+
+                    b.Property<string>("Token")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("token");
+
+                    b.Property<byte>("Type")
+                        .HasColumnType("smallint")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("IX_webhook_subscriptions_type");
+
+                    b.ToTable("webhooks", (string)null);
+                });
+
             modelBuilder.Entity("People.Domain.Entities.Account", b =>
                 {
                     b.Property<long>("Id")
@@ -32,7 +68,7 @@ namespace People.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("CountryCode")
+                    b.Property<string>("Country")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(2)
@@ -64,7 +100,7 @@ namespace People.Infrastructure.Migrations
                         .HasColumnType("character varying(2048)")
                         .HasColumnName("picture");
 
-                    b.Property<string>("RegionCode")
+                    b.Property<string>("Region")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(2)
@@ -260,43 +296,30 @@ namespace People.Infrastructure.Migrations
                     b.ToTable("confirmations", (string)null);
                 });
 
-            modelBuilder.Entity("People.Infrastructure.Entities.WebhookSubscription", b =>
+            modelBuilder.Entity("People.Infrastructure.Outbox.Entities.OutboxConsumer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("message_id")
+                        .HasColumnOrder(0);
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("DestinationUrl")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
-                        .HasColumnName("destination_url");
-
-                    b.Property<byte>("Method")
-                        .HasColumnType("smallint")
-                        .HasColumnName("method");
-
-                    b.Property<string>("Token")
+                    b.Property<string>("Consumer")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
-                        .HasColumnName("token");
+                        .HasColumnName("consumer")
+                        .HasColumnOrder(1);
 
-                    b.Property<byte>("Type")
-                        .HasColumnType("smallint")
-                        .HasColumnName("type");
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at")
+                        .HasColumnOrder(2);
 
-                    b.HasKey("Id");
+                    b.HasKey("MessageId", "Consumer");
 
-                    b.HasIndex("Type")
-                        .HasDatabaseName("IX_webhook_subscriptions_type");
-
-                    b.ToTable("webhook_subscriptions", (string)null);
+                    b.ToTable("outbox_consumers", (string)null);
                 });
 
-            modelBuilder.Entity("People.Infrastructure.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("People.Infrastructure.Outbox.Entities.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

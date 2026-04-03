@@ -1,10 +1,9 @@
-using System.Net;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using People.Api.Application.Commands.SignUpByMicrosoft;
-using People.Api.Infrastructure.Providers.Microsoft;
+using People.Application.Commands.SignUpByMicrosoft;
+using People.Application.Providers.Microsoft;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
@@ -30,7 +29,7 @@ public sealed class MicrosoftSignUpFlowTests(PostgreSqlFixture postgres) : Comma
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
         var result = await sender.Send(
-            new SignUpByMicrosoftCommand("ms-access-token", Language.Parse("en"), IPAddress.Loopback, null),
+            new SignUpByMicrosoftCommand("ms-access-token", Language.Parse("en"), System.Net.IPAddress.Loopback),
             CancellationToken.None);
 
         await using var read = Commands.CreateReadOnlyContext();

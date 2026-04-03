@@ -1,10 +1,10 @@
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.ConfirmEmail;
+using People.Application.Commands.ConfirmEmail;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
-using People.Infrastructure.Confirmations;
+using People.Application.Providers.Confirmation;
 using Xunit;
 
 namespace People.UnitTests.Application.Commands;

@@ -1,10 +1,8 @@
-using System.Net;
 using System.Net.Mail;
 using Mediator;
 using NSubstitute;
-using People.Api.Application.Commands.SignInByEmail;
-using People.Api.Application.Commands.SigningInByEmail;
-using People.Api.Application.IntegrationEvents.Events;
+using People.Application.Commands.SignInByEmail;
+using People.Application.Commands.SigningInByEmail;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.IntegrationTests.Infrastructure;
@@ -50,15 +48,9 @@ public sealed class EmailSignInFlowTests(PostgreSqlFixture postgres) : CommandIn
         Assert.NotNull(signInCode);
 
         var signIn = await sender.Send(
-            new SignInByEmailCommand(token, signInCode!, IPAddress.Loopback, null),
+            new SignInByEmailCommand(token, signInCode!),
             CancellationToken.None);
 
         Assert.Equal("login-user", signIn.FullName);
-
-        await Commands.EventBus
-            .Received(1)
-            .PublishAsync(
-                Arg.Is<AccountActivity.LoggedInIntegrationEvent>(e => e.AccountId == (long)signIn.Id),
-                Arg.Any<CancellationToken>());
     }
 }

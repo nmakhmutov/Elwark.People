@@ -1,11 +1,10 @@
-using System.Net;
 using System.Net.Mail;
 using Grpc.Core;
 using Mediator;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using People.Api.Application.Commands.SignUpByGoogle;
-using People.Api.Infrastructure.Providers.Google;
+using People.Application.Commands.SignUpByGoogle;
+using People.Application.Providers.Google;
 using People.Domain.Entities;
 using People.Infrastructure;
 using People.IntegrationTests.Commands;
@@ -47,8 +46,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
             {
                 AccessToken = "grpc-google-signup-token",
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByGoogle(req, ctx));
 
@@ -78,7 +76,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByGoogleCommand("grpc-google-signin-token", Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByGoogleCommand("grpc-google-signin-token", Domain.ValueObjects.Language.Parse("en"), System.Net.IPAddress.Loopback),
                 CancellationToken.None);
         }
 
@@ -93,8 +91,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
             new ExternalSignInRequest
             {
                 AccessToken = "grpc-google-signin-token",
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignInByGoogle(req, ctx));
 
@@ -172,8 +169,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
                 {
                     AccessToken = "bad-google-token",
                     Language = GrpcProtoTestData.EnLanguage(),
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByGoogle(req, ctx)));
 
@@ -220,8 +216,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
             {
                 AccessToken = "grpc-google-dup-token-a",
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByGoogle(req, ctx));
 
@@ -233,8 +228,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
                 {
                     AccessToken = "grpc-google-dup-token-b",
                     Language = GrpcProtoTestData.EnLanguage(),
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByGoogle(req, ctx)));
 

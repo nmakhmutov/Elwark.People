@@ -1,12 +1,12 @@
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.ConfirmingEmail;
-using People.Api.Infrastructure.Notifications;
+using People.Application.Commands.ConfirmingEmail;
+using People.Application.Providers;
+using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.ValueObjects;
-using People.Infrastructure.Confirmations;
 using Xunit;
 
 namespace People.UnitTests.Application.Commands;

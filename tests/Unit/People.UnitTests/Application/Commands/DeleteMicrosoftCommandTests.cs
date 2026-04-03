@@ -1,5 +1,5 @@
 using NSubstitute;
-using People.Api.Application.Commands.DeleteMicrosoft;
+using People.Application.Commands.DeleteMicrosoft;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;

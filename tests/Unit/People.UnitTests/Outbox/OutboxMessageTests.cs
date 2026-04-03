@@ -1,5 +1,4 @@
-using People.Domain.IntegrationEvents;
-using People.Infrastructure.Outbox;
+using People.Infrastructure.Outbox.Entities;
 using Xunit;
 
 namespace People.UnitTests.Outbox;
@@ -10,10 +9,10 @@ public sealed class OutboxMessageTests
         new(Guid.CreateVersion7(), 42L, "203.0.113.1", new DateTime(2026, 4, 1, 0, 0, 0, DateTimeKind.Utc));
 
     [Fact]
-    public void Create_SetsStatusPending()
+    public void Create_SetsStatusCreated()
     {
         var message = OutboxMessage.Create(CreatedPayload());
-        Assert.Equal(OutboxStatus.Pending, message.Status);
+        Assert.Equal(OutboxStatus.Created, message.Status);
         Assert.Null(message.ProcessedAt);
     }
 
@@ -23,7 +22,7 @@ public sealed class OutboxMessageTests
         var message = OutboxMessage.Create(CreatedPayload());
         var at = new DateTime(2026, 4, 2, 15, 30, 0, DateTimeKind.Utc);
         message.MarkProcessed(at);
-        Assert.Equal(OutboxStatus.Success, message.Status);
+        Assert.Equal(OutboxStatus.Completed, message.Status);
         Assert.Equal(at, message.ProcessedAt);
         Assert.Null(message.NextRetryAt);
     }
@@ -47,7 +46,7 @@ public sealed class OutboxMessageTests
         for (var i = 0; i < OutboxMessage.MaxAttempts; i++)
             message.MarkFailed(t.AddSeconds(i), new Exception($"attempt {i}"));
 
-        Assert.Equal(OutboxStatus.Fail, message.Status);
+        Assert.Equal(OutboxStatus.Failed, message.Status);
         Assert.NotNull(message.ProcessedAt);
         Assert.Null(message.NextRetryAt);
     }

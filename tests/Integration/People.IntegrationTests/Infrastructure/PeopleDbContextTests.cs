@@ -1,7 +1,4 @@
-using Mediator;
 using Microsoft.EntityFrameworkCore;
-using NSubstitute;
-using People.Domain.DomainEvents;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using Xunit;
@@ -14,15 +11,14 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task SaveEntitiesAsync_PersistsAccount()
     {
-        var mediator = new NoOpMediator();
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var account = AccountTestFactory.CreateNewAccount(AccountTestFactory.FakeIpHasher(), TimeProvider.System);
         write.Accounts.Add(account);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         var loaded = await read.Accounts.AsNoTracking().SingleOrDefaultAsync(a => a.Id == account.Id);
 
         Assert.NotNull(loaded);
@@ -31,13 +27,9 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
     }
 
     [Fact]
-    public async Task SaveEntitiesAsync_DispatchesDomainEvents_ViaMediatorPublish()
+    public async Task SaveEntitiesAsync_PersistsOutboxMessage_WhenAccountCreated()
     {
-        var mediator = Substitute.For<IMediator>();
-        mediator.Publish(Arg.Any<INotification>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-        mediator.Publish(Arg.Any<object>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var account = Account.Create(
@@ -51,18 +43,13 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         write.Accounts.Add(account);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
-        await mediator.Received(1)
-            .Publish(
-                Arg.Is<AccountCreatedDomainEvent>(e => e.Account.Id == account.Id),
-                Arg.Any<CancellationToken>()
-            );
+        Assert.Equal(1, await write.OutboxMessages.CountAsync());
     }
 
     [Fact]
     public async Task SaveEntitiesAsync_SecondWriterWithStaleRowVersion_ThrowsDbUpdateConcurrencyException()
     {
-        var mediator = new NoOpMediator();
-        await using (var setup = fixture.CreateContext(mediator))
+        await using (var setup = fixture.CreateContext())
         {
             await IntegrationDatabaseCleanup.DeleteAllAsync(setup);
             var account =
@@ -71,24 +58,46 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
             await setup.SaveEntitiesAsync(CancellationToken.None);
         }
 
-        await using var ctx1 = fixture.CreateContext(new NoOpMediator());
-        await using var ctx2 = fixture.CreateContext(new NoOpMediator());
+        await using var ctx1 = fixture.CreateContext();
+        await using var ctx2 = fixture.CreateContext();
 
         var id = await ctx1.Accounts.Select(a => a.Id).FirstAsync();
         var a1 = await ctx1.Accounts.FirstAsync(a => a.Id == id);
         var a2 = await ctx2.Accounts.FirstAsync(a => a.Id == id);
 
-        a1.Update("first-win", null, null, true, TimeProvider.System);
+        a1.Update(
+            a1.Name,
+            null,
+            a1.Language,
+            a1.Region,
+            a1.Country,
+            a1.TimeZone,
+            a1.DateFormat,
+            a1.TimeFormat,
+            a1.StartOfWeek,
+            TimeProvider.System);
+        ctx1.Entry(a1).State = EntityState.Modified;
         await ctx1.SaveEntitiesAsync(CancellationToken.None);
 
-        a2.Update("second-lose", null, null, true, TimeProvider.System);
+        a2.Update(
+            a2.Name,
+            null,
+            a2.Language,
+            a2.Region,
+            a2.Country,
+            a2.TimeZone,
+            a2.DateFormat,
+            a2.TimeFormat,
+            a2.StartOfWeek,
+            TimeProvider.System);
+        ctx2.Entry(a2).State = EntityState.Modified;
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => ctx2.SaveEntitiesAsync(CancellationToken.None));
     }
 
     [Fact]
     public async Task Database_OnFreshContainer_MigrationsApplyAndSchemaIsQueryable()
     {
-        await using var ctx = fixture.CreateContext(new NoOpMediator());
+        await using var ctx = fixture.CreateContext();
 
         var pending = await ctx.Database.GetPendingMigrationsAsync();
         Assert.Empty(pending);

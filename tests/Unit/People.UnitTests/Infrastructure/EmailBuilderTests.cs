@@ -3,8 +3,8 @@ using Fluid.ViewEngine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using People.Api.Email.Models;
-using People.Api.Infrastructure.EmailBuilder;
+using People.Infrastructure.Email.Models;
+using People.Infrastructure.EmailBuilder;
 using Xunit;
 
 namespace People.UnitTests.Infrastructure;

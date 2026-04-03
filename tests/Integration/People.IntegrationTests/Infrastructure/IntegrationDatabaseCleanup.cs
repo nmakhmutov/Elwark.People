@@ -12,5 +12,8 @@ internal static class IntegrationDatabaseCleanup
         await ctx.Database.ExecuteSqlRawAsync("DELETE FROM emails;", ct);
         await ctx.Database.ExecuteSqlRawAsync("DELETE FROM connections;", ct);
         await ctx.Database.ExecuteSqlRawAsync("DELETE FROM accounts;", ct);
+        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM outbox_consumers;", ct);
+        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM outbox_messages;", ct);
+        await ctx.Database.ExecuteSqlRawAsync("DELETE FROM webhooks;", ct);
     }
 }

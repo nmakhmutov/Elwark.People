@@ -32,7 +32,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task SignUpAsync_CreatesConfirmationRow_ReturnsTokenAndCode_VerifyReturnsAccountId()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var sp = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -46,14 +46,14 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         var decodedId = await sut.SignUpAsync(result.Token, result.Code, CancellationToken.None);
         Assert.Equal(accountId, decodedId);
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         Assert.Equal(1, await read.Set<Confirmation>().CountAsync(c => c.AccountId == accountId));
     }
 
     [Fact]
     public async Task SignUpAsync_SecondCallWithinLockTtl_ThrowsAlreadySent()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -69,7 +69,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task SignUpAsync_VerifyWithWrongCode_ThrowsMismatch()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -86,7 +86,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task SignUpAsync_AfterCleanupOfExpiredRow_VerifyThrowsNotFound()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -99,7 +99,9 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         await db.Database.ExecuteSqlInterpolatedAsync(
             $"UPDATE confirmations SET expires_at = {past} WHERE id = {confirmationId}");
 
-        var deleted = await sut.CleanUpAsync(CancellationToken.None);
+        var deleted = await db.Confirmations
+            .Where(x => x.ExpiresAt < DateTime.UtcNow)
+            .ExecuteDeleteAsync();
         Assert.True(deleted >= 1);
 
         var ex = await Assert.ThrowsAsync<ConfirmationException>(() =>
@@ -111,7 +113,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task SignInAsync_CreatesConfirmation_VerifyReturnsAccountId()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -126,7 +128,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task SignInAsync_VerifyWithWrongCode_ThrowsMismatch()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -142,7 +144,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task VerifyEmailAsync_CreatesConfirmation_VerifyReturnsAccountIdAndEmail()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -160,7 +162,7 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task DeleteAsync_RemovesConfirmationsForAccount()
     {
-        await using var write = fixture.CreateContext(new NoOpMediator());
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(write, cache);
@@ -171,14 +173,14 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         var removed = await sut.DeleteAsync(accountId, CancellationToken.None);
         Assert.True(removed >= 1);
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         Assert.Equal(0, await read.Set<Confirmation>().CountAsync(c => c.AccountId == accountId));
     }
 
     [Fact]
     public async Task CleanUpAsync_RemovesOnlyExpiredConfirmations()
     {
-        await using var db = fixture.CreateContext(new NoOpMediator());
+        await using var db = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(db);
         await using var cacheProvider = CreateServiceProviderWithHybridCache(out var cache);
         var sut = CreateSut(db, cache);
@@ -194,10 +196,12 @@ public sealed class ConfirmationServiceTests(PostgreSqlFixture fixture)
         await db.Database.ExecuteSqlInterpolatedAsync(
             $"UPDATE confirmations SET expires_at = {past} WHERE id = {expiredGuid}");
 
-        var deleted = await sut.CleanUpAsync(CancellationToken.None);
+        var deleted = await db.Confirmations
+            .Where(x => x.ExpiresAt < DateTime.UtcNow)
+            .ExecuteDeleteAsync();
         Assert.True(deleted >= 1);
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         Assert.Equal(0, await read.Set<Confirmation>().CountAsync(c => c.AccountId == expiredId));
         Assert.Equal(1, await read.Set<Confirmation>().CountAsync(c => c.AccountId == freshId));
 

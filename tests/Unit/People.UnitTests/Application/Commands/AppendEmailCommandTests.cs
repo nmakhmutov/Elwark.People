@@ -1,6 +1,6 @@
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.AppendEmail;
+using People.Application.Commands.AppendEmail;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;

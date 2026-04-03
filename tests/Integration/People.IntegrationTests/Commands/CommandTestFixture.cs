@@ -1,23 +1,33 @@
 using System.Net;
 using System.Net.Mail;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
-using People.Api.Application.Behaviour;
+using People.Application.Behaviour;
 using People.Api.Grpc;
-using People.Api.Infrastructure.Notifications;
-using People.Api.Infrastructure.Providers;
-using People.Api.Infrastructure.Providers.Google;
-using People.Api.Infrastructure.Providers.Gravatar;
-using People.Api.Infrastructure.Providers.Microsoft;
-using People.Api.Infrastructure.Providers.World;
+using People.Application.Providers;
+using People.Application.Providers.Country;
+using People.Application.Providers.Google;
+using People.Application.Providers.Gravatar;
+using People.Application.Providers.Ip;
+using People.Application.Providers.Confirmation;
+using People.Application.Providers.Microsoft;
+using People.Application.Providers.Postgres;
 using People.Domain.Entities;
 using People.Domain.Repositories;
+using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using People.Domain.SeedWork;
+using People.Infrastructure.Confirmations;
+using People.Infrastructure.Cryptography;
+using People.Infrastructure.Mappers;
+using People.Infrastructure.Outbox.Extensions;
+using People.Infrastructure.Providers.Postgres;
+using People.Infrastructure.Repositories;
 using People.IntegrationTests.Infrastructure;
-using People.Kafka.Integration;
 using Xunit;
 
 namespace People.IntegrationTests.Commands;
@@ -43,8 +53,6 @@ public sealed class CommandTestFixture : IAsyncLifetime
 
     public INotificationSender Notification { get; } = Substitute.For<INotificationSender>();
 
-    public IIntegrationEventBus EventBus { get; } = Substitute.For<IIntegrationEventBus>();
-
     internal ICountryClient Country { get; } = Substitute.For<ICountryClient>();
 
     public Task InitializeAsync()
@@ -58,22 +66,40 @@ public sealed class CommandTestFixture : IAsyncLifetime
         services.AddSingleton(Gravatar);
         services.AddSingleton(IpService);
         services.AddSingleton(Notification);
-        services.AddSingleton(EventBus);
         services.AddSingleton(Country);
         services.AddSingleton<IEnumerable<IIpService>>(sp => [sp.GetRequiredService<IIpService>()]);
 
-        services.AddInfrastructure(options =>
-        {
-            options.PostgresqlConnectionString = _postgres.ConnectionString;
-            options.AppKey = new string('K', 32);
-            options.AppVector = new string('V', 16);
-        });
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IIpHasher, IpHasher>();
+        services.AddSingleton(Options.Create(new AppSecurityOptions(new string('K', 32), new string('V', 16))));
 
-        services.AddMediator(options =>
-        {
-            options.ServiceLifetime = ServiceLifetime.Scoped;
-            options.PipelineBehaviors = [typeof(RequestLoggingBehavior<,>), typeof(RequestValidatorBehavior<,>)];
-        });
+        services.AddOutbox<PeopleDbContext>(outbox => outbox
+            .AddMapper(new AccountCreatedMapper())
+            .AddMapper(new AccountUpdatedMapper())
+            .AddMapper(new AccountDeletedMapper())
+        );
+
+        services.AddSingleton<INpgsqlAccessor>(new NpgsqlAccessor(
+            _postgres.ConnectionString,
+            NullLoggerFactory.Instance));
+
+        services.AddDbContextFactory<PeopleDbContext>(options =>
+            options.UseNpgsql(
+                _postgres.ConnectionString,
+                npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
+            )
+        );
+
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IConfirmationService, ConfirmationService>();
+
+        MediatorDependencyInjectionExtensions.AddMediator(
+            services,
+            options =>
+            {
+                options.ServiceLifetime = ServiceLifetime.Scoped;
+                options.PipelineBehaviors = [typeof(RequestLoggingBehavior<,>), typeof(RequestValidatorBehavior<,>)];
+            });
 
         services.AddValidatorsFromAssembly(
             typeof(PeopleService).Assembly,
@@ -125,5 +151,5 @@ public sealed class CommandTestFixture : IAsyncLifetime
     }
 
     public PeopleDbContext CreateReadOnlyContext() =>
-        _postgres.CreateContext(new NoOpMediator());
+        _postgres.CreateContext();
 }

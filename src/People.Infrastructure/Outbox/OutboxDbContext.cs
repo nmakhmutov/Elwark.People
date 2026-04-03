@@ -17,10 +17,27 @@ public abstract class OutboxDbContext<T> : DbContext, IOutboxDbContext where T :
     public DbSet<OutboxConsumer> OutboxConsumers =>
         Set<OutboxConsumer>();
 
-    public override Task<int> SaveChangesAsync(CancellationToken ct = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {
+        if (Database.CurrentTransaction is not null)
+            return await SaveWithPipelineAsync(ct);
+
+        await using var tx = await Database.BeginTransactionAsync(ct);
+        var result = await SaveWithPipelineAsync(ct);
+        await tx.CommitAsync(ct);
+
+        return result;
+    }
+
+    private async Task<int> SaveWithPipelineAsync(CancellationToken ct)
+    {
+        var result = await base.SaveChangesAsync(ct);
         _pipeline.Prepare(this);
-        return base.SaveChangesAsync(ct);
+
+        if (ChangeTracker.HasChanges())
+            return await base.SaveChangesAsync(ct);
+
+        return result;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

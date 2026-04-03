@@ -1,5 +1,5 @@
 using NSubstitute;
-using People.Api.Application.Queries.GetAccountDetails;
+using People.Application.Queries.GetAccountDetails;
 using People.UnitTests.Application.Commands;
 using People.Domain.Entities;
 using People.Domain.Exceptions;

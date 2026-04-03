@@ -6,20 +6,20 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.IdentityModel.Tokens;
 using NSubstitute;
-using People.Api.Infrastructure.Notifications;
-using People.Api.Infrastructure.Providers;
-using People.Api.Infrastructure.Providers.Google;
-using People.Api.Infrastructure.Providers.Gravatar;
-using People.Api.Infrastructure.Providers.Microsoft;
-using People.Api.Infrastructure.Providers.World;
+using People.Api.Resources;
+using People.Application.Providers;
+using People.Application.Providers.Country;
+using People.Application.Providers.Google;
+using People.Application.Providers.Gravatar;
+using People.Application.Providers.Ip;
+using People.Application.Providers.Microsoft;
 using People.Domain.ValueObjects;
-using People.Kafka.Integration;
 using People.Infrastructure;
 using People.IntegrationTests.Infrastructure;
 
 namespace People.IntegrationTests.Web;
 
-public sealed class PeopleApiFactory : WebApplicationFactory<Program>
+public sealed class PeopleApiFactory : WebApplicationFactory<Errors>
 {
     private readonly PostgreSqlFixture _postgres;
     private readonly IGoogleApiService _google = Substitute.For<IGoogleApiService>();
@@ -27,7 +27,6 @@ public sealed class PeopleApiFactory : WebApplicationFactory<Program>
     private readonly IGravatarService _gravatar = Substitute.For<IGravatarService>();
     private readonly IIpService _ipService = Substitute.For<IIpService>();
     private readonly ICountryClient _country = Substitute.For<ICountryClient>();
-    private readonly IIntegrationEventBus _eventBus = Substitute.For<IIntegrationEventBus>();
 
     public PeopleApiFactory(PostgreSqlFixture postgres) =>
         _postgres = postgres;
@@ -56,9 +55,6 @@ public sealed class PeopleApiFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             RemoveKafkaHostedServices(services);
-
-            RemoveAllOf<IIntegrationEventBus>(services);
-            services.AddSingleton(_eventBus);
 
             RemoveAllOf<INotificationSender>(services);
             services.AddSingleton(Notification);
@@ -173,8 +169,5 @@ public sealed class PeopleApiFactory : WebApplicationFactory<Program>
                 Arg.Any<Language>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
-
-        _eventBus.PublishAsync(Arg.Any<IIntegrationEvent>(), Arg.Any<CancellationToken>())
-            .Returns(ValueTask.CompletedTask);
     }
 }

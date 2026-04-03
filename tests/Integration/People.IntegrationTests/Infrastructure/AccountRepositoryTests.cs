@@ -12,8 +12,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task GetAsync_ReturnsAccountWithEmailsAndExternalsLoaded()
     {
-        var mediator = new NoOpMediator();
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var hasher = AccountTestFactory.FakeIpHasher();
@@ -23,10 +22,10 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
         await write.SaveEntitiesAsync(CancellationToken.None);
 
         account.AddEmail(new MailAddress("graph@example.com"), true, time);
-        account.AddGoogle("google-sub", "G", "User", time);
+        account.AddGoogle("google-sub", "G", "User", null, time);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         var repo = new AccountRepository(read);
         var loaded = await repo.GetAsync(account.Id, CancellationToken.None);
 
@@ -41,7 +40,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task GetAsync_ReturnsNull_ForUnknownId()
     {
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         var repo = new AccountRepository(read);
 
         var loaded = await repo.GetAsync(new AccountId(long.MaxValue), CancellationToken.None);
@@ -52,8 +51,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task AddAsync_PersistsAccount_WithGeneratedId()
     {
-        var mediator = new NoOpMediator();
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var repo = new AccountRepository(write);
@@ -65,7 +63,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
 
         Assert.False(account.Id == default);
 
-        await using var read = fixture.CreateContext(new NoOpMediator());
+        await using var read = fixture.CreateContext();
         var loaded = await read.Accounts.AsNoTracking().SingleOrDefaultAsync(a => a.Id == account.Id);
         Assert.NotNull(loaded);
     }
@@ -73,8 +71,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task Delete_RemovesAccount_AndCascadeDeletesEmailsAndConnections()
     {
-        var mediator = new NoOpMediator();
-        await using var write = fixture.CreateContext(mediator);
+        await using var write = fixture.CreateContext();
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var time = AccountTestFactory.FixedUtc(new DateTime(2026, 4, 2, 9, 0, 0, DateTimeKind.Utc));
@@ -94,7 +91,7 @@ public sealed class AccountRepositoryTests(PostgreSqlFixture fixture)
         repo.Delete(tracked);
         await write.SaveEntitiesAsync(CancellationToken.None);
 
-        await using var verify = fixture.CreateContext(new NoOpMediator());
+        await using var verify = fixture.CreateContext();
         Assert.Null(await verify.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id));
         Assert.Equal(0, await verify.Emails.CountAsync(e => e.AccountId == id));
         Assert.Equal(0, await verify.Connections.CountAsync());

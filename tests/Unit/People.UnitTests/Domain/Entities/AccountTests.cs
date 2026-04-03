@@ -15,8 +15,8 @@ namespace People.UnitTests.Domain.Entities;
 
 public sealed class AccountTests
 {
-    private const string ExpectedDefaultPicture =
-        "https://res.cloudinary.com/elwark/image/upload/v1/People/default.jpg";
+    private static readonly Picture ExpectedDefaultPicture =
+        Picture.Parse("https://res.cloudinary.com/elwark/image/upload/v1/People/default.jpg");
 
     private static TimeProvider FakeTime(DateTime utc)
     {
@@ -54,8 +54,8 @@ public sealed class AccountTests
         Assert.False(account.IsActivated);
         Assert.Equal(DateFormat.Default, account.DateFormat);
         Assert.Equal(TimeFormat.Default, account.TimeFormat);
-        Assert.Equal(RegionCode.Empty, account.RegionCode);
-        Assert.Equal(CountryCode.Empty, account.CountryCode);
+        Assert.Equal(RegionCode.Empty, account.Region);
+        Assert.Equal(CountryCode.Empty, account.Country);
         Assert.Empty(GetRoles(account));
     }
 
@@ -248,7 +248,7 @@ public sealed class AccountTests
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         Assert.False(account.IsActivated);
 
-        account.AddGoogle("gid", null, null, time);
+        account.AddGoogle("gid", null, null, null, time);
 
         Assert.True(account.IsActivated);
     }
@@ -259,7 +259,7 @@ public sealed class AccountTests
         var account = CreateAccount();
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
         account.AddEmail(new MailAddress("a@x.com"), false, time);
-        account.AddGoogle("gid", null, null, time);
+        account.AddGoogle("gid", null, null, null, time);
         Assert.True(account.IsActivated);
 
         account.DeleteGoogle("gid", time);
@@ -273,7 +273,7 @@ public sealed class AccountTests
         var account = CreateAccount();
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
 
-        account.AddGoogle("g1", "John", "Doe", time);
+        account.AddGoogle("g1", "John", "Doe", null, time);
 
         var ext = account.Externals.Single();
         Assert.Equal(ExternalService.Google, ext.Type);
@@ -289,7 +289,7 @@ public sealed class AccountTests
         account.ClearDomainEvents();
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
 
-        account.AddGoogle("g1", null, null, time);
+        account.AddGoogle("g1", null, null, null, time);
 
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
@@ -299,7 +299,7 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
-        account.AddGoogle("g1", null, null, time);
+        account.AddGoogle("g1", null, null, null, time);
 
         account.DeleteGoogle("g1", time);
 
@@ -311,7 +311,7 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         var time = FakeTime(new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc));
-        account.AddGoogle("g1", null, null, time);
+        account.AddGoogle("g1", null, null, null, time);
         var before = account.Externals.Count;
 
         account.DeleteGoogle("unknown", time);
@@ -362,7 +362,17 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
-        account.Update("John", "Doe", TimeProvider.System);
+        account.Update(
+            Name.Create(account.Name.Nickname, "John", "Doe", account.Name.PreferNickname),
+            account.Picture,
+            account.Language,
+            account.Region,
+            account.Country,
+            account.TimeZone,
+            account.DateFormat,
+            account.TimeFormat,
+            account.StartOfWeek,
+            TimeProvider.System);
 
         Assert.Equal("nick", account.Name.Nickname);
         Assert.Equal("John", account.Name.FirstName);
@@ -377,7 +387,18 @@ public sealed class AccountTests
         var account = CreateAccount();
         account.ClearDomainEvents();
 
-        account.Update("newnick", "A", "B", preferNickname: false, TimeProvider.System);
+        account.Update(
+            Name.Create("newnick", "A", "B", preferNickname: false),
+            account.Picture,
+            account.Language,
+            account.Region,
+            account.Country,
+            account.TimeZone,
+            account.DateFormat,
+            account.TimeFormat,
+            account.StartOfWeek,
+            TimeProvider.System
+        );
 
         Assert.Equal("newnick", account.Name.Nickname);
         Assert.Equal("A", account.Name.FirstName);
@@ -391,12 +412,37 @@ public sealed class AccountTests
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
-        account.Update(new Uri("https://example.com/p.png"), TimeProvider.System);
-        Assert.Equal("https://example.com/p.png", account.Picture);
+        var picture = Picture.Parse("https://example.com/p.png");
+
+        account.Update(
+            account.Name,
+            picture,
+            account.Language,
+            account.Region,
+            account.Country,
+            account.TimeZone,
+            account.DateFormat,
+            account.TimeFormat,
+            account.StartOfWeek,
+            TimeProvider.System
+        );
+
+        Assert.Equal(picture, account.Picture);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
 
         account.ClearDomainEvents();
-        account.Update(null, TimeProvider.System);
+        account.Update(
+            account.Name,
+            null,
+            account.Language,
+            account.Region,
+            account.Country,
+            account.TimeZone,
+            account.DateFormat,
+            account.TimeFormat,
+            account.StartOfWeek,
+            TimeProvider.System
+        );
         Assert.Equal(ExpectedDefaultPicture, account.Picture);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
@@ -408,29 +454,41 @@ public sealed class AccountTests
         account.ClearDomainEvents();
 
         account.Update(
+            account.Name,
+            account.Picture,
             Language.Parse("ru"),
             RegionCode.Parse("EU"),
             CountryCode.Parse("DE"),
             TimeZoneVo.Parse("UTC"),
-            TimeProvider.System);
+            account.DateFormat,
+            account.TimeFormat,
+            account.StartOfWeek,
+            TimeProvider.System
+        );
 
         Assert.Equal(Language.Parse("ru"), account.Language);
-        Assert.Equal(RegionCode.Parse("EU"), account.RegionCode);
-        Assert.Equal(CountryCode.Parse("DE"), account.CountryCode);
+        Assert.Equal(RegionCode.Parse("EU"), account.Region);
+        Assert.Equal(CountryCode.Parse("DE"), account.Country);
         Assert.Equal(TimeZoneVo.Parse("UTC"), account.TimeZone);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
 
         account.ClearDomainEvents();
         account.Update(
+            account.Name,
+            account.Picture,
             Language.Parse("en"),
             RegionCode.Parse("NA"),
             CountryCode.Parse("US"),
             TimeZoneVo.Parse("UTC"),
-            TimeProvider.System);
+            account.DateFormat,
+            account.TimeFormat,
+            account.StartOfWeek,
+            TimeProvider.System
+        );
 
         Assert.Equal(Language.Parse("en"), account.Language);
-        Assert.Equal(RegionCode.Parse("NA"), account.RegionCode);
-        Assert.Equal(CountryCode.Parse("US"), account.CountryCode);
+        Assert.Equal(RegionCode.Parse("NA"), account.Region);
+        Assert.Equal(CountryCode.Parse("US"), account.Country);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
@@ -440,7 +498,18 @@ public sealed class AccountTests
         var account = CreateAccount();
         account.ClearDomainEvents();
 
-        account.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("H:mm"), DayOfWeek.Tuesday, TimeProvider.System);
+        account.Update(
+            account.Name,
+            account.Picture,
+            account.Language,
+            account.Region,
+            account.Country,
+            account.TimeZone,
+            DateFormat.Parse("dd.MM.yyyy"),
+            TimeFormat.Parse("H:mm"),
+            DayOfWeek.Tuesday,
+            TimeProvider.System
+        );
 
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);

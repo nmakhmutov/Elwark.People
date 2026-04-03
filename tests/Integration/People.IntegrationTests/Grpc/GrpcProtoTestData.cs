@@ -4,16 +4,11 @@ namespace People.IntegrationTests.Grpc;
 
 internal static class GrpcProtoTestData
 {
-    public static IpAddress LoopbackIp() =>
+    public static Metadata TestMetadata() =>
         new()
         {
-            Value = "127.0.0.1"
-        };
-
-    public static UserAgent TestUserAgent() =>
-        new()
-        {
-            Value = "grpc-integration-test"
+            IpAddress = "127.0.0.1",
+            UserAgent = "grpc-integration-test"
         };
 
     public static Language EnLanguage() =>

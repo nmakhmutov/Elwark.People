@@ -1,4 +1,4 @@
-namespace Shared.Outbox;
+namespace People.Infrastructure.Outbox;
 
 public sealed class UnsupportedOutboxPayloadTypeException : InvalidOperationException
 {

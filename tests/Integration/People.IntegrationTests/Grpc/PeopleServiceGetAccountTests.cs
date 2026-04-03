@@ -43,13 +43,16 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
             );
 
             account.ClearDomainEvents();
-            account.Update("GrpcNick", "G", "User", preferNickname: false, fixedTime);
-            account.Update(new Uri("https://grpc.example/p.png"), fixedTime);
             account.Update(
+                Name.Create("GrpcNick", "G", "User", preferNickname: false),
+                Picture.Parse("https://grpc.example/p.png"),
                 DomainLanguage.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("AT"),
                 TimeZone.Parse("Europe/Vienna"),
+                DateFormat.Default,
+                TimeFormat.Default,
+                DayOfWeek.Monday,
                 fixedTime
             );
 

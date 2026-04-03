@@ -2,9 +2,9 @@ using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using People.Api.Application.Commands.UpdateAccount;
+using People.Application.Commands.UpdateAccount;
 using People.Domain.Entities;
-using People.Api.Infrastructure.Providers.World;
+using People.Application.Providers.Country;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.IntegrationTests.Infrastructure;
@@ -65,7 +65,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Parse("HH:mm"), account.TimeFormat);
         Assert.Equal(DayOfWeek.Wednesday, account.StartOfWeek);
-        Assert.Equal(CountryCode.Parse("DE"), account.CountryCode);
-        Assert.Equal(RegionCode.Parse("EU"), account.RegionCode);
+        Assert.Equal(CountryCode.Parse("DE"), account.Country);
+        Assert.Equal(RegionCode.Parse("EU"), account.Region);
     }
 }

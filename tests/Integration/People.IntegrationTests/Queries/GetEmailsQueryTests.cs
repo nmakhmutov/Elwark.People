@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using Mediator;
-using People.Api.Application.Queries.GetEmails;
+using People.Application.Queries.GetEmails;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;

@@ -276,7 +276,7 @@ internal static class AccountEndpoints
                 account.Name.LastName,
                 account.Name.FullName(),
                 account.Language.ToString(),
-                account.Picture,
+                account.Picture.ToString(),
                 account.Region.IsEmpty() ? null : account.Region.ToString(),
                 account.Country.IsEmpty() ? null : account.Country.ToString(),
                 account.TimeZone.ToString(),

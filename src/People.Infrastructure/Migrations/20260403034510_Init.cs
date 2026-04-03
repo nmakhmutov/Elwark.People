@@ -28,7 +28,7 @@ namespace People.Infrastructure.Migrations
                     country_code = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false, defaultValue: "--"),
                     language = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     time_zone = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    date_format = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    date_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     time_format = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     start_of_week = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     is_activated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
@@ -60,6 +60,54 @@ namespace People.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_confirmations", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_consumers",
+                columns: table => new
+                {
+                    message_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    consumer = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    processed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_outbox_consumers", x => new { x.message_id, x.consumer });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    payload = table.Column<string>(type: "jsonb", nullable: false),
+                    error = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    attempts = table.Column<int>(type: "integer", nullable: false),
+                    next_retry_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    processed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    occurred_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_outbox_messages", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "webhooks",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    type = table.Column<byte>(type: "smallint", nullable: false),
+                    method = table.Column<byte>(type: "smallint", nullable: false),
+                    destination_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                    token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_webhooks", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -123,6 +171,23 @@ namespace People.Infrastructure.Migrations
                 name: "IX_emails_account_id",
                 table: "emails",
                 column: "account_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_outbox_messages_processed_at_next_retry_at_occurred_at",
+                table: "outbox_messages",
+                columns: new[] { "processed_at", "next_retry_at", "occurred_at" },
+                filter: "processed_at IS NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_outbox_messages_processed_at_occurred_at",
+                table: "outbox_messages",
+                columns: new[] { "processed_at", "occurred_at" },
+                filter: "processed_at IS NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_webhook_subscriptions_type",
+                table: "webhooks",
+                column: "type");
         }
 
         /// <inheritdoc />
@@ -136,6 +201,15 @@ namespace People.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "emails");
+
+            migrationBuilder.DropTable(
+                name: "outbox_consumers");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages");
+
+            migrationBuilder.DropTable(
+                name: "webhooks");
 
             migrationBuilder.DropTable(
                 name: "accounts");

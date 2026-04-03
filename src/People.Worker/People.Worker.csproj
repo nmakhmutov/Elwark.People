@@ -1,7 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Duende.AccessTokenManagement"/>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
@@ -21,9 +18,10 @@
     <PackageReference Include="MinimalApis.LiquidViews"/>
     <PackageReference Include="Scalar.AspNetCore"/>
     <PackageReference Include="Serilog.AspNetCore"/>
-    <PackageReference Include="Quartz.Extensions.Hosting" />
+    <PackageReference Include="Quartz.Extensions.Hosting"/>
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj" />
+    <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj"/>
   </ItemGroup>
 </Project>

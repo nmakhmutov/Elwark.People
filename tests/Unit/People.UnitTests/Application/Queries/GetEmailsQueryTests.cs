@@ -1,4 +1,4 @@
-using People.Api.Application.Queries.GetEmails;
+using People.Application.Queries.GetEmails;
 using People.Domain.Entities;
 using Xunit;
 

@@ -1,11 +1,10 @@
-using System.Net;
 using NSubstitute;
-using People.Api.Application.Commands.SignUpByEmail;
+using People.Application.Commands.SignUpByEmail;
+using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
-using People.Infrastructure.Confirmations;
 using Xunit;
 
 namespace People.UnitTests.Application.Commands;
@@ -35,7 +34,7 @@ public sealed class SignUpByEmailCommandTests
         var handler = new SignUpByEmailCommandHandler(confirmation, repo, time);
 
         var result = await handler.Handle(
-            new SignUpByEmailCommand("token-b64", "123456", IPAddress.Loopback, null),
+            new SignUpByEmailCommand("token-b64", "123456"),
             CancellationToken.None);
 
         Assert.Equal(AccountId, result.Id);
@@ -61,7 +60,7 @@ public sealed class SignUpByEmailCommandTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await handler.Handle(
-                new SignUpByEmailCommand("t", "wrong", IPAddress.Loopback, null),
+                new SignUpByEmailCommand("t", "wrong"),
                 CancellationToken.None));
 
         await repo.DidNotReceive().GetAsync(Arg.Any<AccountId>(), Arg.Any<CancellationToken>());
@@ -84,6 +83,6 @@ public sealed class SignUpByEmailCommandTests
             EmailHandlerTestAccounts.FixedTime(Utc));
 
         await Assert.ThrowsAsync<AccountException>(async () =>
-            await handler.Handle(new SignUpByEmailCommand("ok", "ok", IPAddress.Loopback, null), CancellationToken.None));
+            await handler.Handle(new SignUpByEmailCommand("ok", "ok"), CancellationToken.None));
     }
 }

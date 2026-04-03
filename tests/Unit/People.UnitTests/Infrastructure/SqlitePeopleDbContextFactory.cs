@@ -1,8 +1,7 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using People.Domain.Events;
 using People.Infrastructure;
-using People.Infrastructure.Outbox.EntityFrameworkCore;
+using People.Infrastructure.Outbox;
 
 namespace People.UnitTests.Infrastructure;
 
@@ -17,16 +16,8 @@ internal static class SqlitePeopleDbContextFactory
             .UseSqlite(connection)
             .Options;
 
-        var dispatcher = new NoOpDomainEventDispatcher();
-        var pipeline = new OutboxSaveChangesPipeline<PeopleDbContext>(dispatcher, []);
-        var ctx = new PeopleDbContext(options, pipeline, TimeProvider.System);
+        var ctx = new PeopleDbContext(options, OutboxPipeline<PeopleDbContext>.Empty, TimeProvider.System);
         ctx.Database.EnsureCreated();
         return ctx;
-    }
-
-    private sealed class NoOpDomainEventDispatcher : IDomainEventDispatcher
-    {
-        public ValueTask DispatchAsync(IReadOnlyCollection<IDomainEvent> events, CancellationToken ct = default) =>
-            ValueTask.CompletedTask;
     }
 }

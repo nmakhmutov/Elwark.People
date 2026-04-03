@@ -11,7 +11,21 @@ public sealed class Webhook
 
     public WebhookMethod Method { get; private set; }
 
-    public string DestinationUrl { get; private set; } = null!;
+    public string DestinationUrl { get; private set; }
 
     public string? Token { get; private set; }
+
+    public Webhook(WebhookType type, WebhookMethod method, string destinationUrl, string? token)
+        : this(0, type, method, destinationUrl, token)
+    {
+    }
+
+    private Webhook(int id, WebhookType type, WebhookMethod method, string destinationUrl, string? token)
+    {
+        Id = id;
+        Type = type;
+        Method = method;
+        DestinationUrl = destinationUrl;
+        Token = token;
+    }
 }

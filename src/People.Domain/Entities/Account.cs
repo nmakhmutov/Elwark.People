@@ -11,8 +11,6 @@ namespace People.Domain.Entities;
 // ReSharper disable NotAccessedField.Local
 public sealed class Account : Entity<AccountId>, IAggregateRoot
 {
-    private const string DefaultPicture = "https://res.cloudinary.com/elwark/image/upload/v1/People/default.jpg";
-
     private readonly List<EmailAccount> _emails;
     private readonly List<ExternalConnection> _externals;
 
@@ -26,7 +24,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public Name Name { get; private set; }
 
-    public string Picture { get; private set; }
+    public Picture Picture { get; private set; }
 
     public RegionCode Region { get; private set; }
 
@@ -62,7 +60,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     private Account(
         Name name,
-        string picture,
+        Picture picture,
         RegionCode region,
         CountryCode country,
         Language language,
@@ -103,7 +101,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     {
         var account = new Account(
             Name.Create(nickname),
-            DefaultPicture,
+            Picture.Default,
             RegionCode.Empty,
             CountryCode.Empty,
             language,
@@ -183,8 +181,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         var now = timeProvider.UtcNow();
         _externals.Add(ExternalConnection.Google(identity, firstName, lastName, now));
         Name = Name.Create(Name.Nickname, Name.FirstName ?? firstName, Name.LastName ?? lastName, Name.PreferNickname);
-        if (Picture == DefaultPicture)
-            Picture = picture?.ToString() ?? Picture;
+        Picture = picture is null ? Picture : Picture.Parse(picture);
 
         UpdateActivation();
         AddDomainEvent(new AccountUpdatedDomainEvent(Id, now));
@@ -245,7 +242,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public void Update(
         Name name,
-        string? picture,
+        Picture? picture,
         Language language,
         RegionCode region,
         CountryCode country,
@@ -257,7 +254,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     )
     {
         Name = name;
-        Picture = string.IsNullOrWhiteSpace(picture) ? DefaultPicture : picture;
+        Picture = picture ?? Picture.Default;
         Region = region;
         Country = country;
         Language = language;

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using Mediator;
-using People.Api.Application.Queries.GetAccountDetails;
+using People.Application.Queries.GetAccountDetails;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -36,18 +36,20 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
 
             var account = Account.Create("nick-base", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
-            account.Update("DisplayNick", "First", "Last", preferNickname: false, fixedTime);
-            account.Update(new Uri("https://example.com/avatar.png"), fixedTime);
             account.Update(
+                Name.Create("DisplayNick", "First", "Last", preferNickname: false),
+                Picture.Parse("https://example.com/avatar.png"),
                 Language.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("DE"),
                 TimeZone.Parse("Europe/Berlin"),
+                DateFormat.Parse("dd.MM.yyyy"),
+                TimeFormat.Parse("HH:mm"),
+                DayOfWeek.Friday,
                 fixedTime);
-            account.Update(DateFormat.Parse("dd.MM.yyyy"), TimeFormat.Parse("HH:mm"), DayOfWeek.Friday, fixedTime);
             account.AddEmail(primary, true, fixedTime);
             account.AddEmail(secondary, false, fixedTime);
-            account.AddGoogle("google-sub-details", "G", "User", fixedTime);
+            account.AddGoogle("google-sub-details", "G", "User", null, fixedTime);
             account.AddMicrosoft("ms-sub-details", "M", "Person", fixedTime);
 
             await repo.AddAsync(account, CancellationToken.None);
@@ -68,9 +70,9 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
         Assert.Equal("First Last", result.Name.FullName());
         Assert.Equal(Language.Parse("de"), result.Language);
         Assert.Equal(TimeZone.Parse("Europe/Berlin"), result.TimeZone);
-        Assert.Equal("https://example.com/avatar.png", result.Picture);
-        Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
-        Assert.Equal(CountryCode.Parse("DE"), result.CountryCode);
+        Assert.Equal(Picture.Parse("https://example.com/avatar.png"), result.Picture);
+        Assert.Equal(RegionCode.Parse("EU"), result.Region);
+        Assert.Equal(CountryCode.Parse("DE"), result.Country);
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), result.DateFormat);
         Assert.Equal(TimeFormat.Parse("HH:mm"), result.TimeFormat);
         Assert.Equal(DayOfWeek.Friday, result.StartOfWeek);

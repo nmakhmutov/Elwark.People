@@ -10,10 +10,9 @@ public sealed class ConfirmationCleanupJob(IDbContextFactory<PeopleDbContext> fa
     public async Task Execute(IJobExecutionContext context)
     {
         await using var dbContext = await factory.CreateDbContextAsync();
-        var now = context.FireTimeUtc.UtcDateTime;
-        
+
         await dbContext.Confirmations
-            .Where(x => x.ExpiresAt < now)
+            .Where(x => x.ExpiresAt < context.FireTimeUtc.UtcDateTime)
             .ExecuteDeleteAsync(context.CancellationToken);
     }
 }

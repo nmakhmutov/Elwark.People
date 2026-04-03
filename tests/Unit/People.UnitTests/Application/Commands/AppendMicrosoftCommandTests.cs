@@ -1,7 +1,7 @@
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.AppendMicrosoft;
-using People.Api.Infrastructure.Providers.Microsoft;
+using People.Application.Commands.AppendMicrosoft;
+using People.Application.Providers.Microsoft;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;

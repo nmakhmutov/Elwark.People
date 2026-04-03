@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using Mediator;
-using People.Api.Application.Queries.GetAccountSummary;
+using People.Application.Queries.GetAccountSummary;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -36,15 +36,17 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
 
             var account = Account.Create("sum-nick", Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
             account.ClearDomainEvents();
-            account.Update("SumNick", "Sum", "Mary", preferNickname: false, fixedTime);
-            account.Update(new Uri("https://summary.example/p.png"), fixedTime);
             account.Update(
+                Name.Create("SumNick", "Sum", "Mary", preferNickname: false),
+                Picture.Parse("https://summary.example/p.png"),
                 Language.Parse("ru"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("FR"),
                 TimeZone.Parse("Europe/Paris"),
+                DateFormat.Parse("yyyy-MM-dd"),
+                TimeFormat.Parse("HH:mm"),
+                DayOfWeek.Tuesday,
                 fixedTime);
-            account.Update(DateFormat.Parse("yyyy-MM-dd"), TimeFormat.Parse("HH:mm"), DayOfWeek.Tuesday, fixedTime);
             account.AddEmail(primary, true, fixedTime);
             account.AddRole("member", fixedTime);
             account.AddRole("admin", fixedTime);

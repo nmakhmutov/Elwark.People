@@ -1,10 +1,9 @@
-using System.Net;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using People.Api.Application.Commands.SignUpByEmail;
-using People.Api.Application.Commands.SigningUpByEmail;
+using People.Application.Commands.SignUpByEmail;
+using People.Application.Commands.SigningUpByEmail;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using People.IntegrationTests.Infrastructure;
@@ -36,14 +35,14 @@ public sealed class EmailSignUpFlowTests(PostgreSqlFixture postgres) : CommandIn
 
         var email = new MailAddress("new-user@example.com");
         var token = await sender.Send(
-            new SigningUpByEmailCommand(email, Language.Parse("en"), IPAddress.Loopback, null),
+            new SigningUpByEmailCommand(email, Language.Parse("en"), System.Net.IPAddress.Loopback),
             CancellationToken.None);
 
         Assert.False(string.IsNullOrEmpty(token));
         Assert.NotNull(capturedCode);
 
         var signUp = await sender.Send(
-            new SignUpByEmailCommand(token, capturedCode!, IPAddress.Loopback, null),
+            new SignUpByEmailCommand(token, capturedCode!),
             CancellationToken.None);
 
         await using var read = Commands.CreateReadOnlyContext();

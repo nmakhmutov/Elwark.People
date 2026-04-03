@@ -2,6 +2,7 @@
   <ItemGroup>
     <Protobuf Include="Protos\people.proto" GrpcServices="Server"/>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions"/>
     <PackageReference Include="Google.Protobuf"/>
@@ -19,13 +20,15 @@
     <PackageReference Include="MinimalApis.LiquidViews"/>
     <PackageReference Include="Scalar.AspNetCore"/>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\People.Infrastructure\People.Infrastructure.csproj"/>
   </ItemGroup>
+
   <ItemGroup>
-    <InternalsVisibleTo Include="People.UnitTests" />
-    <InternalsVisibleTo Include="People.IntegrationTests" />
-    <InternalsVisibleTo Include="People.Worker" />
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="People.UnitTests"/>
+    <InternalsVisibleTo Include="People.IntegrationTests"/>
+    <InternalsVisibleTo Include="People.Worker"/>
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
   </ItemGroup>
 </Project>

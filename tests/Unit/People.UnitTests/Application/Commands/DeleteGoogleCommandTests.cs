@@ -1,5 +1,5 @@
 using NSubstitute;
-using People.Api.Application.Commands.DeleteGoogle;
+using People.Application.Commands.DeleteGoogle;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
@@ -18,7 +18,7 @@ public sealed class DeleteGoogleCommandTests
     {
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
         var account = EmailHandlerTestAccounts.AccountWithConfirmedPrimary(AccountId, time);
-        account.AddGoogle("gid-remove", "G", "One", time);
+        account.AddGoogle("gid-remove", "G", "One", null, time);
 
         var repo = Substitute.For<IAccountRepository>();
         var uow = Substitute.For<IUnitOfWork>();

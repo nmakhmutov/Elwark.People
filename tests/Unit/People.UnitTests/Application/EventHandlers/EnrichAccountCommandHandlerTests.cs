@@ -1,15 +1,14 @@
 using System.Net.Mail;
-using Mediator;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using People.Api.Application.Commands.EnrichAccount;
-using People.Api.Infrastructure.Providers;
-using People.Api.Infrastructure.Providers.Gravatar;
+using People.Application.Commands.EnrichAccount;
+using People.Application.Providers.Confirmation;
+using People.Application.Providers.Gravatar;
+using People.Application.Providers.Ip;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using People.Infrastructure.Confirmations;
 using People.UnitTests.Application.Commands;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 using Xunit;
@@ -78,8 +77,8 @@ public sealed class EnrichAccountCommandHandlerTests
         await ip2.Received(1).GetAsync("10.0.0.1", "en");
         await gravatar.Received(1).GetAsync(Arg.Is<MailAddress>(m => m.Address == "user@example.com"));
 
-        Assert.Equal(CountryCode.Parse("DE"), account.CountryCode);
-        Assert.Equal(RegionCode.Parse("EU"), account.RegionCode);
+        Assert.Equal(CountryCode.Parse("DE"), account.Country);
+        Assert.Equal(RegionCode.Parse("EU"), account.Region);
         Assert.Equal(TimeZone.Utc, account.TimeZone);
         Assert.Equal("Ada", account.Name.FirstName);
         Assert.Equal("Lovelace", account.Name.LastName);
@@ -117,7 +116,7 @@ public sealed class EnrichAccountCommandHandlerTests
         var accountId = new AccountId(1002L);
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
         var account = EmailHandlerTestAccounts.AccountWithConfirmedPrimary(accountId, time);
-        var regionBefore = account.RegionCode;
+        var regionBefore = account.Region;
 
         var repository = Substitute.For<IAccountRepository>();
         var uow = Substitute.For<IUnitOfWork>();
@@ -138,7 +137,7 @@ public sealed class EnrichAccountCommandHandlerTests
 
         _ = await sut.Handle(Command(1002L, "192.0.2.1"), CancellationToken.None);
 
-        Assert.Equal(regionBefore, account.RegionCode);
+        Assert.Equal(regionBefore, account.Region);
         await ip1.Received(1).GetAsync("192.0.2.1", "en");
         await ip2.Received(1).GetAsync("192.0.2.1", "en");
         await gravatar.Received(1).GetAsync(Arg.Any<MailAddress>());
@@ -234,8 +233,8 @@ public sealed class EnrichAccountCommandHandlerTests
         _ = await sut.Handle(Command(1005L, "5.5.5.5"), CancellationToken.None);
 
         await ip2.Received(1).GetAsync("5.5.5.5", "en");
-        Assert.Equal(CountryCode.Parse("CA"), account.CountryCode);
-        Assert.Equal(RegionCode.Parse("NA"), account.RegionCode);
+        Assert.Equal(CountryCode.Parse("CA"), account.Country);
+        Assert.Equal(RegionCode.Parse("NA"), account.Region);
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
         await confirmation.Received(1).DeleteAsync(accountId, Arg.Any<CancellationToken>());
     }

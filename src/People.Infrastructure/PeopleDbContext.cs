@@ -4,6 +4,7 @@ using People.Application.Providers.Webhooks;
 using People.Domain.Entities;
 using People.Domain.SeedWork;
 using People.Infrastructure.Confirmations;
+using People.Infrastructure.EntityConfigurations;
 using People.Infrastructure.Outbox;
 
 namespace People.Infrastructure;
@@ -54,7 +55,14 @@ public sealed class PeopleDbContext : OutboxDbContext<PeopleDbContext>, IUnitOfW
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PeopleDbContext).Assembly);
+        modelBuilder.ApplyConfiguration(new AccountEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfirmationEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new EmailEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new ExternalConnectionEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxConsumerEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxMessageEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new WebhookSubscriptionEntityTypeConfiguration());
+
         base.OnModelCreating(modelBuilder);
     }
 }
@@ -66,7 +74,7 @@ public sealed class OrderingContextDesignFactory : IDesignTimeDbContextFactory<P
         var optionsBuilder = new DbContextOptionsBuilder<PeopleDbContext>()
             .UseNpgsql(
                 "Host=_;Database=_;Username=_;Password=_",
-                npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
+                npgsql => npgsql.ConfigureDataSource(x => x.EnableDynamicJson())
             );
 
         var pipeline = OutboxPipeline<PeopleDbContext>.Empty;

@@ -45,7 +45,8 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
 
         builder.Property(x => x.Picture)
             .HasColumnName("picture")
-            .HasMaxLength(2048)
+            .HasConversion(x => x.ToString(), x => Picture.Parse(x))
+            .HasMaxLength(Picture.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.Language)

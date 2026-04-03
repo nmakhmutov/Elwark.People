@@ -1,6 +1,6 @@
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.DeleteEmail;
+using People.Application.Commands.DeleteEmail;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;

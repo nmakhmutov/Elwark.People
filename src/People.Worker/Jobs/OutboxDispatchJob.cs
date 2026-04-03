@@ -35,7 +35,7 @@ public sealed partial class OutboxDispatchJob : IJob
         var utcNow = context.FireTimeUtc.UtcDateTime;
 
         await using var scope = _scopeFactory.CreateAsyncScope();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+        var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
 
         await using var dbContext = await _dbFactory.CreateDbContextAsync(context.CancellationToken);
         await using var tx = await dbContext.Database.BeginTransactionAsync(context.CancellationToken);
@@ -86,7 +86,7 @@ public sealed partial class OutboxDispatchJob : IJob
         await tx.CommitAsync(context.CancellationToken);
     }
 
-    private static IEnumerable<IMessage> GetCommands(IIntegrationEvent payload) =>
+    private static IEnumerable<ICommand> GetCommands(IIntegrationEvent payload) =>
         payload switch
         {
             AccountCreatedIntegrationEvent x =>

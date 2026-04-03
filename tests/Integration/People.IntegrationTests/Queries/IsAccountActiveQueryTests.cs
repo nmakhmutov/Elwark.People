@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using Mediator;
-using NSubstitute;
-using People.Api.Application.IntegrationEvents.Events;
-using People.Api.Application.Queries.IsAccountActive;
+using People.Application.Queries.IsAccountActive;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
@@ -18,10 +16,8 @@ namespace People.IntegrationTests.Queries;
 public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : QueryIntegrationTestBase(postgres)
 {
     [Fact]
-    public async Task ActiveAccount_ReturnsTrue_AndPublishesInspected()
+    public async Task ActiveAccount_ReturnsTrue()
     {
-        Commands.EventBus.ClearReceivedCalls();
-
         using var resetScope = Commands.CreateScope();
         await using var resetDb = resetScope.ServiceProvider.GetRequiredService<PeopleDbContext>();
         await CommandTestFixture.ResetDatabaseAsync(resetDb);
@@ -42,18 +38,11 @@ public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : Quer
         var active = await sender.Send(new IsAccountActiveQuery(id), CancellationToken.None);
 
         Assert.True(active);
-        await Commands.EventBus
-            .Received(1)
-            .PublishAsync(
-                Arg.Is<AccountActivity.InspectedIntegrationEvent>(e => e.AccountId == (long)id),
-                Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task InactiveAccount_ReturnsFalse_AndPublishesInspectedWhenRowExists()
+    public async Task InactiveAccount_ReturnsFalse()
     {
-        Commands.EventBus.ClearReceivedCalls();
-
         using var resetScope = Commands.CreateScope();
         await using var resetDb = resetScope.ServiceProvider.GetRequiredService<PeopleDbContext>();
         await CommandTestFixture.ResetDatabaseAsync(resetDb);
@@ -80,18 +69,11 @@ public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : Quer
         var active = await sender.Send(new IsAccountActiveQuery(id), CancellationToken.None);
 
         Assert.False(active);
-        await Commands.EventBus
-            .Received(1)
-            .PublishAsync(
-                Arg.Is<AccountActivity.InspectedIntegrationEvent>(e => e.AccountId == (long)id),
-                Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task BannedAccount_ReturnsFalse_AndPublishesInspectedWhenRowExists()
+    public async Task BannedAccount_ReturnsFalse()
     {
-        Commands.EventBus.ClearReceivedCalls();
-
         using var resetScope = Commands.CreateScope();
         await using var resetDb = resetScope.ServiceProvider.GetRequiredService<PeopleDbContext>();
         await CommandTestFixture.ResetDatabaseAsync(resetDb);
@@ -119,18 +101,11 @@ public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : Quer
         var active = await sender.Send(new IsAccountActiveQuery(id), CancellationToken.None);
 
         Assert.False(active);
-        await Commands.EventBus
-            .Received(1)
-            .PublishAsync(
-                Arg.Is<AccountActivity.InspectedIntegrationEvent>(e => e.AccountId == (long)id),
-                Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task UnknownAccount_ReturnsFalse_WithoutPublishing()
+    public async Task UnknownAccount_ReturnsFalse()
     {
-        Commands.EventBus.ClearReceivedCalls();
-
         using var resetScope = Commands.CreateScope();
         await using var resetDb = resetScope.ServiceProvider.GetRequiredService<PeopleDbContext>();
         await CommandTestFixture.ResetDatabaseAsync(resetDb);
@@ -141,8 +116,5 @@ public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : Quer
         var active = await sender.Send(new IsAccountActiveQuery(new AccountId(77_777_777L)), CancellationToken.None);
 
         Assert.False(active);
-        await Commands.EventBus
-            .DidNotReceive()
-            .PublishAsync(Arg.Any<AccountActivity.InspectedIntegrationEvent>(), Arg.Any<CancellationToken>());
     }
 }

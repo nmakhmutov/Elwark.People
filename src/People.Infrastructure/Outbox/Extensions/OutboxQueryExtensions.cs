@@ -40,12 +40,12 @@ public static class OutboxQueryExtensions
             $"""
              WITH deleted_messages AS (
                  DELETE FROM outbox_messages
-                 WHERE (status = {completedStatus} AND occurred_at < {completedCutoff})
-                    OR (status = {failedStatus} AND occurred_at < {failedCutoff})
+                 WHERE (status = {completedStatus} AND processed_at < {completedCutoff})
+                    OR (status = {failedStatus} AND processed_at < {failedCutoff})
                  RETURNING id
              )
              DELETE FROM outbox_consumers
-             WHERE outbox_message_id IN (SELECT id FROM deleted_messages)
+             WHERE message_id IN (SELECT id FROM deleted_messages)
              """,
             ct
         );

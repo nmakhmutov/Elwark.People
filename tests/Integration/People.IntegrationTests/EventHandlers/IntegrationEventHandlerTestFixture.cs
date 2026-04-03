@@ -2,17 +2,24 @@ using System.Net.Mail;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NSubstitute;
-using People.Api.Application.Behaviour;
-using People.Api.Application.IntegrationEvents.EventHandling;
+using People.Application.Behaviour;
+using People.Application.Commands.EnrichAccount;
 using People.Api.Grpc;
-using People.Api.Infrastructure.Providers;
-using People.Api.Infrastructure.Providers.Gravatar;
+using People.Application.Providers.Confirmation;
+using People.Application.Providers.Gravatar;
+using People.Application.Providers.Ip;
 using People.Domain.Entities;
+using People.Domain.Repositories;
+using People.Domain.SeedWork;
 using People.Infrastructure;
 using People.Infrastructure.Confirmations;
+using People.Infrastructure.Cryptography;
+using People.Infrastructure.Mappers;
+using People.Infrastructure.Outbox.Extensions;
+using People.Infrastructure.Repositories;
 using People.IntegrationTests.Infrastructure;
-using People.Kafka.Integration;
 using Xunit;
 
 namespace People.IntegrationTests.EventHandlers;
@@ -36,8 +43,6 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
 
     public IIpService Ip2 { get; } = Substitute.For<IIpService>();
 
-    public IIntegrationEventBus EventBus { get; } = Substitute.For<IIntegrationEventBus>();
-
     public Task InitializeAsync()
     {
         ResetExternalMocks();
@@ -47,29 +52,43 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
         services.AddHybridCache();
 
         services.AddSingleton(Gravatar);
-        services.AddSingleton(EventBus);
         services.AddSingleton<IEnumerable<IIpService>>(_ => [Ip1, Ip2]);
 
-        services.AddInfrastructure(options =>
-        {
-            options.PostgresqlConnectionString = _postgres.ConnectionString;
-            options.AppKey = new string('K', 32);
-            options.AppVector = new string('V', 16);
-        });
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IIpHasher, IpHasher>();
+        services.AddSingleton<IOptions<AppSecurityOptions>>(
+            Options.Create(new AppSecurityOptions(new string('K', 32), new string('V', 16))));
+
+        services.AddOutbox<PeopleDbContext>(outbox => outbox
+            .AddMapper(new AccountCreatedMapper())
+            .AddMapper(new AccountUpdatedMapper())
+            .AddMapper(new AccountDeletedMapper())
+        );
+
+        services.AddDbContextFactory<PeopleDbContext>(options =>
+            options.UseNpgsql(
+                _postgres.ConnectionString,
+                npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
+            )
+        );
+
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IConfirmationService, ConfirmationService>();
 
         foreach (var d in services.Where(d => d.ServiceType == typeof(IConfirmationService)).ToList())
             services.Remove(d);
 
         services.AddScoped<IConfirmationService>(_ => Confirmation);
 
-        services.AddScoped<AccountCreatedIntegrationEventHandler>();
-        services.AddScoped<AccountEngagedIntegrationEventHandler>();
+        services.AddScoped<EnrichAccountCommandHandler>();
 
-        services.AddMediator(options =>
-        {
-            options.ServiceLifetime = ServiceLifetime.Scoped;
-            options.PipelineBehaviors = [typeof(RequestLoggingBehavior<,>), typeof(RequestValidatorBehavior<,>)];
-        });
+        MediatorDependencyInjectionExtensions.AddMediator(
+            services,
+            options =>
+            {
+                options.ServiceLifetime = ServiceLifetime.Scoped;
+                options.PipelineBehaviors = [typeof(RequestLoggingBehavior<,>), typeof(RequestValidatorBehavior<,>)];
+            });
 
         services.AddValidatorsFromAssembly(
             typeof(PeopleService).Assembly,
@@ -88,12 +107,6 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
         Ip2.ClearReceivedCalls();
         Gravatar.ClearReceivedCalls();
         Confirmation.ClearReceivedCalls();
-        EventBus.ClearReceivedCalls();
-
-        EventBus.PublishAsync(Arg.Any<IIntegrationEvent>(), Arg.Any<CancellationToken>()).Returns(ValueTask.CompletedTask);
-        EventBus
-            .PublishAsync(Arg.Any<ICollection<IIntegrationEvent>>(), Arg.Any<CancellationToken>())
-            .Returns(ValueTask.CompletedTask);
 
         Ip1.GetAsync(Arg.Any<string>(), Arg.Any<string>()).Returns((IpInformation?)null);
         Ip2.GetAsync(Arg.Any<string>(), Arg.Any<string>()).Returns((IpInformation?)null);
@@ -111,7 +124,7 @@ public sealed class IntegrationEventHandlerTestFixture : IAsyncLifetime
         _provider?.CreateScope() ?? throw new InvalidOperationException("Fixture not initialized.");
 
     public PeopleDbContext CreateReadOnlyContext() =>
-        _postgres.CreateContext(new NoOpMediator());
+        _postgres.CreateContext();
 
     public static async Task<DateTime> QueryAccountTimestampUtcAsync(
         PeopleDbContext db,

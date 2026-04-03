@@ -1,11 +1,11 @@
+extern alias PeopleWorker;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
-using People.Infrastructure.Outbox;
+using People.Infrastructure.Outbox.Entities;
 using People.IntegrationTests.Infrastructure;
-using People.Worker.Jobs;
+using PeopleWorker::People.Worker.Jobs;
 using Quartz;
 using Xunit;
 
@@ -17,17 +17,28 @@ public sealed class OutboxCleanupJobTests(PostgreSqlFixture fixture)
     private static ServiceProvider CreateProvider(PostgreSqlFixture fx)
     {
         var services = new ServiceCollection();
-        services.AddScoped<PeopleDbContext>(_ => fx.CreateContext(new NoOpMediator()));
+        services.AddScoped<PeopleDbContext>(_ => fx.CreateContext());
+        services.AddSingleton<IDbContextFactory<PeopleDbContext>>(
+            new DelegatingDbContextFactory(fx));
         return services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
     }
 
     private static OutboxCleanupJob CreateJob(ServiceProvider root) =>
-        new(root.GetRequiredService<IServiceScopeFactory>());
+        new(root.GetRequiredService<IDbContextFactory<PeopleDbContext>>());
+
+    private sealed class DelegatingDbContextFactory(PostgreSqlFixture fx) : IDbContextFactory<PeopleDbContext>
+    {
+        public PeopleDbContext CreateDbContext() => fx.CreateContext();
+
+        public Task<PeopleDbContext> CreateDbContextAsync(CancellationToken ct = default) =>
+            Task.FromResult(fx.CreateContext());
+    }
 
     private static IJobExecutionContext FakeContext(CancellationToken ct = default)
     {
         var ctx = Substitute.For<IJobExecutionContext>();
         ctx.CancellationToken.Returns(ct);
+        ctx.FireTimeUtc.Returns(DateTimeOffset.UtcNow);
         return ctx;
     }
 

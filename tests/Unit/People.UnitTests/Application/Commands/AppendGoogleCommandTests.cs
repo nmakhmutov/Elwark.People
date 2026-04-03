@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Net.Mail;
 using NSubstitute;
-using People.Api.Application.Commands.AppendGoogle;
-using People.Api.Infrastructure.Providers.Google;
+using People.Application.Commands.AppendGoogle;
+using People.Application.Providers.Google;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;

@@ -54,7 +54,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
                 account.Name.LastName ?? gravatar?.Name?.FirstOrDefault()?.LastName,
                 account.Name.PreferNickname
             ),
-            gravatar?.ThumbnailUrl,
+            Picture.Parse(gravatar?.ThumbnailUrl ?? string.Empty),
             account.Language,
             account.Region.IsEmpty() ? RegionCode.ParseOrDefault(ip?.Region) : account.Region,
             account.Country.IsEmpty() ? CountryCode.ParseOrDefault(ip?.CountryCode) : account.Country,
@@ -66,7 +66,6 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
         );
 
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);
-
         await _confirmation.DeleteAsync(request.AccountId, ct);
 
         return Unit.Value;
@@ -82,9 +81,10 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
             try
             {
                 var result = await ipService.GetAsync(ip, language.ToString());
+                if (result is null)
+                    continue;
 
-                if (result is not null)
-                    return result;
+                return result;
             }
             catch (Exception ex)
             {

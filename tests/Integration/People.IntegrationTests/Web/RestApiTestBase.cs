@@ -72,7 +72,7 @@ public abstract class RestApiTestBase : IAsyncLifetime
         var account = Account.Create(nickname, Language.Parse("en"), IPAddress.Loopback, hasher, time);
         account.ClearDomainEvents();
         account.AddEmail(primaryEmail, true, time);
-        account.AddGoogle(googleIdentity, "G", "User", time);
+        account.AddGoogle(googleIdentity, "G", "User", null, time);
 
         await repo.AddAsync(account, ct);
         await repo.UnitOfWork.SaveEntitiesAsync(ct);

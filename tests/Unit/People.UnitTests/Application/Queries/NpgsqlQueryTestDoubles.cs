@@ -1,4 +1,4 @@
-using People.Infrastructure.Providers.NpgsqlData;
+using People.Application.Providers.Postgres;
 
 namespace People.UnitTests.Application.Queries;
 

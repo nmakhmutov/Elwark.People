@@ -3,7 +3,7 @@ using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging.Abstractions;
-using People.Api.Infrastructure.Providers.Gravatar;
+using People.Infrastructure.Providers;
 using Xunit;
 
 namespace People.UnitTests.Infrastructure.ExternalServices;

@@ -82,7 +82,7 @@ jobs:
         run: dotnet test tests/Unit/People.UnitTests/People.UnitTests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-unit
           path: TestResults/**/coverage.cobertura.xml
@@ -121,7 +121,7 @@ jobs:
         run: dotnet test tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-integration
           path: TestResults/**/coverage.cobertura.xml
@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload HTML report
         if: hashFiles('coverage-results/**/coverage.cobertura.xml') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-report
           path: coverage-report/

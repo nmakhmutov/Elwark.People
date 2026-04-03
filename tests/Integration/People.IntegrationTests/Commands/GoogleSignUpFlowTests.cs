@@ -1,10 +1,9 @@
-using System.Net;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
-using People.Api.Application.Commands.SignUpByGoogle;
-using People.Api.Infrastructure.Providers.Google;
+using People.Application.Commands.SignUpByGoogle;
+using People.Application.Providers.Google;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
@@ -37,7 +36,7 @@ public sealed class GoogleSignUpFlowTests(PostgreSqlFixture postgres) : CommandI
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
         var result = await sender.Send(
-            new SignUpByGoogleCommand("google-access-token", Language.Parse("en"), IPAddress.Loopback, null),
+            new SignUpByGoogleCommand("google-access-token", Language.Parse("en"), System.Net.IPAddress.Loopback),
             CancellationToken.None);
 
         await using var read = Commands.CreateReadOnlyContext();

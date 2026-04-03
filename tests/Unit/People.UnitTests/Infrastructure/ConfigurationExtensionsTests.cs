@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Configuration;
-using People.Api.Infrastructure;
+using People.Infrastructure;
 using Xunit;
 
 namespace People.UnitTests.Infrastructure;

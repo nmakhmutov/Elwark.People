@@ -1,5 +1,5 @@
 using NSubstitute;
-using People.Api.Application.Commands.DeleteAccount;
+using People.Application.Commands.DeleteAccount;
 using People.Domain.DomainEvents;
 using People.Domain.Entities;
 using People.Domain.Repositories;

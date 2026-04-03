@@ -1,4 +1,4 @@
-using People.Api.Application.Queries.GetAccountSummary;
+using People.Application.Queries.GetAccountSummary;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.ValueObjects;

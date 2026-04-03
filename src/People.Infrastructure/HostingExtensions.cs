@@ -41,6 +41,8 @@ public static class HostingExtensions
     {
         public IServiceCollection AddInfrastructure()
         {
+            var configuration = builder.Configuration;
+
             builder.Services
                 .AddOutbox<PeopleDbContext>(outbox => outbox
                     .AddMapper(new AccountCreatedMapper())
@@ -49,10 +51,13 @@ public static class HostingExtensions
                 );
 
             builder.Services
+                .AddHybridCache();
+
+            builder.Services
                 .AddSingleton(TimeProvider.System)
                 .AddDbContextFactory<PeopleDbContext>(options =>
                     options.UseNpgsql(
-                        builder.Configuration.GetConnectionString("Postgresql"),
+                        configuration.GetConnectionString("Postgresql"),
                         npgsql => npgsql.ConfigureDataSource(ds => ds.EnableDynamicJson())
                     )
                 )
@@ -60,82 +65,69 @@ public static class HostingExtensions
                 .AddScoped<IConfirmationService, ConfirmationService>()
                 .AddSingleton<IIpHasher, IpHasher>()
                 .AddSingleton<INpgsqlAccessor>(provider => new NpgsqlAccessor(
-                        builder.Configuration.GetConnectionString("Postgresql")!,
+                        configuration.GetConnectionString("Postgresql")!,
                         provider.GetRequiredService<ILoggerFactory>()
                     )
-                );
+                )
+                .AddSingleton<IEmailBuilder, EmailBuilder.EmailBuilder>();
 
             builder.Services
                 .AddSingleton<IOptions<AppSecurityOptions>>(_ =>
-                    new OptionsWrapper<AppSecurityOptions>(
-                        new AppSecurityOptions(
-                            builder.Configuration["App:Key"]!,
-                            builder.Configuration["App:Vector"]!
-                        )
-                    )
+                    Options.Create(new AppSecurityOptions(configuration["App:Key"]!, configuration["App:Vector"]!))
                 );
-
-            builder.Services
-                .AddHybridCache();
-
-            builder.Services
-                .AddSingleton<IEmailBuilder, EmailBuilder.EmailBuilder>();
 
             builder.Services
                 .AddClientCredentialsTokenManagement()
                 .AddClient(ClientCredentialsClientName.Parse("notification"), client =>
                 {
-                    client.TokenEndpoint = builder.Configuration.GetUri("Authentication:Authority", "connect/token");
-                    client.ClientId = ClientId.Parse(builder.Configuration.GetString("Notification:ClientId"));
-                    client.ClientSecret = ClientSecret.Parse(builder.Configuration.GetString("Notification:ClientSecret"));
-                    client.Scope = Scope.Parse(builder.Configuration.GetString("Notification:Scope"));
+                    client.TokenEndpoint = configuration.GetUri("Authentication:Authority", "connect/token");
+                    client.ClientId = ClientId.Parse(configuration.GetString("Notification:ClientId"));
+                    client.ClientSecret = ClientSecret.Parse(configuration.GetString("Notification:ClientSecret"));
+                    client.Scope = Scope.Parse(configuration.GetString("Notification:Scope"));
                 });
 
             builder.Services
                 .AddHttpClient<INotificationSender, NotificationSender>(client =>
-                    client.BaseAddress = new Uri(builder.Configuration["Notification:Host"]!)
+                    client.BaseAddress = new Uri(configuration["Notification:Host"]!)
                 )
                 .AddClientCredentialsTokenHandler(ClientCredentialsClientName.Parse("notification"));
 
             builder.Services
                 .AddHttpClient<ICountryClient, CountryClient>(client =>
-                    client.BaseAddress = new Uri(builder.Configuration["Urls:Countries.Api"]!)
+                    client.BaseAddress = new Uri(configuration["Urls:Countries.Api"]!)
                 );
 
             builder.Services
                 .AddHttpClient<IGoogleApiService, GoogleApiService>(client =>
-                    client.BaseAddress = new Uri(builder.Configuration["Urls:Google.Api"]!)
+                    client.BaseAddress = new Uri(configuration["Urls:Google.Api"]!)
                 );
 
             builder.Services
                 .AddHttpClient<IMicrosoftApiService, MicrosoftApiService>(client =>
-                    client.BaseAddress = new Uri(builder.Configuration["Urls:Microsoft.Api"]!)
+                    client.BaseAddress = new Uri(configuration["Urls:Microsoft.Api"]!)
                 );
 
             builder.Services
                 .AddHttpClient<IIpService, IpApiService>(client =>
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
-                });
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"])
+                );
 
             builder.Services
                 .AddHttpClient<IIpService, GeoPluginService>(client =>
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
-                });
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"])
+                );
 
             builder.Services
                 .AddHttpClient<IIpService, IpQueryService>(client =>
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
-                });
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"])
+                );
 
             builder.Services
                 .AddHttpClient<IGravatarService, GravatarService>(client =>
                 {
-                    client.BaseAddress = new Uri(builder.Configuration["Urls:Gravatar.Api"]!);
+                    client.BaseAddress = new Uri(configuration["Urls:Gravatar.Api"]!);
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    client.DefaultRequestHeaders.Add("User-Agent", builder.Configuration["UserAgent"]);
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"]);
                 });
 
             builder.Services

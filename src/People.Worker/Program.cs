@@ -39,8 +39,8 @@ builder.Services.AddQuartz(options =>
     {
         options.ScheduleJob<OutboxDispatchJob>(trigger => trigger
             .WithIdentity(nameof(OutboxDispatchJob))
-            .StartNow()
-            .WithSimpleSchedule(x => x.WithIntervalInSeconds(5).RepeatForever())
+            .StartAt(DateBuilder.EvenMinuteDateAfterNow())
+            .WithSimpleSchedule(x => x.WithIntervalInSeconds(3).RepeatForever())
         );
 
         options.ScheduleJob<OutboxCleanupJob>(trigger => trigger
@@ -48,7 +48,6 @@ builder.Services.AddQuartz(options =>
             .StartAt(DateBuilder.TodayAt(14, 0, 0))
             .WithSimpleSchedule(s => s.WithIntervalInHours(24).RepeatForever())
         );
-
 
         options.ScheduleJob<ConfirmationCleanupJob>(trigger => trigger
             .WithIdentity(nameof(ConfirmationCleanupJob))

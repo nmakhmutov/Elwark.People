@@ -51,7 +51,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SigningUpByEmailCommand(
             request.Email.ToMailAddress(),
             request.Language.ToLanguage(),
-            request.Ip.ToIpAddress()
+            request.Metadata.GetIpAddress()
         );
 
         var token = await _mediator.Send(command, context.CancellationToken);
@@ -91,7 +91,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByGoogleCommand(
             request.AccessToken,
             request.Language.ToLanguage(),
-            request.Ip.ToIpAddress()
+            request.Metadata.GetIpAddress()
         );
 
         var result = await _mediator.Send(command, context.CancellationToken);
@@ -120,7 +120,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByMicrosoftCommand(
             request.AccessToken,
             request.Language.ToLanguage(),
-            request.Ip.ToIpAddress()
+            request.Metadata.GetIpAddress()
         );
 
         var result = await _mediator.Send(command, context.CancellationToken);

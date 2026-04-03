@@ -1,17 +1,17 @@
-using System.Threading;
+extern alias PeopleWorker;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using People.Api.Application.Commands.EnrichAccount;
-using People.Api.Application.Commands.SendWebhooks;
+using NSubstitute.ExceptionExtensions;
+using People.Application.Commands.EnrichAccount;
+using People.Application.Commands.SendWebhooks;
+using People.Application.Providers.Webhooks;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
-using People.Infrastructure.Outbox;
-using People.Infrastructure.Webhooks;
+using People.Infrastructure.Outbox.Entities;
 using People.IntegrationTests.Infrastructure;
-using People.Worker.Jobs;
+using PeopleWorker::People.Worker.Jobs;
 using Quartz;
 using Xunit;
 
@@ -24,12 +24,26 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
     {
         var services = new ServiceCollection();
         services.AddScoped(_ => sender);
-        services.AddScoped<PeopleDbContext>(_ => fx.CreateContext(new NoOpMediator()));
+        services.AddScoped<PeopleDbContext>(_ => fx.CreateContext());
+        services.AddSingleton<IDbContextFactory<PeopleDbContext>>(
+            new DelegatingDbContextFactory(fx));
         return services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
     }
 
+    private sealed class DelegatingDbContextFactory(PostgreSqlFixture fx) : IDbContextFactory<PeopleDbContext>
+    {
+        public PeopleDbContext CreateDbContext() =>
+            fx.CreateContext();
+
+        public Task<PeopleDbContext> CreateDbContextAsync(CancellationToken ct = default) =>
+            Task.FromResult(fx.CreateContext());
+    }
+
     private static OutboxDispatchJob CreateJob(ServiceProvider root) =>
-        new(root.GetRequiredService<IServiceScopeFactory>(), NullLogger<OutboxDispatchJob>.Instance);
+        new(
+            root.GetRequiredService<IServiceScopeFactory>(),
+            root.GetRequiredService<IDbContextFactory<PeopleDbContext>>(),
+            NullLogger<OutboxDispatchJob>.Instance);
 
     private static IJobExecutionContext FakeContext(CancellationToken ct = default)
     {
@@ -41,13 +55,13 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
     [Fact]
     public async Task Execute_DispatchesEnrichAndWebhooks_ForAccountCreatedPayload()
     {
-        var sender = Substitute.For<ISender>();
-        sender.Send(Arg.Any<EnrichAccountCommand>(), Arg.Any<CancellationToken>())
-            .Returns(ValueTask.FromResult(Unit.Value));
-        sender.Send(Arg.Any<SendWebhooksCommand>(), Arg.Any<CancellationToken>())
-            .Returns(ValueTask.FromResult(Unit.Value));
+        var mediator = Substitute.For<IMediator>();
+        mediator.Send(Arg.Any<EnrichAccountCommand>(), Arg.Any<CancellationToken>())
+            .Returns(await ValueTask.FromResult(Unit.Value));
+        mediator.Send(Arg.Any<SendWebhooksCommand>(), Arg.Any<CancellationToken>())
+            .Returns(await ValueTask.FromResult(Unit.Value));
 
-        await using var root = CreateProvider(fixture, sender);
+        await using var root = CreateProvider(fixture, mediator);
         await using (var seedScope = root.CreateAsyncScope())
         {
             var db = seedScope.ServiceProvider.GetRequiredService<PeopleDbContext>();
@@ -61,16 +75,16 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
             await db.SaveChangesAsync(CancellationToken.None);
         }
 
-        await using (var runRoot = CreateProvider(fixture, sender))
+        await using (var runRoot = CreateProvider(fixture, mediator))
         {
             var job = CreateJob(runRoot);
             await job.Execute(FakeContext());
         }
 
-        await sender.Received(1).Send(
+        await mediator.Received(1).Send(
             Arg.Is<EnrichAccountCommand>(c => c.AccountId == 5001L && c.IpAddress == "198.51.100.10"),
             Arg.Any<CancellationToken>());
-        await sender.Received(1).Send(
+        await mediator.Received(1).Send(
             Arg.Is<SendWebhooksCommand>(c =>
                 c.AccountId == 5001L && c.Type == WebhookType.Created),
             Arg.Any<CancellationToken>());
@@ -80,13 +94,8 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
     public async Task Execute_OnHandlerFailure_SchedulesRetry_WithPendingStatus()
     {
         var sender = Substitute.For<ISender>();
-        var calls = 0;
         sender.Send(Arg.Any<EnrichAccountCommand>(), Arg.Any<CancellationToken>())
-            .Returns(_ =>
-            {
-                _ = Interlocked.Increment(ref calls);
-                throw new InvalidOperationException("handler down");
-            });
+            .ThrowsAsync(new InvalidOperationException("handler down"));
 
         Guid messageId;
         await using (var seedRoot = CreateProvider(fixture, sender))

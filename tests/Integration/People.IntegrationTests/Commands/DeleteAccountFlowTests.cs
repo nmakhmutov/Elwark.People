@@ -1,7 +1,7 @@
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-using People.Api.Application.Commands.DeleteAccount;
+using People.Application.Commands.DeleteAccount;
 using People.Domain.Entities;
 using People.Infrastructure;
 using People.IntegrationTests.Infrastructure;

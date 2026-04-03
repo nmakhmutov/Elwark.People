@@ -1,7 +1,8 @@
 using System.Globalization;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
-using People.Api.Infrastructure.Providers.World;
+using People.Application.Providers.Country;
+using People.Infrastructure.Providers;
 using People.Domain.ValueObjects;
 using Xunit;
 

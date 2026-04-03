@@ -13,8 +13,8 @@ using People.Infrastructure;
 namespace People.Infrastructure.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
-    [Migration("20260331051753_SyncPeopleDbContextModel")]
-    partial class SyncPeopleDbContextModel
+    [Migration("20260403034510_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,6 +26,42 @@ namespace People.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("People.Application.Providers.Webhooks.Webhook", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DestinationUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("destination_url");
+
+                    b.Property<byte>("Method")
+                        .HasColumnType("smallint")
+                        .HasColumnName("method");
+
+                    b.Property<string>("Token")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("token");
+
+                    b.Property<byte>("Type")
+                        .HasColumnType("smallint")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .HasDatabaseName("IX_webhook_subscriptions_type");
+
+                    b.ToTable("webhooks", (string)null);
+                });
+
             modelBuilder.Entity("People.Domain.Entities.Account", b =>
                 {
                     b.Property<long>("Id")
@@ -35,7 +71,7 @@ namespace People.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("CountryCode")
+                    b.Property<string>("Country")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(2)
@@ -67,7 +103,7 @@ namespace People.Infrastructure.Migrations
                         .HasColumnType("character varying(2048)")
                         .HasColumnName("picture");
 
-                    b.Property<string>("RegionCode")
+                    b.Property<string>("Region")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(2)
@@ -261,6 +297,92 @@ namespace People.Infrastructure.Migrations
                     b.HasIndex("AccountId", "Type");
 
                     b.ToTable("confirmations", (string)null);
+                });
+
+            modelBuilder.Entity("People.Infrastructure.Outbox.Entities.OutboxConsumer", b =>
+                {
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("message_id")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("Consumer")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("consumer")
+                        .HasColumnOrder(1);
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("MessageId", "Consumer");
+
+                    b.ToTable("outbox_consumers", (string)null);
+                });
+
+            modelBuilder.Entity("People.Infrastructure.Outbox.Entities.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTime?>("NextRetryAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_retry_at")
+                        .HasColumnOrder(6);
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at")
+                        .HasColumnOrder(8);
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at")
+                        .HasColumnOrder(7);
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("_attempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempts")
+                        .HasColumnOrder(5);
+
+                    b.Property<string>("_error")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("error")
+                        .HasColumnOrder(3);
+
+                    b.Property<string>("_payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("_type")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("type")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessedAt", "OccurredAt")
+                        .HasFilter("processed_at IS NULL");
+
+                    b.HasIndex("ProcessedAt", "NextRetryAt", "OccurredAt")
+                        .HasFilter("processed_at IS NULL");
+
+                    b.ToTable("outbox_messages", (string)null);
                 });
 
             modelBuilder.Entity("People.Domain.Entities.Account", b =>

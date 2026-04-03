@@ -4,8 +4,8 @@ using Grpc.Core;
 using Mediator;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using People.Api.Application.Commands.SignUpByMicrosoft;
-using People.Api.Infrastructure.Providers.Microsoft;
+using People.Application.Commands.SignUpByMicrosoft;
+using People.Application.Providers.Microsoft;
 using People.Domain.Entities;
 using People.Infrastructure;
 using People.IntegrationTests.Commands;
@@ -40,8 +40,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             {
                 AccessToken = "grpc-ms-signup-token",
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx));
 
@@ -64,7 +63,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByMicrosoftCommand("grpc-ms-signin-token", Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback, null),
+                new SignUpByMicrosoftCommand("grpc-ms-signin-token", Domain.ValueObjects.Language.Parse("en"), IPAddress.Loopback),
                 CancellationToken.None);
         }
 
@@ -79,8 +78,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             new ExternalSignInRequest
             {
                 AccessToken = "grpc-ms-signin-token",
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignInByMicrosoft(req, ctx));
 
@@ -155,8 +153,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
                 {
                     AccessToken = "bad-ms-token",
                     Language = GrpcProtoTestData.EnLanguage(),
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx)));
 
@@ -189,8 +186,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             {
                 AccessToken = "grpc-ms-dup-token-a",
                 Language = GrpcProtoTestData.EnLanguage(),
-                Ip = GrpcProtoTestData.LoopbackIp(),
-                UserAgent = GrpcProtoTestData.TestUserAgent()
+                Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx));
 
@@ -202,8 +198,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
                 {
                     AccessToken = "grpc-ms-dup-token-b",
                     Language = GrpcProtoTestData.EnLanguage(),
-                    Ip = GrpcProtoTestData.LoopbackIp(),
-                    UserAgent = GrpcProtoTestData.TestUserAgent()
+                    Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx)));
 
