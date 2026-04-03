@@ -45,6 +45,26 @@ public sealed class NameTests
     }
 
     [Fact]
+    public void Create_TrimmedFirstAndLastName_AreNormalized()
+    {
+        var name = Name.Create(Nickname.Parse("nick"), "  John  ", "  Doe  ", preferNickname: false);
+
+        Assert.Equal("John", name.FirstName);
+        Assert.Equal("Doe", name.LastName);
+        Assert.Equal("John Doe", name.FullName());
+    }
+
+    [Fact]
+    public void Create_WhitespaceOnlyFirstAndLastName_AreStoredAsNull()
+    {
+        var name = Name.Create(Nickname.Parse("nick"), "   ", "   ", preferNickname: false);
+
+        Assert.Null(name.FirstName);
+        Assert.Null(name.LastName);
+        Assert.Equal("nick", name.FullName());
+    }
+
+    [Fact]
     public void FullName_PreferNickname_ReturnsNickname()
     {
         var name = Name.Create(Nickname.Parse("nick"), "John", "Doe", preferNickname: true);
@@ -63,6 +83,20 @@ public sealed class NameTests
     {
         var name = Name.Create(Nickname.Parse("nick"), preferNickname: false);
         Assert.Equal("nick", name.FullName());
+    }
+
+    [Fact]
+    public void FullName_OnlyFirstName_ReturnsFirstName()
+    {
+        var name = Name.Create(Nickname.Parse("nick"), "John", preferNickname: false);
+        Assert.Equal("John", name.FullName());
+    }
+
+    [Fact]
+    public void FullName_OnlyLastName_ReturnsLastName()
+    {
+        var name = Name.Create(Nickname.Parse("nick"), null, "Doe", preferNickname: false);
+        Assert.Equal("Doe", name.FullName());
     }
 
     [Fact]

@@ -100,7 +100,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     public static Account Create(Language language, IPAddress ip, IIpHasher hasher, TimeProvider time)
     {
         var account = new Account(
-            Name.Create(),
+            Name.Create(NicknameGenerator.Create()),
             Picture.Default,
             RegionCode.Empty,
             CountryCode.Empty,
