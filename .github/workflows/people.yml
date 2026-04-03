@@ -240,7 +240,7 @@ jobs:
           docker run -d --name people-worker-smoke \
             -p 8081:8081 \
             --add-host host.docker.internal:host-gateway \
-            -e HealthChecks__Url=http://0.0.0.0:8081 \
+            -e Kestrel__Endpoints__Http__Url=http://0.0.0.0:8081 \
             -e ConnectionStrings__Postgresql='Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password' \
             elwark/people-worker:ci
 
