@@ -1,0 +1,52 @@
+name: Cleanup
+
+on:
+  pull_request:
+    types: [ closed ]
+  delete:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  cleanup-pr-caches:
+    name: Delete PR Caches
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete caches for PR branch
+        run: gh cache delete --all --ref "${{ github.event.pull_request.head.ref }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+  cleanup-branch-caches:
+    name: Delete Branch Caches
+    if: github.event_name == 'delete' && github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete caches for deleted branch
+        run: gh cache delete --all --ref "${{ github.event.ref }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+  cleanup-stale-caches:
+    name: Delete Stale Caches
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete caches older than N days
+        run: |
+          gh cache list --json id,createdAt --limit 100 \
+            | jq -r --arg cutoff "$(date -u -d '3 days ago' +%Y-%m-%dT%H:%M:%SZ)" \
+              '.[] | select(.createdAt < $cutoff) | .id' \
+            | xargs -r -I{} gh cache delete {}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}

@@ -4,6 +4,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="People.UnitTests"/>
+    <InternalsVisibleTo Include="Unit.Api.Tests"/>
   </ItemGroup>
 </Project>

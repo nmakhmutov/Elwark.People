@@ -5,7 +5,10 @@
         <File Path="Directory.Packages.props"/>
         <File Path="docker-compose.yml"/>
         <File Path="docker-compose.override.yml"/>
+    </Folder>
+    <Folder Name="/github/">
         <File Path=".github/workflows/people.yml"/>
+        <File Path=".github/workflows/cleanup.yml"/>
     </Folder>
     <Folder Name="/src/">
         <Project Path="src/People.Api/People.Api.csproj"/>
@@ -15,8 +18,9 @@
         <Project Path="src/People.Worker/People.Worker.csproj"/>
     </Folder>
     <Folder Name="/tests/">
-        <Project Path="tests/Unit/People.UnitTests/People.UnitTests.csproj"/>
-        <Project Path="tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj"/>
-        <Project Path="tests/Integration/People.IntegrationTests.Shared/People.IntegrationTests.Shared.csproj"/>
+        <Project Path="tests/Unit/Unit.Api.Tests/Unit.Api.Tests.csproj"/>
+        <Project Path="tests/Integration/Integration.Shared.Tests/Integration.Shared.Tests.csproj"/>
+        <Project Path="tests/Integration/Integration.Api.Tests/Integration.Api.Tests.csproj"/>
+        <Project Path="tests/Integration/Integration.Worker.Tests/Integration.Worker.Tests.csproj"/>
     </Folder>
 </Solution>

@@ -79,7 +79,7 @@ jobs:
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
       - name: Test
-        run: dotnet test tests/Unit/People.UnitTests/People.UnitTests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
+        run: dotnet test tests/Unit/Unit.Api.Tests/Unit.Api.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6
@@ -89,8 +89,8 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  integration-tests:
-    name: Integration Tests
+  api-integration-tests:
+    name: API Integration Tests
     runs-on: ubuntu-latest
     env:
       DOTNET_NOLOGO: true
@@ -118,12 +118,51 @@ jobs:
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
       - name: Test
-        run: dotnet test tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
+        run: dotnet test tests/Integration/Integration.Api.Tests/Integration.Api.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
 
       - name: Upload coverage
         uses: actions/upload-artifact@v6
         with:
-          name: coverage-integration
+          name: coverage-api-integration
+          path: TestResults/**/coverage.cobertura.xml
+          if-no-files-found: error
+          retention-days: 1
+
+  worker-integration-tests:
+    name: Worker Integration Tests
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+      NUGET_XMLDOC_MODE: skip
+      Serilog__MinimumLevel__Default: Warning
+      Serilog__MinimumLevel__Override__Microsoft: Warning
+      Serilog__MinimumLevel__Override__Microsoft.Hosting: Information
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Build
+        run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
+
+      - name: Test
+        run: dotnet test tests/Integration/Integration.Worker.Tests/Integration.Worker.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v6
+        with:
+          name: coverage-worker-integration
           path: TestResults/**/coverage.cobertura.xml
           if-no-files-found: error
           retention-days: 1
@@ -131,7 +170,7 @@ jobs:
   coverage-report:
     name: Coverage Report
     runs-on: ubuntu-latest
-    needs: [ unit-tests, integration-tests ]
+    needs: [ unit-tests, api-integration-tests, worker-integration-tests ]
     if: ${{ !cancelled() }}
     steps:
       - name: Download coverage results
@@ -148,7 +187,7 @@ jobs:
           reports: coverage-results/**/coverage.cobertura.xml
           targetdir: coverage-report
           reporttypes: HtmlInline;MarkdownSummaryGithub;Cobertura
-          assemblyfilters: -[*.UnitTests]*;-[*.IntegrationTests]*
+          assemblyfilters: -[Unit.Api.Tests]*;-[Integration.*.Tests]*
           verbosity: Warning
 
       - name: Add coverage summary to job
@@ -162,3 +201,12 @@ jobs:
           name: coverage-report
           path: coverage-report/
           retention-days: 1
+
+      - name: Delete coverage artifacts
+        if: always()
+        uses: actions/delete-artifact@v4
+        with:
+          name: |
+            coverage-unit
+            coverage-api-integration
+            coverage-worker-integration
