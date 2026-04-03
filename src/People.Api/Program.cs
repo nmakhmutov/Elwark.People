@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using FluentValidation;
 using Fluid;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -103,6 +104,11 @@ builder.Services
     });
 
 builder.Services
+    .AddHealthChecks()
+    .AddDbContextCheck<PeopleDbContext>("people-db", tags: ["ready"])
+    .AddDbContextCheck<WebhookDbContext>("webhook-db", tags: ["ready"]);
+
+builder.Services
     .AddMediator(options =>
     {
         options.ServiceLifetime = ServiceLifetime.Scoped;
@@ -193,6 +199,17 @@ else
     app.MapOpenApi();
     app.MapScalarApiReference("/docs");
 }
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = static _ => false,
+    ResponseWriter = static (context, report) => context.Response.WriteAsJsonAsync(report)
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = static check => check.Tags.Contains("ready"),
+    ResponseWriter = static (context, report) => context.Response.WriteAsJsonAsync(report)
+});
 
 app.MapAccountEndpoints();
 app.MapDictionariesEndpoints();

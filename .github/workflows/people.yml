@@ -45,7 +45,7 @@ jobs:
         uses: docker/setup-buildx-action@v3.12.0
 
       - name: Build ${{ matrix.name }} image
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v7
         env:
           DOCKER_BUILD_RECORD_RETENTION_DAYS: 1
         with:
@@ -55,6 +55,96 @@ jobs:
           outputs: type=docker,dest=/tmp/people-${{ matrix.name }}.tar
           cache-from: type=gha,scope=people-${{ matrix.name }}
           cache-to: type=gha,scope=people-${{ matrix.name }},mode=max
+
+      - name: Upload ${{ matrix.name }} image artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: docker-image-${{ matrix.name }}
+          path: /tmp/people-${{ matrix.name }}.tar
+          if-no-files-found: error
+          retention-days: 1
+
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [ build-docker-images ]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: elwark_people
+          POSTGRES_USER: master_account
+          POSTGRES_PASSWORD: master_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U master_account -d elwark_people"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Download API image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image-api
+          path: /tmp/docker-images/api
+
+      - name: Download worker image
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-image-worker
+          path: /tmp/docker-images/worker
+
+      - name: Load images
+        run: |
+          docker load --input /tmp/docker-images/api/people-api.tar
+          docker load --input /tmp/docker-images/worker/people-worker.tar
+
+      - name: Start API container
+        run: |
+          docker run -d --name people-api-smoke \
+            -p 8080:8080 \
+            --add-host host.docker.internal:host-gateway \
+            -e Kestrel__Endpoints__Http__Url=http://0.0.0.0:8080 \
+            -e ConnectionStrings__Postgresql='Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password' \
+            elwark/people-api:ci
+
+      - name: Start worker container
+        run: |
+          docker run -d --name people-worker-smoke \
+            -p 8081:8081 \
+            --add-host host.docker.internal:host-gateway \
+            -e HealthChecks__Url=http://0.0.0.0:8081 \
+            -e ConnectionStrings__Postgresql='Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password' \
+            elwark/people-worker:ci
+
+      - name: Wait for API health
+        run: |
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8080/health/live >/dev/null && \
+               curl --fail --silent http://127.0.0.1:8080/health/ready >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs people-api-smoke
+          exit 1
+
+      - name: Wait for worker health
+        run: |
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8081/health/live >/dev/null && \
+               curl --fail --silent http://127.0.0.1:8081/health/ready >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs people-worker-smoke
+          exit 1
+
+      - name: Cleanup smoke containers
+        if: always()
+        run: docker rm -f people-api-smoke people-worker-smoke || true
 
   unit-tests:
     name: Unit Tests
@@ -179,7 +269,7 @@ jobs:
       actions: write
     steps:
       - name: Download coverage results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: coverage-*
           path: coverage-results

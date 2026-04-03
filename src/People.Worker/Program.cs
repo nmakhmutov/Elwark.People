@@ -1,6 +1,7 @@
 using System.Net;
 using FluentValidation;
 using Fluid;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using People.Application.Behaviour;
 using People.Domain.Entities;
@@ -11,7 +12,7 @@ using Quartz;
 using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Worker";
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .Configure<HostOptions>(options =>
@@ -19,6 +20,9 @@ builder.Services
         options.ServicesStartConcurrently = true;
         options.ServicesStopConcurrently = true;
     });
+
+builder.Services
+    .AddHealthChecks();
 
 builder.Services
     .AddMediator(options =>
@@ -75,16 +79,19 @@ builder.AddSerilog(appName, configuration => configuration
     .Destructure.ByTransforming<Account>(x => new { x.Id, x.Name.Nickname })
 );
 
-var host = builder.Build();
+await using var app = builder.Build();
 
-await using (var scope = host.Services.CreateAsyncScope())
+app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
-    await dbContext.Database.MigrateAsync();
+    Predicate = static _ => false,
+    ResponseWriter = static (context, report) => context.Response.WriteAsJsonAsync(report)
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = static _ => true,
+    ResponseWriter = static (context, report) => context.Response.WriteAsJsonAsync(report)
+});
 
-    var webhookDbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<WebhookDbContext>>();
-    await using var webhookDb = await webhookDbFactory.CreateDbContextAsync();
-    await webhookDb.Database.MigrateAsync();
-}
+await app.RunAsync();
 
-await host.RunAsync();
+public partial class Program;

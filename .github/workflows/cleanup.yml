@@ -50,3 +50,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+
+  cleanup-stale-artifacts:
+    name: Delete Stale Artifacts
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete artifacts older than 1 day
+        run: |
+          gh api -X GET repos/$GH_REPO/actions/artifacts --paginate --jq '.artifacts[] | select(.created_at < "'$(date -u -d '1 day ago' +%Y-%m-%dT%H:%M:%SZ)'") | .id' \
+            | xargs -r -I{} gh api -X DELETE repos/$GH_REPO/actions/artifacts/{}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
