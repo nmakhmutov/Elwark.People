@@ -1,0 +1,25 @@
+using People.Grpc.People;
+
+namespace People.IntegrationTests.Grpc;
+
+internal static class GrpcProtoTestData
+{
+    public static Metadata TestMetadata() =>
+        new()
+        {
+            IpAddress = "127.0.0.1",
+            UserAgent = "grpc-integration-test"
+        };
+
+    public static Language EnLanguage() =>
+        new()
+        {
+            Value = "en"
+        };
+
+    public static Email Email(string address) =>
+        new()
+        {
+            Value = address
+        };
+}
