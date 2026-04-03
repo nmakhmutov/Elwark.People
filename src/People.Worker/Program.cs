@@ -2,7 +2,6 @@ using System.Net;
 using FluentValidation;
 using Fluid;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.EntityFrameworkCore;
 using People.Application.Behaviour;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
