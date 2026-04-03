@@ -17,5 +17,6 @@
     <Folder Name="/tests/">
         <Project Path="tests/Unit/People.UnitTests/People.UnitTests.csproj"/>
         <Project Path="tests/Integration/People.IntegrationTests/People.IntegrationTests.csproj"/>
+        <Project Path="tests/Integration/People.IntegrationTests.Shared/People.IntegrationTests.Shared.csproj"/>
     </Folder>
 </Solution>
