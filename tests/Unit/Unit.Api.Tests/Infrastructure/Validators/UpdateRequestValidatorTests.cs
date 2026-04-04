@@ -90,11 +90,12 @@ public sealed class UpdateRequestValidatorTests
     }
 
     [Fact]
-    public void InvalidTimeZone_ThrowsTimeZoneNotFoundException()
+    public void InvalidTimeZone_FallsBackAndStillValid()
     {
         var r = ValidRequest() with { TimeZone = "Not/A/Real/Zone_Id" };
 
-        Assert.Throws<TimeZoneNotFoundException>(() => Validator.Validate(r));
+        var result = Validator.Validate(r);
+        Assert.True(result.IsValid);
     }
 
     [Fact]

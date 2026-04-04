@@ -17,7 +17,7 @@ public partial class AccountReply
             FullName = account.Name.FullName(),
             Picture = account.Picture.ToString(),
             CountryCode = account.CountryCode.ToString(),
-            TimeZone = account.TimeZone.ToString(),
+            TimeZone = account.Timezone.ToString(),
             Language = Language.Create(account.Language),
             Ban = Types.Ban.Map(account.Ban),
             Roles =

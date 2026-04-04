@@ -20,6 +20,7 @@ public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
 
         var account = Account.Create(
             Language.Parse("en"),
+            Timezone.Utc,
             CultureInfo.InvariantCulture,
             System.Net.IPAddress.Parse("198.51.100.50"),
             AccountTestFactory.FakeIpHasher(),
@@ -41,6 +42,7 @@ public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
         const string expectedIp = "198.51.100.51";
         var account = Account.Create(
             Language.Parse("en"),
+            Timezone.Utc,
             CultureInfo.InvariantCulture,
             System.Net.IPAddress.Parse(expectedIp),
             AccountTestFactory.FakeIpHasher(),

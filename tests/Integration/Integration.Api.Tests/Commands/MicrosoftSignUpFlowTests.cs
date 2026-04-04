@@ -32,6 +32,7 @@ public sealed class MicrosoftSignUpFlowTests(PostgreSqlFixture postgres) : Comma
             new SignUpByMicrosoftCommand(
                 "ms-access-token",
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 System.Net.IPAddress.Loopback
             ),

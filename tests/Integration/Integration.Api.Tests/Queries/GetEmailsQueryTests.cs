@@ -35,6 +35,7 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
 
             var account = Account.Create(
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,
@@ -82,6 +83,7 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
 
             var account = Account.Create(
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,

@@ -4,7 +4,6 @@ using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Application.Commands.UpdateAccount;
 
@@ -15,7 +14,7 @@ public sealed record UpdateAccountCommand(
     Nickname Nickname,
     bool UseNickname,
     Language Language,
-    TimeZone TimeZone,
+    Timezone Timezone,
     DateFormat DateFormat,
     TimeFormat TimeFormat,
     DayOfWeek StartOfWeek,
@@ -51,7 +50,7 @@ public sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountC
             request.Language,
             region,
             request.Country,
-            request.TimeZone,
+            request.Timezone,
             request.DateFormat,
             request.TimeFormat,
             request.StartOfWeek,

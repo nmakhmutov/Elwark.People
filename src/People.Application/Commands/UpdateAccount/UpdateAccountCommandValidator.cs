@@ -19,7 +19,7 @@ public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAcco
         RuleFor(x => x.LastName)
             .MaximumLength(Name.LastNameLength);
 
-        RuleFor(x => x.TimeZone)
+        RuleFor(x => x.Timezone)
             .NotNull();
 
         RuleFor(x => x.DateFormat)

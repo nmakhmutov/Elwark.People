@@ -7,6 +7,7 @@ using NSubstitute.ExceptionExtensions;
 using People.Application.Commands.SignUpByGoogle;
 using People.Application.Providers.Google;
 using People.Domain.Entities;
+using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
@@ -80,6 +81,7 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
                 new SignUpByGoogleCommand(
                     "grpc-google-signin-token",
                     DomainLanguage.Parse("en"),
+                    Timezone.Utc,
                     CultureInfo.InvariantCulture,
                     System.Net.IPAddress.Loopback
                 ),

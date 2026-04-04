@@ -2,7 +2,7 @@ using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Integration.Api.Tests.Infrastructure;
@@ -54,7 +54,7 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
         Assert.Equal(Language.Parse("de"), account.Language);
         Assert.Equal(RegionCode.Parse("EU"), account.Region);
         Assert.Equal(CountryCode.Parse("US"), account.Country);
-        Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.TimeZone);
+        Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.Timezone);
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);
         Assert.Equal(DayOfWeek.Friday, account.StartOfWeek);

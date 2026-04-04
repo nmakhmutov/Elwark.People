@@ -56,6 +56,7 @@ public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : Quer
 
             var account = Account.Create(
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,
@@ -93,6 +94,7 @@ public sealed class IsAccountActiveQueryTests(PostgreSqlFixture postgres) : Quer
 
             var account = Account.Create(
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,

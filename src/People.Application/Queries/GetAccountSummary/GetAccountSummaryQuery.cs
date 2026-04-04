@@ -3,7 +3,6 @@ using People.Application.Providers.Postgres;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Application.Queries.GetAccountSummary;
 
@@ -55,7 +54,7 @@ public sealed class GetAccountSummaryQueryHandler : IQueryHandler<GetAccountSumm
                 Language.Parse(x.GetString(7)),
                 RegionCode.Parse(x.GetString(8)),
                 CountryCode.Parse(x.GetString(9)),
-                TimeZone.Parse(x.GetString(10)),
+                Timezone.Parse(x.GetString(10)),
                 DateFormat.Parse(x.GetString(11)),
                 TimeFormat.Parse(x.GetString(12)),
                 (DayOfWeek)x.GetInt32(13),
@@ -73,7 +72,7 @@ public sealed record AccountSummary(
     Language Language,
     RegionCode RegionCode,
     CountryCode CountryCode,
-    TimeZone TimeZone,
+    Timezone Timezone,
     DateFormat DateFormat,
     TimeFormat TimeFormat,
     DayOfWeek StartOfWeek,

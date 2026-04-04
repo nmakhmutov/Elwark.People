@@ -11,8 +11,13 @@ using People.Domain.ValueObjects;
 
 namespace People.Application.Commands.SignUpByGoogle;
 
-public sealed record SignUpByGoogleCommand(string Token, Language Language, CultureInfo Culture, IPAddress Ip)
-    : ICommand<SignUpResult>;
+public sealed record SignUpByGoogleCommand(
+    string Token,
+    Language Language,
+    Timezone Timezone,
+    CultureInfo Culture,
+    IPAddress Ip
+) : ICommand<SignUpResult>;
 
 public sealed class SignUpByGoogleCommandHandler : ICommandHandler<SignUpByGoogleCommand, SignUpResult>
 {
@@ -45,7 +50,7 @@ public sealed class SignUpByGoogleCommandHandler : ICommandHandler<SignUpByGoogl
             throw ExternalAccountException.AlreadyCreated(ExternalService.Google, google.Identity);
 
         var culture = google.Locale ?? request.Culture;
-        var account = Account.Create(request.Language, culture, request.Ip, _hasher, _timeProvider);
+        var account = Account.Create(request.Language, request.Timezone, culture, request.Ip, _hasher, _timeProvider);
         account.AddGoogle(google.Identity, google.FirstName, google.LastName, google.Picture, _timeProvider);
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 

@@ -8,6 +8,7 @@ using NSubstitute.ExceptionExtensions;
 using People.Application.Commands.SignUpByMicrosoft;
 using People.Application.Providers.Microsoft;
 using People.Domain.Entities;
+using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
@@ -67,6 +68,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
                 new SignUpByMicrosoftCommand(
                     "grpc-ms-signin-token",
                     DomainLanguage.Parse("en"),
+                    Timezone.Utc,
                     CultureInfo.InvariantCulture,
                     IPAddress.Loopback
                 ),

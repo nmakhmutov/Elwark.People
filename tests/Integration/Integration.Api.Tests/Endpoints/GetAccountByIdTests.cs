@@ -31,7 +31,7 @@ public sealed class GetAccountByIdTests(PostgreSqlFixture postgres) : RestApiTes
         Assert.True(root.TryGetProperty("picture", out _));
         Assert.True(!root.TryGetProperty("regionCode", out var rc) || rc.ValueKind is JsonValueKind.String or JsonValueKind.Null);
         Assert.True(!root.TryGetProperty("countryCode", out var cc) || cc.ValueKind is JsonValueKind.String or JsonValueKind.Null);
-        Assert.True(root.TryGetProperty("timeZone", out _));
+        Assert.True(root.TryGetProperty("timezone", out _));
         Assert.True(root.TryGetProperty("dateFormat", out _));
         Assert.True(root.TryGetProperty("timeFormat", out _));
         Assert.True(root.TryGetProperty("startOfWeek", out _));

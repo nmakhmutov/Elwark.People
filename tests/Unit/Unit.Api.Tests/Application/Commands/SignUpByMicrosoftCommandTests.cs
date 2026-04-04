@@ -17,6 +17,7 @@ public sealed class SignUpByMicrosoftCommandTests
 {
     private static readonly DateTime Utc = new(2026, 6, 2, 12, 0, 0, DateTimeKind.Utc);
     private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
+    private static readonly Timezone Timezone = Timezone.Utc;
 
     private static MicrosoftAccount ValidMicrosoft(string identity = "ms-id-1", string email = "m@example.com") =>
         new(identity, new MailAddress(email), "Sam", "Smith");
@@ -50,7 +51,7 @@ public sealed class SignUpByMicrosoftCommandTests
         var handler = new SignUpByMicrosoftCommandHandler(microsoft, hasher, repo, time);
 
         var result = await handler.Handle(
-            new SignUpByMicrosoftCommand("ms-token", language, Culture, IPAddress.Loopback),
+            new SignUpByMicrosoftCommand("ms-token", language, Timezone, Culture, IPAddress.Loopback),
             CancellationToken.None);
 
         Assert.NotNull(added);
@@ -83,7 +84,7 @@ public sealed class SignUpByMicrosoftCommandTests
 
         await Assert.ThrowsAsync<HttpRequestException>(async () =>
             await handler.Handle(
-                new SignUpByMicrosoftCommand("x", Language.Parse("en"), Culture, IPAddress.Loopback),
+                new SignUpByMicrosoftCommand("x", Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
                 CancellationToken.None));
 
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
@@ -109,7 +110,7 @@ public sealed class SignUpByMicrosoftCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SignUpByMicrosoftCommand("t", Language.Parse("en"), Culture, IPAddress.Loopback),
+                new SignUpByMicrosoftCommand("t", Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.AlreadyCreated), ex.Code);
@@ -133,7 +134,7 @@ public sealed class SignUpByMicrosoftCommandTests
 
         var ex = await Assert.ThrowsAsync<ExternalAccountException>(async () =>
             await handler.Handle(
-                new SignUpByMicrosoftCommand("t", Language.Parse("en"), Culture, IPAddress.Loopback),
+                new SignUpByMicrosoftCommand("t", Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(ExternalAccountException.AlreadyCreated), ex.Code);

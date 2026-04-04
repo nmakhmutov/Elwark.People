@@ -11,8 +11,13 @@ using People.Domain.ValueObjects;
 
 namespace People.Application.Commands.SignUpByMicrosoft;
 
-public sealed record SignUpByMicrosoftCommand(string Token, Language Language, CultureInfo Culture, IPAddress Ip)
-    : IRequest<SignUpResult>;
+public sealed record SignUpByMicrosoftCommand(
+    string Token,
+    Language Language,
+    Timezone Timezone,
+    CultureInfo Culture,
+    IPAddress Ip
+) : IRequest<SignUpResult>;
 
 public sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMicrosoftCommand, SignUpResult>
 {
@@ -44,7 +49,14 @@ public sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMi
         if (await _repository.IsExistsAsync(ExternalService.Microsoft, microsoft.Identity, ct))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
-        var account = Account.Create(request.Language, request.Culture, request.Ip, _hasher, _timeProvider);
+        var account = Account.Create(
+            request.Language,
+            request.Timezone,
+            request.Culture,
+            request.Ip,
+            _hasher,
+            _timeProvider
+        );
         account.AddMicrosoft(microsoft.Identity, microsoft.FirstName, microsoft.LastName, _timeProvider);
         account.AddEmail(microsoft.Email, true, _timeProvider);
 

@@ -5,7 +5,6 @@ using People.Domain.DomainEvents;
 using People.Domain.Exceptions;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Domain.Entities;
 
@@ -33,7 +32,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public Language Language { get; private set; }
 
-    public TimeZone TimeZone { get; private set; }
+    public Timezone Timezone { get; private set; }
 
     public DateFormat DateFormat { get; private set; }
 
@@ -65,7 +64,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         RegionCode region,
         CountryCode country,
         Language language,
-        TimeZone timeZone,
+        Timezone timezone,
         DateFormat dateFormat,
         TimeFormat timeFormat,
         DayOfWeek startOfWeek,
@@ -78,7 +77,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         Region = region;
         Country = country;
         Language = language;
-        TimeZone = timeZone;
+        Timezone = timezone;
         DateFormat = dateFormat;
         TimeFormat = timeFormat;
         StartOfWeek = startOfWeek;
@@ -100,6 +99,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public static Account Create(
         Language language,
+        Timezone timezone,
         CultureInfo culture,
         IPAddress ip,
         IIpHasher hasher,
@@ -112,7 +112,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
             RegionCode.Empty,
             CountryCode.Empty,
             language,
-            TimeZone.Utc,
+            timezone,
             DateFormat.Convert(culture),
             TimeFormat.Convert(culture),
             DayOfWeek.Monday,
@@ -264,7 +264,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         Language language,
         RegionCode region,
         CountryCode country,
-        TimeZone timeZone,
+        Timezone timezone,
         DateFormat dateFormat,
         TimeFormat timeFormat,
         DayOfWeek startOfWeek,
@@ -276,7 +276,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         Region = region;
         Country = country;
         Language = language;
-        TimeZone = timeZone;
+        Timezone = timezone;
         DateFormat = dateFormat;
         TimeFormat = timeFormat;
         StartOfWeek = startOfWeek;

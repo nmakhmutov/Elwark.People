@@ -51,6 +51,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SigningUpByEmailCommand(
             request.Email.ToMailAddress(),
             request.Language.ToLanguage(),
+            request.Metadata.GetTimezone(),
             request.Metadata.GetCulture(),
             request.Metadata.GetIpAddress()
         );
@@ -92,6 +93,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByGoogleCommand(
             request.AccessToken,
             request.Language.ToLanguage(),
+            request.Metadata.GetTimezone(),
             request.Metadata.GetCulture(),
             request.Metadata.GetIpAddress()
         );
@@ -122,6 +124,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         var command = new SignUpByMicrosoftCommand(
             request.AccessToken,
             request.Language.ToLanguage(),
+            request.Metadata.GetTimezone(),
             request.Metadata.GetCulture(),
             request.Metadata.GetIpAddress()
         );

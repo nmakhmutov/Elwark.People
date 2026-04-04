@@ -12,7 +12,7 @@ using Integration.Api.Tests.Commands;
 using People.Grpc.People;
 using Xunit;
 using DomainLanguage = People.Domain.ValueObjects.Language;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 
 namespace Integration.Api.Tests.Grpc;
 
@@ -36,6 +36,7 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
 
             var account = Account.Create(
                 DomainLanguage.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,

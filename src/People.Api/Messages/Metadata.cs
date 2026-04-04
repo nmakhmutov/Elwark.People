@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using People.Domain.ValueObjects;
 
 // ReSharper disable CheckNamespace
 namespace People.Grpc.People;
@@ -20,4 +21,7 @@ public partial class Metadata
             return CultureInfo.InvariantCulture;
         }
     }
+
+    public Timezone GetTimezone() =>
+        Domain.ValueObjects.Timezone.ParseOrDefault(Timezone);
 }

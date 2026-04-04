@@ -58,7 +58,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
             account.Language,
             account.Region.IsEmpty() ? RegionCode.ParseOrDefault(ip?.Region) : account.Region,
             account.Country.IsEmpty() ? CountryCode.ParseOrDefault(ip?.CountryCode) : account.Country,
-            Domain.ValueObjects.TimeZone.ParseOrDefault(ip?.TimeZone),
+            Timezone.ParseOrDefault(ip?.TimeZone),
             account.DateFormat,
             account.TimeFormat,
             account.StartOfWeek,

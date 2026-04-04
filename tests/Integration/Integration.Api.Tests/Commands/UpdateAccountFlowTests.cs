@@ -7,7 +7,7 @@ using People.Domain.Entities;
 using People.Application.Providers.Country;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Integration.Api.Tests.Commands;
@@ -45,7 +45,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
                 Nickname: Nickname.Parse("annlee"),
                 UseNickname: false,
                 Language: Language.Parse("ru"),
-                TimeZone: TimeZone.Parse("Europe/Berlin"),
+                Timezone: TimeZone.Parse("Europe/Berlin"),
                 DateFormat: DateFormat.Parse("dd.MM.yyyy"),
                 TimeFormat: TimeFormat.Parse("HH:mm"),
                 StartOfWeek: DayOfWeek.Wednesday,
@@ -60,7 +60,7 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
         Assert.Equal("Ann", account.Name.FirstName);
         Assert.Equal("Lee", account.Name.LastName);
         Assert.Equal(Language.Parse("ru"), account.Language);
-        Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.TimeZone);
+        Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.Timezone);
         Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Parse("HH:mm"), account.TimeFormat);
         Assert.Equal(DayOfWeek.Wednesday, account.StartOfWeek);

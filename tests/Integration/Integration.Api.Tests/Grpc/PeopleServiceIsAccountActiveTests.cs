@@ -5,6 +5,7 @@ using Mediator;
 using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
+using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
@@ -62,6 +63,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
 
             var account = Account.Create(
                 DomainLanguage.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,
@@ -105,6 +107,7 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
 
             var account = Account.Create(
                 DomainLanguage.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,

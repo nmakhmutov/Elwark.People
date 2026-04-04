@@ -8,7 +8,9 @@ internal static class GrpcProtoTestData
         new()
         {
             IpAddress = "127.0.0.1",
-            UserAgent = "grpc-integration-test"
+            UserAgent = "grpc-integration-test",
+            Timezone = TimeZoneInfo.Utc.Id,
+            Locale = "en"
         };
 
     public static Language EnLanguage() =>

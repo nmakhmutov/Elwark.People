@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Infrastructure.EntityConfigurations;
 
@@ -70,10 +69,10 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasMaxLength(CountryCode.MaxLength)
             .IsRequired();
 
-        builder.Property(x => x.TimeZone)
+        builder.Property(x => x.Timezone)
             .HasColumnName("time_zone")
-            .HasConversion(x => x.ToString(), x => TimeZone.Parse(x))
-            .HasMaxLength(TimeZone.MaxLength)
+            .HasConversion(x => x.ToString(), x => Timezone.Parse(x))
+            .HasMaxLength(Timezone.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.DateFormat)

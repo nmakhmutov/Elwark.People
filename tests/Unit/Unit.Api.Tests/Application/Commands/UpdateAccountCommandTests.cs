@@ -6,7 +6,7 @@ using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Unit.Api.Tests.Application.Commands;
@@ -47,7 +47,7 @@ public sealed class UpdateAccountCommandTests
             Nickname: Nickname.Parse("ada"),
             UseNickname: false,
             Language: language,
-            TimeZone: tz,
+            Timezone: tz,
             DateFormat: dateFmt,
             TimeFormat: timeFmt,
             StartOfWeek: DayOfWeek.Monday,
@@ -61,7 +61,7 @@ public sealed class UpdateAccountCommandTests
         Assert.Equal("Lovelace", result.Name.LastName);
         Assert.False(result.Name.UseNickname);
         Assert.Equal(language, result.Language);
-        Assert.Equal(tz, result.TimeZone);
+        Assert.Equal(tz, result.Timezone);
         Assert.Equal(dateFmt, result.DateFormat);
         Assert.Equal(timeFmt, result.TimeFormat);
         Assert.Equal(DayOfWeek.Monday, result.StartOfWeek);

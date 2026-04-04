@@ -11,7 +11,7 @@ using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using Xunit;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 
 namespace Integration.Api.Tests.Queries;
 
@@ -36,6 +36,7 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
 
             var account = Account.Create(
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,
@@ -79,7 +80,7 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
         Assert.Equal(Language.Parse("ru"), result.Language);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
         Assert.Equal(CountryCode.Parse("FR"), result.CountryCode);
-        Assert.Equal(TimeZone.Parse("Europe/Paris"), result.TimeZone);
+        Assert.Equal(TimeZone.Parse("Europe/Paris"), result.Timezone);
         Assert.Equal(DateFormat.Parse("yyyy-MM-dd"), result.DateFormat);
         Assert.Equal(TimeFormat.Parse("HH:mm"), result.TimeFormat);
         Assert.Equal(DayOfWeek.Tuesday, result.StartOfWeek);

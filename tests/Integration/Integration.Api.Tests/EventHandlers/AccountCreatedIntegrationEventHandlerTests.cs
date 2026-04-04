@@ -8,7 +8,7 @@ using People.Domain.Repositories;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Integration.Api.Tests.EventHandlers;
@@ -63,7 +63,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.NotNull(account);
             Assert.Equal(CountryCode.Parse("US"), account.Country);
             Assert.Equal(RegionCode.Parse("NA"), account.Region);
-            Assert.Equal(TimeZone.Utc, account.TimeZone);
+            Assert.Equal(TimeZone.Utc, account.Timezone);
             Assert.Equal("Jane", account.Name.FirstName);
             Assert.Equal("Doe", account.Name.LastName);
             Assert.Equal(Picture.Parse("https://www.gravatar.com/avatar/test?s=80"), account.Picture);
@@ -99,7 +99,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.NotNull(seeded);
             expectedCountry = seeded.Country;
             expectedRegion = seeded.Region;
-            expectedTz = seeded.TimeZone;
+            expectedTz = seeded.Timezone;
         }
 
         using (var runScope = Fx.CreateScope())
@@ -115,7 +115,7 @@ public sealed class AccountCreatedIntegrationEventHandlerTests(PostgreSqlFixture
             Assert.NotNull(account);
             Assert.Equal(expectedCountry, account.Country);
             Assert.Equal(expectedRegion, account.Region);
-            Assert.Equal(expectedTz, account.TimeZone);
+            Assert.Equal(expectedTz, account.Timezone);
         }
 
         await Fx.Confirmation.Received(1).DeleteByAccountAsync(accountId, Arg.Any<CancellationToken>());

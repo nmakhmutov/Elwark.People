@@ -9,7 +9,7 @@ using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using TimeZoneVo = People.Domain.ValueObjects.TimeZone;
+using TimeZoneVo = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Unit.Api.Tests.Domain.Entities;
@@ -34,6 +34,7 @@ public sealed class AccountTests
 
         return Account.Create(
             language ?? Language.Parse("en"),
+            TimeZoneVo.Utc,
             CultureInfo.InvariantCulture,
             IPAddress.Parse("127.0.0.1"),
             hasher,
@@ -57,7 +58,7 @@ public sealed class AccountTests
         var account = CreateAccount();
 
         Assert.Equal(ExpectedDefaultPicture, account.Picture);
-        Assert.Equal(TimeZoneVo.Utc, account.TimeZone);
+        Assert.Equal(TimeZoneVo.Utc, account.Timezone);
         Assert.Equal(DayOfWeek.Monday, account.StartOfWeek);
         Assert.False(account.IsActivated);
         Assert.Equal(DateFormat.Parse("MM/dd/yyyy"), account.DateFormat);
@@ -86,7 +87,7 @@ public sealed class AccountTests
         hasher.CreateHash(ip).Returns([9, 9, 9]);
 
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-        _ = Account.Create(Language.Parse("en"), CultureInfo.InvariantCulture, ip, hasher, time);
+        _ = Account.Create(Language.Parse("en"), TimeZoneVo.Utc, CultureInfo.InvariantCulture, ip, hasher, time);
 
         hasher.Received(1).CreateHash(ip);
     }
@@ -377,7 +378,7 @@ public sealed class AccountTests
             account.Language,
             account.Region,
             account.Country,
-            account.TimeZone,
+            account.Timezone,
             account.DateFormat,
             account.TimeFormat,
             account.StartOfWeek,
@@ -402,7 +403,7 @@ public sealed class AccountTests
             account.Language,
             account.Region,
             account.Country,
-            account.TimeZone,
+            account.Timezone,
             account.DateFormat,
             account.TimeFormat,
             account.StartOfWeek,
@@ -429,7 +430,7 @@ public sealed class AccountTests
             account.Language,
             account.Region,
             account.Country,
-            account.TimeZone,
+            account.Timezone,
             account.DateFormat,
             account.TimeFormat,
             account.StartOfWeek,
@@ -446,7 +447,7 @@ public sealed class AccountTests
             account.Language,
             account.Region,
             account.Country,
-            account.TimeZone,
+            account.Timezone,
             account.DateFormat,
             account.TimeFormat,
             account.StartOfWeek,
@@ -478,7 +479,7 @@ public sealed class AccountTests
         Assert.Equal(Language.Parse("ru"), account.Language);
         Assert.Equal(RegionCode.Parse("EU"), account.Region);
         Assert.Equal(CountryCode.Parse("DE"), account.Country);
-        Assert.Equal(TimeZoneVo.Parse("UTC"), account.TimeZone);
+        Assert.Equal(TimeZoneVo.Parse("UTC"), account.Timezone);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
 
         account.ClearDomainEvents();
@@ -513,7 +514,7 @@ public sealed class AccountTests
             account.Language,
             account.Region,
             account.Country,
-            account.TimeZone,
+            account.Timezone,
             DateFormat.Parse("dd.MM.yyyy"),
             TimeFormat.Parse("H:mm"),
             DayOfWeek.Tuesday,

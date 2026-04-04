@@ -38,6 +38,7 @@ public sealed class EmailSignUpFlowTests(PostgreSqlFixture postgres) : CommandIn
             new SigningUpByEmailCommand(
                 email,
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 System.Net.IPAddress.Loopback
             ),

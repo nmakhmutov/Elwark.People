@@ -9,7 +9,7 @@ using People.Domain.Entities;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Unit.Api.Tests.Application.Commands;
@@ -78,7 +78,7 @@ public sealed class EnrichAccountCommandTests
 
         Assert.Equal(CountryCode.Parse("DE"), account.Country);
         Assert.Equal(RegionCode.Parse("EU"), account.Region);
-        Assert.Equal(TimeZone.Utc, account.TimeZone);
+        Assert.Equal(TimeZone.Utc, account.Timezone);
         Assert.Equal("Ada", account.Name.FirstName);
         Assert.Equal("Lovelace", account.Name.LastName);
         Assert.NotEqual(pictureBefore, account.Picture);

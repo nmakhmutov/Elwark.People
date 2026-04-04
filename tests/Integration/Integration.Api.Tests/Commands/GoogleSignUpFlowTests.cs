@@ -39,6 +39,7 @@ public sealed class GoogleSignUpFlowTests(PostgreSqlFixture postgres) : CommandI
             new SignUpByGoogleCommand(
                 "google-access-token",
                 Language.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 System.Net.IPAddress.Loopback
             ),

@@ -20,14 +20,14 @@ public static class AccountTestFactory
 
     public static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock, string nickname = "integration")
     {
-        var account = Account.Create(Language.Parse("en"), Culture, IPAddress.Loopback, hasher, clock);
+        var account = Account.Create(Language.Parse("en"), Timezone.Utc, Culture, IPAddress.Loopback, hasher, clock);
         account.Update(
             Name.Create(Nickname.Parse(nickname)),
             account.Picture,
             account.Language,
             account.Region,
             account.Country,
-            account.TimeZone,
+            account.Timezone,
             account.DateFormat,
             account.TimeFormat,
             account.StartOfWeek,

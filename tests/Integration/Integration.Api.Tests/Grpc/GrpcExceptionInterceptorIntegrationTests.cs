@@ -9,6 +9,7 @@ using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
+using People.Domain.ValueObjects;
 using DomainLanguage = People.Domain.ValueObjects.Language;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
@@ -50,6 +51,7 @@ public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture p
 
             var account = Account.Create(
                 DomainLanguage.Parse("en"),
+                Timezone.Utc,
                 CultureInfo.InvariantCulture,
                 IPAddress.Loopback,
                 hasher,

@@ -2,7 +2,7 @@ using People.Application.Queries.GetAccountSummary;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
+using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Unit.Api.Tests.Application.Queries;
@@ -47,7 +47,7 @@ public sealed class GetAccountSummaryQueryTests
         Assert.Equal(Language.Parse("en"), result.Language);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
         Assert.Equal(CountryCode.Parse("DE"), result.CountryCode);
-        Assert.Equal(TimeZone.Utc, result.TimeZone);
+        Assert.Equal(TimeZone.Utc, result.Timezone);
         Assert.Equal(DateFormat.Parse("yyyy-MM-dd"), result.DateFormat);
         Assert.Equal(TimeFormat.Parse("HH:mm"), result.TimeFormat);
         Assert.Equal(DayOfWeek.Wednesday, result.StartOfWeek);

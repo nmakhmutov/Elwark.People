@@ -23,7 +23,6 @@ using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
 using Scalar.AspNetCore;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 const string appName = "People.Api";
 var builder = WebApplication.CreateBuilder(args);
@@ -154,7 +153,7 @@ builder.AddSerilog(appName, configuration => configuration
     .Destructure.AsScalar<Language>()
     .Destructure.AsScalar<RegionCode>()
     .Destructure.AsScalar<CountryCode>()
-    .Destructure.AsScalar<TimeZone>()
+    .Destructure.AsScalar<Timezone>()
     .Destructure.AsScalar<DateFormat>()
     .Destructure.AsScalar<TimeFormat>()
     .Destructure.AsScalar<IPAddress>()

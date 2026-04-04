@@ -1,4 +1,4 @@
-using TimeZoneVo = People.Domain.ValueObjects.TimeZone;
+using TimeZoneVo = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Unit.Api.Tests.Domain.ValueObjects;
@@ -14,13 +14,19 @@ public sealed class TimeZoneTests
         Assert.Equal(TimeZoneInfo.FindSystemTimeZoneById(id).Id, tz.Value);
     }
 
+    [Fact]
+    public void Parse_UnknownId_FallsBackToUtc()
+    {
+        var tz = TimeZoneVo.Parse("Not/A/Real/Zone");
+        Assert.Equal(TimeZoneInfo.Utc.Id, tz.Value);
+    }
+
     [Theory]
-    [InlineData("Not/A/Real/Zone")]
     [InlineData("")]
     [InlineData("   ")]
-    public void Parse_InvalidId_Throws(string id)
+    public void Parse_EmptyOrWhitespace_Throws(string id)
     {
-        Assert.ThrowsAny<Exception>(() => TimeZoneVo.Parse(id));
+        Assert.Throws<FormatException>(() => TimeZoneVo.Parse(id));
     }
 
     [Fact]
@@ -40,9 +46,11 @@ public sealed class TimeZoneTests
     }
 
     [Fact]
-    public void TryParse_Invalid_Throws()
+    public void TryParse_Invalid_FallsBackToUtc()
     {
-        Assert.Throws<TimeZoneNotFoundException>(() => TimeZoneVo.TryParse("Not/A/Real/Zone", out _));
+        var ok = TimeZoneVo.TryParse("Not/A/Real/Zone", out var tz);
+        Assert.True(ok);
+        Assert.Equal(TimeZoneInfo.Utc.Id, tz.Value);
     }
 
     [Fact]

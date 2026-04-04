@@ -35,6 +35,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
 
         var account = Account.Create(
             Language.Parse("en"),
+            Timezone.Utc,
             CultureInfo.InvariantCulture,
             System.Net.IPAddress.Loopback,
             AccountTestFactory.FakeIpHasher(),
@@ -72,7 +73,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
             a1.Language,
             a1.Region,
             a1.Country,
-            a1.TimeZone,
+            a1.Timezone,
             a1.DateFormat,
             a1.TimeFormat,
             a1.StartOfWeek,
@@ -86,7 +87,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
             a2.Language,
             a2.Region,
             a2.Country,
-            a2.TimeZone,
+            a2.Timezone,
             a2.DateFormat,
             a2.TimeFormat,
             a2.StartOfWeek,

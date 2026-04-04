@@ -19,7 +19,6 @@ using People.Application.Queries.GetAccountSummary;
 using People.Application.Queries.GetEmails;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.TimeZone;
 
 namespace People.Api.Endpoints;
 
@@ -221,7 +220,7 @@ internal static class AccountEndpoints
         Picture Picture,
         RegionCode? RegionCode,
         CountryCode? CountryCode,
-        TimeZone TimeZone,
+        Timezone Timezone,
         DateFormat DateFormat,
         TimeFormat TimeFormat,
         DayOfWeek StartOfWeek,
@@ -240,7 +239,7 @@ internal static class AccountEndpoints
                 result.Picture,
                 result.RegionCode.IsEmpty() ? null : result.RegionCode,
                 result.CountryCode.IsEmpty() ? null : result.CountryCode,
-                result.TimeZone,
+                result.Timezone,
                 result.DateFormat,
                 result.TimeFormat,
                 result.StartOfWeek,
@@ -259,7 +258,7 @@ internal static class AccountEndpoints
         Picture Picture,
         RegionCode? RegionCode,
         CountryCode? CountryCode,
-        TimeZone TimeZone,
+        Timezone Timezone,
         DateFormat DateFormat,
         TimeFormat TimeFormat,
         DayOfWeek StartOfWeek,
@@ -280,7 +279,7 @@ internal static class AccountEndpoints
                 account.Picture,
                 account.Region.IsEmpty() ? null : account.Region,
                 account.Country.IsEmpty() ? null : account.Country,
-                account.TimeZone,
+                account.Timezone,
                 account.DateFormat,
                 account.TimeFormat,
                 account.StartOfWeek,
@@ -342,7 +341,7 @@ internal static class AccountEndpoints
                 Domain.ValueObjects.Nickname.Parse(Nickname),
                 UseNickname,
                 Domain.ValueObjects.Language.Parse(Language),
-                Domain.ValueObjects.TimeZone.Parse(TimeZone),
+                Timezone.Parse(TimeZone),
                 Domain.ValueObjects.DateFormat.Parse(DateFormat),
                 Domain.ValueObjects.TimeFormat.Parse(TimeFormat),
                 StartOfWeek,
@@ -376,8 +375,8 @@ internal static class AccountEndpoints
 
                 RuleFor(x => x.TimeZone)
                     .NotEmpty()
-                    .MaximumLength(Domain.ValueObjects.TimeZone.MaxLength)
-                    .Must(x => Domain.ValueObjects.TimeZone.TryParse(x, out _));
+                    .MaximumLength(Timezone.MaxLength)
+                    .Must(x => Timezone.TryParse(x, out _));
 
                 RuleFor(x => x.DateFormat)
                     .NotEmpty()

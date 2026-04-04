@@ -18,6 +18,7 @@ public sealed class SigningUpByEmailCommandTests
 {
     private static readonly DateTime Utc = new(2026, 6, 1, 9, 0, 0, DateTimeKind.Utc);
     private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
+    private static readonly Timezone Timezone = Timezone.Utc;
 
     [Fact]
     public async Task Handle_NewEmail_CreatesAccountReturnsTokenAndSendsConfirmation()
@@ -51,7 +52,7 @@ public sealed class SigningUpByEmailCommandTests
             time);
 
         var token = await handler.Handle(
-            new SigningUpByEmailCommand(email, language, Culture, IPAddress.Loopback),
+            new SigningUpByEmailCommand(email, language, Timezone, Culture, IPAddress.Loopback),
             CancellationToken.None
         );
 
@@ -98,7 +99,7 @@ public sealed class SigningUpByEmailCommandTests
             time);
 
         var token = await handler.Handle(
-            new SigningUpByEmailCommand(email, language, Culture, IPAddress.Loopback),
+            new SigningUpByEmailCommand(email, language, Timezone, Culture, IPAddress.Loopback),
             CancellationToken.None);
 
         Assert.Equal("tok-re", token);
@@ -130,7 +131,7 @@ public sealed class SigningUpByEmailCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SigningUpByEmailCommand(email, Language.Parse("en"), Culture, IPAddress.Loopback),
+                new SigningUpByEmailCommand(email, Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
                 CancellationToken.None
             ));
 
