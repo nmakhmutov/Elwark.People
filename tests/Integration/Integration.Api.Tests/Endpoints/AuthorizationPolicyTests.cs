@@ -30,7 +30,7 @@ public sealed class AuthorizationPolicyTests(PostgreSqlFixture postgres) : RestA
         var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("pol-write@example.com"));
 
         using var client = Factory.CreateAuthenticatedClient(id, "people:read");
-        var response = await client.GetAsync("/accounts/me");
+        var response = await client.DeleteAsync("/accounts/me");
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }

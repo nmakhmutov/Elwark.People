@@ -15,7 +15,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
         await ResetAsync();
         var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-get@example.com"));
 
-        using var client = Factory.CreateAuthenticatedClient(id, "people:write");
+        using var client = Factory.CreateAuthenticatedClient(id, "people:read");
         var response = await client.GetAsync("/accounts/me");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -42,7 +42,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
         await ResetAsync();
         var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-put@example.com"));
 
-        using var client = Factory.CreateAuthenticatedClient(id, "people:write");
+        using var client = Factory.CreateAuthenticatedClient(id, "people:write", "people:read");
         var putBody =
             """
             {"firstName":null,"lastName":null,"nickname":"after-put-nick","useNickname":true,"language":"en","countryCode":"US","timeZone":"UTC","dateFormat":"yyyy-MM-dd","timeFormat":"HH:mm","startOfWeek":"monday"}
@@ -61,7 +61,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
         await ResetAsync();
         var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-bad@example.com"));
 
-        using var client = Factory.CreateAuthenticatedClient(id, "people:write");
+        using var client = Factory.CreateAuthenticatedClient(id, "people:write", "people:read");
         var putBody =
             """
             {"firstName":null,"lastName":null,"nickname":"ab","useNickname":true,"language":"en","countryCode":"US","timeZone":"UTC","dateFormat":"yyyy-MM-dd","timeFormat":"HH:mm","startOfWeek":"monday"}
@@ -78,7 +78,7 @@ public sealed class AccountMeTests(PostgreSqlFixture postgres) : RestApiTestBase
         await ResetAsync();
         var id = await SeedAccountWithConfirmedPrimaryAsync(Factory, new MailAddress("me-del@example.com"));
 
-        using var client = Factory.CreateAuthenticatedClient(id, "people:write");
+        using var client = Factory.CreateAuthenticatedClient(id, "people:write", "people:read");
         var del = await client.DeleteAsync("/accounts/me");
 
         Assert.True(del.StatusCode is HttpStatusCode.NoContent or HttpStatusCode.OK);
