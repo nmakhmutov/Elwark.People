@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +35,14 @@ public sealed class EmailSignUpFlowTests(PostgreSqlFixture postgres) : CommandIn
 
         var email = new MailAddress("new-user@example.com");
         var token = await sender.Send(
-            new SigningUpByEmailCommand(email, Language.Parse("en"), System.Net.IPAddress.Loopback),
-            CancellationToken.None);
+            new SigningUpByEmailCommand(
+                email,
+                Language.Parse("en"),
+                CultureInfo.InvariantCulture,
+                System.Net.IPAddress.Loopback
+            ),
+            CancellationToken.None
+        );
 
         Assert.False(string.IsNullOrEmpty(token));
         Assert.NotNull(capturedCode);

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using Mediator;
 using People.Application.Models;
@@ -10,7 +11,8 @@ using People.Domain.ValueObjects;
 
 namespace People.Application.Commands.SignUpByGoogle;
 
-public sealed record SignUpByGoogleCommand(string Token, Language Language, IPAddress Ip) : ICommand<SignUpResult>;
+public sealed record SignUpByGoogleCommand(string Token, Language Language, CultureInfo Culture, IPAddress Ip)
+    : ICommand<SignUpResult>;
 
 public sealed class SignUpByGoogleCommandHandler : ICommandHandler<SignUpByGoogleCommand, SignUpResult>
 {
@@ -42,11 +44,8 @@ public sealed class SignUpByGoogleCommandHandler : ICommandHandler<SignUpByGoogl
         if (await _repository.IsExistsAsync(ExternalService.Google, google.Identity, ct))
             throw ExternalAccountException.AlreadyCreated(ExternalService.Google, google.Identity);
 
-        var language = google.Locale is null
-            ? request.Language
-            : Language.Parse(google.Locale.TwoLetterISOLanguageName);
-
-        var account = Account.Create(language, request.Ip, _hasher, _timeProvider);
+        var culture = google.Locale ?? request.Culture;
+        var account = Account.Create(request.Language, culture, request.Ip, _hasher, _timeProvider);
         account.AddGoogle(google.Identity, google.FirstName, google.LastName, google.Picture, _timeProvider);
         account.AddEmail(google.Email, google.IsEmailVerified, _timeProvider);
 

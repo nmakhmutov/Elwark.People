@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
@@ -30,7 +31,14 @@ public sealed class AccountTests
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1, 2, 3]);
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-        return Account.Create(language ?? Language.Parse("en"), IPAddress.Parse("127.0.0.1"), hasher, time);
+
+        return Account.Create(
+            language ?? Language.Parse("en"),
+            CultureInfo.InvariantCulture,
+            IPAddress.Parse("127.0.0.1"),
+            hasher,
+            time
+        );
     }
 
     private static string[] GetRoles(Account account) =>
@@ -52,7 +60,7 @@ public sealed class AccountTests
         Assert.Equal(TimeZoneVo.Utc, account.TimeZone);
         Assert.Equal(DayOfWeek.Monday, account.StartOfWeek);
         Assert.False(account.IsActivated);
-        Assert.Equal(DateFormat.Default, account.DateFormat);
+        Assert.Equal(DateFormat.Parse("MM/dd/yyyy"), account.DateFormat);
         Assert.Equal(TimeFormat.Default, account.TimeFormat);
         Assert.Equal(RegionCode.Empty, account.Region);
         Assert.Equal(CountryCode.Empty, account.Country);
@@ -78,7 +86,7 @@ public sealed class AccountTests
         hasher.CreateHash(ip).Returns([9, 9, 9]);
 
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-        _ = Account.Create(Language.Parse("en"), ip, hasher, time);
+        _ = Account.Create(Language.Parse("en"), CultureInfo.InvariantCulture, ip, hasher, time);
 
         hasher.Received(1).CreateHash(ip);
     }

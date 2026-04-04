@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -59,7 +60,13 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create(DomainLanguage.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(
+                DomainLanguage.Parse("en"),
+                CultureInfo.InvariantCulture,
+                IPAddress.Loopback,
+                hasher,
+                fixedTime
+            );
             account.ClearDomainEvents();
             account.AddEmail(new MailAddress("pending-grpc@example.com"), false, fixedTime);
 
@@ -96,7 +103,13 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create(DomainLanguage.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(
+                DomainLanguage.Parse("en"),
+                CultureInfo.InvariantCulture,
+                IPAddress.Loopback,
+                hasher,
+                fixedTime
+            );
             account.ClearDomainEvents();
             account.AddEmail(new MailAddress("banned-grpc@example.com"), true, fixedTime);
             account.Ban("policy", fixedTime.GetUtcNow().UtcDateTime.AddDays(7), fixedTime);

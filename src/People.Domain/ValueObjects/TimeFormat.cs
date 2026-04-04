@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace People.Domain.ValueObjects;
 
@@ -18,6 +19,12 @@ public readonly partial struct TimeFormat
     ];
 
     public static readonly TimeFormat Default = new("HH:mm");
+
+    public static TimeFormat Convert(CultureInfo culture)
+    {
+        var format = culture.DateTimeFormat.ShortTimePattern;
+        return IsValid(format) ? new TimeFormat(format) : Default;
+    }
 
     private TimeFormat(string? value)
     {

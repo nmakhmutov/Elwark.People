@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -11,7 +12,8 @@ using People.Domain.ValueObjects;
 
 namespace People.Application.Commands.SigningUpByEmail;
 
-public sealed record SigningUpByEmailCommand(MailAddress Email, Language Language, IPAddress Ip) : ICommand<string>;
+public sealed record SigningUpByEmailCommand(MailAddress Email, Language Language, CultureInfo Culture, IPAddress Ip)
+    : ICommand<string>;
 
 public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpByEmailCommand, string>
 {
@@ -48,7 +50,7 @@ public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpBy
             return await SendAsync(email.AccountId, email.Email, request.Language, ct);
         }
 
-        var account = Account.Create(request.Language, request.Ip, _hasher, _timeProvider);
+        var account = Account.Create(request.Language, request.Culture, request.Ip, _hasher, _timeProvider);
         account.AddEmail(request.Email, false, _timeProvider);
 
         await _repository.AddAsync(account, ct);

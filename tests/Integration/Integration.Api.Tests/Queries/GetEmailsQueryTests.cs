@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -32,7 +33,13 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(
+                Language.Parse("en"),
+                CultureInfo.InvariantCulture,
+                IPAddress.Loopback,
+                hasher,
+                fixedTime
+            );
             account.ClearDomainEvents();
             account.AddEmail(primary, true, fixedTime);
             account.AddEmail(secondaryConfirmed, true, fixedTime);
@@ -73,7 +80,12 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, TimeProvider.System);
+            var account = Account.Create(
+                Language.Parse("en"),
+                CultureInfo.InvariantCulture,
+                IPAddress.Loopback,
+                hasher,
+                TimeProvider.System);
             account.ClearDomainEvents();
 
             await repo.AddAsync(account, CancellationToken.None);

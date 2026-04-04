@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -35,8 +36,14 @@ public sealed class GoogleSignUpFlowTests(PostgreSqlFixture postgres) : CommandI
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
         var result = await sender.Send(
-            new SignUpByGoogleCommand("google-access-token", Language.Parse("en"), System.Net.IPAddress.Loopback),
-            CancellationToken.None);
+            new SignUpByGoogleCommand(
+                "google-access-token",
+                Language.Parse("en"),
+                CultureInfo.InvariantCulture,
+                System.Net.IPAddress.Loopback
+            ),
+            CancellationToken.None
+        );
 
         await using var read = Commands.CreateReadOnlyContext();
 

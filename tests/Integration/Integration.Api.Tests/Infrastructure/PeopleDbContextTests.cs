@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
@@ -34,6 +35,7 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
 
         var account = Account.Create(
             Language.Parse("en"),
+            CultureInfo.InvariantCulture,
             System.Net.IPAddress.Loopback,
             AccountTestFactory.FakeIpHasher(),
             TimeProvider.System

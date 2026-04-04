@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Mail;
 using Grpc.Core;
 using Mediator;
@@ -76,9 +77,14 @@ public sealed class PeopleServiceGoogleFlowTests(PostgreSqlFixture postgres) : G
         {
             var mediatorSeed = seedScope.ServiceProvider.GetRequiredService<IMediator>();
             await mediatorSeed.Send(
-                new SignUpByGoogleCommand("grpc-google-signin-token", DomainLanguage.Parse("en"),
-                    System.Net.IPAddress.Loopback),
-                CancellationToken.None);
+                new SignUpByGoogleCommand(
+                    "grpc-google-signin-token",
+                    DomainLanguage.Parse("en"),
+                    CultureInfo.InvariantCulture,
+                    System.Net.IPAddress.Loopback
+                ),
+                CancellationToken.None
+            );
         }
 
         using var scope = Commands.CreateScope();

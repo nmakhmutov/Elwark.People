@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using NSubstitute;
 using People.Domain.Entities;
@@ -8,6 +9,8 @@ namespace Integration.Shared.Tests.Infrastructure;
 
 public static class AccountTestFactory
 {
+    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
+
     public static TimeProvider FixedUtc(DateTime utc)
     {
         var tp = Substitute.For<TimeProvider>();
@@ -17,7 +20,7 @@ public static class AccountTestFactory
 
     public static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock, string nickname = "integration")
     {
-        var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, clock);
+        var account = Account.Create(Language.Parse("en"), Culture, IPAddress.Loopback, hasher, clock);
         account.Update(
             Name.Create(Nickname.Parse(nickname)),
             account.Picture,

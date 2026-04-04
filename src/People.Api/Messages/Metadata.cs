@@ -9,7 +9,7 @@ public partial class Metadata
     public IPAddress GetIpAddress() =>
         IPAddress.TryParse(IpAddress, out var address) ? address : IPAddress.None;
 
-    public CultureInfo GetLocale()
+    public CultureInfo GetCulture()
     {
         try
         {

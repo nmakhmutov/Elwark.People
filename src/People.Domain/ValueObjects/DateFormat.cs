@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace People.Domain.ValueObjects;
 
@@ -29,6 +30,12 @@ public readonly partial struct DateFormat
     ];
 
     public static readonly DateFormat Default = new("yyyy-MM-dd");
+
+    public static DateFormat Convert(CultureInfo culture)
+    {
+        var format = culture.DateTimeFormat.ShortDatePattern;
+        return IsValid(format) ? new DateFormat(format) : Default;
+    }
 
     private DateFormat(string value)
     {

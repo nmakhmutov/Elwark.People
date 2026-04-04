@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using People.Domain.DomainEvents;
@@ -97,7 +98,13 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         _updatedAt = provider.UtcNow();
     }
 
-    public static Account Create(Language language, IPAddress ip, IIpHasher hasher, TimeProvider time)
+    public static Account Create(
+        Language language,
+        CultureInfo culture,
+        IPAddress ip,
+        IIpHasher hasher,
+        TimeProvider time
+    )
     {
         var account = new Account(
             Name.Create(NicknameGenerator.Create()),
@@ -106,8 +113,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
             CountryCode.Empty,
             language,
             TimeZone.Utc,
-            DateFormat.Default,
-            TimeFormat.Default,
+            DateFormat.Convert(culture),
+            TimeFormat.Convert(culture),
             DayOfWeek.Monday,
             false,
             hasher.CreateHash(ip)

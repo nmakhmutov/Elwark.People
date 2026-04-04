@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -33,7 +34,13 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create(Language.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(
+                Language.Parse("en"),
+                CultureInfo.InvariantCulture,
+                IPAddress.Loopback,
+                hasher,
+                fixedTime
+            );
             account.ClearDomainEvents();
             account.Update(
                 Name.Create(Nickname.Parse("DisplayNick"), "First", "Last", useNickname: false),

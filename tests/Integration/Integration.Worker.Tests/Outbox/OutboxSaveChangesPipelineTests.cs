@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using People.Domain.Entities;
 using People.Domain.IntegrationEvents;
@@ -19,6 +20,7 @@ public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
 
         var account = Account.Create(
             Language.Parse("en"),
+            CultureInfo.InvariantCulture,
             System.Net.IPAddress.Parse("198.51.100.50"),
             AccountTestFactory.FakeIpHasher(),
             TimeProvider.System
@@ -39,6 +41,7 @@ public sealed class OutboxPipelineTests(PostgreSqlFixture fixture)
         const string expectedIp = "198.51.100.51";
         var account = Account.Create(
             Language.Parse("en"),
+            CultureInfo.InvariantCulture,
             System.Net.IPAddress.Parse(expectedIp),
             AccountTestFactory.FakeIpHasher(),
             TimeProvider.System

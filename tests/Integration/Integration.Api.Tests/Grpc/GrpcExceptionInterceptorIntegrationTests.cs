@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Grpc.Core;
@@ -16,7 +17,8 @@ using Xunit;
 
 namespace Integration.Api.Tests.Grpc;
 
-public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture postgres) : GrpcPeopleServiceTestBase(postgres)
+public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture postgres)
+    : GrpcPeopleServiceTestBase(postgres)
 {
     [Fact]
     public async Task AccountException_NotFound_MapsToRpcNotFound_ThroughInterceptor()
@@ -46,7 +48,13 @@ public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture p
             var repo = seedScope.ServiceProvider.GetRequiredService<IAccountRepository>();
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
-            var account = Account.Create(DomainLanguage.Parse("en"), IPAddress.Loopback, hasher, fixedTime);
+            var account = Account.Create(
+                DomainLanguage.Parse("en"),
+                CultureInfo.InvariantCulture,
+                IPAddress.Loopback,
+                hasher,
+                fixedTime
+            );
             account.ClearDomainEvents();
             account.AddEmail(new MailAddress("not-confirmed-grpc@example.com"), false, fixedTime);
 

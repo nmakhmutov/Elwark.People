@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using NSubstitute;
@@ -16,6 +17,7 @@ namespace Unit.Api.Tests.Application.Commands;
 public sealed class SigningUpByEmailCommandTests
 {
     private static readonly DateTime Utc = new(2026, 6, 1, 9, 0, 0, DateTimeKind.Utc);
+    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
     [Fact]
     public async Task Handle_NewEmail_CreatesAccountReturnsTokenAndSendsConfirmation()
@@ -48,18 +50,24 @@ public sealed class SigningUpByEmailCommandTests
             repo,
             time);
 
-        var token = await handler.Handle(new SigningUpByEmailCommand(email, language, IPAddress.Loopback), CancellationToken.None);
+        var token = await handler.Handle(
+            new SigningUpByEmailCommand(email, language, Culture, IPAddress.Loopback),
+            CancellationToken.None
+        );
 
         Assert.Equal("tok-new", token);
         await repo.Received(1).GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>());
         await repo.Received(1).AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
         await uow.Received(1).SaveEntitiesAsync(Arg.Any<CancellationToken>());
-        await confirmation.Received(1).IssueAsync(Arg.Any<AccountId>(), ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
-        await notification.Received(1).SendConfirmationAsync(
-            Arg.Is<MailAddress>(m => m.Address == email.Address),
-            "CODE1",
-            language,
-            Arg.Any<CancellationToken>());
+        await confirmation.Received(1)
+            .IssueAsync(Arg.Any<AccountId>(), ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
+        await notification.Received(1)
+            .SendConfirmationAsync(
+                Arg.Is<MailAddress>(m => m.Address == email.Address),
+                "CODE1",
+                language,
+                Arg.Any<CancellationToken>()
+            );
     }
 
     [Fact]
@@ -89,16 +97,20 @@ public sealed class SigningUpByEmailCommandTests
             repo,
             time);
 
-        var token = await handler.Handle(new SigningUpByEmailCommand(email, language, IPAddress.Loopback), CancellationToken.None);
+        var token = await handler.Handle(
+            new SigningUpByEmailCommand(email, language, Culture, IPAddress.Loopback),
+            CancellationToken.None);
 
         Assert.Equal("tok-re", token);
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
-        await confirmation.Received(1).IssueAsync(existingId, ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
-        await notification.Received(1).SendConfirmationAsync(
-            Arg.Is<MailAddress>(m => m.Address == email.Address),
-            "CODE2",
-            language,
-            Arg.Any<CancellationToken>());
+        await confirmation.Received(1)
+            .IssueAsync(existingId, ConfirmationType.EmailSignUp, Arg.Any<CancellationToken>());
+        await notification.Received(1)
+            .SendConfirmationAsync(
+                Arg.Is<MailAddress>(m => m.Address == email.Address),
+                "CODE2",
+                language,
+                Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -118,8 +130,9 @@ public sealed class SigningUpByEmailCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SigningUpByEmailCommand(email, Language.Parse("en"), IPAddress.Loopback),
-                CancellationToken.None));
+                new SigningUpByEmailCommand(email, Language.Parse("en"), Culture, IPAddress.Loopback),
+                CancellationToken.None
+            ));
 
         Assert.Equal(nameof(EmailException.AlreadyCreated), ex.Code);
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
