@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Text.Json;
 using Integration.Api.Tests.Web;
 using Xunit;
@@ -32,7 +33,12 @@ public sealed class DictionaryEndpointsTests(PostgreSqlFixture postgres) : RestA
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
-        Assert.NotEmpty(doc.RootElement.EnumerateArray());
+        var timezones = doc.RootElement.EnumerateArray().ToArray();
+        Assert.NotEmpty(timezones);
+
+        var firstTimezone = timezones[0];
+        Assert.True(firstTimezone.TryGetProperty("offset", out var offsetElement));
+        Assert.Matches(new Regex(@"^[+-]\d{2}:\d{2}$"), offsetElement.GetString());
     }
 
     [Fact]

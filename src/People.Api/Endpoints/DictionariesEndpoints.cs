@@ -9,7 +9,13 @@ public static class DictionariesEndpoints
 {
     private static readonly TimezoneOverview[] TimeZones = TimeZoneInfo.GetSystemTimeZones()
         .Where(x => x.HasIanaId)
-        .Select(x => new TimezoneOverview(x.Id, x.DisplayName, x.BaseUtcOffset))
+        .OrderBy(x => x.BaseUtcOffset)
+        .ThenBy(x => x.Id)
+        .Select(x => new TimezoneOverview(
+            x.Id,
+            x.DisplayName,
+            $"{(x.BaseUtcOffset >= TimeSpan.Zero ? "+" : "-")}{x.BaseUtcOffset:hh\\:mm}"
+        ))
         .ToArray();
 
     public static IEndpointRouteBuilder MapDictionariesEndpoints(this IEndpointRouteBuilder routes)
@@ -26,5 +32,5 @@ public static class DictionariesEndpoints
         return routes;
     }
 
-    private sealed record TimezoneOverview(string Id, string Name, TimeSpan Offset);
+    private sealed record TimezoneOverview(string Id, string Name, string Offset);
 }
