@@ -110,19 +110,28 @@ public static class HostingExtensions
                 );
 
             builder.Services
-                .AddHttpClient<IIpService, IpApiService>(client =>
-                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"])
-                );
+                .AddTransient<IIpService>(provider => provider.GetRequiredService<IIpApiService>())
+                .AddHttpClient<IIpApiService, IpApiService>(client =>
+                {
+                    client.BaseAddress = configuration.GetUri("Geocoding:IpApi:Url");
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"]);
+                });
 
             builder.Services
-                .AddHttpClient<IIpService, GeoPluginService>(client =>
-                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"])
-                );
+                .AddTransient<IIpService>(provider => provider.GetRequiredService<IGeoPluginService>())
+                .AddHttpClient<IGeoPluginService, GeoPluginService>(client =>
+                {
+                    client.BaseAddress = configuration.GetUri("Geocoding:GeoPlugin:Url");
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"]);
+                });
 
             builder.Services
-                .AddHttpClient<IIpService, IpQueryService>(client =>
-                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"])
-                );
+                .AddTransient<IIpService>(provider => provider.GetRequiredService<IIpQueryService>())
+                .AddHttpClient<IIpQueryService, IpQueryService>(client =>
+                {
+                    client.BaseAddress = configuration.GetUri("Geocoding:IpQuery:Url");
+                    client.DefaultRequestHeaders.Add("User-Agent", configuration["UserAgent"]);
+                });
 
             builder.Services
                 .AddHttpClient<IGravatarService, GravatarService>(client =>

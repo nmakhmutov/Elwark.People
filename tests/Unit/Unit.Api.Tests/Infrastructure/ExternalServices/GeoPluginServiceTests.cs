@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using People.Infrastructure.Providers.Ip;
 using Xunit;
@@ -9,16 +8,13 @@ namespace Unit.Api.Tests.Infrastructure.ExternalServices;
 
 public sealed class GeoPluginServiceTests
 {
-    private static IConfiguration Config =>
-        new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Urls:GeoPlugin.Api"] = "https://geoplugin.test"
-            })
-            .Build();
-
     private static GeoPluginService CreateService(MockHttpMessageHandler handler) =>
-        new(new HttpClient(handler, disposeHandler: true), Config, NullLogger<GeoPluginService>.Instance);
+        new(
+            new HttpClient(handler, disposeHandler: true)
+            {
+                BaseAddress = new Uri("https://geoplugin.test")
+            },
+            NullLogger<GeoPluginService>.Instance);
 
     [Fact]
     public async Task GetAsync_ValidJson_ReturnsIpInformation()

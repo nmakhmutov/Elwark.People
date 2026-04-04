@@ -34,7 +34,10 @@ services:
           memory: 128M
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - ConnectionStrings__Postgresql=Host=postgresql;Database=elwark_people;Username=master_account;Password=master_password
+      - Kestrel__EndPoints__Http__Url=http://+:80
+      - Authentication__Authority=http://elwark_identity_api
+      - Authentication__Audience=people-api
       - Notification__Host=http://elwark_notification_api
+      - ConnectionStrings__Postgresql=Host=postgresql;Database=elwark_people;Username=master_account;Password=master_password
     networks:
       - elwarknetwork

@@ -27,5 +27,5 @@ public readonly partial struct Timezone
         ValueAsString;
 
     public static Timezone ParseOrDefault(string? value) =>
-        TryParse(value, out var result) ? result : Utc;
+        string.IsNullOrWhiteSpace(value) ? Utc : new Timezone(value);
 }

@@ -9,10 +9,23 @@ public sealed class EmailAccount : Entity<Guid>
     private DateTime? _confirmedAt;
     private DateTime _createdAt;
 
-    public static EmailAccount Create(AccountId id, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt) =>
+    public static EmailAccount Create(
+        AccountId id,
+        string email,
+        bool isPrimary,
+        DateTime? confirmedAt,
+        DateTime createdAt
+    ) =>
         new(Guid.CreateVersion7(), id, email, isPrimary, confirmedAt, createdAt);
 
-    private EmailAccount(Guid id, AccountId accountId, string email, bool isPrimary, DateTime? confirmedAt, DateTime createdAt)
+    private EmailAccount(
+        Guid id,
+        AccountId accountId,
+        string email,
+        bool isPrimary,
+        DateTime? confirmedAt,
+        DateTime createdAt
+    )
     {
         Id = id;
         AccountId = accountId;
@@ -42,4 +55,7 @@ public sealed class EmailAccount : Entity<Guid>
 
     internal void Confute() =>
         _confirmedAt = null;
+
+    public override string ToString() =>
+        $"{Email} - {(IsConfirmed ? "Confirmed" : "Not confirmed")} {(IsPrimary ? "(Primary)" : null)}".Trim();
 }

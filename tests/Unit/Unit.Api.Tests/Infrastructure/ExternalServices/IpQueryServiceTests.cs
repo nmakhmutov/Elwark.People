@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using People.Infrastructure.Providers.Ip;
 using Xunit;
@@ -9,16 +8,13 @@ namespace Unit.Api.Tests.Infrastructure.ExternalServices;
 
 public sealed class IpQueryServiceTests
 {
-    private static IConfiguration Config =>
-        new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Urls:IpQuery.Api"] = "https://ipquery.test/lookup"
-            })
-            .Build();
-
     private static IpQueryService CreateService(MockHttpMessageHandler handler) =>
-        new(new HttpClient(handler, disposeHandler: true), Config, NullLogger<IpQueryService>.Instance);
+        new(
+            new HttpClient(handler, disposeHandler: true)
+            {
+                BaseAddress = new Uri("https://ipquery.test")
+            },
+            NullLogger<IpQueryService>.Instance);
 
     [Fact]
     public async Task GetAsync_ValidJson_ReturnsIpInformation()
@@ -27,7 +23,7 @@ public sealed class IpQueryServiceTests
         handler.Configure((req, _) =>
         {
             var url = req.RequestUri?.ToString();
-            Assert.Equal("https://ipquery.test/lookup/198.51.100.2?format=json", url);
+            Assert.Equal("https://ipquery.test/198.51.100.2?format=json", url);
             const string json =
                 """
                 {"location":{"country_code":"FR","city":"Paris","timezone":"Europe/Paris"}}

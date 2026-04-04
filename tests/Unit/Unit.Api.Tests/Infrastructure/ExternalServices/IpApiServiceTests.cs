@@ -1,6 +1,5 @@
 using System.Net;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using People.Infrastructure.Providers.Ip;
 using Xunit;
@@ -9,16 +8,13 @@ namespace Unit.Api.Tests.Infrastructure.ExternalServices;
 
 public sealed class IpApiServiceTests
 {
-    private static IConfiguration Config =>
-        new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Urls:Ip.Api"] = "https://ipapi.test"
-            })
-            .Build();
-
     private static IpApiService CreateService(MockHttpMessageHandler handler) =>
-        new(new HttpClient(handler, disposeHandler: true), Config, NullLogger<IpApiService>.Instance);
+        new(
+            new HttpClient(handler, disposeHandler: true)
+            {
+                BaseAddress = new Uri("https://ipapi.test")
+            },
+            NullLogger<IpApiService>.Instance);
 
     [Fact]
     public async Task GetAsync_StatusSuccess_ReturnsIpInformation()
