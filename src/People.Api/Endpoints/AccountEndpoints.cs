@@ -33,7 +33,7 @@ internal static class AccountEndpoints
             .RequireAuthorization(Policy.RequireRead.Name);
 
         group.MapGet("/me", GetMyAccountAsync)
-            .RequireAuthorization(Policy.RequireWrite.Name);
+            .RequireAuthorization(Policy.RequireRead.Name);
 
         group.MapPut("/me", UpdateAccountAsync)
             .RequireAuthorization(Policy.RequireWrite.Name)
