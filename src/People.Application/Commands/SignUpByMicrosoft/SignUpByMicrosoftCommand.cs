@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using Mediator;
 using People.Application.Models;
@@ -13,9 +12,8 @@ namespace People.Application.Commands.SignUpByMicrosoft;
 
 public sealed record SignUpByMicrosoftCommand(
     string Token,
-    Language Language,
+    Locale Locale,
     Timezone Timezone,
-    CultureInfo Culture,
     IPAddress Ip
 ) : IRequest<SignUpResult>;
 
@@ -50,9 +48,8 @@ public sealed class SignUpByMicrosoftCommandHandler : IRequestHandler<SignUpByMi
             throw ExternalAccountException.AlreadyCreated(ExternalService.Microsoft, microsoft.Identity);
 
         var account = Account.Create(
-            request.Language,
             request.Timezone,
-            request.Culture,
+            request.Locale,
             request.Ip,
             _hasher,
             _timeProvider

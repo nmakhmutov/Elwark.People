@@ -13,11 +13,8 @@ public sealed record UpdateAccountCommand(
     string? LastName,
     Nickname Nickname,
     bool UseNickname,
-    Language Language,
+    Locale Locale,
     Timezone Timezone,
-    DateFormat DateFormat,
-    TimeFormat TimeFormat,
-    DayOfWeek StartOfWeek,
     CountryCode Country
 ) : IRequest<Account>;
 
@@ -47,13 +44,10 @@ public sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountC
         account.Update(
             Name.Create(request.Nickname, request.FirstName, request.LastName, request.UseNickname),
             account.Picture,
-            request.Language,
+            request.Locale,
             region,
             request.Country,
             request.Timezone,
-            request.DateFormat,
-            request.TimeFormat,
-            request.StartOfWeek,
             _timeProvider
         );
 

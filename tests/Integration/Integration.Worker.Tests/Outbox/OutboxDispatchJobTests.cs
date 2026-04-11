@@ -6,7 +6,6 @@ using NSubstitute.ExceptionExtensions;
 using People.Application.Commands.EnrichAccount;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
-using People.Infrastructure.Commands;
 using People.Infrastructure.Outbox.Entities;
 using Integration.Shared.Tests.Infrastructure;
 using People.Application.Webhooks;

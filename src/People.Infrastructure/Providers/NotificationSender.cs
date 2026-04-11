@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -12,6 +13,9 @@ namespace People.Infrastructure.Providers;
 
 internal sealed partial class NotificationSender : INotificationSender
 {
+    private static readonly FrozenSet<string> Languages =
+        new[] { "en", "ru" }.ToFrozenSet();
+
     private readonly HttpClient _client;
     private readonly IEmailBuilder _emailBuilder;
     private readonly ILogger<NotificationSender> _logger;
@@ -23,10 +27,11 @@ internal sealed partial class NotificationSender : INotificationSender
         _logger = logger;
     }
 
-    public async Task SendConfirmationAsync(MailAddress email, string code, Language language, CancellationToken ct)
+    public async Task SendConfirmationAsync(MailAddress email, string code, Locale locale, CancellationToken ct)
     {
         LogSendingConfirmation(email.Address);
 
+        var language = Languages.Contains(locale.Language) ? locale.Language : "en";
         var template = $"Confirmation.{language}.liquid";
         var (subject, body) = await _emailBuilder.CreateEmailAsync(template, new ConfirmationCodeModel(code));
 

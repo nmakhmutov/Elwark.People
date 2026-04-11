@@ -5,11 +5,12 @@ using People.Application.Providers;
 using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
+using People.Infrastructure;
 using People.Infrastructure.Confirmations;
 
-namespace People.Infrastructure.Commands;
+namespace People.Worker.Commands;
 
-public sealed record SendEmailVerificationCommand(AccountId AccountId, string Email, Language Language) : ICommand;
+public sealed record SendEmailVerificationCommand(AccountId AccountId, string Email, Locale Locale) : ICommand;
 
 public sealed class SendEmailVerificationCommandHandler : ICommandHandler<SendEmailVerificationCommand>
 {
@@ -33,7 +34,7 @@ public sealed class SendEmailVerificationCommandHandler : ICommandHandler<SendEm
             .Select(x => x.Code)
             .FirstOrDefaultAsync(ct) ?? throw ConfirmationException.NotFound();
 
-        await _notification.SendConfirmationAsync(email, code, request.Language, ct);
+        await _notification.SendConfirmationAsync(email, code, request.Locale, ct);
 
         return Unit.Value;
     }

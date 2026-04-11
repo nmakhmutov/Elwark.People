@@ -13,7 +13,7 @@ public sealed class EmailVerificationRequestedMapper : IOutboxEventMapper<EmailV
             Guid.CreateVersion7(),
             evt.Id,
             evt.Email.Address,
-            evt.Language,
+            evt.Locale,
             evt.OccurredAt
         );
 

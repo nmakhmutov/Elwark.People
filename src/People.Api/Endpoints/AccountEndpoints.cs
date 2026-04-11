@@ -216,14 +216,11 @@ internal static class AccountEndpoints
         string? FirstName,
         string? LastName,
         string FullName,
-        Language Language,
+        Locale Locale,
         Picture Picture,
         RegionCode? RegionCode,
         CountryCode? CountryCode,
         Timezone Timezone,
-        DateFormat DateFormat,
-        TimeFormat TimeFormat,
-        DayOfWeek StartOfWeek,
         bool IsBanned
     )
     {
@@ -235,14 +232,11 @@ internal static class AccountEndpoints
                 result.Name.FirstName,
                 result.Name.LastName,
                 result.Name.FullName(),
-                result.Language,
+                result.Locale,
                 result.Picture,
                 result.RegionCode.IsEmpty() ? null : result.RegionCode,
                 result.CountryCode.IsEmpty() ? null : result.CountryCode,
                 result.Timezone,
-                result.DateFormat,
-                result.TimeFormat,
-                result.StartOfWeek,
                 result.Ban is not null
             );
     }
@@ -254,14 +248,11 @@ internal static class AccountEndpoints
         string? FirstName,
         string? LastName,
         string FullName,
-        Language Language,
+        Locale Locale,
         Picture Picture,
         RegionCode? RegionCode,
         CountryCode? CountryCode,
         Timezone Timezone,
-        DateFormat DateFormat,
-        TimeFormat TimeFormat,
-        DayOfWeek StartOfWeek,
         DateTime CreatedAt,
         IEnumerable<EmailResponse> Emails,
         IEnumerable<ConnectionResponse> Connections
@@ -275,14 +266,11 @@ internal static class AccountEndpoints
                 account.Name.FirstName,
                 account.Name.LastName,
                 account.Name.FullName(),
-                account.Language,
+                account.Locale,
                 account.Picture,
                 account.Region.IsEmpty() ? null : account.Region,
                 account.Country.IsEmpty() ? null : account.Country,
                 account.Timezone,
-                account.DateFormat,
-                account.TimeFormat,
-                account.StartOfWeek,
                 account.GetCreatedDateTime(),
                 account.Emails.Select(x => EmailResponse.Map(x)),
                 account.Externals.Select(x => ConnectionResponse.Map(x))
@@ -325,12 +313,9 @@ internal static class AccountEndpoints
         string? LastName,
         string Nickname,
         bool UseNickname,
-        string Language,
+        string Locale,
         string CountryCode,
-        string TimeZone,
-        string DateFormat,
-        string TimeFormat,
-        DayOfWeek StartOfWeek
+        string TimeZone
     )
     {
         public UpdateAccountCommand ToCommand(AccountId id) =>
@@ -340,11 +325,8 @@ internal static class AccountEndpoints
                 LastName,
                 Domain.ValueObjects.Nickname.Parse(Nickname),
                 UseNickname,
-                Domain.ValueObjects.Language.Parse(Language),
+                Domain.ValueObjects.Locale.Parse(Locale),
                 Timezone.Parse(TimeZone),
-                Domain.ValueObjects.DateFormat.Parse(DateFormat),
-                Domain.ValueObjects.TimeFormat.Parse(TimeFormat),
-                StartOfWeek,
                 Domain.ValueObjects.CountryCode.Parse(CountryCode)
             );
 
@@ -363,10 +345,10 @@ internal static class AccountEndpoints
                 RuleFor(x => x.LastName)
                     .MaximumLength(Name.LastNameLength);
 
-                RuleFor(x => x.Language)
+                RuleFor(x => x.Locale)
                     .NotEmpty()
-                    .Length(Domain.ValueObjects.Language.MaxLength)
-                    .Must(x => Domain.ValueObjects.Language.TryParse(x, out _));
+                    .Length(Domain.ValueObjects.Locale.Length)
+                    .Must(x => Domain.ValueObjects.Locale.TryParse(x, out _));
 
                 RuleFor(x => x.CountryCode)
                     .NotEmpty()
@@ -377,19 +359,6 @@ internal static class AccountEndpoints
                     .NotEmpty()
                     .MaximumLength(Timezone.MaxLength)
                     .Must(x => Timezone.TryParse(x, out _));
-
-                RuleFor(x => x.DateFormat)
-                    .NotEmpty()
-                    .MaximumLength(Domain.ValueObjects.DateFormat.MaxLength)
-                    .Must(x => Domain.ValueObjects.DateFormat.TryParse(x, out _));
-
-                RuleFor(x => x.TimeFormat)
-                    .NotEmpty()
-                    .MaximumLength(Domain.ValueObjects.TimeFormat.MaxLength)
-                    .Must(x => Domain.ValueObjects.TimeFormat.TryParse(x, out _));
-
-                RuleFor(x => x.StartOfWeek)
-                    .IsInEnum();
             }
         }
     }

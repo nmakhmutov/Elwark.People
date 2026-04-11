@@ -7,6 +7,6 @@ public sealed record EmailVerificationRequestedIntegrationEvent(
     Guid Id,
     long AccountId,
     string Email,
-    Language Language,
+    Locale Locale,
     DateTime OccurredAt
 ) : IIntegrationEvent;

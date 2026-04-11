@@ -5,8 +5,8 @@ using People.Application.Providers;
 using People.Application.Providers.Confirmation;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
-using People.Infrastructure.Commands;
 using People.Infrastructure.Confirmations;
+using People.Worker.Commands;
 using Xunit;
 
 namespace Integration.Worker.Tests.Commands;

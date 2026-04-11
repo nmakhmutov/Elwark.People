@@ -8,6 +8,6 @@ namespace People.Domain.DomainEvents;
 public sealed record EmailVerificationRequestedDomainEvent(
     AccountId Id,
     MailAddress Email,
-    Language Language,
+    Locale Locale,
     DateTime OccurredAt
 ) : IDomainEvent;

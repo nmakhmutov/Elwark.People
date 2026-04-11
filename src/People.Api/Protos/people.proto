@@ -28,15 +28,14 @@ message Email {
   string value = 1;
 }
 
-message Language {
+message Locale {
   string value = 1;
 }
 
 message Metadata {
   string ip_address = 1;
   string user_agent = 2;
-  string locale = 3;
-  string timezone = 4;
+  string timezone = 3;
 }
 
 message AccountRequest {
@@ -69,14 +68,14 @@ message AccountReply {
   string picture = 7;
   string country_code = 8;
   string time_zone = 9;
-  Language language = 10;
+  Locale locale = 10;
   Ban ban = 11;
   repeated string roles = 12;
 }
 
 message EmailSigningUpRequest {
   Email email = 1;
-  Language language = 2;
+  Locale locale = 2;
   Metadata metadata = 3;
 }
 
@@ -87,12 +86,13 @@ message EmailSigningUpReply {
 message EmailSignUpRequest {
   string token = 1;
   string code = 2;
-  Metadata metadata = 3;
+  Locale locale = 3;
+  Metadata metadata = 4;
 }
 
 message EmailSigningInRequest {
   Email email = 1;
-  Language language = 2;
+  Locale locale = 2;
   Metadata metadata = 3;
 }
 
@@ -103,24 +103,27 @@ message EmailSigningInReply {
 message EmailSignInRequest {
   string token = 1;
   string code = 2;
-  Metadata metadata = 3;
+  Locale locale = 3;
+  Metadata metadata = 4;
 }
 
 message ExternalSignInRequest {
   string access_token = 1;
-  Metadata metadata = 2;
+  Locale locale = 2;
+  Metadata metadata = 3;
 }
 
 message ExternalSignUpRequest {
   string access_token = 1;
-  Language language = 2;
+  Locale locale = 2;
   Metadata metadata = 3;
 }
 
 message ExternalAppendRequest {
   int64 id = 1;
   string access_token = 2;
-  Metadata metadata = 3;
+  Locale locale = 3;
+  Metadata metadata = 4;
 }
 
 message SignInReply {

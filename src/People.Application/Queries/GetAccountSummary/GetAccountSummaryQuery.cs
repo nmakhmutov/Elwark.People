@@ -25,13 +25,10 @@ public sealed class GetAccountSummaryQueryHandler : IQueryHandler<GetAccountSumm
                        a.last_name,
                        a.use_nickname,
                        a.picture,
-                       a.language,
+                       a.locale,
                        a.region_code,
                        a.country_code,
                        a.time_zone,
-                       a.date_format,
-                       a.time_format,
-                       a.start_of_week,
                        a.roles,
                        a.ban
                 FROM accounts a
@@ -51,15 +48,12 @@ public sealed class GetAccountSummaryQueryHandler : IQueryHandler<GetAccountSumm
                     x.GetBoolean(5)
                 ),
                 Picture.Parse(x.GetString(6)),
-                Language.Parse(x.GetString(7)),
+                Locale.Parse(x.GetString(7)),
                 RegionCode.Parse(x.GetString(8)),
                 CountryCode.Parse(x.GetString(9)),
                 Timezone.Parse(x.GetString(10)),
-                DateFormat.Parse(x.GetString(11)),
-                TimeFormat.Parse(x.GetString(12)),
-                (DayOfWeek)x.GetInt32(13),
-                x.GetFieldValue<string[]>(14),
-                x.IsDbNull(15) ? null : x.GetFieldValue<Ban>(15)
+                x.GetFieldValue<string[]>(11),
+                x.IsDbNull(12) ? null : x.GetFieldValue<Ban>(12)
             ))
             .FirstOrDefaultAsync(ct) ?? throw AccountException.NotFound(request.Id);
 }
@@ -69,13 +63,10 @@ public sealed record AccountSummary(
     string Email,
     Name Name,
     Picture Picture,
-    Language Language,
+    Locale Locale,
     RegionCode RegionCode,
     CountryCode CountryCode,
     Timezone Timezone,
-    DateFormat DateFormat,
-    TimeFormat TimeFormat,
-    DayOfWeek StartOfWeek,
     string[] Roles,
     Ban? Ban
 );

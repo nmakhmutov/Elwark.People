@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -14,9 +13,8 @@ namespace People.Application.Commands.SigningUpByEmail;
 
 public sealed record SigningUpByEmailCommand(
     MailAddress Email,
-    Language Language,
+    Locale Locale,
     Timezone Timezone,
-    CultureInfo Culture,
     IPAddress Ip
 ) : ICommand<string>;
 
@@ -52,13 +50,12 @@ public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpBy
             if (email.IsConfirmed)
                 throw EmailException.AlreadyCreated(request.Email);
 
-            return await SendAsync(email.AccountId, email.Email, request.Language, ct);
+            return await SendAsync(email.AccountId, email.Email, request.Locale, ct);
         }
 
         var account = Account.Create(
-            request.Language,
             request.Timezone,
-            request.Culture,
+            request.Locale,
             request.Ip,
             _hasher,
             _timeProvider
@@ -68,13 +65,13 @@ public sealed class SigningUpByEmailCommandHandler : ICommandHandler<SigningUpBy
         await _repository.AddAsync(account, ct);
         await _repository.UnitOfWork.SaveEntitiesAsync(ct);
 
-        return await SendAsync(account.Id, account.GetPrimaryEmail(), request.Language, ct);
+        return await SendAsync(account.Id, account.GetPrimaryEmail(), request.Locale, ct);
     }
 
-    private async Task<string> SendAsync(AccountId id, MailAddress email, Language language, CancellationToken ct)
+    private async Task<string> SendAsync(AccountId id, MailAddress email, Locale locale, CancellationToken ct)
     {
         var confirmation = await _confirmation.IssueAsync(id, ConfirmationType.EmailSignUp, ct);
-        await _notification.SendConfirmationAsync(email, confirmation.Code, language, ct);
+        await _notification.SendConfirmationAsync(email, confirmation.Code, locale, ct);
 
         return confirmation.Token;
     }

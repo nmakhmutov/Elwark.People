@@ -40,23 +40,17 @@ namespace People.Infrastructure.Migrations.People
                         .HasDefaultValue("--")
                         .HasColumnName("country_code");
 
-                    b.Property<string>("DateFormat")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("date_format");
-
                     b.Property<bool>("IsActivated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasColumnName("is_activated");
 
-                    b.Property<string>("Language")
+                    b.Property<string>("Locale")
                         .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)")
-                        .HasColumnName("language");
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)")
+                        .HasColumnName("locale");
 
                     b.Property<string>("Picture")
                         .IsRequired()
@@ -72,17 +66,7 @@ namespace People.Infrastructure.Migrations.People
                         .HasDefaultValue("--")
                         .HasColumnName("region_code");
 
-                    b.Property<int>("StartOfWeek")
-                        .HasColumnType("integer")
-                        .HasColumnName("start_of_week");
-
-                    b.Property<string>("TimeFormat")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("time_format");
-
-                    b.Property<string>("TimeZone")
+                    b.Property<string>("Timezone")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)")

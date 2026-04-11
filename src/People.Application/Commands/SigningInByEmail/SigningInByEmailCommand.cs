@@ -8,7 +8,7 @@ using People.Domain.ValueObjects;
 
 namespace People.Application.Commands.SigningInByEmail;
 
-public sealed record SigningInByEmailCommand(MailAddress Email, Language Language) : ICommand<string>;
+public sealed record SigningInByEmailCommand(MailAddress Email, Locale Locale) : ICommand<string>;
 
 public sealed class SigningInByEmailCommandHandler : ICommandHandler<SigningInByEmailCommand, string>
 {
@@ -37,7 +37,7 @@ public sealed class SigningInByEmailCommandHandler : ICommandHandler<SigningInBy
 
         var confirmation = await _confirmation.IssueAsync(email.AccountId, ConfirmationType.EmailSignIn, ct);
 
-        await _notification.SendConfirmationAsync(email.Email, confirmation.Code, request.Language, ct);
+        await _notification.SendConfirmationAsync(email.Email, confirmation.Code, request.Locale, ct);
 
         return confirmation.Token;
     }

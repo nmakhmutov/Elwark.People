@@ -44,7 +44,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
         if (account is null)
             return Unit.Value;
 
-        var ip = await GetIpInformation(request.IpAddress, account.Language);
+        var ip = await GetIpInformation(request.IpAddress, account.Locale);
         var gravatar = await _gravatar.GetAsync(account.GetPrimaryEmail());
 
         account.Update(
@@ -54,14 +54,11 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
                 account.Name.LastName ?? gravatar?.Name?.FirstOrDefault()?.LastName,
                 account.Name.UseNickname
             ),
-            Picture.Parse(gravatar?.ThumbnailUrl ?? string.Empty),
-            account.Language,
+            gravatar?.ThumbnailUrl is null ? account.Picture : Picture.Parse(gravatar.ThumbnailUrl ?? string.Empty),
+            account.Locale,
             account.Region.IsEmpty() ? RegionCode.ParseOrDefault(ip?.Region) : account.Region,
             account.Country.IsEmpty() ? CountryCode.ParseOrDefault(ip?.CountryCode) : account.Country,
             Timezone.ParseOrDefault(ip?.TimeZone),
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             _timeProvider
         );
 
@@ -71,7 +68,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
         return Unit.Value;
     }
 
-    private async Task<IpInformation?> GetIpInformation(string ip, Language language)
+    private async Task<IpInformation?> GetIpInformation(string ip, Locale locale)
     {
         if (!IPAddress.TryParse(ip, out _))
             return null;
@@ -80,7 +77,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
         {
             try
             {
-                var result = await ipService.GetAsync(ip, language.ToString());
+                var result = await ipService.GetAsync(ip, locale.Language);
                 if (result is null)
                     continue;
 

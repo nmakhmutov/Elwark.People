@@ -49,10 +49,10 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasMaxLength(Picture.MaxLength)
             .IsRequired();
 
-        builder.Property(x => x.Language)
-            .HasColumnName("language")
-            .HasConversion(x => x.ToString(), x => Language.Parse(x))
-            .HasMaxLength(Language.MaxLength)
+        builder.Property(x => x.Locale)
+            .HasColumnName("locale")
+            .HasConversion(x => x.ToString(), x => Locale.Parse(x))
+            .HasMaxLength(Locale.Length)
             .IsRequired();
 
         builder.Property(x => x.Region)
@@ -73,22 +73,6 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("time_zone")
             .HasConversion(x => x.ToString(), x => Timezone.Parse(x))
             .HasMaxLength(Timezone.MaxLength)
-            .IsRequired();
-
-        builder.Property(x => x.DateFormat)
-            .HasColumnName("date_format")
-            .HasConversion(x => x.ToString(), x => DateFormat.Parse(x))
-            .HasMaxLength(DateFormat.MaxLength)
-            .IsRequired();
-
-        builder.Property(x => x.TimeFormat)
-            .HasColumnName("time_format")
-            .HasConversion(x => x.ToString(), x => TimeFormat.Parse(x))
-            .HasMaxLength(TimeFormat.MaxLength)
-            .IsRequired();
-
-        builder.Property(x => x.StartOfWeek)
-            .HasColumnName("start_of_week")
             .IsRequired();
 
         builder.Property(x => x.IsActivated)

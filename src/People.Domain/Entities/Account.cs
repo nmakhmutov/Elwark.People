@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using People.Domain.DomainEvents;
@@ -30,15 +29,9 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
 
     public CountryCode Country { get; private set; }
 
-    public Language Language { get; private set; }
-
     public Timezone Timezone { get; private set; }
 
-    public DateFormat DateFormat { get; private set; }
-
-    public TimeFormat TimeFormat { get; private set; }
-
-    public DayOfWeek StartOfWeek { get; private set; }
+    public Locale Locale { get; private set; }
 
     public bool IsActivated { get; private set; }
 
@@ -63,11 +56,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         Picture picture,
         RegionCode region,
         CountryCode country,
-        Language language,
+        Locale locale,
         Timezone timezone,
-        DateFormat dateFormat,
-        TimeFormat timeFormat,
-        DayOfWeek startOfWeek,
         bool isActivated,
         byte[] regIp
     )
@@ -76,11 +66,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         Picture = picture;
         Region = region;
         Country = country;
-        Language = language;
+        Locale = locale;
         Timezone = timezone;
-        DateFormat = dateFormat;
-        TimeFormat = timeFormat;
-        StartOfWeek = startOfWeek;
         IsActivated = isActivated;
         _regIp = regIp;
         _regCountryCode = CountryCode.Empty;
@@ -98,9 +85,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     }
 
     public static Account Create(
-        Language language,
         Timezone timezone,
-        CultureInfo culture,
+        Locale locale,
         IPAddress ip,
         IIpHasher hasher,
         TimeProvider time
@@ -111,11 +97,8 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
             Picture.Default,
             RegionCode.Empty,
             CountryCode.Empty,
-            language,
+            locale,
             timezone,
-            DateFormat.Convert(culture),
-            TimeFormat.Convert(culture),
-            DayOfWeek.Monday,
             false,
             hasher.CreateHash(ip)
         );
@@ -176,7 +159,7 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
         if (emailAccount.IsConfirmed)
             throw EmailException.AlreadyConfirmed(email);
 
-        AddDomainEvent(new EmailVerificationRequestedDomainEvent(Id, email, Language, timeProvider.UtcNow()));
+        AddDomainEvent(new EmailVerificationRequestedDomainEvent(Id, email, Locale, timeProvider.UtcNow()));
     }
 
     public void DeleteEmail(MailAddress email, TimeProvider timeProvider)
@@ -261,25 +244,19 @@ public sealed class Account : Entity<AccountId>, IAggregateRoot
     public void Update(
         Name name,
         Picture? picture,
-        Language language,
+        Locale locale,
         RegionCode region,
         CountryCode country,
         Timezone timezone,
-        DateFormat dateFormat,
-        TimeFormat timeFormat,
-        DayOfWeek startOfWeek,
         TimeProvider timeProvider
     )
     {
         Name = name;
-        Picture = picture ?? Picture.Default;
+        Picture = picture ?? Picture;
         Region = region;
         Country = country;
-        Language = language;
+        Locale = locale;
         Timezone = timezone;
-        DateFormat = dateFormat;
-        TimeFormat = timeFormat;
-        StartOfWeek = startOfWeek;
 
         if (_regCountryCode == CountryCode.Empty)
             _regCountryCode = country;

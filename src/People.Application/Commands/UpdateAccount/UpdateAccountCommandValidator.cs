@@ -7,7 +7,7 @@ public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAcco
 {
     public UpdateAccountCommandValidator()
     {
-        RuleFor(x => x.Language)
+        RuleFor(x => x.Locale)
             .NotNull();
 
         RuleFor(x => x.Nickname)
@@ -21,15 +21,6 @@ public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAcco
 
         RuleFor(x => x.Timezone)
             .NotNull();
-
-        RuleFor(x => x.DateFormat)
-            .NotNull();
-
-        RuleFor(x => x.TimeFormat)
-            .NotNull();
-
-        RuleFor(x => x.StartOfWeek)
-            .IsInEnum();
 
         RuleFor(x => x.Country)
             .NotNull();

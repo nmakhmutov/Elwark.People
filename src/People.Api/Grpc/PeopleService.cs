@@ -50,9 +50,8 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
     {
         var command = new SigningUpByEmailCommand(
             request.Email.ToMailAddress(),
-            request.Language.ToLanguage(),
+            request.Locale.ToLocale(),
             request.Metadata.GetTimezone(),
-            request.Metadata.GetCulture(),
             request.Metadata.GetIpAddress()
         );
 
@@ -74,7 +73,7 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
         ServerCallContext context
     )
     {
-        var command = new SigningInByEmailCommand(request.Email.ToMailAddress(), request.Language.ToLanguage());
+        var command = new SigningInByEmailCommand(request.Email.ToMailAddress(), request.Locale.ToLocale());
         var token = await _mediator.Send(command, context.CancellationToken);
 
         return EmailSigningInReply.Map(token);
@@ -92,9 +91,8 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
     {
         var command = new SignUpByGoogleCommand(
             request.AccessToken,
-            request.Language.ToLanguage(),
+            request.Locale.ToLocale(),
             request.Metadata.GetTimezone(),
-            request.Metadata.GetCulture(),
             request.Metadata.GetIpAddress()
         );
 
@@ -123,9 +121,8 @@ internal sealed class PeopleService : People.Grpc.People.PeopleService.PeopleSer
     {
         var command = new SignUpByMicrosoftCommand(
             request.AccessToken,
-            request.Language.ToLanguage(),
+            request.Locale.ToLocale(),
             request.Metadata.GetTimezone(),
-            request.Metadata.GetCulture(),
             request.Metadata.GetIpAddress()
         );
 

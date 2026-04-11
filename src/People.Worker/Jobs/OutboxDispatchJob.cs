@@ -5,7 +5,6 @@ using People.Application.Webhooks;
 using People.Domain.Events;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
-using People.Infrastructure.Commands;
 using People.Infrastructure.Outbox.Entities;
 using People.Infrastructure.Outbox.Extensions;
 using People.Worker.Commands;
@@ -105,7 +104,7 @@ public sealed partial class OutboxDispatchJob : IJob
             ],
             EmailVerificationRequestedIntegrationEvent x =>
             [
-                new SendEmailVerificationCommand(x.AccountId, x.Email, x.Language)
+                new SendEmailVerificationCommand(x.AccountId, x.Email, x.Locale)
             ],
             _ => throw new ArgumentOutOfRangeException()
         };

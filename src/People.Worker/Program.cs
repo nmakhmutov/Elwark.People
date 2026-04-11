@@ -67,12 +67,10 @@ builder.Services.AddQuartz(options =>
 
 builder.AddSerilog(appName, configuration => configuration
     .Destructure.AsScalar<AccountId>()
-    .Destructure.AsScalar<Language>()
+    .Destructure.AsScalar<Locale>()
     .Destructure.AsScalar<RegionCode>()
     .Destructure.AsScalar<CountryCode>()
     .Destructure.AsScalar<Timezone>()
-    .Destructure.AsScalar<DateFormat>()
-    .Destructure.AsScalar<TimeFormat>()
     .Destructure.AsScalar<IPAddress>()
     .Destructure.ByTransforming<Account>(x => new { x.Id, x.Name.Nickname })
 );
