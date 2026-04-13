@@ -1,11 +1,12 @@
-name: сleanup
+name: cleanup
 
 on:
+  push:
   pull_request:
     types: [ closed ]
   delete:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 jobs:
@@ -17,7 +18,41 @@ jobs:
       actions: write
     steps:
       - name: Delete caches for PR branch
-        run: gh cache delete --all --ref ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+
+          BRANCH=${{ github.event.pull_request.head.ref }}
+          OUTPUT=""
+
+          if ! OUTPUT=$(gh cache delete --all --ref "$BRANCH" 2>&1); then
+            echo "$OUTPUT"
+
+            if grep -q "No caches to delete" <<<"$OUTPUT"; then
+              exit 0
+            fi
+
+            exit 1
+          fi
+
+          echo "$OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+  cleanup-pr-workflow-runs:
+    name: Delete PR Workflow Runs
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete completed workflow runs for PR branch
+        run: |
+          BRANCH=${{ github.event.pull_request.head.ref }}
+          echo "Deleting completed workflow runs for $BRANCH"
+
+          gh api -X GET repos/$GH_REPO/actions/runs --paginate --jq ".workflow_runs[] | select(.status == \"completed\" and .head_branch == \"$BRANCH\") | .id" \
+            | xargs -r -I{} gh api -X DELETE repos/$GH_REPO/actions/runs/{}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
@@ -30,14 +65,48 @@ jobs:
       actions: write
     steps:
       - name: Delete caches for deleted branch
-        run: gh cache delete --all --ref ${{ github.event.ref }}
+        run: |
+          set -euo pipefail
+
+          BRANCH=${{ github.event.ref }}
+          OUTPUT=""
+
+          if ! OUTPUT=$(gh cache delete --all --ref "$BRANCH" 2>&1); then
+            echo "$OUTPUT"
+
+            if grep -q "No caches to delete" <<<"$OUTPUT"; then
+              exit 0
+            fi
+
+            exit 1
+          fi
+
+          echo "$OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+  cleanup-branch-workflow-runs:
+    name: Delete Branch Workflow Runs
+    if: github.event_name == 'delete' && github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete completed workflow runs for deleted branch
+        run: |
+          BRANCH=${{ github.event.ref }}
+          echo "Deleting completed workflow runs for $BRANCH"
+
+          gh api -X GET repos/$GH_REPO/actions/runs --paginate --jq ".workflow_runs[] | select(.status == \"completed\" and .head_branch == \"$BRANCH\") | .id" \
+            | xargs -r -I{} gh api -X DELETE repos/$GH_REPO/actions/runs/{}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
 
   cleanup-stale-caches:
     name: Delete Stale Caches
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -55,7 +124,7 @@ jobs:
 
   cleanup-stale-artifacts:
     name: Delete Stale Artifacts
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       actions: write
@@ -67,6 +136,26 @@ jobs:
 
           gh api -X GET repos/$GH_REPO/actions/artifacts --paginate --jq ".artifacts[] | select(.created_at < \"$CUTOFF\") | .id" \
             | xargs -r -I{} gh api -X DELETE repos/$GH_REPO/actions/artifacts/{}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+
+  cleanup-workflow-runs:
+    name: Delete Old Workflow Runs
+    if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Delete completed workflow runs older than 7 days
+        run: |
+          set -euo pipefail
+
+          CUTOFF=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+          echo "Deleting completed workflow runs created before $CUTOFF"
+
+          gh api -X GET repos/$GH_REPO/actions/runs --paginate --jq ".workflow_runs[] | select(.status == \"completed\" and .created_at < \"$CUTOFF\") | .id" \
+            | xargs -r -I{} gh api -X DELETE repos/$GH_REPO/actions/runs/{}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}

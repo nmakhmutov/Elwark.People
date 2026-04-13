@@ -8,68 +8,24 @@ on:
       - 'tests/**'
       - '.github/workflows/people.yml'
       - 'coverage.runsettings'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - 'src/**'
-      - 'tests/**'
-      - '.github/workflows/people.yml'
-      - 'coverage.runsettings'
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-docker-images:
-    name: Build Docker / ${{ matrix.name }}
+  backend-unit:
+    name: Unit Tests / ${{ matrix.project }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: api
-            dockerfile: src/People.Api/Dockerfile
-            tag: elwark/people-api:ci
-          - name: worker
-            dockerfile: src/People.Worker/Dockerfile
-            tag: elwark/people-worker:ci
+        project:
+          - Unit.Api.Tests
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Build ${{ matrix.name }} image
-        uses: docker/build-push-action@v7
-        env:
-          DOCKER_BUILD_RECORD_RETENTION_DAYS: 1
-        with:
-          context: .
-          file: ${{ matrix.dockerfile }}
-          tags: ${{ matrix.tag }}
-          outputs: type=docker,dest=/tmp/people-${{ matrix.name }}.tar
-          cache-from: type=gha,scope=people-${{ matrix.name }}
-          cache-to: type=gha,scope=people-${{ matrix.name }},mode=max
-
-      - name: Upload ${{ matrix.name }} image artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: docker-image-${{ matrix.name }}
-          path: /tmp/people-${{ matrix.name }}.tar
-          if-no-files-found: error
-          retention-days: 1
-
-  unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    env:
-      DOTNET_NOLOGO: true
-      NUGET_XMLDOC_MODE: skip
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -83,32 +39,41 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - name: Build
+      - name: Build backend
+        env:
+          DOTNET_NOLOGO: true
+          NUGET_XMLDOC_MODE: skip
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
-      - name: Test
-        run: dotnet test tests/Unit/Unit.Api.Tests/Unit.Api.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
+      - name: Run ${{ matrix.project }}
+        run: dotnet test tests/Unit/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
 
       - name: Upload coverage
+        continue-on-error: true
         uses: actions/upload-artifact@v6
         with:
-          name: coverage-unit
+          name: coverage-unit-${{ matrix.project }}
           path: TestResults/**/coverage.cobertura.xml
           if-no-files-found: error
           retention-days: 1
 
-  api-integration-tests:
-    name: API Integration Tests
+  backend-integration:
+    name: Integration Tests / ${{ matrix.project }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - Integration.Api.Tests
+          - Integration.Worker.Tests
     env:
-      DOTNET_NOLOGO: true
-      NUGET_XMLDOC_MODE: skip
       Serilog__MinimumLevel__Default: Warning
       Serilog__MinimumLevel__Override__Microsoft: Warning
       Serilog__MinimumLevel__Override__Microsoft.Hosting: Information
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -122,150 +87,33 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('**/Directory.Packages.props') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - name: Build
-        run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
-
-      - name: Test
-        run: dotnet test tests/Integration/Integration.Api.Tests/Integration.Api.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-api-integration
-          path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: error
-          retention-days: 1
-
-  worker-integration-tests:
-    name: Worker Integration Tests
-    runs-on: ubuntu-latest
-    env:
-      DOTNET_NOLOGO: true
-      NUGET_XMLDOC_MODE: skip
-      Serilog__MinimumLevel__Default: Warning
-      Serilog__MinimumLevel__Override__Microsoft: Warning
-      Serilog__MinimumLevel__Override__Microsoft.Hosting: Information
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v5
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/Directory.Packages.props') }}
-          restore-keys: nuget-${{ runner.os }}-
-
-      - name: Build
-        run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
-
-      - name: Test
-        run: dotnet test tests/Integration/Integration.Worker.Tests/Integration.Worker.Tests.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-worker-integration
-          path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: error
-          retention-days: 1
-
-  smoke-tests:
-    name: Smoke Tests
-    runs-on: ubuntu-latest
-    needs: [ build-docker-images, unit-tests, api-integration-tests, worker-integration-tests ]
-    services:
-      postgres:
-        image: postgres:18
+      - name: Build backend
         env:
-          POSTGRES_DB: elwark_people
-          POSTGRES_USER: master_account
-          POSTGRES_PASSWORD: master_password
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U master_account -d elwark_people"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-    steps:
-      - name: Download API image
-        uses: actions/download-artifact@v8
+          DOTNET_NOLOGO: true
+          NUGET_XMLDOC_MODE: skip
+        run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
+
+      - name: Run ${{ matrix.project }}
+        run: dotnet test tests/Integration/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
+
+      - name: Upload coverage
+        continue-on-error: true
+        uses: actions/upload-artifact@v6
         with:
-          name: docker-image-api
-          path: /tmp/docker-images/api
+          name: coverage-integration-${{ matrix.project }}
+          path: TestResults/**/coverage.cobertura.xml
+          if-no-files-found: ignore
+          retention-days: 1
 
-      - name: Download worker image
-        uses: actions/download-artifact@v8
-        with:
-          name: docker-image-worker
-          path: /tmp/docker-images/worker
-
-      - name: Load images
-        run: |
-          docker load --input /tmp/docker-images/api/people-api.tar
-          docker load --input /tmp/docker-images/worker/people-worker.tar
-
-      - name: Start API container
-        run: |
-          docker run -d --name people-api-smoke \
-            -p 8080:8080 \
-            --add-host host.docker.internal:host-gateway \
-            -e Kestrel__Endpoints__Http__Url=http://0.0.0.0:8080 \
-            -e ConnectionStrings__Postgresql='Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password' \
-            elwark/people-api:ci
-
-      - name: Wait for API health
-        run: |
-          for i in {1..30}; do
-            if curl --fail --silent http://127.0.0.1:8080/health/live >/dev/null && \
-               curl --fail --silent http://127.0.0.1:8080/health/ready >/dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-          docker logs people-api-smoke
-          exit 1
-
-      - name: Start worker container
-        run: |
-          docker run -d --name people-worker-smoke \
-            -p 8081:8081 \
-            --add-host host.docker.internal:host-gateway \
-            -e Kestrel__Endpoints__Http__Url=http://0.0.0.0:8081 \
-            -e ConnectionStrings__Postgresql='Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password' \
-            elwark/people-worker:ci
-
-      - name: Wait for worker health
-        run: |
-          for i in {1..30}; do
-            if curl --fail --silent http://127.0.0.1:8081/health/live >/dev/null && \
-               curl --fail --silent http://127.0.0.1:8081/health/ready >/dev/null; then
-              exit 0
-            fi
-            sleep 2
-          done
-          docker logs people-worker-smoke
-          exit 1
-
-      - name: Cleanup smoke containers
-        if: always()
-        run: docker rm -f people-api-smoke people-worker-smoke || true
-
-  coverage-report:
+  backend-coverage:
     name: Coverage Report
     runs-on: ubuntu-latest
-    needs: [ unit-tests, api-integration-tests, worker-integration-tests ]
+    needs: [ backend-unit, backend-integration ]
     if: ${{ !cancelled() }}
-    permissions:
-      actions: write
+
     steps:
       - name: Download coverage results
+        continue-on-error: true
         uses: actions/download-artifact@v8
         with:
           pattern: coverage-*
@@ -279,7 +127,7 @@ jobs:
           reports: coverage-results/**/coverage.cobertura.xml
           targetdir: coverage-report
           reporttypes: HtmlInline;MarkdownSummaryGithub;Cobertura
-          assemblyfilters: -[Unit.Api.Tests]*;-[Integration.Api.Tests]*;-[Integration.Worker.Tests]*
+          assemblyfilters: -[Unit.Api.Tests]*;-[Integration.Api.Tests]*;-[Integration.Worker.Tests]*;-[Integration.Shared.Tests]*
           verbosity: Warning
 
       - name: Add coverage summary to job
@@ -287,6 +135,7 @@ jobs:
         run: cat coverage-report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload HTML report
+        continue-on-error: true
         if: hashFiles('coverage-results/**/coverage.cobertura.xml') != ''
         uses: actions/upload-artifact@v6
         with:
@@ -294,12 +143,121 @@ jobs:
           path: coverage-report/
           retention-days: 1
 
-      - name: Delete coverage artifacts
-        if: always()
+  backend-smoke-tests:
+    name: Backend Docker Build and Smoke Tests
+    needs: [ backend-unit, backend-integration ]
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
+          POSTGRES_USER: master_account
+          POSTGRES_PASSWORD: master_password
+          POSTGRES_DB: elwark_people
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U master_account -d elwark_people"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and export API image
+        uses: docker/build-push-action@v7
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+        with:
+          context: .
+          file: src/People.Api/Dockerfile
+          tags: elwark/people-api:ci
+          outputs: type=docker,dest=/tmp/people-api.tar
+          cache-from: type=gha,scope=people-api
+          cache-to: type=gha,scope=people-api,mode=max
+
+      - name: Build and export Worker image
+        uses: docker/build-push-action@v7
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+        with:
+          context: .
+          file: src/People.Worker/Dockerfile
+          tags: elwark/people-worker:ci
+          outputs: type=docker,dest=/tmp/people-worker.tar
+          cache-from: type=gha,scope=people-worker
+          cache-to: type=gha,scope=people-worker,mode=max
+
+      - name: Load images
         run: |
-          gh api "repos/$GH_REPO/actions/runs/$RUN_ID/artifacts" --paginate --jq '.artifacts[] | select(.name == "coverage-unit" or .name == "coverage-api-integration" or .name == "coverage-worker-integration") | .id' \
-            | xargs -r -I{} gh api --method DELETE "repos/$GH_REPO/actions/artifacts/{}"
+          docker load -i /tmp/people-api.tar
+          docker load -i /tmp/people-worker.tar
+
+      - name: Smoke test API container
+        run: |
+          set -euo pipefail
+
+          docker run -d --rm --name people-api-smoke -p 8080:8080 \
+            --add-host=host.docker.internal:host-gateway \
+            -e Kestrel__Endpoints__Http__Url=http://0.0.0.0:8080 \
+            -e ConnectionStrings__Postgresql="Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password" \
+            elwark/people-api:ci
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8080/health/live > /dev/null && curl -fsS http://127.0.0.1:8080/health/ready > /dev/null; then
+              break
+            fi
+
+            if ! docker ps --format '{{.Names}}' | grep -q '^people-api-smoke$'; then
+              echo "API container exited. Logs:"
+              docker logs people-api-smoke || true
+              exit 1
+            fi
+
+            sleep 2
+
+            if [ "$i" -eq 30 ]; then
+              echo "Health check timed out. Logs:"
+              docker logs people-api-smoke || true
+              exit 1
+            fi
+          done
+
+      - name: Smoke test Worker container
+        run: |
+          set -euo pipefail
+
+          docker run -d --rm --name people-worker-smoke -p 8081:8081 \
+            --add-host=host.docker.internal:host-gateway \
+            -e Kestrel__Endpoints__Http__Url=http://0.0.0.0:8081 \
+            -e ConnectionStrings__Postgresql="Host=host.docker.internal;Port=5432;Database=elwark_people;Username=master_account;Password=master_password" \
+            elwark/people-worker:ci
+
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8081/health/live > /dev/null && curl -fsS http://127.0.0.1:8081/health/ready > /dev/null; then
+              break
+            fi
+
+            if ! docker ps --format '{{.Names}}' | grep -q '^people-worker-smoke$'; then
+              echo "Worker container exited. Logs:"
+              docker logs people-worker-smoke || true
+              exit 1
+            fi
+
+            sleep 2
+
+            if [ "$i" -eq 30 ]; then
+              echo "Health check timed out. Logs:"
+              docker logs people-worker-smoke || true
+              exit 1
+            fi
+          done
+
+      - name: Cleanup smoke containers
+        if: always()
+        run: docker rm -f people-api-smoke people-worker-smoke || true
