@@ -19,6 +19,7 @@ using People.Api.Infrastructure;
 using People.Api.Infrastructure.Interceptors;
 using People.Application.Behaviour;
 using People.Application.Queries.GetAccountSummary;
+using People.Application.Webhooks;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;
 using People.Infrastructure;
@@ -163,12 +164,21 @@ await using var app = builder.Build();
 
 await using (var scope = app.Services.CreateAsyncScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
-    await dbContext.Database.MigrateAsync();
+    var peopleContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
+    await peopleContext.Database.MigrateAsync();
 
-    var webhookDbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<WebhookDbContext>>();
-    await using var webhookDb = await webhookDbFactory.CreateDbContextAsync();
-    await webhookDb.Database.MigrateAsync();
+    var webhookContext = scope.ServiceProvider.GetRequiredService<WebhookDbContext>();
+    await webhookContext.Database.MigrateAsync();
+
+    if (!builder.Environment.IsProduction())
+    {
+        const string url = "http://localhost:5011/webhooks/people";
+        if (!await webhookContext.Consumers.AnyAsync(x => x.DestinationUrl == url))
+        {
+            var consumer = WebhookConsumer.Create(WebhookType.Updated, WebhookMethod.Post, url, "webhook-secret");
+            await webhookContext.Consumers.AddAsync(consumer);
+        }
+    }
 }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
