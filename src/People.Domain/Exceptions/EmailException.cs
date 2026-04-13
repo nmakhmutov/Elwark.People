@@ -4,11 +4,11 @@ namespace People.Domain.Exceptions;
 
 public sealed class EmailException : PeopleException
 {
+    public MailAddress Email { get; }
+
     public EmailException(MailAddress email, string code, string? message = null)
         : base(nameof(EmailException), code, message) =>
         Email = email;
-
-    public MailAddress Email { get; }
 
     public static EmailException NotFound(MailAddress email) =>
         new(email, nameof(NotFound), $"Email '{email}' not found");

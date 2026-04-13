@@ -8,14 +8,14 @@ public abstract class OutboxDbContext<T> : DbContext, IOutboxDbContext where T :
 {
     private readonly OutboxPipeline<T> _pipeline;
 
-    protected OutboxDbContext(DbContextOptions<T> options, OutboxPipeline<T> pipeline) : base(options) =>
-        _pipeline = pipeline;
-
     public DbSet<OutboxMessage> OutboxMessages =>
         Set<OutboxMessage>();
 
     public DbSet<OutboxConsumer> OutboxConsumers =>
         Set<OutboxConsumer>();
+
+    protected OutboxDbContext(DbContextOptions<T> options, OutboxPipeline<T> pipeline) : base(options) =>
+        _pipeline = pipeline;
 
     public override async Task<int> SaveChangesAsync(CancellationToken ct = default)
     {

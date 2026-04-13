@@ -16,7 +16,7 @@ internal sealed class EmailVerificationTokenService : IEmailVerificationTokenSer
     public string CreateToken(Guid confirmationId, MailAddress email)
     {
         var payload = ComposePayload(confirmationId, email.Address);
-        var encrypted = Transform(payload, encrypt: true);
+        var encrypted = Transform(payload, true);
 
         return Convert.ToBase64String(encrypted);
     }
@@ -25,7 +25,7 @@ internal sealed class EmailVerificationTokenService : IEmailVerificationTokenSer
     {
         try
         {
-            var decrypted = Transform(Convert.FromBase64String(token), encrypt: false);
+            var decrypted = Transform(Convert.FromBase64String(token), false);
             var confirmationId = new Guid(decrypted[..16]);
             var email = new MailAddress(Encoding.UTF8.GetString(decrypted[16..]));
 

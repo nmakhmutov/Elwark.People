@@ -10,8 +10,14 @@ namespace People.Infrastructure.Providers;
 
 internal sealed class CountryClient : ICountryClient
 {
-    private readonly HttpClient _client;
+    private static readonly HybridCacheEntryOptions CacheEntryOptions = new()
+    {
+        Expiration = TimeSpan.FromHours(1),
+        LocalCacheExpiration = TimeSpan.FromHours(1)
+    };
+
     private readonly HybridCache _cache;
+    private readonly HttpClient _client;
 
     public CountryClient(HttpClient client, HybridCache cache)
     {
@@ -34,11 +40,7 @@ internal sealed class CountryClient : ICountryClient
 
                 return await response.Content.ReadFromJsonAsync<IReadOnlyCollection<RestCountry>>(token) ?? [];
             },
-            new HybridCacheEntryOptions
-            {
-                Expiration = TimeSpan.FromHours(1),
-                LocalCacheExpiration = TimeSpan.FromHours(1),
-            },
+            CacheEntryOptions,
             ["countries"],
             ct
         );

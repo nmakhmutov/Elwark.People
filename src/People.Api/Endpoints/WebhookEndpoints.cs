@@ -25,13 +25,17 @@ internal static class WebhookEndpoints
         return routes;
     }
 
-    private static IAsyncEnumerable<WebhookResponse> GetAllAsync(IWebhookConsumerRepository repository, CancellationToken ct) =>
+    private static IAsyncEnumerable<WebhookResponse> GetAllAsync(
+        IWebhookConsumerRepository repository,
+        CancellationToken ct
+    ) =>
         repository.GetAsync(ct).Select(WebhookResponse.Map);
 
     private static async Task<Results<Ok<WebhookResponse>, NotFound>> GetByIdAsync(
         Guid id,
         IWebhookConsumerRepository repository,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var consumer = await repository.GetAsync(id, ct);
         return consumer is null
@@ -42,7 +46,8 @@ internal static class WebhookEndpoints
     private static async Task<WebhookResponse> CreateAsync(
         CreateRequest request,
         IWebhookConsumerRepository repository,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var consumer = WebhookConsumer.Create(request.Type, request.Method, request.DestinationUrl, request.Token);
         var created = await repository.CreateAsync(consumer, ct);
@@ -53,7 +58,8 @@ internal static class WebhookEndpoints
         Guid id,
         UpdateRequest request,
         IWebhookConsumerRepository repository,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var consumer = await repository.GetAsync(id, ct);
         if (consumer is null)
@@ -68,7 +74,8 @@ internal static class WebhookEndpoints
     private static async Task<Results<NoContent, NotFound>> DeleteAsync(
         Guid id,
         IWebhookConsumerRepository repository,
-        CancellationToken ct)
+        CancellationToken ct
+    )
     {
         var consumer = await repository.GetAsync(id, ct);
         if (consumer is null)

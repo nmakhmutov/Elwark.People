@@ -52,7 +52,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property(x => x.Locale)
             .HasColumnName("locale")
             .HasConversion(x => x.ToString(), x => Locale.Parse(x))
-            .HasMaxLength(Locale.Length)
+            .HasMaxLength(Locale.MaxLength)
             .IsRequired();
 
         builder.Property(x => x.Region)
@@ -66,7 +66,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
             .HasColumnName("country_code")
             .HasConversion(x => x.ToString(), x => CountryCode.Parse(x))
             .HasDefaultValue(CountryCode.Empty)
-            .HasMaxLength(CountryCode.MaxLength)
+            .HasMaxLength(CountryCode.Length)
             .IsRequired();
 
         builder.Property(x => x.Timezone)
@@ -96,7 +96,7 @@ internal sealed class AccountEntityTypeConfiguration : IEntityTypeConfiguration<
         builder.Property<CountryCode>("_regCountryCode")
             .HasColumnName("reg_country_code")
             .HasConversion(x => x.ToString(), x => CountryCode.Parse(x))
-            .HasMaxLength(CountryCode.MaxLength)
+            .HasMaxLength(CountryCode.Length)
             .IsRequired();
 
         builder.Property<DateTime>("_lastLogIn")

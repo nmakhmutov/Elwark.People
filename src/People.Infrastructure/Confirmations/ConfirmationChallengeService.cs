@@ -18,7 +18,7 @@ internal sealed class ConfirmationChallengeService : IConfirmationChallengeServi
     private static readonly HybridCacheEntryOptions LockCacheOptions = new()
     {
         Expiration = LockTtl,
-        LocalCacheExpiration = LockTtl,
+        LocalCacheExpiration = LockTtl
     };
 
     private readonly HybridCache _cache;

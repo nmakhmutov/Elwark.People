@@ -18,9 +18,9 @@ internal sealed class NpgsqlAccessor : INpgsqlAccessor, IAsyncDisposable
             .Build();
     }
 
-    public ISqlBuilder Sql(string sql) =>
-        new SqlBuilder(_dataSource, sql);
-
     public ValueTask DisposeAsync() =>
         _dataSource.DisposeAsync();
+
+    public ISqlBuilder Sql(string sql) =>
+        new SqlBuilder(_dataSource, sql);
 }

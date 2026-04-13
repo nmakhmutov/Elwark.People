@@ -26,7 +26,7 @@
     <InternalsVisibleTo Include="Unit.Api.Tests"/>
     <InternalsVisibleTo Include="People.Worker"/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Update="Email\Views\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

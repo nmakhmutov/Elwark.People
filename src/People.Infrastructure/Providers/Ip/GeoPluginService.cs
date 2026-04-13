@@ -50,13 +50,6 @@ internal sealed partial class GeoPluginService : IGeoPluginService
         }
     }
 
-    private sealed record GeoPluginResponse(
-        [property: JsonPropertyName("geoplugin_city")] string? City,
-        [property: JsonPropertyName("geoplugin_countryCode")] string? CountryCode,
-        [property: JsonPropertyName("geoplugin_continentCode")] string? ContinentCode,
-        [property: JsonPropertyName("geoplugin_timezone")] string? Timezone
-    );
-
     [LoggerMessage(LogLevel.Information, "Received ip information {@Information}")]
     partial void LogReceivedInformation(GeoPluginResponse information);
 
@@ -65,4 +58,11 @@ internal sealed partial class GeoPluginService : IGeoPluginService
 
     [LoggerMessage(LogLevel.Warning, "Cannot deserialize geo plugin object")]
     partial void LogReceivedException(Exception exception);
+
+    private sealed record GeoPluginResponse(
+        [property: JsonPropertyName("geoplugin_city")] string? City,
+        [property: JsonPropertyName("geoplugin_countryCode")] string? CountryCode,
+        [property: JsonPropertyName("geoplugin_continentCode")] string? ContinentCode,
+        [property: JsonPropertyName("geoplugin_timezone")] string? Timezone
+    );
 }

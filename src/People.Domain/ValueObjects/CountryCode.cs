@@ -5,7 +5,7 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct CountryCode
 {
-    public const int MaxLength = 2;
+    public const int Length = 2;
 
     public static readonly CountryCode Empty = new("--");
 
@@ -21,7 +21,7 @@ public readonly partial struct CountryCode
         this == Empty;
 
     public static bool IsValid([NotNullWhen(true)] string? value) =>
-        !string.IsNullOrWhiteSpace(value) && value.Length == MaxLength;
+        !string.IsNullOrWhiteSpace(value) && value.Length == Length;
 
     public override string ToString() =>
         ValueAsString;

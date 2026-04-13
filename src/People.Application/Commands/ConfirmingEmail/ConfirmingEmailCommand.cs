@@ -12,9 +12,9 @@ public sealed record ConfirmingEmailCommand(AccountId Id, MailAddress Email) : I
 public sealed class ConfirmingEmailCommandHandler : ICommandHandler<ConfirmingEmailCommand, ConfirmingTokenModel>
 {
     private readonly IConfirmationChallengeService _confirmation;
-    private readonly IEmailVerificationTokenService _tokens;
     private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
+    private readonly IEmailVerificationTokenService _tokens;
 
     public ConfirmingEmailCommandHandler(
         IConfirmationChallengeService confirmation,

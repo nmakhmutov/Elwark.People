@@ -4,5 +4,5 @@ namespace People.Infrastructure.Webhooks;
 
 public interface IWebhookSender
 {
-    Task SendAsync(long accountId, DateTime occurredAt, IEnumerable<WebhookConsumer> consumers, CancellationToken ct);
+    Task SendAsync(IEnumerable<WebhookConsumer> consumers, WebhookPayload payload, CancellationToken ct);
 }

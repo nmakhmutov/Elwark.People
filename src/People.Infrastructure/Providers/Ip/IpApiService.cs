@@ -30,7 +30,8 @@ internal sealed partial class IpApiService : IIpApiService
 
     public async Task<IpInformation?> GetAsync(string ip, string lang)
     {
-        var response = await _client.GetAsync($"/json/{ip}?lang={lang}&fields=status,continentCode,countryCode,city,timezone");
+        var response =
+            await _client.GetAsync($"/json/{ip}?lang={lang}&fields=status,continentCode,countryCode,city,timezone");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -60,14 +61,6 @@ internal sealed partial class IpApiService : IIpApiService
         }
     }
 
-    private sealed record IpApiResponse(
-        string Status,
-        string CountryCode,
-        string ContinentCode,
-        string? City,
-        string TimeZone
-    );
-
     [LoggerMessage(LogLevel.Information, "Received ip information {@Information}")]
     partial void LogReceivedInformation(IpApiResponse information);
 
@@ -76,4 +69,12 @@ internal sealed partial class IpApiService : IIpApiService
 
     [LoggerMessage(LogLevel.Warning, "Cannot deserialize ip api object")]
     partial void LogReceivedException(Exception exception);
+
+    private sealed record IpApiResponse(
+        string Status,
+        string CountryCode,
+        string ContinentCode,
+        string? City,
+        string TimeZone
+    );
 }

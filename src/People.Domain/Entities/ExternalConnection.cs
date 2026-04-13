@@ -8,6 +8,14 @@ public sealed class ExternalConnection : Entity<Guid>
 {
     private DateTime _createdAt;
 
+    public ExternalService Type { get; private set; }
+
+    public string Identity { get; private set; }
+
+    public string? FirstName { get; private set; }
+
+    public string? LastName { get; private set; }
+
     private ExternalConnection(
         Guid id,
         ExternalService type,
@@ -24,14 +32,6 @@ public sealed class ExternalConnection : Entity<Guid>
         LastName = lastName;
         _createdAt = createdAt;
     }
-
-    public ExternalService Type { get; private set; }
-
-    public string Identity { get; private set; }
-
-    public string? FirstName { get; private set; }
-
-    public string? LastName { get; private set; }
 
     public static ExternalConnection Google(string identity, string? firstName, string? lastName, DateTime now) =>
         new(Guid.CreateVersion7(), ExternalService.Google, identity, firstName, lastName, now);

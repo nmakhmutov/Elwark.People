@@ -20,8 +20,8 @@ public sealed record UpdateAccountCommand(
 
 public sealed class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand, Account>
 {
-    private readonly IAccountRepository _repository;
     private readonly ICountryClient _countryClient;
+    private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public UpdateAccountCommandHandler(

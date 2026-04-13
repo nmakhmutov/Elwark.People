@@ -9,14 +9,14 @@ public sealed class EmailAccount : Entity<Guid>
     private DateTime? _confirmedAt;
     private DateTime _createdAt;
 
-    public static EmailAccount Create(
-        AccountId id,
-        string email,
-        bool isPrimary,
-        DateTime? confirmedAt,
-        DateTime createdAt
-    ) =>
-        new(Guid.CreateVersion7(), id, email, isPrimary, confirmedAt, createdAt);
+    public AccountId AccountId { get; private set; }
+
+    public string Email { get; private set; }
+
+    public bool IsPrimary { get; private set; }
+
+    public bool IsConfirmed =>
+        _confirmedAt.HasValue;
 
     private EmailAccount(
         Guid id,
@@ -35,14 +35,14 @@ public sealed class EmailAccount : Entity<Guid>
         _createdAt = createdAt;
     }
 
-    public AccountId AccountId { get; private set; }
-
-    public string Email { get; private set; }
-
-    public bool IsPrimary { get; private set; }
-
-    public bool IsConfirmed =>
-        _confirmedAt.HasValue;
+    public static EmailAccount Create(
+        AccountId id,
+        string email,
+        bool isPrimary,
+        DateTime? confirmedAt,
+        DateTime createdAt
+    ) =>
+        new(Guid.CreateVersion7(), id, email, isPrimary, confirmedAt, createdAt);
 
     internal bool SetPrimary() =>
         IsPrimary = true;

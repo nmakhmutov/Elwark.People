@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using System.Net;
-using System.Text;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using People.Application.Webhooks;
 
@@ -11,19 +10,19 @@ namespace People.Infrastructure.Webhooks;
 
 internal sealed partial class WebhookSender(HttpClient httpClient, ILogger<WebhookSender> logger) : IWebhookSender
 {
-    private static readonly JsonSerializerOptions Options = new()
+    private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web)
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    public Task SendAsync(long accountId, DateTime occurredAt, IEnumerable<WebhookConsumer> consumers, CancellationToken ct)
+    public Task SendAsync(IEnumerable<WebhookConsumer> consumers, WebhookPayload payload, CancellationToken ct)
     {
-        var json = JsonSerializer.Serialize(new WebhookPayload(accountId, occurredAt), Options);
+        var json = JsonContent.Create(payload, options: Options);
         return Task.WhenAll(consumers.Select(s => SendOneAsync(s, json, ct)));
     }
 
-    private async Task SendOneAsync(WebhookConsumer subscription, string json, CancellationToken ct)
+    private async Task SendOneAsync(WebhookConsumer subscription, JsonContent json, CancellationToken ct)
     {
         var request = new HttpRequestMessage
         {
@@ -35,7 +34,7 @@ internal sealed partial class WebhookSender(HttpClient httpClient, ILogger<Webho
                 WebhookMethod.Delete => HttpMethod.Delete,
                 _ => throw new UnreachableException($"Unknown webhook method {subscription.Method}")
             },
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
+            Content = json
         };
 
         if (!string.IsNullOrWhiteSpace(subscription.Token))
@@ -49,12 +48,11 @@ internal sealed partial class WebhookSender(HttpClient httpClient, ILogger<Webho
         WebhookSent(request.Method, request.RequestUri, response.StatusCode);
     }
 
-    [UsedImplicitly]
-    private readonly record struct WebhookPayload(long AccountId, DateTime CreatedAt);
-
     [LoggerMessage(LogLevel.Information, "Webhook to {Method} {Url} completed with Status Code: {StatusCode}")]
     private partial void WebhookSent(HttpMethod method, Uri url, HttpStatusCode statusCode);
 
     [LoggerMessage(LogLevel.Information, "Initiating webhook to {Method} {Url}")]
     partial void WebhookSending(HttpMethod method, Uri url);
 }
+
+public readonly record struct WebhookPayload(long AccountId, DateTime CreatedAt);

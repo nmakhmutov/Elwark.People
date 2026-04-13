@@ -11,8 +11,8 @@ public sealed record SignInByMicrosoftCommand(string Token) : IRequest<SignInRes
 
 public sealed class SignInByMicrosoftCommandHandler : IRequestHandler<SignInByMicrosoftCommand, SignInResult>
 {
-    private readonly IAccountRepository _repository;
     private readonly IMicrosoftApiService _microsoft;
+    private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public SignInByMicrosoftCommandHandler(

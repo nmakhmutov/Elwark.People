@@ -347,12 +347,12 @@ internal static class AccountEndpoints
 
                 RuleFor(x => x.Locale)
                     .NotEmpty()
-                    .Length(Domain.ValueObjects.Locale.Length)
+                    .MaximumLength(Domain.ValueObjects.Locale.MaxLength)
                     .Must(x => Domain.ValueObjects.Locale.TryParse(x, out _));
 
                 RuleFor(x => x.CountryCode)
                     .NotEmpty()
-                    .Length(Domain.ValueObjects.CountryCode.MaxLength)
+                    .Length(Domain.ValueObjects.CountryCode.Length)
                     .Must(x => Domain.ValueObjects.CountryCode.TryParse(x, out _));
 
                 RuleFor(x => x.TimeZone)

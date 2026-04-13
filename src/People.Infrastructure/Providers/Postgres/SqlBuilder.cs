@@ -23,12 +23,6 @@ public sealed class SqlBuilder : ISqlBuilder
             Value = value
         });
 
-    private SqlBuilder AddParameter(NpgsqlParameter parameter)
-    {
-        _parameters.Add(parameter);
-        return this;
-    }
-
     public ISqlReader<TResult> Select<TResult>(Func<INpgsqlRow, TResult> mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
@@ -51,5 +45,11 @@ public sealed class SqlBuilder : ISqlBuilder
             command.Parameters.Add(parameter);
 
         return await command.ExecuteNonQueryAsync(ct);
+    }
+
+    private SqlBuilder AddParameter(NpgsqlParameter parameter)
+    {
+        _parameters.Add(parameter);
+        return this;
     }
 }

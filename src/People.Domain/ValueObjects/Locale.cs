@@ -5,7 +5,7 @@ namespace People.Domain.ValueObjects;
 [StronglyTypedId<string>(generateNewtonsoftJsonConverter: false, generateMongoDBBsonSerialization: false)]
 public readonly partial struct Locale
 {
-    public const int Length = 12;
+    public const int MaxLength = 12;
 
     public string Language =>
         _value[..2].ToLower();

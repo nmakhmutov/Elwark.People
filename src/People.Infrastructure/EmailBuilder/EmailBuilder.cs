@@ -8,9 +8,9 @@ namespace People.Infrastructure.EmailBuilder;
 
 internal sealed partial class EmailBuilder : IEmailBuilder
 {
-    private readonly IFluidViewRenderer _rendering;
-    private readonly ILogger<EmailBuilder> _logger;
     private readonly string _host;
+    private readonly ILogger<EmailBuilder> _logger;
+    private readonly IFluidViewRenderer _rendering;
 
     public EmailBuilder(IFluidViewRenderer rendering, IConfiguration configuration, ILogger<EmailBuilder> logger)
     {

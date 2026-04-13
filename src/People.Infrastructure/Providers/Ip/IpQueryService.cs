@@ -50,6 +50,15 @@ internal sealed partial class IpQueryService : IIpQueryService
         }
     }
 
+    [LoggerMessage(LogLevel.Information, "Received ip information {@Information}")]
+    partial void LogReceivedInformation(IpQueryResponse information);
+
+    [LoggerMessage(LogLevel.Warning, "Ip query return error response {body}")]
+    partial void LogReceivedError(string body);
+
+    [LoggerMessage(LogLevel.Warning, "Cannot deserialize ip query object")]
+    partial void LogReceivedException(Exception exception);
+
     private sealed record IpQueryResponse(IpQueryResponse.LocationModel Location)
     {
         public bool IsEmpty =>
@@ -63,13 +72,4 @@ internal sealed partial class IpQueryService : IIpQueryService
             string? Timezone
         );
     }
-
-    [LoggerMessage(LogLevel.Information, "Received ip information {@Information}")]
-    partial void LogReceivedInformation(IpQueryResponse information);
-
-    [LoggerMessage(LogLevel.Warning, "Ip query return error response {body}")]
-    partial void LogReceivedError(string body);
-
-    [LoggerMessage(LogLevel.Warning, "Cannot deserialize ip query object")]
-    partial void LogReceivedException(Exception exception);
 }

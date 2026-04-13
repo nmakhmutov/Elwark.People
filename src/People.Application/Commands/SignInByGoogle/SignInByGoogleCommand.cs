@@ -11,8 +11,8 @@ public sealed record SignInByGoogleCommand(string Token) : IRequest<SignInResult
 
 public sealed class SignInByGoogleCommandHandler : IRequestHandler<SignInByGoogleCommand, SignInResult>
 {
-    private readonly IAccountRepository _repository;
     private readonly IGoogleApiService _google;
+    private readonly IAccountRepository _repository;
     private readonly TimeProvider _timeProvider;
 
     public SignInByGoogleCommandHandler(

@@ -4,5 +4,5 @@ public enum ConfirmationType
 {
     EmailSignIn = 1,
     EmailSignUp = 2,
-    EmailConfirmation = 3,
+    EmailConfirmation = 3
 }

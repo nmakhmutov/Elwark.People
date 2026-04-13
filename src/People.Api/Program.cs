@@ -177,6 +177,7 @@ await using (var scope = app.Services.CreateAsyncScope())
         {
             var consumer = WebhookConsumer.Create(WebhookType.Updated, WebhookMethod.Post, url, "webhook-secret");
             await webhookContext.Consumers.AddAsync(consumer);
+            await webhookContext.SaveChangesAsync();
         }
     }
 }

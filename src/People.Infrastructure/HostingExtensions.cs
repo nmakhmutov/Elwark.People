@@ -179,6 +179,10 @@ public static class HostingExtensions
 
 public sealed record AppSecurityOptions
 {
+    public byte[] AppKey { get; init; }
+
+    public byte[] AppVector { get; init; }
+
     public AppSecurityOptions(string appKey, string appVector)
     {
         if (string.IsNullOrWhiteSpace(appKey))
@@ -190,10 +194,6 @@ public sealed record AppSecurityOptions
         AppKey = Encoding.UTF8.GetBytes(appKey);
         AppVector = Encoding.UTF8.GetBytes(appVector);
     }
-
-    public byte[] AppKey { get; init; }
-
-    public byte[] AppVector { get; init; }
 }
 
 internal sealed class ElwarkJsonFormatter : ITextFormatter

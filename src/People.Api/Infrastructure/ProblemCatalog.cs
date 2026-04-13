@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Globalization;
+using FluentValidation;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using People.Domain.Exceptions;
@@ -13,7 +14,7 @@ internal static class ProblemCatalog
         new Dictionary<string, int>(StringComparer.Ordinal)
             {
                 ["NotFound"] = StatusCodes.Status404NotFound,
-                ["AlreadySent"] = StatusCodes.Status429TooManyRequests,
+                ["AlreadySent"] = StatusCodes.Status429TooManyRequests
             }
             .ToFrozenDictionary(StringComparer.Ordinal);
 
@@ -29,12 +30,12 @@ internal static class ProblemCatalog
                 [StatusCode.Unimplemented] = StatusCodes.Status501NotImplemented,
                 [StatusCode.Internal] = StatusCodes.Status500InternalServerError,
                 [StatusCode.Unknown] = StatusCodes.Status500InternalServerError,
-                [StatusCode.Unavailable] = StatusCodes.Status503ServiceUnavailable,
+                [StatusCode.Unavailable] = StatusCodes.Status503ServiceUnavailable
             }
             .ToFrozenDictionary();
 
     public static bool IsValidationRpcException(RpcException exception) =>
-        GetTrailer(exception.Trailers, "ex-name") == nameof(FluentValidation.ValidationException);
+        GetTrailer(exception.Trailers, "ex-name") == nameof(ValidationException);
 
     public static ProblemDetails FromConfirmationException(ConfirmationException exception)
     {

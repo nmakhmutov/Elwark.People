@@ -2,11 +2,11 @@ namespace People.Infrastructure.Confirmations;
 
 public sealed class ConfirmationException : Exception
 {
+    public string Code { get; }
+
     public ConfirmationException(string code, string? message = null)
         : base(message) =>
         Code = code;
-
-    public string Code { get; }
 
     public static ConfirmationException NotFound() =>
         new("NotFound");

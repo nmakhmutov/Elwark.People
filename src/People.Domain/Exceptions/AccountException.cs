@@ -4,11 +4,11 @@ namespace People.Domain.Exceptions;
 
 public sealed class AccountException : PeopleException
 {
+    public AccountId Id { get; }
+
     private AccountException(string code, AccountId id, string? message = null)
         : base(nameof(AccountException), code, message) =>
         Id = id;
-
-    public AccountId Id { get; }
 
     public static AccountException NotFound(AccountId id) =>
         new(nameof(NotFound), id, $"Account '{id}' not found");

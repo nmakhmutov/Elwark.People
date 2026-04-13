@@ -4,8 +4,8 @@ namespace People.Api.Infrastructure.Filters;
 
 internal sealed class ValidatorFilter<T> : IEndpointFilter where T : class
 {
-    private readonly IValidator<T> _validator;
     private readonly IProblemDetailsFactory _problems;
+    private readonly IValidator<T> _validator;
 
     public ValidatorFilter(IValidator<T> validator, IProblemDetailsFactory problems)
     {

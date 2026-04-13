@@ -9,11 +9,11 @@ public abstract class Entity : IHasDomainEvents
     public IReadOnlyCollection<IDomainEvent> GetDomainEvents() =>
         _domainEvents.ToArray();
 
-    protected void AddDomainEvent(IDomainEvent evt) =>
-        _domainEvents.Add(evt);
-
     public void ClearDomainEvents() =>
         _domainEvents.Clear();
+
+    protected void AddDomainEvent(IDomainEvent evt) =>
+        _domainEvents.Add(evt);
 
     public abstract bool IsTransient();
 }

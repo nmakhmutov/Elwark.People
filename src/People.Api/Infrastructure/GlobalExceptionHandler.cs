@@ -6,8 +6,8 @@ namespace People.Api.Infrastructure;
 
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> _logger;
     private readonly IProblemDetailsFactory _factory;
+    private readonly ILogger<GlobalExceptionHandler> _logger;
 
     public GlobalExceptionHandler(IProblemDetailsFactory factory, ILogger<GlobalExceptionHandler> logger)
     {

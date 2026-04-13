@@ -12,9 +12,6 @@ public sealed class WebhookConsumer
 
     public string? Token { get; private set; }
 
-    public static WebhookConsumer Create(WebhookType type, WebhookMethod method, string destination, string? token) =>
-        new(Guid.CreateVersion7(), type, method, destination, token);
-
     private WebhookConsumer(Guid id, WebhookType type, WebhookMethod method, string destinationUrl, string? token)
     {
         Id = id;
@@ -23,6 +20,9 @@ public sealed class WebhookConsumer
         DestinationUrl = destinationUrl;
         Token = token;
     }
+
+    public static WebhookConsumer Create(WebhookType type, WebhookMethod method, string destination, string? token) =>
+        new(Guid.CreateVersion7(), type, method, destination, token);
 
     public void Update(WebhookType type, WebhookMethod method, string destinationUrl, string? token)
     {

@@ -2,6 +2,12 @@ namespace People.Infrastructure.Outbox.Entities;
 
 public sealed class OutboxConsumer
 {
+    public Guid MessageId { get; }
+
+    public string Consumer { get; }
+
+    public DateTime ProcessedAt { get; }
+
     // ReSharper disable once UnusedMember.Local
     private OutboxConsumer() =>
         Consumer = string.Empty;
@@ -12,12 +18,6 @@ public sealed class OutboxConsumer
         Consumer = consumer;
         ProcessedAt = processedAt;
     }
-
-    public Guid MessageId { get; }
-
-    public string Consumer { get; }
-
-    public DateTime ProcessedAt { get; }
 
     public static OutboxConsumer Create(Guid outboxMessageId, string consumerName, DateTime processedAt)
     {

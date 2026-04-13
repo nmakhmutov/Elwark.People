@@ -106,7 +106,19 @@ public static class NicknameGenerator
 
     public static Nickname Create()
     {
-        var nickname = $"{Adjectives[Random.Shared.Next(Adjectives.Length)]}_{Animals[Random.Shared.Next(Animals.Length)]}";
+        var adjective = Adjectives[Random.Shared.Next(Adjectives.Length)];
+        var animal = Animals[Random.Shared.Next(Animals.Length)];
+
+        var nickname = string.Create(
+            adjective.Length + animal.Length + 1,
+            (adjective, animal),
+            static (buffer, state) =>
+            {
+                state.adjective.AsSpan().CopyTo(buffer);
+                buffer[state.adjective.Length] = '_';
+                state.animal.AsSpan().CopyTo(buffer[(state.adjective.Length + 1)..]);
+            }
+        );
 
         return Nickname.Parse(nickname);
     }

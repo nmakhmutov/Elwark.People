@@ -23,7 +23,12 @@ public sealed class Name : ValueObject
         UseNickname = useNickname;
     }
 
-    public static Name Create(Nickname nickname, string? firstName = null, string? lastName = null, bool useNickname = true)
+    public static Name Create(
+        Nickname nickname,
+        string? firstName = null,
+        string? lastName = null,
+        bool useNickname = true
+    )
     {
         firstName = firstName.TrimToNull();
         lastName = lastName.TrimToNull();

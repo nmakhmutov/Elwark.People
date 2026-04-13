@@ -15,9 +15,9 @@ namespace People.Worker.Jobs;
 [DisallowConcurrentExecution]
 public sealed partial class OutboxDispatchJob : IJob
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<OutboxDispatchJob> _logger;
     private readonly IDbContextFactory<PeopleDbContext> _dbFactory;
+    private readonly ILogger<OutboxDispatchJob> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
 
     public OutboxDispatchJob(
         IServiceScopeFactory scopeFactory,
