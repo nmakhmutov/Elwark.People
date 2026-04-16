@@ -34,9 +34,8 @@ public sealed class WebhookDispatchJobTests(PostgreSqlFixture fixture)
         await using var verifyDb = fixture.CreateWebhookContext();
         Assert.Equal(0, await verifyDb.Messages.CountAsync());
         await sender.Received(1).SendAsync(
-            1L,
-            Arg.Any<DateTime>(),
             Arg.Is<IEnumerable<WebhookConsumer>>(list => list.Count() == 1),
+            Arg.Is<WebhookPayload>(payload => payload.AccountId == 1L),
             Arg.Any<CancellationToken>());
     }
 
@@ -53,9 +52,8 @@ public sealed class WebhookDispatchJobTests(PostgreSqlFixture fixture)
 
         var sender = Substitute.For<IWebhookSender>();
         sender.SendAsync(
-                Arg.Any<long>(),
-                Arg.Any<DateTime>(),
                 Arg.Any<IEnumerable<WebhookConsumer>>(),
+                Arg.Any<WebhookPayload>(),
                 Arg.Any<CancellationToken>())
             .ThrowsAsync(new HttpRequestException("timeout"));
 
@@ -90,9 +88,8 @@ public sealed class WebhookDispatchJobTests(PostgreSqlFixture fixture)
         Assert.Equal(0, await verifyDb.Messages.CountAsync());
         await sender.DidNotReceive()
             .SendAsync(
-                Arg.Any<long>(),
-                Arg.Any<DateTime>(),
                 Arg.Any<IEnumerable<WebhookConsumer>>(),
+                Arg.Any<WebhookPayload>(),
                 Arg.Any<CancellationToken>());
     }
 
@@ -109,9 +106,8 @@ public sealed class WebhookDispatchJobTests(PostgreSqlFixture fixture)
 
         var sender = Substitute.For<IWebhookSender>();
         sender.SendAsync(
-                Arg.Any<long>(),
-                Arg.Any<DateTime>(),
                 Arg.Any<IEnumerable<WebhookConsumer>>(),
+                Arg.Any<WebhookPayload>(),
                 Arg.Any<CancellationToken>())
             .ThrowsAsync(new HttpRequestException("error"));
 
@@ -120,9 +116,8 @@ public sealed class WebhookDispatchJobTests(PostgreSqlFixture fixture)
 
         sender.ClearReceivedCalls();
         sender.SendAsync(
-                Arg.Any<long>(),
-                Arg.Any<DateTime>(),
                 Arg.Any<IEnumerable<WebhookConsumer>>(),
+                Arg.Any<WebhookPayload>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -132,9 +127,8 @@ public sealed class WebhookDispatchJobTests(PostgreSqlFixture fixture)
         Assert.Equal(1, await verifyDb.Messages.CountAsync());
         await sender.DidNotReceive()
             .SendAsync(
-                Arg.Any<long>(),
-                Arg.Any<DateTime>(),
                 Arg.Any<IEnumerable<WebhookConsumer>>(),
+                Arg.Any<WebhookPayload>(),
                 Arg.Any<CancellationToken>());
     }
 

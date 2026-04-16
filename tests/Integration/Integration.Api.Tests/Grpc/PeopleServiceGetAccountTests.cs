@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Grpc.Core;
@@ -11,7 +10,7 @@ using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
 using Xunit;
-using DomainLanguage = People.Domain.ValueObjects.Language;
+using DomainLocale = People.Domain.ValueObjects.Locale;
 using TimeZone = People.Domain.ValueObjects.Timezone;
 
 namespace Integration.Api.Tests.Grpc;
@@ -35,9 +34,8 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                DomainLanguage.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                DomainLocale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime
@@ -47,13 +45,10 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
             account.Update(
                 Name.Create(Nickname.Parse("GrpcNick"), "G", "User", useNickname: false),
                 Picture.Parse("https://grpc.example/p.png"),
-                DomainLanguage.Parse("de"),
+                DomainLocale.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("AT"),
                 TimeZone.Parse("Europe/Vienna"),
-                DateFormat.Default,
-                TimeFormat.Default,
-                DayOfWeek.Monday,
                 fixedTime
             );
 
@@ -85,7 +80,7 @@ public sealed class PeopleServiceGetAccountTests(PostgreSqlFixture postgres) : G
         Assert.Equal("https://grpc.example/p.png", reply.Picture);
         Assert.Equal("AT", reply.CountryCode);
         Assert.Equal("Europe/Vienna", reply.TimeZone);
-        Assert.Equal("de", reply.Language.Value);
+        Assert.Equal("de", reply.Locale.Value);
         Assert.Single(reply.Roles);
         Assert.Equal("viewer", reply.Roles[0]);
         Assert.Null(reply.Ban);

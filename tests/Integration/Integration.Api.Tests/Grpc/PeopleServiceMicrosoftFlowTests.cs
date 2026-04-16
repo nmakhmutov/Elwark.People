@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Grpc.Core;
@@ -13,7 +12,7 @@ using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
 using Xunit;
-using DomainLanguage = People.Domain.ValueObjects.Language;
+using DomainLocale = People.Domain.ValueObjects.Locale;
 
 namespace Integration.Api.Tests.Grpc;
 
@@ -41,7 +40,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             new ExternalSignUpRequest
             {
                 AccessToken = "grpc-ms-signup-token",
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
                 Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx));
@@ -67,9 +66,8 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             await mediatorSeed.Send(
                 new SignUpByMicrosoftCommand(
                     "grpc-ms-signin-token",
-                    DomainLanguage.Parse("en"),
+                    DomainLocale.Parse("en"),
                     Timezone.Utc,
-                    CultureInfo.InvariantCulture,
                     IPAddress.Loopback
                 ),
                 CancellationToken.None
@@ -161,7 +159,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
                 new ExternalSignUpRequest
                 {
                     AccessToken = "bad-ms-token",
-                    Language = GrpcProtoTestData.EnLanguage(),
+                    Locale = GrpcProtoTestData.EnLocale(),
                     Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx)));
@@ -194,7 +192,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
             new ExternalSignUpRequest
             {
                 AccessToken = "grpc-ms-dup-token-a",
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
                 Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx));
@@ -206,7 +204,7 @@ public sealed class PeopleServiceMicrosoftFlowTests(PostgreSqlFixture postgres) 
                 new ExternalSignUpRequest
                 {
                     AccessToken = "grpc-ms-dup-token-b",
-                    Language = GrpcProtoTestData.EnLanguage(),
+                    Locale = GrpcProtoTestData.EnLocale(),
                     Metadata = GrpcProtoTestData.TestMetadata()
                 },
                 static (s, req, ctx) => s.SignUpByMicrosoft(req, ctx)));

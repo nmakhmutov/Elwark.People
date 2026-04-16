@@ -16,12 +16,9 @@ public sealed class UpdateRequestValidatorTests
             LastName: "B",
             Nickname: "annb",
             UseNickname: false,
-            Language: "en",
+            Locale: "en",
             CountryCode: "DE",
-            TimeZone: TimeZoneInfo.Utc.Id,
-            DateFormat: "yyyy-MM-dd",
-            TimeFormat: "HH:mm",
-            StartOfWeek: DayOfWeek.Tuesday
+            TimeZone: TimeZoneInfo.Utc.Id
         );
 
     [Fact]
@@ -37,9 +34,7 @@ public sealed class UpdateRequestValidatorTests
     [InlineData("  ")]
     public void EmptyNickname_Fails(string nickname)
     {
-        var r = ValidRequest() with { Nickname = nickname };
-
-        var result = Validator.Validate(r);
+        var result = Validator.Validate(ValidRequest() with { Nickname = nickname });
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.PropertyName == nameof(AccountEndpoints.UpdateRequest.Nickname));
@@ -48,9 +43,7 @@ public sealed class UpdateRequestValidatorTests
     [Fact]
     public void NicknameShorterThanThreeChars_Fails()
     {
-        var r = ValidRequest() with { Nickname = "ab" };
-
-        var result = Validator.Validate(r);
+        var result = Validator.Validate(ValidRequest() with { Nickname = "ab" });
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.PropertyName == nameof(AccountEndpoints.UpdateRequest.Nickname));
@@ -59,77 +52,45 @@ public sealed class UpdateRequestValidatorTests
     [Fact]
     public void NicknameExceedingMaxLength_Fails()
     {
-        var r = ValidRequest() with { Nickname = new string('x', Nickname.MaxLength + 1) };
-
-        var result = Validator.Validate(r);
+        var result = Validator.Validate(ValidRequest() with { Nickname = new string('x', Nickname.MaxLength + 1) });
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.PropertyName == nameof(AccountEndpoints.UpdateRequest.Nickname));
     }
 
-    /// <remarks>
-    /// Language rules chain <c>Length(2)</c> with <c>Must(Language.TryParse)</c>. FluentValidation continues rule
-    /// execution, and the generated <c>TryParse</c> throws <see cref="FormatException"/> for non-empty invalid values.
-    /// </remarks>
     [Theory]
-    [InlineData("e")]
-    [InlineData("eng")]
-    public void InvalidLanguageNotTwoChars_ThrowsFormatException(string language)
+    [InlineData("")]
+    [InlineData("  ")]
+    public void EmptyLocale_Fails(string locale)
     {
-        var r = ValidRequest() with { Language = language };
+        var result = Validator.Validate(ValidRequest() with { Locale = locale });
 
-        Assert.Throws<FormatException>(() => Validator.Validate(r));
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(AccountEndpoints.UpdateRequest.Locale));
     }
 
     [Fact]
-    public void InvalidLanguageValue_ThrowsFormatException()
+    public void LocaleLongerThanMaxLength_Fails()
     {
-        var r = ValidRequest() with { Language = "iv" };
+        var result = Validator.Validate(ValidRequest() with { Locale = new string('x', Locale.MaxLength + 1) });
 
-        Assert.Throws<FormatException>(() => Validator.Validate(r));
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.PropertyName == nameof(AccountEndpoints.UpdateRequest.Locale));
     }
 
     [Fact]
     public void InvalidTimeZone_FallsBackAndStillValid()
     {
-        var r = ValidRequest() with { TimeZone = "Not/A/Real/Zone_Id" };
+        var result = Validator.Validate(ValidRequest() with { TimeZone = "Not/A/Real/Zone_Id" });
 
-        var result = Validator.Validate(r);
         Assert.True(result.IsValid);
-    }
-
-    [Fact]
-    public void InvalidDateFormat_ThrowsFormatException()
-    {
-        var r = ValidRequest() with { DateFormat = "not-a-format" };
-
-        Assert.Throws<FormatException>(() => Validator.Validate(r));
-    }
-
-    [Fact]
-    public void InvalidTimeFormat_ThrowsFormatException()
-    {
-        var r = ValidRequest() with { TimeFormat = "25:99" };
-
-        Assert.Throws<FormatException>(() => Validator.Validate(r));
     }
 
     [Fact]
     public void InvalidCountryCode_ThrowsFormatException()
     {
-        var r = ValidRequest() with { CountryCode = "D" };
+        var request = ValidRequest() with { CountryCode = "D" };
 
-        Assert.Throws<FormatException>(() => Validator.Validate(r));
-    }
-
-    [Fact]
-    public void InvalidStartOfWeek_Fails()
-    {
-        var r = ValidRequest() with { StartOfWeek = (DayOfWeek)42 };
-
-        var result = Validator.Validate(r);
-
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.PropertyName == nameof(AccountEndpoints.UpdateRequest.StartOfWeek));
+        Assert.Throws<FormatException>(() => Validator.Validate(request));
     }
 }

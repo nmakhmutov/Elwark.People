@@ -9,7 +9,7 @@ namespace Integration.Shared.Tests.Infrastructure;
 
 public static class AccountTestFactory
 {
-    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
+    public static readonly Locale EnLocale = Locale.Parse("en");
 
     public static TimeProvider FixedUtc(DateTime utc)
     {
@@ -20,17 +20,14 @@ public static class AccountTestFactory
 
     public static Account CreateNewAccount(IIpHasher hasher, TimeProvider clock, string nickname = "integration")
     {
-        var account = Account.Create(Language.Parse("en"), Timezone.Utc, Culture, IPAddress.Loopback, hasher, clock);
+        var account = Account.Create(Timezone.Utc, EnLocale, IPAddress.Loopback, hasher, clock);
         account.Update(
             Name.Create(Nickname.Parse(nickname)),
             account.Picture,
-            account.Language,
+            account.Locale,
             account.Region,
             account.Country,
             account.Timezone,
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             clock);
         account.ClearDomainEvents();
         return account;

@@ -44,11 +44,8 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
                 LastName: "Lee",
                 Nickname: Nickname.Parse("annlee"),
                 UseNickname: false,
-                Language: Language.Parse("ru"),
+                Locale: Locale.Parse("ru"),
                 Timezone: TimeZone.Parse("Europe/Berlin"),
-                DateFormat: DateFormat.Parse("dd.MM.yyyy"),
-                TimeFormat: TimeFormat.Parse("HH:mm"),
-                StartOfWeek: DayOfWeek.Wednesday,
                 Country: CountryCode.Parse("DE")),
             CancellationToken.None);
 
@@ -59,11 +56,8 @@ public sealed class UpdateAccountFlowTests(PostgreSqlFixture postgres) : Command
         Assert.False(account.Name.UseNickname);
         Assert.Equal("Ann", account.Name.FirstName);
         Assert.Equal("Lee", account.Name.LastName);
-        Assert.Equal(Language.Parse("ru"), account.Language);
+        Assert.Equal(Locale.Parse("ru"), account.Locale);
         Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.Timezone);
-        Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
-        Assert.Equal(TimeFormat.Parse("HH:mm"), account.TimeFormat);
-        Assert.Equal(DayOfWeek.Wednesday, account.StartOfWeek);
         Assert.Equal(CountryCode.Parse("DE"), account.Country);
         Assert.Equal(RegionCode.Parse("EU"), account.Region);
     }

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using FluentValidation;
@@ -37,8 +36,6 @@ namespace Integration.Api.Tests.Commands;
 /// </summary>
 public sealed class CommandTestFixture : IAsyncLifetime
 {
-    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-
     private readonly PostgreSqlFixture _postgres;
     private ServiceProvider? _provider;
 
@@ -147,18 +144,16 @@ public sealed class CommandTestFixture : IAsyncLifetime
         var hasher = scope.ServiceProvider.GetRequiredService<IIpHasher>();
         var time = scope.ServiceProvider.GetRequiredService<TimeProvider>();
 
-        var account = Account.Create(Language.Parse("en"), Timezone.Utc, Culture, IPAddress.Loopback, hasher, time);
+        var account = Account.Create(Timezone.Utc, AccountTestFactory.EnLocale, IPAddress.Loopback, hasher, time);
         account.Update(
             Name.Create(Nickname.Parse(nickname)),
             account.Picture,
-            account.Language,
+            account.Locale,
             account.Region,
             account.Country,
             account.Timezone,
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
-            time);
+            time
+            );
         account.ClearDomainEvents();
         account.AddEmail(email, true, time);
 

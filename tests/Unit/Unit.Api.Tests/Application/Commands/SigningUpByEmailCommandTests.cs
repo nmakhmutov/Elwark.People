@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using NSubstitute;
@@ -17,14 +16,13 @@ namespace Unit.Api.Tests.Application.Commands;
 public sealed class SigningUpByEmailCommandTests
 {
     private static readonly DateTime Utc = new(2026, 6, 1, 9, 0, 0, DateTimeKind.Utc);
-    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
     private static readonly Timezone Timezone = Timezone.Utc;
 
     [Fact]
     public async Task Handle_NewEmail_CreatesAccountReturnsTokenAndSendsConfirmation()
     {
         var email = new MailAddress("new@example.com");
-        var language = Language.Parse("en");
+        var locale = Locale.Parse("en");
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1, 2]);
@@ -52,7 +50,7 @@ public sealed class SigningUpByEmailCommandTests
             time);
 
         var token = await handler.Handle(
-            new SigningUpByEmailCommand(email, language, Timezone, Culture, IPAddress.Loopback),
+            new SigningUpByEmailCommand(email, locale, Timezone, IPAddress.Loopback),
             CancellationToken.None
         );
 
@@ -66,7 +64,7 @@ public sealed class SigningUpByEmailCommandTests
             .SendConfirmationAsync(
                 Arg.Is<MailAddress>(m => m.Address == email.Address),
                 "CODE1",
-                language,
+                locale,
                 Arg.Any<CancellationToken>()
             );
     }
@@ -75,7 +73,7 @@ public sealed class SigningUpByEmailCommandTests
     public async Task Handle_UnconfirmedEmailExists_ResendsConfirmationWithoutCreatingAccount()
     {
         var email = new MailAddress("pending@example.com");
-        var language = Language.Parse("en");
+        var locale = Locale.Parse("en");
         var existingId = new AccountId(42L);
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
         var hasher = Substitute.For<IIpHasher>();
@@ -99,7 +97,7 @@ public sealed class SigningUpByEmailCommandTests
             time);
 
         var token = await handler.Handle(
-            new SigningUpByEmailCommand(email, language, Timezone, Culture, IPAddress.Loopback),
+            new SigningUpByEmailCommand(email, locale, Timezone, IPAddress.Loopback),
             CancellationToken.None);
 
         Assert.Equal("tok-re", token);
@@ -110,7 +108,7 @@ public sealed class SigningUpByEmailCommandTests
             .SendConfirmationAsync(
                 Arg.Is<MailAddress>(m => m.Address == email.Address),
                 "CODE2",
-                language,
+                locale,
                 Arg.Any<CancellationToken>());
     }
 
@@ -131,7 +129,7 @@ public sealed class SigningUpByEmailCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SigningUpByEmailCommand(email, Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
+                new SigningUpByEmailCommand(email, Locale.Parse("en"), Timezone, IPAddress.Loopback),
                 CancellationToken.None
             ));
 

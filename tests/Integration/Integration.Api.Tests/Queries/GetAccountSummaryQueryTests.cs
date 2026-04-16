@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -35,9 +34,8 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                Language.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                Locale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime
@@ -46,13 +44,10 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
             account.Update(
                 Name.Create(Nickname.Parse("SumNick"), "Sum", "Mary", useNickname: false),
                 Picture.Parse("https://summary.example/p.png"),
-                Language.Parse("ru"),
+                Locale.Parse("ru"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("FR"),
                 TimeZone.Parse("Europe/Paris"),
-                DateFormat.Parse("yyyy-MM-dd"),
-                TimeFormat.Parse("HH:mm"),
-                DayOfWeek.Tuesday,
                 fixedTime);
             account.AddEmail(primary, true, fixedTime);
             account.AddRole("member", fixedTime);
@@ -77,13 +72,10 @@ public sealed class GetAccountSummaryQueryTests(PostgreSqlFixture postgres) : Qu
         Assert.False(result.Name.UseNickname);
         Assert.Equal("Sum Mary", result.Name.FullName());
         Assert.Equal(Picture.Parse("https://summary.example/p.png"), result.Picture);
-        Assert.Equal(Language.Parse("ru"), result.Language);
+        Assert.Equal(Locale.Parse("ru"), result.Locale);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
         Assert.Equal(CountryCode.Parse("FR"), result.CountryCode);
         Assert.Equal(TimeZone.Parse("Europe/Paris"), result.Timezone);
-        Assert.Equal(DateFormat.Parse("yyyy-MM-dd"), result.DateFormat);
-        Assert.Equal(TimeFormat.Parse("HH:mm"), result.TimeFormat);
-        Assert.Equal(DayOfWeek.Tuesday, result.StartOfWeek);
         Assert.Equal(new[] { "member", "admin" }, result.Roles);
 
         Assert.NotNull(result.Ban);

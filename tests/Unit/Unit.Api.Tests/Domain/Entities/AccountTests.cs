@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using System.Reflection;
@@ -26,16 +25,15 @@ public sealed class AccountTests
         return tp;
     }
 
-    private static Account CreateAccount(Language? language = null)
+    private static Account CreateAccount(Locale? locale = null)
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1, 2, 3]);
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
 
         return Account.Create(
-            language ?? Language.Parse("en"),
             TimeZoneVo.Utc,
-            CultureInfo.InvariantCulture,
+            locale ?? Locale.Parse("en"),
             IPAddress.Parse("127.0.0.1"),
             hasher,
             time
@@ -59,10 +57,8 @@ public sealed class AccountTests
 
         Assert.Equal(ExpectedDefaultPicture, account.Picture);
         Assert.Equal(TimeZoneVo.Utc, account.Timezone);
-        Assert.Equal(DayOfWeek.Monday, account.StartOfWeek);
+        Assert.Equal(Locale.Parse("en"), account.Locale);
         Assert.False(account.IsActivated);
-        Assert.Equal(DateFormat.Parse("MM/dd/yyyy"), account.DateFormat);
-        Assert.Equal(TimeFormat.Default, account.TimeFormat);
         Assert.Equal(RegionCode.Empty, account.Region);
         Assert.Equal(CountryCode.Empty, account.Country);
         Assert.Empty(GetRoles(account));
@@ -87,7 +83,7 @@ public sealed class AccountTests
         hasher.CreateHash(ip).Returns([9, 9, 9]);
 
         var time = FakeTime(new DateTime(2010, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-        _ = Account.Create(Language.Parse("en"), TimeZoneVo.Utc, CultureInfo.InvariantCulture, ip, hasher, time);
+        _ = Account.Create(TimeZoneVo.Utc, Locale.Parse("en"), ip, hasher, time);
 
         hasher.Received(1).CreateHash(ip);
     }
@@ -375,13 +371,10 @@ public sealed class AccountTests
         account.Update(
             Name.Create(account.Name.Nickname, "John", "Doe", account.Name.UseNickname),
             account.Picture,
-            account.Language,
+            account.Locale,
             account.Region,
             account.Country,
             account.Timezone,
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             TimeProvider.System);
 
         Assert.Equal(originalNickname, account.Name.Nickname);
@@ -400,13 +393,10 @@ public sealed class AccountTests
         account.Update(
             Name.Create(Nickname.Parse("newnick"), "A", "B", useNickname: false),
             account.Picture,
-            account.Language,
+            account.Locale,
             account.Region,
             account.Country,
             account.Timezone,
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             TimeProvider.System
         );
 
@@ -418,7 +408,7 @@ public sealed class AccountTests
     }
 
     [Fact]
-    public void Update_PictureNull_ResetsDefault()
+    public void Update_PictureNull_KeepsExistingPicture()
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
@@ -427,13 +417,10 @@ public sealed class AccountTests
         account.Update(
             account.Name,
             picture,
-            account.Language,
+            account.Locale,
             account.Region,
             account.Country,
             account.Timezone,
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             TimeProvider.System
         );
 
@@ -444,16 +431,13 @@ public sealed class AccountTests
         account.Update(
             account.Name,
             null,
-            account.Language,
+            account.Locale,
             account.Region,
             account.Country,
             account.Timezone,
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             TimeProvider.System
         );
-        Assert.Equal(ExpectedDefaultPicture, account.Picture);
+        Assert.Equal(picture, account.Picture);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
@@ -466,17 +450,14 @@ public sealed class AccountTests
         account.Update(
             account.Name,
             account.Picture,
-            Language.Parse("ru"),
+            Locale.Parse("ru"),
             RegionCode.Parse("EU"),
             CountryCode.Parse("DE"),
             TimeZoneVo.Parse("UTC"),
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             TimeProvider.System
         );
 
-        Assert.Equal(Language.Parse("ru"), account.Language);
+        Assert.Equal(Locale.Parse("ru"), account.Locale);
         Assert.Equal(RegionCode.Parse("EU"), account.Region);
         Assert.Equal(CountryCode.Parse("DE"), account.Country);
         Assert.Equal(TimeZoneVo.Parse("UTC"), account.Timezone);
@@ -486,24 +467,21 @@ public sealed class AccountTests
         account.Update(
             account.Name,
             account.Picture,
-            Language.Parse("en"),
+            Locale.Parse("en"),
             RegionCode.Parse("NA"),
             CountryCode.Parse("US"),
             TimeZoneVo.Parse("UTC"),
-            account.DateFormat,
-            account.TimeFormat,
-            account.StartOfWeek,
             TimeProvider.System
         );
 
-        Assert.Equal(Language.Parse("en"), account.Language);
+        Assert.Equal(Locale.Parse("en"), account.Locale);
         Assert.Equal(RegionCode.Parse("NA"), account.Region);
         Assert.Equal(CountryCode.Parse("US"), account.Country);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 
     [Fact]
-    public void Update_Formats_UpdatesDisplayPrefs()
+    public void Update_RegionAndTimezone_UpdatesProfile()
     {
         var account = CreateAccount();
         account.ClearDomainEvents();
@@ -511,19 +489,16 @@ public sealed class AccountTests
         account.Update(
             account.Name,
             account.Picture,
-            account.Language,
-            account.Region,
-            account.Country,
-            account.Timezone,
-            DateFormat.Parse("dd.MM.yyyy"),
-            TimeFormat.Parse("H:mm"),
-            DayOfWeek.Tuesday,
+            account.Locale,
+            RegionCode.Parse("ME"),
+            CountryCode.Parse("AE"),
+            TimeZoneVo.Parse("Asia/Dubai"),
             TimeProvider.System
         );
 
-        Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
-        Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);
-        Assert.Equal(DayOfWeek.Tuesday, account.StartOfWeek);
+        Assert.Equal(RegionCode.Parse("ME"), account.Region);
+        Assert.Equal(CountryCode.Parse("AE"), account.Country);
+        Assert.Equal(TimeZoneVo.Parse("Asia/Dubai"), account.Timezone);
         AssertSingle<AccountUpdatedDomainEvent>(account.GetDomainEvents());
     }
 

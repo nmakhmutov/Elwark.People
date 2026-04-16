@@ -8,7 +8,6 @@
     </Folder>
     <Folder Name="/github/">
         <File Path=".github/workflows/people.yml"/>
-        <File Path=".github/workflows/cleanup.yml"/>
     </Folder>
     <Folder Name="/src/">
         <Project Path="src/People.Api/People.Api.csproj"/>

@@ -85,7 +85,7 @@ public sealed class EmailEndpointsTests(PostgreSqlFixture postgres) : RestApiTes
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => capturedCode = c),
-                Arg.Any<Language>(),
+                Arg.Any<Locale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -152,7 +152,7 @@ public sealed class EmailEndpointsTests(PostgreSqlFixture postgres) : RestApiTes
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => capturedCode = c),
-                Arg.Any<Language>(),
+                Arg.Any<Locale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 

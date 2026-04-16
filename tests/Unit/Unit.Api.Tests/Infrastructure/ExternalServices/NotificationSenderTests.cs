@@ -48,7 +48,7 @@ public sealed class NotificationSenderTests
         await sut.SendConfirmationAsync(
             new System.Net.Mail.MailAddress("user+tag@example.com"),
             "secret-code",
-            Language.Parse("en"),
+            Locale.Parse("en"),
             CancellationToken.None);
 
         Assert.Equal(HttpMethod.Post, method);
@@ -84,7 +84,7 @@ public sealed class NotificationSenderTests
             sut.SendConfirmationAsync(
                 new System.Net.Mail.MailAddress("a@b.com"),
                 "c",
-                Language.Parse("en"),
+                Locale.Parse("en"),
                 CancellationToken.None));
     }
 
@@ -105,7 +105,7 @@ public sealed class NotificationSenderTests
             sut.SendConfirmationAsync(
                 new System.Net.Mail.MailAddress("a@b.com"),
                 "c",
-                Language.Parse("en"),
+                Locale.Parse("en"),
                 CancellationToken.None));
 
         Assert.Equal("Simulated network failure", ex.Message);

@@ -6,7 +6,7 @@ using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
 using Xunit;
-using DomainLanguage = People.Domain.ValueObjects.Language;
+using DomainLocale = People.Domain.ValueObjects.Locale;
 
 namespace Integration.Api.Tests.Grpc;
 
@@ -20,7 +20,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
         await CommandTestFixture.ResetDatabaseAsync(resetDb);
 
         Commands.Notification
-            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLanguage>(),
+            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLocale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -35,7 +35,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningUpRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-flow-user@example.com"),
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
                 Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SigningUpByEmail(req, ctx));
@@ -55,7 +55,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => capturedCode = c),
-                Arg.Any<DomainLanguage>(),
+                Arg.Any<DomainLocale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -70,7 +70,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningUpRequest
             {
                 Email = GrpcProtoTestData.Email("signup-grpc@example.com"),
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
                 Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SigningUpByEmail(req, ctx));
@@ -113,7 +113,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => signInCode = c),
-                Arg.Any<DomainLanguage>(),
+                Arg.Any<DomainLocale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -128,7 +128,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningInRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-signin@example.com"),
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
             },
             static (s, req, ctx) => s.SigningInByEmail(req, ctx));
 
@@ -158,7 +158,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => signInCode = c),
-                Arg.Any<DomainLanguage>(),
+                Arg.Any<DomainLocale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -173,7 +173,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningInRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-login@example.com"),
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
             },
             static (s, req, ctx) => s.SigningInByEmail(req, ctx));
 
@@ -231,7 +231,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => capturedCode = c),
-                Arg.Any<DomainLanguage>(),
+                Arg.Any<DomainLocale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -246,7 +246,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningUpRequest
             {
                 Email = GrpcProtoTestData.Email("wrong-code@example.com"),
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
                 Metadata = GrpcProtoTestData.TestMetadata()
             },
             static (s, req, ctx) => s.SigningUpByEmail(req, ctx));
@@ -312,7 +312,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
         }
 
         Commands.Notification
-            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLanguage>(),
+            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<DomainLocale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
@@ -327,7 +327,7 @@ public sealed class PeopleServiceEmailFlowTests(PostgreSqlFixture postgres) : Gr
             new EmailSigningInRequest
             {
                 Email = GrpcProtoTestData.Email("grpc-bad-signin@example.com"),
-                Language = GrpcProtoTestData.EnLanguage(),
+                Locale = GrpcProtoTestData.EnLocale(),
             },
             static (s, req, ctx) => s.SigningInByEmail(req, ctx));
 

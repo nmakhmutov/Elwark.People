@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -10,7 +9,7 @@ using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
 using Xunit;
-using DomainLanguage = People.Domain.ValueObjects.Language;
+using DomainLocale = People.Domain.ValueObjects.Locale;
 
 namespace Integration.Api.Tests.Grpc;
 
@@ -62,9 +61,8 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                DomainLanguage.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                DomainLocale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime
@@ -106,9 +104,8 @@ public sealed class PeopleServiceIsAccountActiveTests(PostgreSqlFixture postgres
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                DomainLanguage.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                DomainLocale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime

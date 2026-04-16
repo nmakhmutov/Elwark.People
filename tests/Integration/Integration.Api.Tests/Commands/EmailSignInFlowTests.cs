@@ -33,7 +33,7 @@ public sealed class EmailSignInFlowTests(PostgreSqlFixture postgres) : CommandIn
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => signInCode = c),
-                Arg.Any<Language>(),
+                Arg.Any<Locale>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Task.CompletedTask);
@@ -42,7 +42,7 @@ public sealed class EmailSignInFlowTests(PostgreSqlFixture postgres) : CommandIn
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
 
         var token = await sender.Send(
-            new SigningInByEmailCommand(new MailAddress("login@example.com"), Language.Parse("en")),
+            new SigningInByEmailCommand(new MailAddress("login@example.com"), Locale.Parse("en")),
             CancellationToken.None);
 
         Assert.NotNull(signInCode);

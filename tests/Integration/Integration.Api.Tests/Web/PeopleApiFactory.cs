@@ -174,7 +174,7 @@ public sealed class PeopleApiFactory : WebApplicationFactory<Errors>
         Notification.SendConfirmationAsync(
                 Arg.Any<System.Net.Mail.MailAddress>(),
                 Arg.Any<string>(),
-                Arg.Any<Language>(),
+                Arg.Any<Locale>(),
                 Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
     }

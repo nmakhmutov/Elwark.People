@@ -19,7 +19,7 @@ public sealed class SigningInByEmailCommandTests
     public async Task Handle_ConfirmedEmail_CreatesSignInConfirmationReturnsTokenAndSendsNotification()
     {
         var email = new MailAddress("user@example.com");
-        var language = Language.Parse("en");
+        var locale = Locale.Parse("en");
         var repo = Substitute.For<IAccountRepository>();
         repo.GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>())
             .Returns(new EmailSignupState(AccountId, email, IsConfirmed: true));
@@ -33,12 +33,12 @@ public sealed class SigningInByEmailCommandTests
 
         var handler = new SigningInByEmailCommandHandler(confirmation, notification, repo);
 
-        var token = await handler.Handle(new SigningInByEmailCommand(email, language), CancellationToken.None);
+        var token = await handler.Handle(new SigningInByEmailCommand(email, locale), CancellationToken.None);
 
         Assert.Equal("signin-token", token);
         await repo.Received(1).GetEmailSignupStateAsync(email, Arg.Any<CancellationToken>());
         await confirmation.Received(1).IssueAsync(AccountId, ConfirmationType.EmailSignIn, Arg.Any<CancellationToken>());
-        await notification.Received(1).SendConfirmationAsync(email, "PIN42", language, Arg.Any<CancellationToken>());
+        await notification.Received(1).SendConfirmationAsync(email, "PIN42", locale, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class SigningInByEmailCommandTests
             repo);
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
-            await handler.Handle(new SigningInByEmailCommand(email, Language.Parse("en")), CancellationToken.None));
+            await handler.Handle(new SigningInByEmailCommand(email, Locale.Parse("en")), CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.NotFound), ex.Code);
         await confirmation.DidNotReceive().IssueAsync(Arg.Any<AccountId>(), Arg.Any<ConfirmationType>(), Arg.Any<CancellationToken>());
@@ -75,11 +75,11 @@ public sealed class SigningInByEmailCommandTests
         var handler = new SigningInByEmailCommandHandler(confirmation, notification, repo);
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
-            await handler.Handle(new SigningInByEmailCommand(email, Language.Parse("en")), CancellationToken.None));
+            await handler.Handle(new SigningInByEmailCommand(email, Locale.Parse("en")), CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.NotConfirmed), ex.Code);
         await confirmation.DidNotReceive().IssueAsync(Arg.Any<AccountId>(), Arg.Any<ConfirmationType>(), Arg.Any<CancellationToken>());
         await notification.DidNotReceive()
-            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<Language>(), Arg.Any<CancellationToken>());
+            .SendConfirmationAsync(Arg.Any<MailAddress>(), Arg.Any<string>(), Arg.Any<Locale>(), Arg.Any<CancellationToken>());
     }
 }

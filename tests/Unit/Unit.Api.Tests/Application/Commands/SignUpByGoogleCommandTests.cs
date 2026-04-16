@@ -16,7 +16,6 @@ namespace Unit.Api.Tests.Application.Commands;
 public sealed class SignUpByGoogleCommandTests
 {
     private static readonly DateTime Utc = new(2026, 6, 2, 11, 0, 0, DateTimeKind.Utc);
-    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
     private static readonly Timezone Timezone = Timezone.Utc;
 
     private static GoogleAccount ValidGoogle(string identity = "gid-1", string email = "g@example.com")
@@ -35,7 +34,7 @@ public sealed class SignUpByGoogleCommandTests
     [Fact]
     public async Task Handle_ValidToken_CreatesAccountWithPictureConfirmedEmailAndReturnsSignUpResult()
     {
-        var language = Language.Parse("en");
+        var locale = Locale.Parse("en");
         var time = EmailHandlerTestAccounts.FixedTime(Utc);
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([9]);
@@ -60,7 +59,7 @@ public sealed class SignUpByGoogleCommandTests
         var handler = new SignUpByGoogleCommandHandler(google, hasher, repo, time);
 
         var result = await handler.Handle(
-            new SignUpByGoogleCommand("access-token", language, Timezone, Culture, IPAddress.Loopback),
+            new SignUpByGoogleCommand("access-token", locale, Timezone, IPAddress.Loopback),
             CancellationToken.None);
 
         Assert.NotNull(added);
@@ -91,7 +90,7 @@ public sealed class SignUpByGoogleCommandTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await handler.Handle(
-                new SignUpByGoogleCommand("bad", Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
+                new SignUpByGoogleCommand("bad", Locale.Parse("en"), Timezone, IPAddress.Loopback),
                 CancellationToken.None));
 
         await repo.DidNotReceive().AddAsync(Arg.Any<Account>(), Arg.Any<CancellationToken>());
@@ -116,7 +115,7 @@ public sealed class SignUpByGoogleCommandTests
 
         var ex = await Assert.ThrowsAsync<EmailException>(async () =>
             await handler.Handle(
-                new SignUpByGoogleCommand("t", Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
+                new SignUpByGoogleCommand("t", Locale.Parse("en"), Timezone, IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(EmailException.AlreadyCreated), ex.Code);
@@ -141,7 +140,7 @@ public sealed class SignUpByGoogleCommandTests
 
         var ex = await Assert.ThrowsAsync<ExternalAccountException>(async () =>
             await handler.Handle(
-                new SignUpByGoogleCommand("t", Language.Parse("en"), Timezone, Culture, IPAddress.Loopback),
+                new SignUpByGoogleCommand("t", Locale.Parse("en"), Timezone, IPAddress.Loopback),
                 CancellationToken.None));
 
         Assert.Equal(nameof(ExternalAccountException.AlreadyCreated), ex.Code);

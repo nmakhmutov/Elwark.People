@@ -7,7 +7,6 @@ on:
       - 'src/**'
       - 'tests/**'
       - '.github/workflows/people.yml'
-      - 'coverage.runsettings'
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -46,16 +45,7 @@ jobs:
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
       - name: Run ${{ matrix.project }}
-        run: dotnet test tests/Unit/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
-
-      - name: Upload coverage
-        continue-on-error: true
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-unit-${{ matrix.project }}
-          path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: error
-          retention-days: 1
+        run: dotnet test tests/Unit/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-build --no-restore --verbosity minimal
 
   backend-integration:
     name: Integration Tests / ${{ matrix.project }}
@@ -94,54 +84,7 @@ jobs:
         run: dotnet build Elwark.People.slnx --configuration Release --verbosity minimal
 
       - name: Run ${{ matrix.project }}
-        run: dotnet test tests/Integration/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-build --no-restore --verbosity minimal --collect:"XPlat Code Coverage" --settings coverage.runsettings --results-directory TestResults
-
-      - name: Upload coverage
-        continue-on-error: true
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-integration-${{ matrix.project }}
-          path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: ignore
-          retention-days: 1
-
-  backend-coverage:
-    name: Coverage Report
-    runs-on: ubuntu-latest
-    needs: [ backend-unit, backend-integration ]
-    if: ${{ !cancelled() }}
-
-    steps:
-      - name: Download coverage results
-        continue-on-error: true
-        uses: actions/download-artifact@v8
-        with:
-          pattern: coverage-*
-          path: coverage-results
-          merge-multiple: true
-
-      - name: ReportGenerator
-        if: hashFiles('coverage-results/**/coverage.cobertura.xml') != ''
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.5.4
-        with:
-          reports: coverage-results/**/coverage.cobertura.xml
-          targetdir: coverage-report
-          reporttypes: HtmlInline;MarkdownSummaryGithub;Cobertura
-          assemblyfilters: -[Unit.Api.Tests]*;-[Integration.Api.Tests]*;-[Integration.Worker.Tests]*;-[Integration.Shared.Tests]*
-          verbosity: Warning
-
-      - name: Add coverage summary to job
-        if: hashFiles('coverage-results/**/coverage.cobertura.xml') != ''
-        run: cat coverage-report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload HTML report
-        continue-on-error: true
-        if: hashFiles('coverage-results/**/coverage.cobertura.xml') != ''
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-report
-          path: coverage-report/
-          retention-days: 1
+        run: dotnet test tests/Integration/${{ matrix.project }}/${{ matrix.project }}.csproj --configuration Release --no-build --no-restore --verbosity minimal
 
   backend-smoke-tests:
     name: Backend Docker Build and Smoke Tests

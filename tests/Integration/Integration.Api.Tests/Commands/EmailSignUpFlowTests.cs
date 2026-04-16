@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ public sealed class EmailSignUpFlowTests(PostgreSqlFixture postgres) : CommandIn
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => capturedCode = c),
-                Arg.Any<Language>(),
+                Arg.Any<Locale>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Task.CompletedTask);
@@ -37,9 +36,8 @@ public sealed class EmailSignUpFlowTests(PostgreSqlFixture postgres) : CommandIn
         var token = await sender.Send(
             new SigningUpByEmailCommand(
                 email,
-                Language.Parse("en"),
+                Locale.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
                 System.Net.IPAddress.Loopback
             ),
             CancellationToken.None
@@ -61,6 +59,6 @@ public sealed class EmailSignUpFlowTests(PostgreSqlFixture postgres) : CommandIn
 
         await Commands.Notification
             .Received(1)
-            .SendConfirmationAsync(email, Arg.Any<string>(), Language.Parse("en"), Arg.Any<CancellationToken>());
+            .SendConfirmationAsync(email, Arg.Any<string>(), Locale.Parse("en"), Arg.Any<CancellationToken>());
     }
 }

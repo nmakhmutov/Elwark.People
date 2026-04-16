@@ -1,8 +1,9 @@
+using System.Net.Mail;
 using Microsoft.EntityFrameworkCore;
 using People.Application.Providers;
+using People.Application.Providers.Confirmation;
 using People.Domain.IntegrationEvents;
 using People.Infrastructure;
-using People.Infrastructure.Commands;
 
 namespace Integration.Api.Tests.Infrastructure;
 
@@ -22,7 +23,6 @@ internal static class EmailVerificationOutboxTestHelper
         if (messages.Count == 0)
             return;
 
-        var handler = new SendEmailVerificationCommandHandler(db, notification);
         var processedAt = scope.ServiceProvider.GetRequiredService<TimeProvider>().GetUtcNow().UtcDateTime;
 
         foreach (var message in messages)
@@ -30,7 +30,17 @@ internal static class EmailVerificationOutboxTestHelper
             if (message.GetPayload() is not EmailVerificationRequestedIntegrationEvent payload)
                 continue;
 
-            await handler.Handle(new SendEmailVerificationCommand(payload.AccountId, payload.Email, payload.Language), ct);
+            var code = await db.Confirmations
+                .AsNoTracking()
+                .Where(x => x.AccountId == payload.AccountId && x.Type == ConfirmationType.EmailConfirmation)
+                .OrderByDescending(x => x.CreatedAt)
+                .Select(x => x.Code)
+                .FirstOrDefaultAsync(ct);
+
+            if (code is null)
+                continue;
+
+            await notification.SendConfirmationAsync(new MailAddress(payload.Email), code, payload.Locale, ct);
 
             message.MarkProcessed(processedAt);
         }

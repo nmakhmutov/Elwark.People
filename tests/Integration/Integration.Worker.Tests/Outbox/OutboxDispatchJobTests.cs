@@ -108,7 +108,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
                 Guid.CreateVersion7(),
                 5004L,
                 "verify@example.com",
-                Language.Default,
+                Locale.Parse("en"),
                 DateTime.UtcNow.AddMinutes(-10));
             db.OutboxMessages.Add(OutboxMessage.Create(evt));
             await db.SaveChangesAsync(CancellationToken.None);
@@ -125,7 +125,7 @@ public sealed class OutboxDispatchJobTests(PostgreSqlFixture fixture)
                 Arg.Is<SendEmailVerificationCommand>(c =>
                     c.AccountId == 5004L &&
                     c.Email == "verify@example.com" &&
-                    c.Language == Language.Default
+                    c.Locale == Locale.Parse("en")
                 ),
                 Arg.Any<CancellationToken>());
     }

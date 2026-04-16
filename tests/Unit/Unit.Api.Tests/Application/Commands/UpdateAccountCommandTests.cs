@@ -23,10 +23,8 @@ public sealed class UpdateAccountCommandTests
         var account = EmailHandlerTestAccounts.AccountWithConfirmedPrimary(AccountId, time);
         var country = CountryCode.Parse("DE");
         var regionEu = RegionCode.Parse("EU");
-        var language = Language.Parse("de");
+        var locale = Locale.Parse("de");
         var tz = TimeZone.Utc;
-        var dateFmt = DateFormat.Parse("dd.MM.yyyy");
-        var timeFmt = TimeFormat.Parse("HH:mm:ss");
 
         var repo = Substitute.For<IAccountRepository>();
         var uow = Substitute.For<IUnitOfWork>();
@@ -46,11 +44,8 @@ public sealed class UpdateAccountCommandTests
             LastName: "Lovelace",
             Nickname: Nickname.Parse("ada"),
             UseNickname: false,
-            Language: language,
+            Locale: locale,
             Timezone: tz,
-            DateFormat: dateFmt,
-            TimeFormat: timeFmt,
-            StartOfWeek: DayOfWeek.Monday,
             Country: country);
 
         var result = await handler.Handle(cmd, CancellationToken.None);
@@ -60,11 +55,8 @@ public sealed class UpdateAccountCommandTests
         Assert.Equal("Ada", result.Name.FirstName);
         Assert.Equal("Lovelace", result.Name.LastName);
         Assert.False(result.Name.UseNickname);
-        Assert.Equal(language, result.Language);
+        Assert.Equal(locale, result.Locale);
         Assert.Equal(tz, result.Timezone);
-        Assert.Equal(dateFmt, result.DateFormat);
-        Assert.Equal(timeFmt, result.TimeFormat);
-        Assert.Equal(DayOfWeek.Monday, result.StartOfWeek);
         Assert.Equal(country, result.Country);
         Assert.Equal(regionEu, result.Region);
         await countryClient.Received(1).GetAsync(country, Arg.Any<CancellationToken>());
@@ -96,11 +88,8 @@ public sealed class UpdateAccountCommandTests
                 null,
                 Nickname.Parse("nick"),
                 UseNickname: true,
-                Language.Parse("en"),
+                Locale.Parse("en"),
                 TimeZone.Utc,
-                DateFormat.Default,
-                TimeFormat.Default,
-                DayOfWeek.Sunday,
                 country),
             CancellationToken.None);
 
@@ -123,11 +112,8 @@ public sealed class UpdateAccountCommandTests
                     null,
                     Nickname.Parse("x"),
                     true,
-                    Language.Parse("en"),
+                    Locale.Parse("en"),
                     TimeZone.Utc,
-                    DateFormat.Default,
-                    TimeFormat.Default,
-                    DayOfWeek.Monday,
                     CountryCode.Parse("US")),
                 CancellationToken.None));
     }

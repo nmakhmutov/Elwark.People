@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Grpc.Core;
@@ -10,11 +9,11 @@ using People.Domain.Exceptions;
 using People.Domain.Repositories;
 using People.Domain.SeedWork;
 using People.Domain.ValueObjects;
-using DomainLanguage = People.Domain.ValueObjects.Language;
 using People.Infrastructure;
 using Integration.Api.Tests.Commands;
 using People.Grpc.People;
 using Xunit;
+using DomainLocale = People.Domain.ValueObjects.Locale;
 
 namespace Integration.Api.Tests.Grpc;
 
@@ -50,9 +49,8 @@ public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture p
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                DomainLanguage.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                DomainLocale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime
@@ -76,7 +74,7 @@ public sealed class GrpcExceptionInterceptorIntegrationTests(PostgreSqlFixture p
                 new EmailSigningInRequest
                 {
                     Email = GrpcProtoTestData.Email("not-confirmed-grpc@example.com"),
-                    Language = GrpcProtoTestData.EnLanguage()
+                    Locale = GrpcProtoTestData.EnLocale()
                 },
                 static (s, req, ctx) => s.SigningInByEmail(req, ctx)));
 

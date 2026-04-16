@@ -30,13 +30,10 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
             draft.Update(
                 Name.Create(Nickname.Parse("nick"), "Ada", "Lovelace", false),
                 null,
-                Language.Parse("de"),
+                Locale.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("US"),
                 TimeZone.Parse("Europe/Berlin"),
-                DateFormat.Parse("dd.MM.yyyy"),
-                TimeFormat.Parse("H:mm"),
-                DayOfWeek.Friday,
                 time);
             draft.AddRole("admin", time);
             draft.Ban("reason", new DateTime(2035, 1, 1, 0, 0, 0, DateTimeKind.Utc), time);
@@ -51,13 +48,10 @@ public sealed class EntityConfigurationTests(PostgreSqlFixture fixture)
             .AsSplitQuery()
             .SingleAsync();
 
-        Assert.Equal(Language.Parse("de"), account.Language);
+        Assert.Equal(Locale.Parse("de"), account.Locale);
         Assert.Equal(RegionCode.Parse("EU"), account.Region);
         Assert.Equal(CountryCode.Parse("US"), account.Country);
         Assert.Equal(TimeZone.Parse("Europe/Berlin"), account.Timezone);
-        Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), account.DateFormat);
-        Assert.Equal(TimeFormat.Parse("H:mm"), account.TimeFormat);
-        Assert.Equal(DayOfWeek.Friday, account.StartOfWeek);
 
         Assert.Equal(Nickname.Parse("nick"), account.Name.Nickname);
         Assert.Equal("Ada", account.Name.FirstName);

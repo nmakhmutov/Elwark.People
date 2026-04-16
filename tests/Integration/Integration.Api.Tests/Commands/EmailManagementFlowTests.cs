@@ -39,7 +39,7 @@ public sealed class EmailManagementFlowTests(PostgreSqlFixture postgres) : Comma
             .SendConfirmationAsync(
                 Arg.Any<MailAddress>(),
                 Arg.Do<string>(c => appendConfirmCode = c),
-                Arg.Any<Language>(),
+                Arg.Any<Locale>(),
                 Arg.Any<CancellationToken>()
             )
             .Returns(Task.CompletedTask);

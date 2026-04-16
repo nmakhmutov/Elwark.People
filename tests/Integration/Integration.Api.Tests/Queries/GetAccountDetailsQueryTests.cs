@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -35,9 +34,8 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                Language.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                Locale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime
@@ -46,13 +44,10 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
             account.Update(
                 Name.Create(Nickname.Parse("DisplayNick"), "First", "Last", useNickname: false),
                 Picture.Parse("https://example.com/avatar.png"),
-                Language.Parse("de"),
+                Locale.Parse("de"),
                 RegionCode.Parse("EU"),
                 CountryCode.Parse("DE"),
                 TimeZone.Parse("Europe/Berlin"),
-                DateFormat.Parse("dd.MM.yyyy"),
-                TimeFormat.Parse("HH:mm"),
-                DayOfWeek.Friday,
                 fixedTime);
             account.AddEmail(primary, true, fixedTime);
             account.AddEmail(secondary, false, fixedTime);
@@ -75,14 +70,11 @@ public sealed class GetAccountDetailsQueryTests(PostgreSqlFixture postgres) : Qu
         Assert.Equal("Last", result.Name.LastName);
         Assert.False(result.Name.UseNickname);
         Assert.Equal("First Last", result.Name.FullName());
-        Assert.Equal(Language.Parse("de"), result.Language);
+        Assert.Equal(Locale.Parse("de"), result.Locale);
         Assert.Equal(TimeZone.Parse("Europe/Berlin"), result.Timezone);
         Assert.Equal(Picture.Parse("https://example.com/avatar.png"), result.Picture);
         Assert.Equal(RegionCode.Parse("EU"), result.Region);
         Assert.Equal(CountryCode.Parse("DE"), result.Country);
-        Assert.Equal(DateFormat.Parse("dd.MM.yyyy"), result.DateFormat);
-        Assert.Equal(TimeFormat.Parse("HH:mm"), result.TimeFormat);
-        Assert.Equal(DayOfWeek.Friday, result.StartOfWeek);
 
         Assert.Equal(2, result.Emails.Count);
         Assert.Contains(result.Emails, e => e.Email == primary.Address && e.IsPrimary && e.IsConfirmed);

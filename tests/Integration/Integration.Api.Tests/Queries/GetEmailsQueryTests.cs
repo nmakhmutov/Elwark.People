@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using Mediator;
@@ -34,9 +33,8 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                Language.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                Locale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 fixedTime
@@ -82,9 +80,8 @@ public sealed class GetEmailsQueryTests(PostgreSqlFixture postgres) : QueryInteg
             var hasher = seedScope.ServiceProvider.GetRequiredService<IIpHasher>();
 
             var account = Account.Create(
-                Language.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
+                Locale.Parse("en"),
                 IPAddress.Loopback,
                 hasher,
                 TimeProvider.System);

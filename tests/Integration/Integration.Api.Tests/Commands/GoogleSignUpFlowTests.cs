@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -38,9 +37,8 @@ public sealed class GoogleSignUpFlowTests(PostgreSqlFixture postgres) : CommandI
         var result = await sender.Send(
             new SignUpByGoogleCommand(
                 "google-access-token",
-                Language.Parse("en"),
+                Locale.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
                 System.Net.IPAddress.Loopback
             ),
             CancellationToken.None

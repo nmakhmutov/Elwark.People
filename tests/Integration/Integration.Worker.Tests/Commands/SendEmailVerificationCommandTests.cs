@@ -32,7 +32,7 @@ public sealed class SendEmailVerificationCommandTests(PostgreSqlFixture fixture)
 
         var notification = Substitute.For<INotificationSender>();
         var handler = new SendEmailVerificationCommandHandler(db, notification);
-        var command = new SendEmailVerificationCommand(600L, "verify@test.com", Language.Default);
+        var command = new SendEmailVerificationCommand(600L, "verify@test.com", Locale.Parse("en"));
 
         await handler.Handle(command, CancellationToken.None);
 
@@ -40,7 +40,7 @@ public sealed class SendEmailVerificationCommandTests(PostgreSqlFixture fixture)
             .SendConfirmationAsync(
                 Arg.Is<MailAddress>(m => m.Address == command.Email),
                 "ABC123",
-                Arg.Is<Language>(x => x == command.Language),
+                Arg.Is<Locale>(x => x == command.Locale),
                 Arg.Any<CancellationToken>()
             );
     }

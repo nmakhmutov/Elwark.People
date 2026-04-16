@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net.Mail;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +30,8 @@ public sealed class MicrosoftSignUpFlowTests(PostgreSqlFixture postgres) : Comma
         var result = await sender.Send(
             new SignUpByMicrosoftCommand(
                 "ms-access-token",
-                Language.Parse("en"),
+                Locale.Parse("en"),
                 Timezone.Utc,
-                CultureInfo.InvariantCulture,
                 System.Net.IPAddress.Loopback
             ),
             CancellationToken.None

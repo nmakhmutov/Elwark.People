@@ -2,7 +2,6 @@ using People.Application.Queries.GetAccountSummary;
 using People.Domain.Entities;
 using People.Domain.Exceptions;
 using People.Domain.ValueObjects;
-using TimeZone = People.Domain.ValueObjects.Timezone;
 using Xunit;
 
 namespace Unit.Api.Tests.Application.Queries;
@@ -26,10 +25,8 @@ public sealed class GetAccountSummaryQueryTests
             [8] = "EU",
             [9] = "DE",
             [10] = TimeZoneInfo.Utc.Id,
-            [11] = "yyyy-MM-dd",
-            [12] = "HH:mm",
-            [13] = (int)DayOfWeek.Wednesday,
-            [14] = new[] { "member", "admin" }
+            [11] = new[] { "member", "admin" },
+            [12] = DBNull.Value
         });
 
         var accessor = new TestNpgsqlAccessor(row);
@@ -44,13 +41,10 @@ public sealed class GetAccountSummaryQueryTests
         Assert.Equal("Last", result.Name.LastName);
         Assert.False(result.Name.UseNickname);
         Assert.Equal(Picture.Parse("https://pic.example/id"), result.Picture);
-        Assert.Equal(Language.Parse("en"), result.Language);
+        Assert.Equal(Locale.Parse("en"), result.Locale);
         Assert.Equal(RegionCode.Parse("EU"), result.RegionCode);
         Assert.Equal(CountryCode.Parse("DE"), result.CountryCode);
-        Assert.Equal(TimeZone.Utc, result.Timezone);
-        Assert.Equal(DateFormat.Parse("yyyy-MM-dd"), result.DateFormat);
-        Assert.Equal(TimeFormat.Parse("HH:mm"), result.TimeFormat);
-        Assert.Equal(DayOfWeek.Wednesday, result.StartOfWeek);
+        Assert.Equal(Timezone.Utc, result.Timezone);
         Assert.Equal(new[] { "member", "admin" }, result.Roles);
         Assert.Null(result.Ban);
     }

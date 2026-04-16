@@ -9,11 +9,10 @@ internal static class GrpcProtoTestData
         {
             IpAddress = "127.0.0.1",
             UserAgent = "grpc-integration-test",
-            Timezone = TimeZoneInfo.Utc.Id,
-            Locale = "en"
+            Timezone = TimeZoneInfo.Utc.Id
         };
 
-    public static Language EnLanguage() =>
+    public static Locale EnLocale() =>
         new()
         {
             Value = "en"

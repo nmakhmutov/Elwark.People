@@ -34,9 +34,8 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         await IntegrationDatabaseCleanup.DeleteAllAsync(write);
 
         var account = Account.Create(
-            Language.Parse("en"),
             Timezone.Utc,
-            CultureInfo.InvariantCulture,
+            AccountTestFactory.EnLocale,
             System.Net.IPAddress.Loopback,
             AccountTestFactory.FakeIpHasher(),
             TimeProvider.System
@@ -70,13 +69,10 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         a1.Update(
             a1.Name,
             null,
-            a1.Language,
+            a1.Locale,
             a1.Region,
             a1.Country,
             a1.Timezone,
-            a1.DateFormat,
-            a1.TimeFormat,
-            a1.StartOfWeek,
             TimeProvider.System);
         ctx1.Entry(a1).State = EntityState.Modified;
         await ctx1.SaveEntitiesAsync(CancellationToken.None);
@@ -84,13 +80,10 @@ public sealed class PeopleDbContextTests(PostgreSqlFixture fixture)
         a2.Update(
             a2.Name,
             null,
-            a2.Language,
+            a2.Locale,
             a2.Region,
             a2.Country,
             a2.Timezone,
-            a2.DateFormat,
-            a2.TimeFormat,
-            a2.StartOfWeek,
             TimeProvider.System);
         ctx2.Entry(a2).State = EntityState.Modified;
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => ctx2.SaveEntitiesAsync(CancellationToken.None));

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using System.Net.Mail;
 using NSubstitute;
@@ -11,7 +10,6 @@ namespace Unit.Api.Tests.Application.Commands;
 internal static class EmailHandlerTestAccounts
 {
     private static readonly IPAddress Ip = IPAddress.Loopback;
-    private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
     internal static TimeProvider FixedTime(DateTime utc)
     {
@@ -32,7 +30,7 @@ internal static class EmailHandlerTestAccounts
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1]);
-        var account = Account.Create(Language.Parse("en"), Timezone.Utc, Culture, Ip, hasher, time);
+        var account = Account.Create(Timezone.Utc, Locale.Parse("en"), Ip, hasher, time);
         SetAccountId(account, id);
         account.AddEmail(new MailAddress(primaryEmail), true, time);
         account.ClearDomainEvents();
@@ -73,7 +71,7 @@ internal static class EmailHandlerTestAccounts
     {
         var hasher = Substitute.For<IIpHasher>();
         hasher.CreateHash(Arg.Any<IPAddress>()).Returns([1]);
-        var account = Account.Create(Language.Parse("en"), Timezone.Utc, Culture, Ip, hasher, time);
+        var account = Account.Create(Timezone.Utc, Locale.Parse("en"), Ip, hasher, time);
         SetAccountId(account, id);
         account.AddEmail(new MailAddress(email), false, time);
         account.ClearDomainEvents();
