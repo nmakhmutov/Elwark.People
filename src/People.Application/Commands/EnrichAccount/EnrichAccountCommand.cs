@@ -58,7 +58,7 @@ public sealed class EnrichAccountCommandHandler : ICommandHandler<EnrichAccountC
             account.Locale,
             account.Region.IsEmpty() ? RegionCode.ParseOrDefault(ip?.Region) : account.Region,
             account.Country.IsEmpty() ? CountryCode.ParseOrDefault(ip?.CountryCode) : account.Country,
-            Timezone.ParseOrDefault(ip?.TimeZone),
+            account.Timezone == Timezone.Utc ? Timezone.ParseOrDefault(ip?.TimeZone) : account.Timezone,
             _timeProvider
         );
 

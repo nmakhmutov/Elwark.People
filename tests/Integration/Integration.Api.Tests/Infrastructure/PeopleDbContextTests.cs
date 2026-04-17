@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using People.Domain.Entities;
 using People.Domain.ValueObjects;

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Net;
 using NSubstitute;
 using People.Domain.Entities;
